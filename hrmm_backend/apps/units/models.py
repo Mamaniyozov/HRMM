@@ -1,0 +1,8 @@
+class Unit(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    department_id = models.UUIDField()
+    name = models.CharField(max_length=200)
+    code = models.CharField(max_length=20, unique=True)
+    head_user_id = models.UUIDField(null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
