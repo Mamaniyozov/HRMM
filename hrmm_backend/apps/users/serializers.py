@@ -23,6 +23,24 @@ class UserCreateSerializer(serializers.ModelSerializer):
         validated_data["password_hash"] = make_password(password)
         return User.objects.create(**validated_data)
 
+    def validate(self, attrs):
+        role = attrs.get("role")
+        department = attrs.get("department_id")
+        unit = attrs.get("unit_id")
+
+        if role in {"UNIT_HEAD", "DEPT_HEAD"} and not department:
+            raise serializers.ValidationError({"department_id": "Bu rol uchun department majburiy."})
+        if role == "UNIT_HEAD" and not unit:
+            raise serializers.ValidationError({"unit_id": "UNIT_HEAD uchun unit majburiy."})
+        if role == "DEPT_HEAD" and unit:
+            raise serializers.ValidationError({"unit_id": "DEPT_HEAD uchun unit kiritilmaydi."})
+        if role == "DIRECTOR" and (department or unit):
+            raise serializers.ValidationError({"role": "DIRECTOR uchun department va unit biriktirilmaydi."})
+        if unit and department and unit.department_id_id != department.id:
+            raise serializers.ValidationError({"unit_id": "Tanlangan unit shu departmentga tegishli emas."})
+
+        return attrs
+
 
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,3 +73,21 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "phone",
             "avatar_url",
         ]
+
+    def validate(self, attrs):
+        role = attrs.get("role", self.instance.role)
+        department = attrs.get("department_id", self.instance.department_id)
+        unit = attrs.get("unit_id", self.instance.unit_id)
+
+        if role in {"UNIT_HEAD", "DEPT_HEAD"} and not department:
+            raise serializers.ValidationError({"department_id": "Bu rol uchun department majburiy."})
+        if role == "UNIT_HEAD" and not unit:
+            raise serializers.ValidationError({"unit_id": "UNIT_HEAD uchun unit majburiy."})
+        if role == "DEPT_HEAD" and unit:
+            raise serializers.ValidationError({"unit_id": "DEPT_HEAD uchun unit kiritilmaydi."})
+        if role == "DIRECTOR" and (department or unit):
+            raise serializers.ValidationError({"role": "DIRECTOR uchun department va unit biriktirilmaydi."})
+        if unit and department and unit.department_id_id != department.id:
+            raise serializers.ValidationError({"unit_id": "Tanlangan unit shu departmentga tegishli emas."})
+
+        return attrs

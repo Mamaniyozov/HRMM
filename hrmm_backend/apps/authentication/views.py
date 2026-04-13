@@ -1,15 +1,10 @@
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
+from django.utils import timezone
+from apps.audit.services import create_audit_log
+from config.responses import api_success
 from .serializers import LoginSerializer
 from .tokens import get_tokens_for_user
-from django.urls import path
-
-
-urlpatterns = [
-   path("login/", TokenObtainPairView.as_view()),
-]
 
 
 
@@ -24,14 +19,28 @@ class LoginView(APIView):
 
         user = serializer.validated_data["user"]
         tokens = get_tokens_for_user(user)
+        user.last_login_at = timezone.now()
+        user.save(update_fields=["last_login_at", "updated_at"])
+        create_audit_log(
+            actor=user,
+            action="LOGIN",
+            target_type="users.User",
+            target_id=user.id,
+            description=f"{user.username} tizimga kirdi",
+            request=request,
+        )
 
-        return Response({
-            "access": tokens["access"],
-            "refresh": tokens["refresh"],
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "full_name": user.full_name,
-                "role": user.role
-            }
-        }, status=status.HTTP_200_OK)
+        return api_success(
+            message="Login successful",
+            data={
+                "access": tokens["access"],
+                "refresh": tokens["refresh"],
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "full_name": user.full_name,
+                    "role": user.role,
+                },
+            },
+            status_code=status.HTTP_200_OK,
+        )

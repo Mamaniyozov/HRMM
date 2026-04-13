@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
-
 class UnitsConfig(AppConfig):
-    name = 'units'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.units"
