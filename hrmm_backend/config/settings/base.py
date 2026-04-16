@@ -32,11 +32,13 @@ INSTALLED_APPS = [
     "apps.leave_management",
     "apps.dashboard",
     "apps.audit",
+    "apps.notifications",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "config.middleware.SimpleCORSMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

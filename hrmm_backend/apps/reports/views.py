@@ -1,7 +1,9 @@
 import hashlib
 
 from django.db.models import Count, Q
+from django.http import FileResponse, Http404
 from rest_framework import permissions, status
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.audit.services import create_audit_log
@@ -13,6 +15,8 @@ from apps.reports.serializers import (
     ReportCreateSerializer,
     ReportDetailSerializer,
     ReportListSerializer,
+    ReportUpdateSerializer,
+    ApprovalHistorySerializer,
     WorkflowActionSerializer,
 )
 from apps.workflows.services import perform_workflow_action
@@ -27,7 +31,7 @@ def _report_queryset_for_user(user):
     queryset = Report.objects.select_related("created_by", "department_id").prefetch_related(
         "attachments",
         "approval_history__approver_id",
-    )
+    ).filter(is_deleted=False)
 
     if user.role == "DIRECTOR":
         return queryset
@@ -85,6 +89,62 @@ class ReportDetailView(APIView):
         if not report:
             return api_success(message="Report not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
         return api_success(data=ReportDetailSerializer(report, context={"request": request}).data)
+
+    def put(self, request, report_id):
+        report = Report.objects.filter(id=report_id, created_by=request.user, is_deleted=False).first()
+        if not report:
+            return api_success(message="Report not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+        if report.status not in {"DRAFT", "REVISION"}:
+            return api_success(
+                message="Faqat draft yoki revision holatidagi reportni yangilash mumkin",
+                data=None,
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = ReportUpdateSerializer(report, data=request.data, partial=True, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        create_audit_log(
+            actor=request.user,
+            action="REPORT_UPDATE",
+            target_type="reports.Report",
+            target_id=report.id,
+            description=f"{report.report_number} report yangilandi",
+            request=request,
+        )
+        return api_success(data=ReportDetailSerializer(report, context={"request": request}).data)
+
+    def delete(self, request, report_id):
+        report = Report.objects.filter(id=report_id, is_deleted=False).first()
+        if not report:
+            return api_success(message="Report not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+
+        if request.user.id != report.created_by_id and request.user.role != "DIRECTOR":
+            return api_success(message="Sizda reportni o'chirish vakolati yo'q", data=None, status_code=status.HTTP_403_FORBIDDEN)
+
+        report.is_deleted = True
+        report.save(update_fields=["is_deleted", "updated_at"])
+        create_audit_log(
+            actor=request.user,
+            action="REPORT_DELETE",
+            target_type="reports.Report",
+            target_id=report.id,
+            description=f"{report.report_number} report soft delete qilindi",
+            request=request,
+        )
+        return api_success(message="Report deleted successfully")
+
+
+class ReportHistoryView(APIView):
+    permission_classes = [IsAuthenticatedHRMM]
+
+    def get(self, request, report_id):
+        report = _report_queryset_for_user(request.user).filter(id=report_id).first()
+        if not report:
+            return api_success(message="Report not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+
+        history = report.approval_history.select_related("approver_id").all()
+        return api_success(data=ApprovalHistorySerializer(history, many=True).data)
 
 
 class ReportAttachmentListCreateView(APIView):
@@ -150,6 +210,50 @@ class ReportAttachmentListCreateView(APIView):
             message="Attachment uploaded",
             status_code=status.HTTP_201_CREATED,
         )
+
+
+class AttachmentDownloadView(APIView):
+    permission_classes = [IsAuthenticatedHRMM]
+
+    def get(self, request, attachment_id):
+        attachment = ReportAttachment.objects.select_related("report_id", "upload_by").filter(id=attachment_id, is_deleted=False).first()
+        if not attachment:
+            raise Http404("Attachment not found")
+
+        report = _report_queryset_for_user(request.user).filter(id=attachment.report_id_id).first()
+        if not report:
+            return api_success(message="Attachment not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+
+        response = FileResponse(attachment.file.open("rb"), as_attachment=True, filename=attachment.file_name)
+        response["Content-Type"] = attachment.file_type or "application/octet-stream"
+        return response
+
+
+class AttachmentDeleteView(APIView):
+    permission_classes = [IsAuthenticatedHRMM]
+
+    def delete(self, request, attachment_id):
+        attachment = ReportAttachment.objects.select_related("report_id").filter(id=attachment_id, is_deleted=False).first()
+        if not attachment:
+            return api_success(message="Attachment not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+
+        report = attachment.report_id
+        if request.user.id != report.created_by_id and request.user.role != "DIRECTOR":
+            return api_success(message="Sizda attachmentni o'chirish vakolati yo'q", data=None, status_code=status.HTTP_403_FORBIDDEN)
+        if report.status not in {"DRAFT", "REVISION"}:
+            return api_success(message="Faqat draft yoki revision report attachmenti o'chiriladi", data=None, status_code=status.HTTP_400_BAD_REQUEST)
+
+        attachment.is_deleted = True
+        attachment.save(update_fields=["is_deleted"])
+        create_audit_log(
+            actor=request.user,
+            action="ATTACHMENT_DELETE",
+            target_type="reports.ReportAttachment",
+            target_id=attachment.id,
+            description=f"{attachment.file_name} attachment soft delete qilindi",
+            request=request,
+        )
+        return api_success(message="Attachment deleted successfully")
 
 
 class ReportWorkflowActionView(APIView):

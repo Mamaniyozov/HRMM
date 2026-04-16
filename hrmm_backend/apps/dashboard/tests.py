@@ -1,7 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from apps.dashboard.views import DashboardStatsView
+from apps.dashboard.views import DashboardAdminView, DashboardAnalyticsView, DashboardStatsView
 from apps.departments.models import Department
 from apps.leave_management.models import LeaveRequest
 from apps.reports.models import Report
@@ -54,3 +54,22 @@ class DashboardStatsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["reports"]["approved_reports"], 1)
         self.assertEqual(response.data["leaves"]["pending_leave_requests"], 1)
+
+    def test_dashboard_admin_returns_management_summary(self):
+        request = self.factory.get("/api/v1/dashboard/admin/")
+        force_authenticate(request, user=self.director)
+
+        response = DashboardAdminView.as_view()(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("employees", response.data)
+        self.assertIn("pending_approvals", response.data)
+
+    def test_dashboard_analytics_returns_department_comparison(self):
+        request = self.factory.get("/api/v1/dashboard/analytics/")
+        force_authenticate(request, user=self.director)
+
+        response = DashboardAnalyticsView.as_view()(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("department_comparison", response.data)

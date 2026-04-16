@@ -5,6 +5,8 @@ from apps.audit.services import create_audit_log
 from config.api_utils import paginate_queryset
 from config.responses import api_success
 from apps.leave_management.models import LeaveRequest
+from apps.notifications.services import create_notification
+from apps.users.models import User
 from apps.leave_management.serializers import (
     LeaveRequestCreateSerializer,
     LeaveRequestListSerializer,
@@ -48,6 +50,21 @@ class LeaveListCreateView(APIView):
             description="Yangi ta'til so'rovi yaratildi",
             request=request,
         )
+        if request.user.department_id_id:
+            reviewers = User.objects.filter(
+                department_id=request.user.department_id,
+                role__in=["DEPT_HEAD", "DIRECTOR"],
+                is_active=True,
+            ).exclude(id=request.user.id)
+            for reviewer in reviewers:
+                create_notification(
+                    user=reviewer,
+                    title="New leave request",
+                    message=f"{request.user.full_name} yangi ta'til so'rovi yubordi.",
+                    notification_type="APPROVAL",
+                    reference_type="leave_management.LeaveRequest",
+                    reference_id=leave_request.id,
+                )
         return api_success(
             data=LeaveRequestListSerializer(leave_request).data,
             message="Leave request created",
@@ -104,6 +121,14 @@ class LeaveReviewView(APIView):
                 description="Ta'til so'rovi bekor qilindi",
                 request=request,
             )
+            create_notification(
+                user=leave_request.requested_by,
+                title="Leave request cancelled",
+                message="Ta'til so'rovi bekor qilindi.",
+                notification_type="INFO",
+                reference_type="leave_management.LeaveRequest",
+                reference_id=leave_request.id,
+            )
             return api_success(data=LeaveRequestListSerializer(leave_request).data)
 
         if request.user.role not in {"DEPT_HEAD", "DIRECTOR"}:
@@ -124,4 +149,48 @@ class LeaveReviewView(APIView):
             description=f"Ta'til so'rovi {action.lower()} qilindi",
             request=request,
         )
+        create_notification(
+            user=leave_request.requested_by,
+            title=f"Leave request {action.lower()}",
+            message=f"Ta'til so'rovingiz {action.lower()} qilindi.",
+            notification_type="INFO" if action == "APPROVE" else "REJECTION",
+            reference_type="leave_management.LeaveRequest",
+            reference_id=leave_request.id,
+        )
         return api_success(data=LeaveRequestListSerializer(leave_request).data)
+
+
+class LeaveCalendarView(APIView):
+    permission_classes = [IsAuthenticatedHRMM]
+
+    def get_queryset(self, user):
+        queryset = LeaveRequest.objects.select_related("requested_by", "requested_by__department_id").filter(status="APPROVED")
+        if user.role == "DIRECTOR":
+            return queryset
+        if user.role == "DEPT_HEAD" and user.department_id_id:
+            return queryset.filter(requested_by__department_id=user.department_id)
+        return queryset.filter(requested_by=user)
+
+    def get(self, request):
+        leaves = self.get_queryset(request.user)
+        start_date = request.query_params.get("start_date")
+        end_date = request.query_params.get("end_date")
+
+        if start_date:
+            leaves = leaves.filter(end_date__gte=start_date)
+        if end_date:
+            leaves = leaves.filter(start_date__lte=end_date)
+
+        calendar_items = list(
+            leaves.values(
+                "id",
+                "requested_by__full_name",
+                "requested_by__department_id__name",
+                "leave_type",
+                "start_date",
+                "end_date",
+                "total_days",
+                "status",
+            )
+        )
+        return api_success(data=calendar_items)

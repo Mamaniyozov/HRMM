@@ -13,6 +13,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "email",
             "full_name",
             "role",
+            "job_role",
+            "job_level",
             "password",
             "department_id",
             "unit_id",
@@ -25,6 +27,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         role = attrs.get("role")
+        job_role = attrs.get("job_role")
+        job_level = attrs.get("job_level")
         department = attrs.get("department_id")
         unit = attrs.get("unit_id")
 
@@ -38,6 +42,10 @@ class UserCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"role": "DIRECTOR uchun department va unit biriktirilmaydi."})
         if unit and department and unit.department_id_id != department.id:
             raise serializers.ValidationError({"unit_id": "Tanlangan unit shu departmentga tegishli emas."})
+        if job_role and not department:
+            raise serializers.ValidationError({"department_id": "Kasbiy rol berilganda department majburiy."})
+        if job_level and not job_role:
+            raise serializers.ValidationError({"job_level": "Daraja berish uchun avval job_role tanlang."})
 
         return attrs
 
@@ -51,6 +59,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "email",
             "full_name",
             "role",
+            "job_role",
+            "job_level",
             "department_id",
             "unit_id",
             "is_active",
@@ -67,6 +77,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "full_name",
             "email",
             "role",
+            "job_role",
+            "job_level",
             "department_id",
             "unit_id",
             "is_active",
@@ -76,6 +88,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         role = attrs.get("role", self.instance.role)
+        job_role = attrs.get("job_role", self.instance.job_role)
+        job_level = attrs.get("job_level", self.instance.job_level)
         department = attrs.get("department_id", self.instance.department_id)
         unit = attrs.get("unit_id", self.instance.unit_id)
 
@@ -89,5 +103,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"role": "DIRECTOR uchun department va unit biriktirilmaydi."})
         if unit and department and unit.department_id_id != department.id:
             raise serializers.ValidationError({"unit_id": "Tanlangan unit shu departmentga tegishli emas."})
+        if job_role and not department:
+            raise serializers.ValidationError({"department_id": "Kasbiy rol berilganda department majburiy."})
+        if job_level and not job_role:
+            raise serializers.ValidationError({"job_level": "Daraja berish uchun avval job_role tanlang."})
 
         return attrs

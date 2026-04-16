@@ -1,7 +1,9 @@
 from django.db import transaction
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
+from apps.notifications.services import create_notification
 from apps.workflows.models import ApprovalHistory
+from apps.users.models import User
 
 
 ROLE_APPROVAL_MATRIX = {
@@ -45,6 +47,28 @@ def _create_history(report, approver, action, comment, previous_status, new_stat
     )
 
 
+def _notify_users(users, *, title, message, notification_type, reference_type, reference_id):
+    for user in users:
+        create_notification(
+            user=user,
+            title=title,
+            message=message,
+            notification_type=notification_type,
+            reference_type=reference_type,
+            reference_id=reference_id,
+        )
+
+
+def _next_approvers_for_report(report):
+    if report.status == "PENDING_L2" and report.created_by.unit_id_id:
+        return User.objects.filter(id=report.created_by.unit_id.head_user_id_id, is_active=True)
+    if report.status == "PENDING_L3" and report.department_id_id:
+        return User.objects.filter(id=report.department_id.head_user_id_id, is_active=True)
+    if report.status == "PENDING_L4":
+        return User.objects.filter(role="DIRECTOR", is_active=True)
+    return User.objects.none()
+
+
 @transaction.atomic
 def perform_workflow_action(report, actor, action, comment, request):
     previous_status = report.status
@@ -62,6 +86,14 @@ def perform_workflow_action(report, actor, action, comment, request):
         report.current_approval_level = 2
         report.save(update_fields=["status", "current_approval_level", "updated_at"])
         _create_history(report, actor, action, comment, previous_status, report.status, request)
+        _notify_users(
+            _next_approvers_for_report(report),
+            title="New report pending approval",
+            message=f"{report.report_number} tasdiqlash uchun yuborildi.",
+            notification_type="APPROVAL",
+            reference_type="reports.Report",
+            reference_id=report.id,
+        )
         return report
 
     if action == "ARCHIVE":
@@ -73,6 +105,14 @@ def perform_workflow_action(report, actor, action, comment, request):
         report.status = "ARCHIVED"
         report.save(update_fields=["status", "updated_at"])
         _create_history(report, actor, action, comment, previous_status, report.status, request)
+        create_notification(
+            user=report.created_by,
+            title="Report archived",
+            message=f"{report.report_number} arxivlandi.",
+            notification_type="INFO",
+            reference_type="reports.Report",
+            reference_id=report.id,
+        )
         return report
 
     role_config = ROLE_APPROVAL_MATRIX.get(actor.role)
@@ -95,4 +135,42 @@ def perform_workflow_action(report, actor, action, comment, request):
 
     report.save(update_fields=["status", "current_approval_level", "updated_at"])
     _create_history(report, actor, action, comment, previous_status, report.status, request)
+
+    if action == "APPROVE":
+        if report.status == "APPROVED":
+            create_notification(
+                user=report.created_by,
+                title="Report approved",
+                message=f"{report.report_number} yakuniy tasdiqdan o'tdi.",
+                notification_type="INFO",
+                reference_type="reports.Report",
+                reference_id=report.id,
+            )
+        else:
+            _notify_users(
+                _next_approvers_for_report(report),
+                title="Report waiting for approval",
+                message=f"{report.report_number} keyingi bosqichga o'tdi.",
+                notification_type="APPROVAL",
+                reference_type="reports.Report",
+                reference_id=report.id,
+            )
+    elif action == "REJECT":
+        create_notification(
+            user=report.created_by,
+            title="Report rejected",
+            message=f"{report.report_number} rad etildi.",
+            notification_type="REJECTION",
+            reference_type="reports.Report",
+            reference_id=report.id,
+        )
+    elif action == "REQUEST_REVISION":
+        create_notification(
+            user=report.created_by,
+            title="Report sent for revision",
+            message=f"{report.report_number} qayta ko'rib chiqish uchun qaytarildi.",
+            notification_type="INFO",
+            reference_type="reports.Report",
+            reference_id=report.id,
+        )
     return report

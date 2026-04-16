@@ -75,6 +75,30 @@ class ReportCreateSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class ReportUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = [
+            "title",
+            "summary",
+            "content",
+            "category_id",
+            "department_id",
+        ]
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        department = attrs.get("department_id", getattr(self.instance, "department_id", None))
+
+        if request and request.user.role != "DIRECTOR":
+            if department and request.user.department_id and department.id != request.user.department_id.id:
+                raise serializers.ValidationError(
+                    {"department_id": "Faqat o'zingizning departmentingizdagi reportni saqlay olasiz."}
+                )
+
+        return attrs
+
+
 class ReportListSerializer(serializers.ModelSerializer):
     created_by_name = serializers.CharField(source="created_by.full_name", read_only=True)
     department_name = serializers.CharField(source="department_id.name", read_only=True)

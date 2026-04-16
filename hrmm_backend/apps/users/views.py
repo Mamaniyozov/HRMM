@@ -15,7 +15,7 @@ from .serializers import (
 # --- Custom permission: only DIRECTOR can manage users ---
 class IsDirector(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role == "DIRECTOR"
+        return bool(getattr(request.user, "id", None)) and getattr(request.user, "role", None) == "DIRECTOR"
 
 
 # --- Create user ---
@@ -45,6 +45,8 @@ class UserListView(APIView):
         users = User.objects.filter(is_active=True).select_related("department_id", "unit_id").order_by("-created_at")
         search = request.query_params.get("search")
         role = request.query_params.get("role")
+        job_role = request.query_params.get("job_role")
+        job_level = request.query_params.get("job_level")
 
         if search:
             users = users.filter(
@@ -52,6 +54,10 @@ class UserListView(APIView):
             )
         if role:
             users = users.filter(role=role)
+        if job_role:
+            users = users.filter(job_role=job_role)
+        if job_level:
+            users = users.filter(job_level=job_level)
 
         return paginate_queryset(request, users, UserDetailSerializer)
 

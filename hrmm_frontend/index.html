@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRMM Control Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">HR</div>
+          <div>
+            <p class="eyebrow">Enterprise panel</p>
+            <h1>HRMM Control Center</h1>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <p class="card-label">Environment</p>
+          <div class="mono-list">
+            <span>API: <strong id="apiBaseLabel">http://127.0.0.1:8000</strong></span>
+            <span>Status: <strong id="authStateLabel">Disconnected</strong></span>
+            <span>User: <strong id="currentUserLabel">-</strong></span>
+          </div>
+        </div>
+
+        <div class="sidebar-card muted">
+          <p class="card-label">Backend coverage</p>
+          <ul class="status-list">
+            <li><span class="dot active"></span> Users and IT roles</li>
+            <li><span class="dot active"></span> Reports and workflow</li>
+            <li><span class="dot active"></span> Attachments</li>
+            <li><span class="dot active"></span> Leave requests</li>
+            <li><span class="dot active"></span> Dashboard stats</li>
+            <li><span class="dot active"></span> Audit logs</li>
+            <li><span class="dot active"></span> Notifications</li>
+            <li><span class="dot active"></span> Auth me/logout/password</li>
+          </ul>
+        </div>
+
+        <div class="sidebar-card">
+          <p class="card-label">Current profile</p>
+          <div class="mono-list">
+            <span>Full name: <strong id="profileNameLabel">-</strong></span>
+            <span>Role: <strong id="profileRoleLabel">-</strong></span>
+            <span>Department: <strong id="profileDeptLabel">-</strong></span>
+            <span>Unit: <strong id="profileUnitLabel">-</strong></span>
+          </div>
+        </div>
+
+        <div class="sidebar-card muted">
+          <p class="card-label">Prepared IT roles</p>
+          <ul class="role-tags">
+            <li>DevOps</li>
+            <li>IT Engineer</li>
+            <li>Android Dev</li>
+            <li>Backend Dev</li>
+            <li>Frontend Dev</li>
+            <li>Manager</li>
+            <li>Director</li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <section class="hero-panel">
+          <div>
+            <p class="eyebrow">Hierarchical report management module</p>
+            <h2>Rasmiy, boshqaruvga mos va amaliy frontend panel</h2>
+            <p class="hero-copy">
+              Hujjatdagi mavjud backend qismlari frontendga ulandi: login, IT staffing, report
+              yaratish, approval workflow, attachment yuklash, leave request va dashboard statistikasi.
+            </p>
+          </div>
+
+          <div class="hero-metrics">
+            <div class="metric-card">
+              <span>Total reports</span>
+              <strong id="totalReportsValue">0</strong>
+            </div>
+            <div class="metric-card">
+              <span>Pending approvals</span>
+              <strong id="pendingReportsValue">0</strong>
+            </div>
+            <div class="metric-card accent">
+              <span>Leave requests</span>
+              <strong id="pendingLeavesValue">0</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace-grid">
+          <div class="panel login-panel">
+            <div class="panel-heading">
+              <p class="eyebrow">Authentication</p>
+              <h3>Director login</h3>
+            </div>
+            <form id="loginForm" class="form-grid">
+              <label>
+                <span>API Base URL</span>
+                <input id="apiBase" name="apiBase" type="text" value="http://127.0.0.1:8000" />
+              </label>
+              <label>
+                <span>Username</span>
+                <input name="username" type="text" placeholder="director username" required />
+              </label>
+              <label>
+                <span>Password</span>
+                <input name="password" type="password" placeholder="password" required />
+              </label>
+              <button type="submit" class="primary-btn">Connect panel</button>
+            </form>
+            <div class="inline-actions auth-actions">
+              <button id="meButton" type="button" class="ghost-btn">Refresh profile</button>
+              <button id="logoutButton" type="button" class="ghost-btn">Logout</button>
+            </div>
+          </div>
+
+          <div class="panel form-panel">
+            <div class="panel-heading">
+              <p class="eyebrow">User provisioning</p>
+              <h3>Create IT employee</h3>
+            </div>
+            <form id="userForm" class="form-grid two-col">
+              <label><span>Full name</span><input name="full_name" type="text" placeholder="Abdulaziz Karimov" required /></label>
+              <label><span>Username</span><input name="username" type="text" placeholder="abdulaziz.k" required /></label>
+              <label><span>Email</span><input name="email" type="email" placeholder="abdulaziz@company.uz" required /></label>
+              <label><span>Password</span><input name="password" type="password" placeholder="temporary password" required /></label>
+              <label>
+                <span>Management role</span>
+                <select name="role" required>
+                  <option value="SPECIALIST">Specialist</option>
+                  <option value="UNIT_HEAD">Unit Head</option>
+                  <option value="DEPT_HEAD">Department Head</option>
+                  <option value="DIRECTOR">Director</option>
+                </select>
+              </label>
+              <label>
+                <span>IT position</span>
+                <select name="job_role" required>
+                  <option value="DEVOPS">DevOps</option>
+                  <option value="IT_ENGINEER">IT Engineer</option>
+                  <option value="ANDROID_DEV">Android Developer</option>
+                  <option value="BACKEND_DEV">Backend Developer</option>
+                  <option value="FRONTEND_DEV">Frontend Developer</option>
+                  <option value="MANAGER">Manager</option>
+                  <option value="DIRECTOR">Director</option>
+                </select>
+              </label>
+              <label>
+                <span>Seniority</span>
+                <select name="job_level" required>
+                  <option value="JUNIOR">Junior</option>
+                  <option value="MIDDLE">Middle</option>
+                  <option value="SENIOR">Senior</option>
+                </select>
+              </label>
+              <label><span>Department</span><select name="department_id" id="departmentSelect" required></select></label>
+              <label><span>Unit</span><select name="unit_id" id="unitSelect"><option value="">No unit</option></select></label>
+              <div class="form-actions"><button type="submit" class="primary-btn">Create employee</button></div>
+            </form>
+          </div>
+        </section>
+
+        <section class="workspace-grid">
+          <div class="panel">
+            <div class="panel-heading">
+              <p class="eyebrow">Security</p>
+              <h3>Change password</h3>
+            </div>
+            <form id="passwordForm" class="form-grid">
+              <label><span>Current password</span><input name="current_password" type="password" required /></label>
+              <label><span>New password</span><input name="new_password" type="password" required /></label>
+              <button type="submit" class="ghost-btn">Update password</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading inline">
+              <div>
+                <p class="eyebrow">Notifications</p>
+                <h3>Inbox</h3>
+              </div>
+              <div class="toolbar">
+                <button id="refreshNotifications" class="ghost-btn" type="button">Refresh inbox</button>
+                <button id="readAllNotifications" class="ghost-btn" type="button">Read all</button>
+              </div>
+            </div>
+            <div id="notificationsList" class="feed-list"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading inline">
+            <div>
+              <p class="eyebrow">Dashboard</p>
+              <h3>Operational summary</h3>
+            </div>
+            <button id="refreshDashboard" class="ghost-btn" type="button">Refresh dashboard</button>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-card"><span>Draft reports</span><strong id="draftReportsValue">0</strong></div>
+            <div class="summary-card"><span>Approved reports</span><strong id="approvedReportsValue">0</strong></div>
+            <div class="summary-card"><span>Rejected reports</span><strong id="rejectedReportsValue">0</strong></div>
+            <div class="summary-card"><span>Approved leaves</span><strong id="approvedLeavesValue">0</strong></div>
+          </div>
+          <div class="dual-feed">
+            <div class="feed-card"><h4>Recent reports</h4><div id="recentReportsList" class="feed-list"></div></div>
+            <div class="feed-card"><h4>Recent leave requests</h4><div id="recentLeavesList" class="feed-list"></div></div>
+          </div>
+        </section>
+
+        <section class="workspace-grid">
+          <div class="panel">
+            <div class="panel-heading inline">
+              <div>
+                <p class="eyebrow">Admin dashboard</p>
+                <h3>Managerial operations</h3>
+              </div>
+              <button id="refreshAdminDashboard" class="ghost-btn" type="button">Refresh admin</button>
+            </div>
+            <div class="summary-grid compact-grid">
+              <div class="summary-card"><span>Total employees</span><strong id="adminEmployeesValue">0</strong></div>
+              <div class="summary-card"><span>On leave</span><strong id="adminOnLeaveValue">0</strong></div>
+              <div class="summary-card"><span>Active reports</span><strong id="adminActiveReportsValue">0</strong></div>
+            </div>
+            <div class="feed-card">
+              <h4>Pending approvals</h4>
+              <div id="adminPendingList" class="feed-list"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading inline">
+              <div>
+                <p class="eyebrow">Analytics dashboard</p>
+                <h3>Department comparison</h3>
+              </div>
+              <button id="refreshAnalyticsDashboard" class="ghost-btn" type="button">Refresh analytics</button>
+            </div>
+            <div class="summary-grid compact-grid">
+              <div class="summary-card"><span>Total reports</span><strong id="analyticsTotalReportsValue">0</strong></div>
+              <div class="summary-card"><span>Approved</span><strong id="analyticsApprovedReportsValue">0</strong></div>
+              <div class="summary-card"><span>Archived</span><strong id="analyticsArchivedReportsValue">0</strong></div>
+            </div>
+            <div class="feed-card">
+              <h4>Department comparison</h4>
+              <div id="analyticsDepartmentsList" class="feed-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading inline">
+            <div><p class="eyebrow">Roster</p><h3>IT staff overview</h3></div>
+            <div class="toolbar">
+              <select id="roleFilter"><option value="">All positions</option><option value="DEVOPS">DevOps</option><option value="IT_ENGINEER">IT Engineer</option><option value="ANDROID_DEV">Android Developer</option><option value="BACKEND_DEV">Backend Developer</option><option value="FRONTEND_DEV">Frontend Developer</option><option value="MANAGER">Manager</option><option value="DIRECTOR">Director</option></select>
+              <select id="levelFilter"><option value="">All levels</option><option value="JUNIOR">Junior</option><option value="MIDDLE">Middle</option><option value="SENIOR">Senior</option></select>
+              <button id="refreshUsers" class="ghost-btn" type="button">Refresh users</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Employee</th><th>Management role</th><th>IT position</th><th>Level</th><th>Department</th><th>Status</th></tr></thead>
+              <tbody id="usersTableBody"><tr><td colspan="6" class="empty-state">Ma'lumot yuklanmagan</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="workspace-grid reports-grid">
+          <div class="panel">
+            <div class="panel-heading"><p class="eyebrow">Reports</p><h3>Create report</h3></div>
+            <form id="reportForm" class="form-grid">
+              <label><span>Report number</span><input name="report_number" type="text" placeholder="RPT-2026-0001" required /></label>
+              <label><span>Title</span><input name="title" type="text" placeholder="Quarterly operations summary" required /></label>
+              <label><span>Summary</span><textarea name="summary" rows="4" placeholder="Short report summary" required></textarea></label>
+              <label><span>Content</span><textarea name="content" rows="6" placeholder="Detailed report content"></textarea></label>
+              <label><span>Department</span><select name="department_id" id="reportDepartmentSelect"></select></label>
+              <button type="submit" class="primary-btn">Create report</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading"><p class="eyebrow">Workflow</p><h3>Report actions and attachments</h3></div>
+            <form id="workflowForm" class="form-grid">
+              <label><span>Report ID</span><input name="report_id" type="text" placeholder="Paste report UUID" required /></label>
+              <label><span>Action</span><select name="action" required><option value="SUBMIT">Submit</option><option value="APPROVE">Approve</option><option value="REJECT">Reject</option><option value="REQUEST_REVISION">Request revision</option><option value="ARCHIVE">Archive</option></select></label>
+              <label><span>Comment</span><textarea name="comment" rows="4" placeholder="Approval or rejection comment"></textarea></label>
+              <button type="submit" class="primary-btn">Run workflow action</button>
+            </form>
+            <form id="attachmentForm" class="form-grid compact-form">
+              <label><span>Attachment report ID</span><input name="report_id" type="text" placeholder="Report UUID" required /></label>
+              <label><span>File</span><input name="file" type="file" required /></label>
+              <button type="submit" class="ghost-btn">Upload attachment</button>
+            </form>
+            <form id="attachmentToolsForm" class="form-grid compact-form">
+              <label><span>Attachment ID</span><input name="attachment_id" type="text" placeholder="Attachment UUID" required /></label>
+              <div class="inline-actions">
+                <button id="downloadAttachmentButton" type="button" class="ghost-btn">Download attachment</button>
+                <button id="deleteAttachmentButton" type="button" class="ghost-btn">Delete attachment</button>
+              </div>
+            </form>
+            <form id="reportToolsForm" class="form-grid compact-form">
+              <label><span>Report ID for history/delete</span><input name="report_id" type="text" placeholder="Report UUID" required /></label>
+              <div class="inline-actions">
+                <button id="loadHistoryButton" type="button" class="ghost-btn">Load history</button>
+                <button id="deleteReportButton" type="button" class="ghost-btn">Delete report</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading inline">
+            <div><p class="eyebrow">Reports registry</p><h3>Reports list</h3></div>
+            <div class="toolbar">
+              <select id="reportStatusFilter"><option value="">All statuses</option><option value="DRAFT">Draft</option><option value="PENDING_L2">Pending L2</option><option value="PENDING_L3">Pending L3</option><option value="PENDING_L4">Pending L4</option><option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option><option value="REVISION">Revision</option><option value="ARCHIVED">Archived</option></select>
+              <button id="refreshReports" class="ghost-btn" type="button">Refresh reports</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Report</th><th>Status</th><th>Level</th><th>Department</th><th>Owner</th><th>Created</th></tr></thead>
+              <tbody id="reportsTableBody"><tr><td colspan="6" class="empty-state">Reportlar yuklanmagan</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="workspace-grid">
+          <div class="panel">
+            <div class="panel-heading"><p class="eyebrow">Leave requests</p><h3>Create leave request</h3></div>
+            <form id="leaveForm" class="form-grid">
+              <label><span>Leave type</span><select name="leave_type" required><option value="ANNUAL">Annual</option><option value="SICK">Sick</option><option value="UNPAID">Unpaid</option><option value="MATERNITY">Maternity</option><option value="OTHER">Other</option></select></label>
+              <label><span>Start date</span><input name="start_date" type="date" required /></label>
+              <label><span>End date</span><input name="end_date" type="date" required /></label>
+              <label><span>Reason</span><textarea name="reason" rows="5" placeholder="Leave reason" required></textarea></label>
+              <button type="submit" class="primary-btn">Create leave request</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading"><p class="eyebrow">Leave review</p><h3>Approve or reject request</h3></div>
+            <form id="leaveReviewForm" class="form-grid">
+              <label><span>Leave ID</span><input name="leave_id" type="text" placeholder="Paste leave UUID" required /></label>
+              <label><span>Action</span><select name="action" required><option value="APPROVE">Approve</option><option value="REJECT">Reject</option><option value="CANCEL">Cancel</option></select></label>
+              <label><span>Comment</span><textarea name="review_comment" rows="4" placeholder="Review comment"></textarea></label>
+              <button type="submit" class="ghost-btn">Process leave action</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Report history</p>
+            <h3>Approval history feed</h3>
+          </div>
+          <div id="reportHistoryList" class="feed-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading inline">
+            <div><p class="eyebrow">Leaves registry</p><h3>Leave requests list</h3></div>
+            <div class="toolbar">
+              <select id="leaveStatusFilter"><option value="">All statuses</option><option value="PENDING">Pending</option><option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option><option value="CANCELLED">Cancelled</option></select>
+              <button id="refreshLeaves" class="ghost-btn" type="button">Refresh leaves</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Employee</th><th>Type</th><th>Period</th><th>Days</th><th>Status</th><th>Reviewer</th></tr></thead>
+              <tbody id="leavesTableBody"><tr><td colspan="6" class="empty-state">Leave requests yuklanmagan</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading inline">
+            <div><p class="eyebrow">Leave calendar</p><h3>Approved leave timeline</h3></div>
+            <button id="refreshLeaveCalendar" class="ghost-btn" type="button">Refresh calendar</button>
+          </div>
+          <div id="leaveCalendarList" class="feed-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading inline">
+            <div><p class="eyebrow">Audit</p><h3>Latest audit logs</h3></div>
+            <button id="refreshAudit" class="ghost-btn" type="button">Refresh audit</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Action</th><th>Target</th><th>Description</th><th>Actor</th><th>Time</th></tr></thead>
+              <tbody id="auditTableBody"><tr><td colspan="5" class="empty-state">Audit loglar yuklanmagan</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="status-strip">
+          <div id="messageBox" class="message-box">Panel tayyor. Login qiling.</div>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>

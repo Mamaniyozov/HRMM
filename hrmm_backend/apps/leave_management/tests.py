@@ -4,7 +4,7 @@ from rest_framework import status
 
 from apps.departments.models import Department
 from apps.leave_management.models import LeaveRequest
-from apps.leave_management.views import LeaveListCreateView, LeaveReviewView
+from apps.leave_management.views import LeaveCalendarView, LeaveListCreateView, LeaveReviewView
 from apps.users.models import User
 
 
@@ -66,3 +66,15 @@ class LeaveManagementTests(TestCase):
 
         response = LeaveListCreateView.as_view()(request)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_calendar_returns_approved_leaves(self):
+        self.leave_request.status = "APPROVED"
+        self.leave_request.save(update_fields=["status"])
+
+        request = self.factory.get("/api/v1/leaves/calendar/")
+        force_authenticate(request, user=self.dept_head)
+
+        response = LeaveCalendarView.as_view()(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data["data"]), 1)

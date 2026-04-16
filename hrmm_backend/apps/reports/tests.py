@@ -5,7 +5,8 @@ from rest_framework import status
 
 from apps.departments.models import Department
 from apps.reports.models import Report, ReportAttachment
-from apps.reports.views import ReportAttachmentListCreateView, ReportListCreateView
+from apps.reports.views import ReportAttachmentListCreateView, ReportHistoryView, ReportListCreateView
+from apps.workflows.models import ApprovalHistory
 from apps.users.models import User
 
 
@@ -77,3 +78,49 @@ class ReportAttachmentUploadTests(TestCase):
 
         response = ReportListCreateView.as_view()(request)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_owner_can_update_report_in_draft(self):
+        request = self.factory.put(
+            f"/api/v1/reports/{self.report.id}/",
+            {"title": "Updated title"},
+            format="json",
+        )
+        force_authenticate(request, user=self.user)
+
+        from apps.reports.views import ReportDetailView
+
+        response = ReportDetailView.as_view()(request, report_id=self.report.id)
+        self.report.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.report.title, "Updated title")
+
+    def test_owner_can_soft_delete_report(self):
+        request = self.factory.delete(f"/api/v1/reports/{self.report.id}/")
+        force_authenticate(request, user=self.user)
+
+        from apps.reports.views import ReportDetailView
+
+        response = ReportDetailView.as_view()(request, report_id=self.report.id)
+        self.report.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(self.report.is_deleted)
+
+    def test_history_endpoint_returns_approval_history(self):
+        ApprovalHistory.objects.create(
+            report_id=self.report,
+            approver_id=self.user,
+            approval_level=1,
+            action="SUBMIT",
+            comment="sent",
+            previous_status="DRAFT",
+            new_status="PENDING_L2",
+        )
+        request = self.factory.get(f"/api/v1/reports/{self.report.id}/history/")
+        force_authenticate(request, user=self.user)
+
+        response = ReportHistoryView.as_view()(request, report_id=self.report.id)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data["data"]), 1)

@@ -10,6 +10,20 @@ class User(models.Model):
         ("DEPT_HEAD", "Department Head"),
         ("DIRECTOR", "Director"),
     ]
+    JOB_ROLE_CHOICES = [
+        ("DEVOPS", "DevOps"),
+        ("IT_ENGINEER", "IT Engineer"),
+        ("ANDROID_DEV", "Android Developer"),
+        ("BACKEND_DEV", "Backend Developer"),
+        ("FRONTEND_DEV", "Frontend Developer"),
+        ("MANAGER", "Manager"),
+        ("DIRECTOR", "Director"),
+    ]
+    JOB_LEVEL_CHOICES = [
+        ("JUNIOR", "Junior"),
+        ("MIDDLE", "Middle"),
+        ("SENIOR", "Senior"),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=100, unique=True)
@@ -17,6 +31,8 @@ class User(models.Model):
     password_hash = models.CharField(max_length=255)
     full_name = models.CharField(max_length=200)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    job_role = models.CharField(max_length=30, choices=JOB_ROLE_CHOICES, null=True, blank=True)
+    job_level = models.CharField(max_length=10, choices=JOB_LEVEL_CHOICES, null=True, blank=True)
     department_id = models.ForeignKey(
         "departments.Department",
         on_delete=models.SET_NULL,
