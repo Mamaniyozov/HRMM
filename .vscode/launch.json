@@ -1,0 +1,51 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Python Debugger: Flask",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "app.py",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload"
+            ],
+            "jinja": true,
+            "autoStartBrowser": false
+        },
+        {
+            "name": "Django Backend",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\hrmm_backend\\manage.py",
+            "args": [
+                "runserver",
+                "127.0.0.1:8000"
+            ],
+            "django": true,
+            "justMyCode": true,
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}\\hrmm_backend",
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "config.settings.local"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "Starting development server at (https?://\\S+)",
+                "uriFormat": "%s"
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}\\hrmm_backend",
+                    "remoteRoot": "."
+                }
+            ]
+        }
+    ]
+}

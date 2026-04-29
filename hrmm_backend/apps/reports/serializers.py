@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 
 from apps.reports.models import Report, ReportAttachment
@@ -57,14 +58,17 @@ class ReportCreateSerializer(serializers.ModelSerializer):
             "category_id",
             "department_id",
         ]
+        extra_kwargs = {
+            "report_number": {"required": False, "allow_blank": True},
+        }
 
     def validate(self, attrs):
         request = self.context.get("request")
         department = attrs.get("department_id")
         report_number = attrs.get("report_number")
 
-        if report_number and not report_number.strip():
-            raise serializers.ValidationError({"report_number": "Report number bo'sh bo'lishi mumkin emas."})
+        if report_number is not None and not str(report_number).strip():
+            attrs.pop("report_number", None)
 
         if request and request.user.role != "DIRECTOR":
             if department and request.user.department_id and department.id != request.user.department_id.id:
@@ -73,6 +77,11 @@ class ReportCreateSerializer(serializers.ModelSerializer):
                 )
 
         return attrs
+
+    def create(self, validated_data):
+        if not validated_data.get("report_number"):
+            validated_data["report_number"] = f"RPT-{timezone.localtime().strftime('%Y%m%d%H%M%S')}"
+        return super().create(validated_data)
 
 
 class ReportUpdateSerializer(serializers.ModelSerializer):

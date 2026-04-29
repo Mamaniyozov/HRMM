@@ -20,7 +20,12 @@ from django.contrib import admin
 from django.urls import path,include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+from config.frontend_views import frontend_app_js, frontend_index, frontend_styles_css
+
 urlpatterns = [
+    path("", frontend_index, name="frontend-index"),
+    path("app.js", frontend_app_js, name="frontend-app-js"),
+    path("styles.css", frontend_styles_css, name="frontend-styles-css"),
     path('admin/', admin.site.urls),
     path("api/v1/auth/", include("apps.authentication.urls")),
     path("api/v1/audit/", include("apps.audit.urls")),

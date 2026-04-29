@@ -2,8 +2,9 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.views import APIView
 
+from apps.audit.services import create_audit_log
 from apps.notifications.models import Notification
-from apps.notifications.serializers import NotificationSerializer
+from apps.notifications.serializers import NotificationCreateSerializer, NotificationSerializer
 from apps.reports.views import IsAuthenticatedHRMM
 from config.api_utils import paginate_queryset
 from config.responses import api_success
@@ -20,6 +21,24 @@ class NotificationListView(APIView):
             notifications = notifications.filter(is_read=(is_read == "true"))
 
         return paginate_queryset(request, notifications, NotificationSerializer)
+
+    def post(self, request):
+        serializer = NotificationCreateSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        notification = serializer.save()
+        create_audit_log(
+            actor=request.user,
+            action="NOTIFICATION_CREATE",
+            target_type="notifications.Notification",
+            target_id=notification.id,
+            description=f"{request.user.username} yangi notification yaratdi",
+            request=request,
+        )
+        return api_success(
+            message="Notification created",
+            data=NotificationSerializer(notification, context={"request": request}).data,
+            status_code=status.HTTP_201_CREATED,
+        )
 
 
 class NotificationReadView(APIView):

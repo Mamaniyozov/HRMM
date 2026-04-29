@@ -11,6 +11,7 @@ class SimpleCORSMiddleware:
         "http://localhost:5500",
         "http://127.0.0.1:8080",
         "http://localhost:8080",
+        "null",
     }
     ALLOWED_HEADERS = "Authorization, Content-Type"
     ALLOWED_METHODS = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
@@ -26,7 +27,12 @@ class SimpleCORSMiddleware:
         else:
             response = self.get_response(request)
 
-        if origin in self.ALLOWED_ORIGINS:
+        is_localhost_origin = bool(origin) and (
+            origin.startswith("http://localhost:")
+            or origin.startswith("http://127.0.0.1:")
+        )
+
+        if origin in self.ALLOWED_ORIGINS or is_localhost_origin:
             response["Access-Control-Allow-Origin"] = origin
             response["Vary"] = "Origin"
             response["Access-Control-Allow-Headers"] = self.ALLOWED_HEADERS

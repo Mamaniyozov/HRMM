@@ -2,12 +2,14 @@ from rest_framework.views import APIView
 from rest_framework import status, permissions
 from django.db.models import Q
 from apps.audit.services import create_audit_log
+from apps.reports.views import IsAuthenticatedHRMM
 from config.api_utils import paginate_queryset
 from config.responses import api_success
-from apps.users.models import User
+from apps.users.models import User, UserFeedback
 from .serializers import (
     UserCreateSerializer,
     UserDetailSerializer,
+    UserFeedbackSerializer,
     UserUpdateSerializer,
 )
 
@@ -124,3 +126,25 @@ class UserDeleteView(APIView):
             request=request,
         )
         return api_success(message="User deleted successfully")
+
+
+class UserFeedbackListCreateView(APIView):
+    permission_classes = [IsAuthenticatedHRMM]
+
+    def get(self, request):
+        feedback = UserFeedback.objects.select_related("author").all()
+        return api_success(data=UserFeedbackSerializer(feedback, many=True).data)
+
+    def post(self, request):
+        serializer = UserFeedbackSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        feedback = serializer.save()
+        create_audit_log(
+            actor=request.user,
+            action="USER_FEEDBACK_CREATE",
+            target_type="users.UserFeedback",
+            target_id=feedback.id,
+            description=f"{request.user.username} feedback qoldirdi",
+            request=request,
+        )
+        return api_success(message="Feedback saved", data=UserFeedbackSerializer(feedback).data, status_code=status.HTTP_201_CREATED)

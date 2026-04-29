@@ -66,7 +66,7 @@ class LeaveListCreateView(APIView):
                     reference_id=leave_request.id,
                 )
         return api_success(
-            data=LeaveRequestListSerializer(leave_request).data,
+            data=LeaveRequestListSerializer(leave_request, context={"request": request}).data,
             message="Leave request created",
             status_code=status.HTTP_201_CREATED,
         )
@@ -87,7 +87,7 @@ class LeaveDetailView(APIView):
         leave_request = self.get_queryset(request.user).filter(id=leave_id).first()
         if not leave_request:
             return api_success(message="Leave request not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
-        return api_success(data=LeaveRequestListSerializer(leave_request).data)
+        return api_success(data=LeaveRequestListSerializer(leave_request, context={"request": request}).data)
 
 
 class LeaveReviewView(APIView):
@@ -129,7 +129,7 @@ class LeaveReviewView(APIView):
                 reference_type="leave_management.LeaveRequest",
                 reference_id=leave_request.id,
             )
-            return api_success(data=LeaveRequestListSerializer(leave_request).data)
+            return api_success(data=LeaveRequestListSerializer(leave_request, context={"request": request}).data)
 
         if request.user.role not in {"DEPT_HEAD", "DIRECTOR"}:
             return api_success(message="Sizda leave review vakolati yo'q", data=None, status_code=403)
@@ -157,7 +157,7 @@ class LeaveReviewView(APIView):
             reference_type="leave_management.LeaveRequest",
             reference_id=leave_request.id,
         )
-        return api_success(data=LeaveRequestListSerializer(leave_request).data)
+        return api_success(data=LeaveRequestListSerializer(leave_request, context={"request": request}).data)
 
 
 class LeaveCalendarView(APIView):

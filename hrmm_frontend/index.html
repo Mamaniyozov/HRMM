@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,7 +13,121 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="page-shell">
+    <section id="loginView" class="login-view">
+      <div class="login-showcase">
+        <div class="login-copy">
+          <p id="loginHeroEyebrow" class="eyebrow">HRMM enterprise workspace</p>
+          <h2 id="loginHeroTitle">Rasmiy boshqaruv paneli, xavfsiz kirish va zamonaviy ish jarayoni</h2>
+          <p id="loginHeroCopy" class="hero-copy">
+            Dashboard, bildirishnoma, hisobot, xodimlar va audit modullarini bitta professional
+            interfeysga birlashtiramiz. Kirishda esa Google Authenticator usulidagi 6 xonali
+            tasdiqlash qo‘shildi.
+          </p>
+          <div class="login-feature-grid">
+            <article class="login-feature-card">
+              <strong id="loginFeatureOneTitle">Professional UI</strong>
+              <span id="loginFeatureOneText">Kardelen uslubiga yaqinroq, lekin yanada toza va boshqaruvga mos ekran.</span>
+            </article>
+            <article class="login-feature-card">
+              <strong id="loginFeatureTwoTitle">2 bosqichli login</strong>
+              <span id="loginFeatureTwoText">Paroldan keyin 6 xonali kod orqali tizimga kirish.</span>
+            </article>
+            <article class="login-feature-card">
+              <strong id="loginFeatureThreeTitle">Ichki gateway</strong>
+              <span>Login sahifasida backend URL foydalanuvchiga ko‘rsatilmaydi.</span>
+            </article>
+          </div>
+        </div>
+
+        <div class="login-card">
+          <div class="login-card-topbar">
+            <span id="loginCardBadge" class="login-card-badge">Kirish</span>
+            <div class="login-language-shell">
+              <button
+                id="loginLanguageButton"
+                type="button"
+                class="login-language-btn"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                aria-controls="loginLanguageDropdown"
+              >
+                <span id="loginLanguageLabel">Til</span>
+                <strong id="loginCurrentLanguageLabel">O'zbek tili</strong>
+              </button>
+              <div id="loginLanguageDropdown" class="login-language-dropdown hidden" role="menu">
+                <button type="button" class="login-language-option" data-language="uz">O'zbek tili</button>
+                <button type="button" class="login-language-option" data-language="ru">Rus tili</button>
+                <button type="button" class="login-language-option" data-language="en">Ingliz tili</button>
+                <button type="button" class="login-language-option" data-language="tr">Turk tili</button>
+              </div>
+            </div>
+          </div>
+          <div id="loginCredentialsStep">
+            <div class="panel-heading">
+              <p id="loginAuthEyebrow" class="eyebrow">Authentication</p>
+              <h3 id="loginAuthTitle">HRMM tizimiga kirish</h3>
+            </div>
+            <form id="loginForm" class="form-grid">
+              <label>
+                <span id="loginUsernameLabel">Username</span>
+                <input id="loginUsernameInput" name="username" type="text" placeholder="Username kiriting" required />
+              </label>
+              <label>
+                <span id="loginPasswordLabel">Password</span>
+                <input id="loginPasswordInput" name="password" type="password" placeholder="Parolni kiriting" required />
+              </label>
+              <button id="loginSubmitButton" type="submit" class="primary-btn">Tizimga kirish</button>
+            </form>
+            <div id="loginStatusBox" class="login-status-box">Login uchun tayyor.</div>
+            <div id="loginFootnote" class="session-footnote">
+              Tizimga kirgandan keyin asosiy boshqaruv paneli avtomatik ochiladi.
+            </div>
+          </div>
+
+          <div id="loginTwoFactorStep" class="hidden">
+            <div class="panel-heading">
+              <p id="loginVerificationEyebrow" class="eyebrow">Authenticator verification</p>
+              <h3 id="loginVerificationTitle">Google Authenticator orqali kirish</h3>
+            </div>
+            <p id="otpDeliveryHint" class="session-footnote otp-footnote">
+              Authenticator ilovasidagi 6 xonali kodni kiriting.
+            </p>
+            <div id="loginQrSetupPanel" class="two-factor-setup hidden">
+              <img id="loginQrImage" class="two-factor-qr" alt="Login QR code" />
+              <div class="mono-list">
+                <span><span id="loginManualKeyLabel">Manual key</span>: <strong id="loginSecretLabel">-</strong></span>
+              </div>
+              <p id="loginQrHint" class="session-footnote">
+                Birinchi kirishda QR ni Google Authenticator bilan skan qiling. QR ishlamasa, manual key ni qo'lda kiriting.
+              </p>
+            </div>
+            <form id="otpForm" class="form-grid">
+              <label>
+                <span id="otpCodeLabel">Verification code</span>
+                <input
+                  id="otpCodeInput"
+                  name="code"
+                  
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]{6}"
+                  maxlength="6"
+                  placeholder="123456"
+                  required
+                />
+              </label>
+              <button id="otpSubmitButton" type="submit" class="primary-btn">Kodni tasdiqlash</button>
+            </form>
+            <div id="otpStatusBox" class="login-status-box">Authenticator kodini kiriting.</div>
+            <button id="backToLoginButton" type="button" class="ghost-btn full-width-btn">
+              Login bosqichiga qaytish
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="appView" class="page-shell">
       <aside class="sidebar">
         <div class="brand-block">
           <div class="brand-mark">HR</div>
@@ -23,150 +137,328 @@
           </div>
         </div>
 
-        <div class="sidebar-card">
-          <p class="card-label">Environment</p>
-          <div class="mono-list">
-            <span>API: <strong id="apiBaseLabel">http://127.0.0.1:8000</strong></span>
-            <span>Status: <strong id="authStateLabel">Disconnected</strong></span>
-            <span>User: <strong id="currentUserLabel">-</strong></span>
-          </div>
-        </div>
-
-        <div class="sidebar-card muted">
-          <p class="card-label">Backend coverage</p>
-          <ul class="status-list">
-            <li><span class="dot active"></span> Users and IT roles</li>
-            <li><span class="dot active"></span> Reports and workflow</li>
-            <li><span class="dot active"></span> Attachments</li>
-            <li><span class="dot active"></span> Leave requests</li>
-            <li><span class="dot active"></span> Dashboard stats</li>
-            <li><span class="dot active"></span> Audit logs</li>
-            <li><span class="dot active"></span> Notifications</li>
-            <li><span class="dot active"></span> Auth me/logout/password</li>
-          </ul>
-        </div>
-
-        <div class="sidebar-card">
-          <p class="card-label">Current profile</p>
-          <div class="mono-list">
-            <span>Full name: <strong id="profileNameLabel">-</strong></span>
-            <span>Role: <strong id="profileRoleLabel">-</strong></span>
-            <span>Department: <strong id="profileDeptLabel">-</strong></span>
-            <span>Unit: <strong id="profileUnitLabel">-</strong></span>
-          </div>
-        </div>
-
-        <div class="sidebar-card muted">
-          <p class="card-label">Prepared IT roles</p>
-          <ul class="role-tags">
-            <li>DevOps</li>
-            <li>IT Engineer</li>
-            <li>Android Dev</li>
-            <li>Backend Dev</li>
-            <li>Frontend Dev</li>
-            <li>Manager</li>
-            <li>Director</li>
-          </ul>
-        </div>
+        <nav class="sidebar-nav">
+          <button class="nav-link active" type="button" data-target="homeSection">
+            <span class="nav-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M5.5 9.5V20h13V9.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M9.5 20v-6h5v6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+              </svg>
+            </span>
+            <span class="nav-link-label">Uy</span>
+          </button>
+          <button class="nav-link" type="button" data-target="notificationsSection">
+            <span class="nav-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <path d="M12 4a4 4 0 0 0-4 4v1.4c0 .8-.24 1.58-.68 2.24L6 14h12l-1.32-2.36A4.5 4.5 0 0 1 16 9.4V8a4 4 0 0 0-4-4Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M10 18a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+              </svg>
+            </span>
+            <span class="nav-link-label">Bildirishnomalar</span>
+          </button>
+          <button class="nav-link" type="button" data-target="reportsSection">
+            <span class="nav-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M14 3.5V8h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M9 12h6M9 16h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+              </svg>
+            </span>
+            <span class="nav-link-label">Hujjatlar</span>
+          </button>
+          <button class="nav-link" type="button" data-target="institutionsSection">
+            <span class="nav-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <path d="M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M6 20V8h12v12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>
+                <path d="M8 8V5h8v3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+              </svg>
+            </span>
+            <span class="nav-link-label">Muassasalar</span>
+          </button>
+        </nav>
       </aside>
 
       <main class="main-content">
-        <section class="hero-panel">
-          <div>
-            <p class="eyebrow">Hierarchical report management module</p>
-            <h2>Rasmiy, boshqaruvga mos va amaliy frontend panel</h2>
-            <p class="hero-copy">
-              Hujjatdagi mavjud backend qismlari frontendga ulandi: login, IT staffing, report
-              yaratish, approval workflow, attachment yuklash, leave request va dashboard statistikasi.
-            </p>
+        <section class="topbar-panel">
+          <div class="topbar-searches">
+            <label class="search-shell">
+              <span>Global qidiruv</span>
+              <input id="globalSearchInput" type="text" placeholder="Bildirishnoma, report, xodim..." />
+            </label>
+            <label class="search-shell">
+              <span>Holat bo'yicha tezkor filter</span>
+              <input id="globalStatusInput" type="text" placeholder="pending, approved, active..." />
+            </label>
           </div>
-
-          <div class="hero-metrics">
-            <div class="metric-card">
-              <span>Total reports</span>
-              <strong id="totalReportsValue">0</strong>
+          <div class="topbar-actions">
+            <button id="refreshAllButton" type="button" class="ghost-btn">Yangilash</button>
+            <div class="create-menu-shell">
+              <button
+                id="createMenuButton"
+                type="button"
+                class="create-menu-btn"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                aria-controls="createMenuDropdown"
+              >
+                <span class="create-menu-plus">+</span>
+                <span id="createMenuLabel">Yangi</span>
+                <span class="create-menu-caret">⌄</span>
+              </button>
+              <div id="createMenuDropdown" class="create-menu-dropdown hidden" role="menu">
+                <button id="createReportItem" type="button" class="create-menu-item" data-create-action="report">Yangi report</button>
+                <button id="createNotificationItem" type="button" class="create-menu-item" data-create-action="notification">Yangi bildirim</button>
+                <button id="createLeaveItem" type="button" class="create-menu-item" data-create-action="leave">Yangi ariza</button>
+                <button id="createFeatureItem" type="button" class="create-menu-item" data-create-action="feature">Yangi funksiya talabi</button>
+              </div>
             </div>
-            <div class="metric-card">
-              <span>Pending approvals</span>
-              <strong id="pendingReportsValue">0</strong>
+            <button id="topbarNotificationsButton" type="button" class="ghost-btn icon-action-btn topbar-bell-btn" aria-label="Bildirishnomalar">
+              <span class="icon-action-symbol" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="presentation">
+                  <path d="M12 4a4 4 0 0 0-4 4v1.4c0 .8-.24 1.58-.68 2.24L6 14h12l-1.32-2.36A4.5 4.5 0 0 1 16 9.4V8a4 4 0 0 0-4-4Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                  <path d="M10 18a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                </svg>
+              </span>
+            </button>
+            <div class="language-menu-shell">
+              <button
+                id="languageMenuButton"
+                type="button"
+                class="language-chip"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                aria-controls="languageDropdown"
+              >
+                <span id="languageMenuLabel">Til</span>
+                <strong id="currentLanguageLabel">O'zbek tili</strong>
+              </button>
+              <div id="languageDropdown" class="language-dropdown hidden" role="menu">
+                <button type="button" class="language-option" data-language="uz">O'zbek tili</button>
+                <button type="button" class="language-option" data-language="ru">Rus tili</button>
+                <button type="button" class="language-option" data-language="en">Ingliz tili</button>
+                <button type="button" class="language-option" data-language="tr">Turk tili</button>
+              </div>
             </div>
-            <div class="metric-card accent">
-              <span>Leave requests</span>
-              <strong id="pendingLeavesValue">0</strong>
+            <div class="profile-menu-shell">
+              <button
+                id="profileMenuButton"
+                type="button"
+                class="profile-chip profile-chip-button"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                aria-controls="profileDropdown"
+              >
+                <span>Profil</span>
+                <strong id="topbarUserLabel">Mehmon</strong>
+              </button>
+              <div id="profileDropdown" class="profile-dropdown hidden" role="menu">
+                <button
+                  id="meButton"
+                  type="button"
+                  class="ghost-btn icon-action-btn"
+                  title="Profilni yangilash"
+                  aria-label="Profilni yangilash"
+                >
+                  <span class="icon-action-symbol" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="presentation">
+                      <path
+                        d="M20 12a8 8 0 1 1-2.34-5.66"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                      />
+                      <path
+                        d="M20 4v6h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </span>
+                </button>
+                <button
+                  id="logoutButton"
+                  type="button"
+                  class="ghost-btn icon-action-btn"
+                  title="Chiqish"
+                  aria-label="Chiqish"
+                >
+                  <span class="icon-action-symbol" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="presentation">
+                      <path
+                        d="M10 17v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v1"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                      />
+                      <path
+                        d="M15 12H4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                      />
+                      <path
+                        d="m8 8-4 4 4 4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
-        <section class="workspace-grid">
-          <div class="panel login-panel">
-            <div class="panel-heading">
-              <p class="eyebrow">Authentication</p>
-              <h3>Director login</h3>
+        <section id="homeSection" class="dashboard-home app-section">
+          <div class="dashboard-home-header">
+            <div>
+              <p class="eyebrow">Uy</p>
+              <h2>Assalomu alaykum, <span id="dashboardWelcomeName">Mehmon</span></h2>
+              <p class="hero-copy">Bildirishnomalar, hisobotlar va arizalar bo'yicha umumiy holat shu yerda jamlanadi.</p>
             </div>
-            <form id="loginForm" class="form-grid">
-              <label>
-                <span>API Base URL</span>
-                <input id="apiBase" name="apiBase" type="text" value="http://127.0.0.1:8000" />
-              </label>
-              <label>
-                <span>Username</span>
-                <input name="username" type="text" placeholder="director username" required />
-              </label>
-              <label>
-                <span>Password</span>
-                <input name="password" type="password" placeholder="password" required />
-              </label>
-              <button type="submit" class="primary-btn">Connect panel</button>
-            </form>
-            <div class="inline-actions auth-actions">
-              <button id="meButton" type="button" class="ghost-btn">Refresh profile</button>
-              <button id="logoutButton" type="button" class="ghost-btn">Logout</button>
+            <div class="dashboard-user-note">
+              <div class="status-pill">
+                <span id="authStateDot" class="status-dot"></span>
+                <strong id="authStateLabel">Offline</strong>
+              </div>
+              <div class="dashboard-quick-icons" aria-label="Tezkor holat ikonkalari">
+                <button id="profileRoleIcon" type="button" class="quick-icon-chip" title="Rol">
+                  <svg viewBox="0 0 24 24" role="presentation">
+                    <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                    <path d="M5 20a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                  </svg>
+                </button>
+                <button id="profileDeptIcon" type="button" class="quick-icon-chip" title="Bo'lim">
+                  <svg viewBox="0 0 24 24" role="presentation">
+                    <path d="M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                    <path d="M6 20V8h12v12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                    <path d="M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>
+                    <path d="M8 8V5h8v3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                  </svg>
+                </button>
+                <button id="profileUnitIcon" type="button" class="quick-icon-chip" title="Birlik">
+                  <svg viewBox="0 0 24 24" role="presentation">
+                    <path d="M4 7h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                    <path d="M4 12h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                    <path d="M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                  </svg>
+                </button>
+                <button id="apiBaseIcon" type="button" class="quick-icon-chip" title="Gateway">
+                  <svg viewBox="0 0 24 24" role="presentation">
+                    <path d="M5 12a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                    <path d="M8 12a4 4 0 0 1 8 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                    <path d="M12 16h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>
+                  </svg>
+                </button>
+              </div>
+              <small id="currentUserLabel" class="sr-only">-</small>
             </div>
           </div>
 
-          <div class="panel form-panel">
-            <div class="panel-heading">
-              <p class="eyebrow">User provisioning</p>
-              <h3>Create IT employee</h3>
-            </div>
-            <form id="userForm" class="form-grid two-col">
-              <label><span>Full name</span><input name="full_name" type="text" placeholder="Abdulaziz Karimov" required /></label>
-              <label><span>Username</span><input name="username" type="text" placeholder="abdulaziz.k" required /></label>
-              <label><span>Email</span><input name="email" type="email" placeholder="abdulaziz@company.uz" required /></label>
-              <label><span>Password</span><input name="password" type="password" placeholder="temporary password" required /></label>
-              <label>
-                <span>Management role</span>
-                <select name="role" required>
-                  <option value="SPECIALIST">Specialist</option>
-                  <option value="UNIT_HEAD">Unit Head</option>
-                  <option value="DEPT_HEAD">Department Head</option>
-                  <option value="DIRECTOR">Director</option>
-                </select>
-              </label>
-              <label>
-                <span>IT position</span>
-                <select name="job_role" required>
-                  <option value="DEVOPS">DevOps</option>
-                  <option value="IT_ENGINEER">IT Engineer</option>
-                  <option value="ANDROID_DEV">Android Developer</option>
-                  <option value="BACKEND_DEV">Backend Developer</option>
-                  <option value="FRONTEND_DEV">Frontend Developer</option>
-                  <option value="MANAGER">Manager</option>
-                  <option value="DIRECTOR">Director</option>
-                </select>
-              </label>
-              <label>
-                <span>Seniority</span>
-                <select name="job_level" required>
-                  <option value="JUNIOR">Junior</option>
-                  <option value="MIDDLE">Middle</option>
-                  <option value="SENIOR">Senior</option>
-                </select>
-              </label>
-              <label><span>Department</span><select name="department_id" id="departmentSelect" required></select></label>
-              <label><span>Unit</span><select name="unit_id" id="unitSelect"><option value="">No unit</option></select></label>
-              <div class="form-actions"><button type="submit" class="primary-btn">Create employee</button></div>
-            </form>
+          <div class="dashboard-card-grid">
+            <article class="dashboard-stat-card">
+              <div class="dashboard-stat-head">
+                <span>Yangi arizalar</span>
+                <span class="stat-icon blue">A</span>
+              </div>
+              <strong id="pendingLeavesValue">0</strong>
+              <div class="dashboard-chip-row">
+                <button class="dashboard-filter-chip active" type="button" data-activity-filter="requests">Hozir yaratilgan ariza</button>
+              </div>
+            </article>
+
+            <article class="dashboard-stat-card">
+              <div class="dashboard-stat-head">
+                <span>Mening hisobotlarim</span>
+                <span class="stat-icon red">H</span>
+              </div>
+              <strong id="totalReportsValue">0</strong>
+              <div class="dashboard-chip-row">
+                <button class="dashboard-filter-chip" type="button" data-activity-filter="reports">Hisobotlar</button>
+                <button class="dashboard-filter-chip" type="button" data-activity-filter="all">Hammasi</button>
+              </div>
+            </article>
+
+            <article class="dashboard-stat-card">
+              <div class="dashboard-stat-head">
+                <span>Tasdiqlash holati</span>
+                <span class="stat-icon green">T</span>
+              </div>
+              <strong id="pendingReportsValue">0</strong>
+              <div class="dashboard-badge-row">
+                <span class="dashboard-badge danger">Hal qilingan arizalar: <strong id="resolvedLeavesValue">0</strong></span>
+                <span class="dashboard-badge danger">Tasdiqlangan hisobotlar: <strong id="approvedReportsValue">0</strong></span>
+              </div>
+            </article>
+
+            <article class="dashboard-stat-card">
+              <div class="dashboard-stat-head">
+                <span>Bildirishnomalar</span>
+                <span class="stat-icon purple">B</span>
+              </div>
+              <strong id="unreadNotificationsValue">0</strong>
+              <div class="dashboard-badge-row">
+                <span class="dashboard-badge neutral">Rad etilgan: <strong id="rejectedReportsValue">0</strong></span>
+                <span class="dashboard-badge neutral">Tasdiqlangan ariza: <strong id="approvedLeavesValue">0</strong></span>
+              </div>
+            </article>
+          </div>
+
+          <div class="dashboard-main-grid">
+            <section class="dashboard-history-panel">
+              <div class="panel-heading inline">
+                <div>
+                  <p class="eyebrow">Faoliyat tarixi</p>
+                  <h3>Userlar nima qilayotganini ko'rish</h3>
+                </div>
+                <div class="toolbar dashboard-toolbar">
+                  <button class="dashboard-filter-chip active" type="button" data-activity-filter="all">Hammasi</button>
+                  <button class="dashboard-filter-chip" type="button" data-activity-filter="requests">Arizalar</button>
+                  <button class="dashboard-filter-chip" type="button" data-activity-filter="reports">Hisobotlar</button>
+                </div>
+              </div>
+              <div id="activityHistoryList" class="activity-history-grid"></div>
+            </section>
+
+            <aside class="dashboard-side-stack">
+              <section class="dashboard-feedback-panel">
+                <div class="panel-heading">
+                  <p class="eyebrow">Baholash</p>
+                  <h3>Fikr va kommentariya</h3>
+                </div>
+                <form id="feedbackForm" class="form-grid">
+                  <div class="feedback-stars" id="feedbackStars" aria-label="Baholash yulduzlari">
+                    <button type="button" class="star-btn" data-rating="1">★</button>
+                    <button type="button" class="star-btn" data-rating="2">★</button>
+                    <button type="button" class="star-btn" data-rating="3">★</button>
+                    <button type="button" class="star-btn" data-rating="4">★</button>
+                    <button type="button" class="star-btn" data-rating="5">★</button>
+                  </div>
+                  <input id="feedbackRatingValue" name="rating" type="hidden" value="0" />
+                  <label>
+                    <span>Kommentariya</span>
+                    <textarea id="feedbackCommentInput" name="comment" rows="4" placeholder="Bu bo'lim haqida fikringizni yozing..." required></textarea>
+                  </label>
+                  <button type="submit" class="primary-btn">Yuborish</button>
+                </form>
+                <div id="feedbackList" class="feedback-list"></div>
+              </section>
+            </aside>
           </div>
         </section>
 
@@ -181,15 +473,73 @@
               <label><span>New password</span><input name="new_password" type="password" required /></label>
               <button type="submit" class="ghost-btn">Update password</button>
             </form>
+            <div class="security-divider"></div>
+            <div class="panel-heading">
+              <p class="eyebrow">Google Authenticator</p>
+              <h3>6 xonali 2FA himoyasi</h3>
+            </div>
+            <div class="two-factor-status-row">
+              <span>Holat</span>
+              <strong id="twoFactorStatusLabel" class="pill role">Inactive</strong>
+            </div>
+            <div class="inline-actions auth-actions">
+              <button id="setupTwoFactorButton" type="button" class="primary-btn">QR yaratish</button>
+            </div>
+            <div id="twoFactorSetupPanel" class="two-factor-setup hidden">
+              <img id="twoFactorQrImage" class="two-factor-qr" alt="2FA QR code" />
+              <div class="mono-list">
+                <span>Manual key: <strong id="twoFactorSecretLabel">-</strong></span>
+              </div>
+              <p class="session-footnote">
+                QR ishlamasa, yuqoridagi kalitni Google Authenticator ichida qo‘lda kiriting.
+              </p>
+              <form id="twoFactorVerifyForm" class="form-grid compact-form">
+                <label>
+                  <span>6 xonali kod</span>
+                  <input
+                    name="code"
+                    type="text"
+                    inputmode="numeric"
+                    pattern="[0-9]{6}"
+                    maxlength="6"
+                    placeholder="123456"
+                    required
+                  />
+                </label>
+                <button type="submit" class="ghost-btn">2FA ni yoqish</button>
+              </form>
+            </div>
+            <form id="twoFactorDisableForm" class="form-grid compact-form hidden">
+              <label><span>Current password</span><input name="current_password" type="password" required /></label>
+              <label>
+                <span>Authenticator code</span>
+                <input
+                  name="code"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]{6}"
+                  maxlength="6"
+                  placeholder="123456"
+                  required
+                />
+              </label>
+              <button type="submit" class="ghost-btn">2FA ni o‘chirish</button>
+            </form>
           </div>
 
-          <div class="panel">
+          <div id="notificationsSection" class="panel app-section">
             <div class="panel-heading inline">
               <div>
                 <p class="eyebrow">Notifications</p>
                 <h3>Inbox</h3>
               </div>
               <div class="toolbar">
+                <input id="notificationSearchInput" type="text" placeholder="Bildirishnoma qidirish..." />
+                <select id="notificationReadFilter">
+                  <option value="">Barchasi</option>
+                  <option value="unread">O'qilmagan</option>
+                  <option value="read">O'qilgan</option>
+                </select>
                 <button id="refreshNotifications" class="ghost-btn" type="button">Refresh inbox</button>
                 <button id="readAllNotifications" class="ghost-btn" type="button">Read all</button>
               </div>
@@ -218,11 +568,11 @@
           </div>
         </section>
 
-        <section class="workspace-grid">
+        <section id="institutionsSection" class="workspace-grid app-section section-surface institutions-surface">
           <div class="panel">
             <div class="panel-heading inline">
               <div>
-                <p class="eyebrow">Admin dashboard</p>
+                <p class="eyebrow">Muassasalar</p>
                 <h3>Managerial operations</h3>
               </div>
               <button id="refreshAdminDashboard" class="ghost-btn" type="button">Refresh admin</button>
@@ -241,10 +591,13 @@
           <div class="panel">
             <div class="panel-heading inline">
               <div>
-                <p class="eyebrow">Analytics dashboard</p>
+                <p class="eyebrow">Muassasalar tahlili</p>
                 <h3>Department comparison</h3>
               </div>
-              <button id="refreshAnalyticsDashboard" class="ghost-btn" type="button">Refresh analytics</button>
+              <div class="toolbar">
+                <input id="departmentSearchInput" type="text" placeholder="Muassasa qidirish..." />
+                <button id="refreshAnalyticsDashboard" class="ghost-btn" type="button">Refresh analytics</button>
+              </div>
             </div>
             <div class="summary-grid compact-grid">
               <div class="summary-card"><span>Total reports</span><strong id="analyticsTotalReportsValue">0</strong></div>
@@ -258,10 +611,11 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section id="usersSection" class="panel app-section">
           <div class="panel-heading inline">
             <div><p class="eyebrow">Roster</p><h3>IT staff overview</h3></div>
             <div class="toolbar">
+              <input id="userSearchInput" type="text" placeholder="Xodim qidirish..." />
               <select id="roleFilter"><option value="">All positions</option><option value="DEVOPS">DevOps</option><option value="IT_ENGINEER">IT Engineer</option><option value="ANDROID_DEV">Android Developer</option><option value="BACKEND_DEV">Backend Developer</option><option value="FRONTEND_DEV">Frontend Developer</option><option value="MANAGER">Manager</option><option value="DIRECTOR">Director</option></select>
               <select id="levelFilter"><option value="">All levels</option><option value="JUNIOR">Junior</option><option value="MIDDLE">Middle</option><option value="SENIOR">Senior</option></select>
               <button id="refreshUsers" class="ghost-btn" type="button">Refresh users</button>
@@ -275,29 +629,44 @@
           </div>
         </section>
 
-        <section class="workspace-grid reports-grid">
-          <div class="panel">
-            <div class="panel-heading"><p class="eyebrow">Reports</p><h3>Create report</h3></div>
-            <form id="reportForm" class="form-grid">
-              <label><span>Report number</span><input name="report_number" type="text" placeholder="RPT-2026-0001" required /></label>
-              <label><span>Title</span><input name="title" type="text" placeholder="Quarterly operations summary" required /></label>
-              <label><span>Summary</span><textarea name="summary" rows="4" placeholder="Short report summary" required></textarea></label>
-              <label><span>Content</span><textarea name="content" rows="6" placeholder="Detailed report content"></textarea></label>
-              <label><span>Department</span><select name="department_id" id="reportDepartmentSelect"></select></label>
+        <section class="workspace-grid reports-grid app-section">
+            <div id="reportCreatePanel" class="panel hidden">
+              <div class="panel-heading"><p class="eyebrow">Reports</p><h3>Create report</h3></div>
+              <form id="reportForm" class="form-grid">
+                <label><span>Title</span><input name="title" type="text" placeholder="Quarterly operations summary" required /></label>
+                <label><span>Comment</span><textarea name="summary" rows="4" placeholder="Report haqida qisqa izoh (commit/comment)" required></textarea></label>
+                <label><span>Content</span><textarea name="content" rows="6" placeholder="Detailed report content"></textarea></label>
+                <label><span>Screenshot yoki rasm</span><input name="screenshot" type="file" accept="image/*" /></label>
+                <label>
+                  <span>Department</span>
+                  <select name="department_id" id="reportDepartmentSelect">
+                  <option value="">Login qiling (departmentlar yuklanadi)</option>
+                </select>
+              </label>
               <button type="submit" class="primary-btn">Create report</button>
             </form>
+            <div class="report-id-helper">
+              <div class="report-id-meta">
+                <span>Yangi report UUID</span>
+                <strong id="latestReportIdLabel">Hali yaratilmagan</strong>
+              </div>
+              <div class="inline-actions">
+                <button id="copyLatestReportIdButton" type="button" class="ghost-btn">Copy UUID</button>
+                <button id="useLatestReportIdButton" type="button" class="ghost-btn">ID ni pastdagi formlarga qo'yish</button>
+              </div>
+            </div>
           </div>
 
           <div class="panel">
             <div class="panel-heading"><p class="eyebrow">Workflow</p><h3>Report actions and attachments</h3></div>
             <form id="workflowForm" class="form-grid">
-              <label><span>Report ID</span><input name="report_id" type="text" placeholder="Paste report UUID" required /></label>
+              <label><span>Report ID</span><input name="report_id" type="text" placeholder="Paste report UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
               <label><span>Action</span><select name="action" required><option value="SUBMIT">Submit</option><option value="APPROVE">Approve</option><option value="REJECT">Reject</option><option value="REQUEST_REVISION">Request revision</option><option value="ARCHIVE">Archive</option></select></label>
               <label><span>Comment</span><textarea name="comment" rows="4" placeholder="Approval or rejection comment"></textarea></label>
               <button type="submit" class="primary-btn">Run workflow action</button>
             </form>
             <form id="attachmentForm" class="form-grid compact-form">
-              <label><span>Attachment report ID</span><input name="report_id" type="text" placeholder="Report UUID" required /></label>
+              <label><span>Attachment report ID</span><input name="report_id" type="text" placeholder="Report UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
               <label><span>File</span><input name="file" type="file" required /></label>
               <button type="submit" class="ghost-btn">Upload attachment</button>
             </form>
@@ -309,7 +678,7 @@
               </div>
             </form>
             <form id="reportToolsForm" class="form-grid compact-form">
-              <label><span>Report ID for history/delete</span><input name="report_id" type="text" placeholder="Report UUID" required /></label>
+              <label><span>Report ID for history/delete</span><input name="report_id" type="text" placeholder="Report UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
               <div class="inline-actions">
                 <button id="loadHistoryButton" type="button" class="ghost-btn">Load history</button>
                 <button id="deleteReportButton" type="button" class="ghost-btn">Delete report</button>
@@ -318,10 +687,11 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section id="reportsSection" class="panel app-section section-surface reports-surface">
           <div class="panel-heading inline">
             <div><p class="eyebrow">Reports registry</p><h3>Reports list</h3></div>
             <div class="toolbar">
+              <input id="reportSearchInput" type="text" placeholder="Report qidirish..." />
               <select id="reportStatusFilter"><option value="">All statuses</option><option value="DRAFT">Draft</option><option value="PENDING_L2">Pending L2</option><option value="PENDING_L3">Pending L3</option><option value="PENDING_L4">Pending L4</option><option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option><option value="REVISION">Revision</option><option value="ARCHIVED">Archived</option></select>
               <button id="refreshReports" class="ghost-btn" type="button">Refresh reports</button>
             </div>
@@ -334,17 +704,18 @@
           </div>
         </section>
 
-        <section class="workspace-grid">
-          <div class="panel">
-            <div class="panel-heading"><p class="eyebrow">Leave requests</p><h3>Create leave request</h3></div>
-            <form id="leaveForm" class="form-grid">
-              <label><span>Leave type</span><select name="leave_type" required><option value="ANNUAL">Annual</option><option value="SICK">Sick</option><option value="UNPAID">Unpaid</option><option value="MATERNITY">Maternity</option><option value="OTHER">Other</option></select></label>
-              <label><span>Start date</span><input name="start_date" type="date" required /></label>
-              <label><span>End date</span><input name="end_date" type="date" required /></label>
-              <label><span>Reason</span><textarea name="reason" rows="5" placeholder="Leave reason" required></textarea></label>
-              <button type="submit" class="primary-btn">Create leave request</button>
-            </form>
-          </div>
+        <section id="leavesSection" class="workspace-grid app-section">
+            <div class="panel">
+              <div class="panel-heading"><p class="eyebrow">Leave requests</p><h3>Create leave request</h3></div>
+              <form id="leaveForm" class="form-grid">
+                <label><span>Leave type</span><select name="leave_type" required><option value="ANNUAL">Annual</option><option value="SICK">Sick</option><option value="UNPAID">Unpaid</option><option value="MATERNITY">Maternity</option><option value="OTHER">Other</option></select></label>
+                <label><span>Start date</span><input name="start_date" type="date" required /></label>
+                <label><span>End date</span><input name="end_date" type="date" required /></label>
+                <label><span>Reason</span><textarea name="reason" rows="5" placeholder="Leave reason" required></textarea></label>
+                <label><span>Screenshot yoki rasm</span><input name="screenshot" type="file" accept="image/*" /></label>
+                <button type="submit" class="primary-btn">Create leave request</button>
+              </form>
+            </div>
 
           <div class="panel">
             <div class="panel-heading"><p class="eyebrow">Leave review</p><h3>Approve or reject request</h3></div>
@@ -365,10 +736,11 @@
           <div id="reportHistoryList" class="feed-list"></div>
         </section>
 
-        <section class="panel">
+        <section class="panel app-section">
           <div class="panel-heading inline">
             <div><p class="eyebrow">Leaves registry</p><h3>Leave requests list</h3></div>
             <div class="toolbar">
+              <input id="leaveSearchInput" type="text" placeholder="Ta'til so'rovi qidirish..." />
               <select id="leaveStatusFilter"><option value="">All statuses</option><option value="PENDING">Pending</option><option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option><option value="CANCELLED">Cancelled</option></select>
               <button id="refreshLeaves" class="ghost-btn" type="button">Refresh leaves</button>
             </div>
@@ -403,10 +775,77 @@
         </section>
 
         <section class="status-strip">
-          <div id="messageBox" class="message-box">Panel tayyor. Login qiling.</div>
+          <div id="messageBox" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
         </section>
+        <footer class="session-footer">
+          <span>Kirish foydalanuvchisi:</span>
+          <strong id="loggedInAsLabel">-</strong>
+        </footer>
       </main>
     </div>
-    <script src="./app.js"></script>
-  </body>
-</html>
+      <div id="sectionModal" class="section-modal hidden" aria-hidden="true">
+        <div id="sectionModalBackdrop" class="section-modal-backdrop"></div>
+        <div class="section-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="sectionModalTitle">
+          <div class="section-modal-header">
+            <div>
+              <p class="eyebrow">Section window</p>
+              <h3 id="sectionModalTitle">Bo'lim oynasi</h3>
+            </div>
+            <button id="sectionModalClose" type="button" class="ghost-btn section-modal-close" aria-label="Oynani yopish">
+              Yopish
+            </button>
+          </div>
+          <div id="sectionModalContent" class="section-modal-content"></div>
+        </div>
+      </div>
+      <div id="quickCreateModal" class="section-modal hidden" aria-hidden="true">
+        <div id="quickCreateBackdrop" class="section-modal-backdrop"></div>
+        <div class="section-modal-dialog quick-create-dialog" role="dialog" aria-modal="true" aria-labelledby="quickCreateTitle">
+          <div class="section-modal-header">
+            <div>
+              <p class="eyebrow">Yangi yaratish</p>
+              <h3 id="quickCreateTitle">Yangi yozuv</h3>
+            </div>
+            <button id="quickCreateClose" type="button" class="ghost-btn section-modal-close" aria-label="Yopish">
+              Yopish
+            </button>
+          </div>
+          <form id="quickCreateForm" class="form-grid">
+            <input id="quickCreateType" name="mode" type="hidden" value="notification" />
+            <label>
+              <span>Sarlavha</span>
+              <input id="quickCreateTitleInput" name="title" type="text" placeholder="Yangi yozuv sarlavhasi" required />
+            </label>
+            <label>
+              <span>Izoh</span>
+              <textarea id="quickCreateMessageInput" name="message" rows="5" placeholder="Kerakli talab yoki bildirish matni" required></textarea>
+            </label>
+            <label>
+              <span>Screenshot yoki rasm</span>
+              <input id="quickCreateScreenshotInput" name="screenshot" type="file" accept="image/*" />
+            </label>
+            <button type="submit" class="primary-btn">Saqlash</button>
+          </form>
+        </div>
+      </div>
+      <div id="creationWarningModal" class="section-modal hidden" aria-hidden="true">
+        <div id="creationWarningBackdrop" class="section-modal-backdrop"></div>
+        <div class="section-modal-dialog creation-warning-dialog" role="dialog" aria-modal="true" aria-labelledby="creationWarningTitle">
+          <div class="section-modal-header">
+            <div>
+              <p class="eyebrow">Ogohlantirish</p>
+              <h3 id="creationWarningTitle">Yaratishdan oldin e'tibor bering</h3>
+            </div>
+            <button id="creationWarningClose" type="button" class="ghost-btn section-modal-close" aria-label="Yopish">
+              Yopish
+            </button>
+          </div>
+          <div class="creation-warning-body">
+            <div id="creationWarningList" class="creation-warning-list"></div>
+            <button id="creationWarningConfirm" type="button" class="primary-btn full-width-btn">Xop</button>
+          </div>
+        </div>
+      </div>
+      <script src="./app.js"></script>
+    </body>
+  </html>

@@ -1,6 +1,15 @@
 import uuid
+from pathlib import Path
 
 from django.db import models
+
+
+def notification_attachment_upload_to(instance, filename):
+    original_name = Path(str(filename)).name
+    suffix = Path(original_name).suffix[:20]
+    stem = Path(original_name).stem[:40] or "attachment"
+    short_name = f"{stem}_{uuid.uuid4().hex[:8]}{suffix}"
+    return f"notifications/{instance.user_id_id}/{instance.id}/{short_name}"
 
 
 class Notification(models.Model):
@@ -23,6 +32,12 @@ class Notification(models.Model):
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     reference_type = models.CharField(max_length=50, null=True, blank=True)
     reference_id = models.CharField(max_length=100, null=True, blank=True)
+    screenshot = models.FileField(
+        upload_to=notification_attachment_upload_to,
+        max_length=255,
+        null=True,
+        blank=True,
+    )
     is_read = models.BooleanField(default=False)
     read_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

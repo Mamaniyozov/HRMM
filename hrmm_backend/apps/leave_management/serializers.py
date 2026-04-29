@@ -8,7 +8,7 @@ from apps.leave_management.models import LeaveRequest
 class LeaveRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveRequest
-        fields = ["leave_type", "reason", "start_date", "end_date"]
+        fields = ["leave_type", "reason", "start_date", "end_date", "screenshot"]
 
     def validate(self, attrs):
         if attrs["end_date"] < attrs["start_date"]:
@@ -35,6 +35,7 @@ class LeaveRequestCreateSerializer(serializers.ModelSerializer):
 class LeaveRequestListSerializer(serializers.ModelSerializer):
     requested_by_name = serializers.CharField(source="requested_by.full_name", read_only=True)
     reviewed_by_name = serializers.CharField(source="reviewed_by.full_name", read_only=True)
+    screenshot_url = serializers.SerializerMethodField()
 
     class Meta:
         model = LeaveRequest
@@ -51,9 +52,19 @@ class LeaveRequestListSerializer(serializers.ModelSerializer):
             "total_days",
             "status",
             "review_comment",
+            "screenshot",
+            "screenshot_url",
             "created_at",
             "updated_at",
         ]
+
+    def get_screenshot_url(self, obj):
+        request = self.context.get("request")
+        if not obj.screenshot:
+            return None
+        if request:
+            return request.build_absolute_uri(obj.screenshot.url)
+        return obj.screenshot.url
 
 
 class LeaveReviewSerializer(serializers.Serializer):

@@ -52,6 +52,9 @@ class User(models.Model):
     is_active = models.BooleanField(default=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     avatar_url = models.CharField(max_length=500, null=True, blank=True)
+    totp_secret = models.CharField(max_length=64, null=True, blank=True)
+    two_factor_enabled = models.BooleanField(default=False)
+    two_factor_confirmed_at = models.DateTimeField(null=True, blank=True)
     last_login_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -74,3 +77,21 @@ class User(models.Model):
 
     def __str__(self):
         return f"{self.username} - {self.full_name}"
+
+
+class UserFeedback(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="feedback_entries",
+    )
+    rating = models.PositiveSmallIntegerField()
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.author.username} - {self.rating}"

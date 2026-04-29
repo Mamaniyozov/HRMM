@@ -3,6 +3,10 @@ import uuid
 from django.db import models
 
 
+def leave_screenshot_upload_to(instance, filename):
+    return f"leaves/{instance.requested_by_id}/{instance.id}/{filename}"
+
+
 class LeaveRequest(models.Model):
     LEAVE_TYPE_CHOICES = [
         ("ANNUAL", "Annual"),
@@ -41,6 +45,7 @@ class LeaveRequest(models.Model):
     total_days = models.PositiveIntegerField(default=1)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
     review_comment = models.TextField(blank=True, default="")
+    screenshot = models.FileField(upload_to=leave_screenshot_upload_to, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

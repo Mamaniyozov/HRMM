@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.users.models import User
+from apps.users.models import User, UserFeedback
 from django.contrib.auth.hashers import make_password
 
 
@@ -109,3 +109,22 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"job_level": "Daraja berish uchun avval job_role tanlang."})
 
         return attrs
+
+
+class UserFeedbackSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source="author.full_name", read_only=True)
+    author_role = serializers.CharField(source="author.role", read_only=True)
+
+    class Meta:
+        model = UserFeedback
+        fields = ["id", "author", "author_name", "author_role", "rating", "comment", "created_at"]
+        read_only_fields = ["id", "author", "author_name", "author_role", "created_at"]
+
+    def validate_rating(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Baho 1 dan 5 gacha bo'lishi kerak.")
+        return value
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        return UserFeedback.objects.create(author=request.user, **validated_data)
