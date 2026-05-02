@@ -24,6 +24,7 @@ const state = {
   leaveCalendar: [],
   reportHistory: [],
   lastCreatedReportId: "",
+  pendingApprovals: [],
 };
 
 const loginForm = document.getElementById("loginForm");
@@ -68,6 +69,26 @@ const loginManualKeyLabel = document.getElementById("loginManualKeyLabel");
 const loginQrHint = document.getElementById("loginQrHint");
 const otpCodeLabel = document.getElementById("otpCodeLabel");
 const otpSubmitButton = document.getElementById("otpSubmitButton");
+const registerStep = document.getElementById("registerStep");
+const registerForm = document.getElementById("registerForm");
+const registerSwitchText = document.getElementById("registerSwitchText");
+const loginSwitchText = document.getElementById("loginSwitchText");
+const registerAuthEyebrow = document.getElementById("registerAuthEyebrow");
+const registerAuthTitle = document.getElementById("registerAuthTitle");
+const registerFullNameLabel = document.getElementById("registerFullNameLabel");
+const registerFullNameInput = document.getElementById("registerFullNameInput");
+const registerUsernameLabel = document.getElementById("registerUsernameLabel");
+const registerUsernameInput = document.getElementById("registerUsernameInput");
+const registerEmailLabel = document.getElementById("registerEmailLabel");
+const registerEmailInput = document.getElementById("registerEmailInput");
+const registerPasswordLabel = document.getElementById("registerPasswordLabel");
+const registerPasswordInput = document.getElementById("registerPasswordInput");
+const registerPasswordConfirmLabel = document.getElementById("registerPasswordConfirmLabel");
+const registerPasswordConfirmInput = document.getElementById("registerPasswordConfirmInput");
+const registerSubmitButton = document.getElementById("registerSubmitButton");
+const registerStatusBox = document.getElementById("registerStatusBox");
+const showRegisterButton = document.getElementById("showRegisterButton");
+const showLoginButton = document.getElementById("showLoginButton");
 const userForm = document.getElementById("userForm");
 const reportForm = document.getElementById("reportForm");
 const workflowForm = document.getElementById("workflowForm");
@@ -229,10 +250,10 @@ const jobLevelLabelMap = {
 };
 
 const languageNames = {
-  uz: "O'zbek tili",
-  ru: "Rus tili",
-  en: "Ingliz tili",
-  tr: "Turk tili",
+  uz: "O'zbekcha",
+  ru: "Русский",
+  en: "English",
+  tr: "Türkçe",
 };
 
 const translations = {
@@ -242,6 +263,36 @@ const translations = {
     refresh: "Yangilash",
     new: "Yangi",
     language: "Til",
+    login_badge: "Kirish",
+    register_title: "Yangi hisob yaratish",
+    full_name: "To'liq ism",
+    email: "Email",
+    password: "Parol",
+    password_confirm: "Parolni tasdiqlash",
+    username: "Username",
+    register_button: "Ro'yxatdan o'tish",
+    register_switch_text: "Hisobingiz yo'qmi?",
+    login_switch_text: "Hisobingiz bormi?",
+    no_account: "Hisobingiz yo'qmi?",
+    have_account: "Hisobingiz bormi?",
+    section_dashboard: "Asosiy panel",
+    section_summary: "Umumiy xulosa",
+    section_institutions: "Muassasalar",
+    section_operations: "Boshqaruv operatsiyalari",
+    section_analytics: "Muassasalar tahlili",
+    section_dept_compare: "Bo'limlar taqqoslash",
+    section_workflow: "Ish jarayoni",
+    section_report_actions: "Hisobot harakatlari va biriktirmalar",
+    section_reports_registry: "Hisobotlar reyesti",
+    section_reports_list: "Hisobotlar ro'yxati",
+    section_leaves: "Ta'til arizalari",
+    section_create_leave: "Ta'til arizasi yaratish",
+    section_leave_review: "Ta'til ko'rib chiqish",
+    section_approve_leave: "Arizani tasdiqlash yoki rad etish",
+    section_report_history: "Hisobot tarixi",
+    section_approval_history: "Tasdiqlash tarixi",
+    section_leaves_registry: "Ta'tillar reyesti",
+    section_leaves_list: "Ta'til arizalari ro'yxati",
     login_badge: "Kirish",
     login_hero_eyebrow: "HRMM enterprise workspace",
     login_hero_title: "Rasmiy boshqaruv paneli, xavfsiz kirish va zamonaviy ish jarayoni",
@@ -279,6 +330,8 @@ const translations = {
     sidebar_home: "Uy",
     sidebar_notifications: "Bildirishnomalar",
     sidebar_documents: "Hujjatlar",
+    sidebar_leaves: "Arizalar",
+    sidebar_employees: "Xodimlar",
     sidebar_institutions: "Muassasalar",
     search_global_label: "Global qidiruv",
     search_global_placeholder: "Bildirishnoma, report, xodim...",
@@ -328,35 +381,36 @@ const translations = {
     two_factor_status: "2FA holati",
     update_profile: "Profilni yangilash",
     logout: "Chiqish",
-    create_report_menu: "Yangi report",
+    create_report_menu: "Yangi hisobot",
     create_notification_menu: "Yangi bildirim",
     create_leave_menu: "Yangi ariza",
     create_feature_menu: "Yangi funksiya talabi",
     employees_section: "Xodimlar",
     sync_system: "Tizimni yangilash",
+    theme_toggle: "Tun/kunduz rejimi",
     section_window: "Bo'lim oynasi",
     close: "Yopish",
-    reports_eyebrow: "Reports",
-    create_report_title: "Report yaratish",
-    report_number: "Report raqami",
+    reports_eyebrow: "Hisobotlar",
+    create_report_title: "Hisobot yaratish",
+    report_number: "Hisobot raqami",
     report_auto_placeholder: "Avtomatik yaratiladi",
     report_title: "Sarlavha",
     report_title_placeholder: "Choraklik operatsion xulosa",
     report_comment: "Izoh",
-    report_comment_placeholder: "Report haqida qisqa izoh",
+    report_comment_placeholder: "Hisobot haqida qisqa izoh",
     report_content: "Mazmun",
-    report_content_placeholder: "Batafsil report mazmuni",
+    report_content_placeholder: "Batafsil hisobot mazmuni",
     report_image: "Screenshot yoki rasm",
-    report_department: "Department",
-    report_department_default: "Joriy foydalanuvchi departmenti",
-    no_departments_available: "Departmentlar mavjud emas",
-    no_departments: "Department yo'q",
-    create_report_button: "Report yaratish",
-    latest_report_id: "Yangi report UUID",
+    report_department: "Bo'lim",
+    report_department_default: "Joriy foydalanuvchi bo'limi",
+    no_departments_available: "Bo'limlar mavjud emas",
+    no_departments: "Bo'lim yo'q",
+    create_report_button: "Hisobot yaratish",
+    latest_report_id: "Yangi hisobot UUID",
     not_created_yet: "Hali yaratilmagan",
     copy_uuid: "UUID nusxalash",
     apply_uuid_to_forms: "ID ni pastdagi formlarga qo'yish",
-    report_modal_title: "Yangi report",
+    report_modal_title: "Yangi hisobot",
     quick_create_eyebrow: "Yangi yaratish",
     quick_create_default_heading: "Yangi yozuv",
     form_title: "Sarlavha",
@@ -384,6 +438,35 @@ const translations = {
     refresh: "Обновить",
     new: "Создать",
     language: "Язык",
+    register_title: "Создать новый аккаунт",
+    full_name: "Полное имя",
+    email: "Email",
+    password: "Пароль",
+    password_confirm: "Подтвердите пароль",
+    username: "Имя пользователя",
+    register_button: "Зарегистрироваться",
+    register_switch_text: "Нет аккаунта?",
+    login_switch_text: "Уже есть аккаунт?",
+    no_account: "Нет аккаунта?",
+    have_account: "Уже есть аккаунт?",
+    section_dashboard: "Главная панель",
+    section_summary: "Общий обзор",
+    section_institutions: "Учреждения",
+    section_operations: "Управленческие операции",
+    section_analytics: "Аналитика учреждений",
+    section_dept_compare: "Сравнение отделов",
+    section_workflow: "Рабочий процесс",
+    section_report_actions: "Действия с отчетами и вложения",
+    section_reports_registry: "Реестр отчетов",
+    section_reports_list: "Список отчетов",
+    section_leaves: "Заявки на отпуск",
+    section_create_leave: "Создать заявку на отпуск",
+    section_leave_review: "Рассмотрение заявок",
+    section_approve_leave: "Утверждение или отклонение заявки",
+    section_report_history: "История отчетов",
+    section_approval_history: "История утверждений",
+    section_leaves_registry: "Реестр отпусков",
+    section_leaves_list: "Список заявок на отпуск",
     sidebar_home: "Главная",
     sidebar_notifications: "Уведомления",
     sidebar_documents: "Документы",
@@ -492,6 +575,35 @@ const translations = {
     refresh: "Refresh",
     new: "Create",
     language: "Language",
+    register_title: "Create new account",
+    full_name: "Full name",
+    email: "Email",
+    password: "Password",
+    password_confirm: "Confirm password",
+    username: "Username",
+    register_button: "Register",
+    register_switch_text: "Don't have an account?",
+    login_switch_text: "Already have an account?",
+    no_account: "Don't have an account?",
+    have_account: "Already have an account?",
+    section_dashboard: "Main Panel",
+    section_summary: "Overview",
+    section_institutions: "Institutions",
+    section_operations: "Management Operations",
+    section_analytics: "Institution Analytics",
+    section_dept_compare: "Department Comparison",
+    section_workflow: "Workflow",
+    section_report_actions: "Report Actions and Attachments",
+    section_reports_registry: "Reports Registry",
+    section_reports_list: "Reports List",
+    section_leaves: "Leave Requests",
+    section_create_leave: "Create Leave Request",
+    section_leave_review: "Leave Review",
+    section_approve_leave: "Approve or Reject Request",
+    section_report_history: "Report History",
+    section_approval_history: "Approval History",
+    section_leaves_registry: "Leaves Registry",
+    section_leaves_list: "Leave Requests List",
     sidebar_home: "Home",
     sidebar_notifications: "Notifications",
     sidebar_documents: "Documents",
@@ -600,6 +712,35 @@ const translations = {
     refresh: "Yenile",
     new: "Yeni",
     language: "Dil",
+    register_title: "Yeni hesap olustur",
+    full_name: "Tam ad",
+    email: "Email",
+    password: "Sifre",
+    password_confirm: "Sifreyi onayla",
+    username: "Kullanıcı adı",
+    register_button: "Kaydol",
+    register_switch_text: "Hesabiniz yok mu?",
+    login_switch_text: "Zaten hesabiniz var mi?",
+    no_account: "Hesabiniz yok mu?",
+    have_account: "Zaten hesabiniz var mi?",
+    section_dashboard: "Ana Panel",
+    section_summary: "Genel Ozet",
+    section_institutions: "Kurumlar",
+    section_operations: "Yonetim Operasyonlari",
+    section_analytics: "Kurum Analizi",
+    section_dept_compare: "Departman Karsilastirmasi",
+    section_workflow: "Is Akisi",
+    section_report_actions: "Rapor Islemleri ve Ekler",
+    section_reports_registry: "Rapor Kaydi",
+    section_reports_list: "Rapor Listesi",
+    section_leaves: "Izin Talepleri",
+    section_create_leave: "Izin Talebi Olustur",
+    section_leave_review: "Izin Incelemesi",
+    section_approve_leave: "Talebi Onayla veya Reddet",
+    section_report_history: "Rapor Gecmisi",
+    section_approval_history: "Onay Gecmisi",
+    section_leaves_registry: "Izin Kaydi",
+    section_leaves_list: "Izin Talepleri Listesi",
     sidebar_home: "Ana sayfa",
     sidebar_notifications: "Bildirimler",
     sidebar_documents: "Belgeler",
@@ -674,7 +815,7 @@ const translations = {
     report_department: "Departman",
     report_department_default: "Mevcut kullanici departmanini kullan",
     no_departments_available: "Departman yok",
-    no_departments: "Departman bulunmadi",
+    no_departments: "Departman bulunamadi",
     create_report_button: "Rapor olustur",
     latest_report_id: "Yeni rapor UUID",
     not_created_yet: "Henuz olusturulmadi",
@@ -910,6 +1051,13 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function isImageUrl(url) {
+  if (!url) return false;
+  const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"];
+  const lowerUrl = String(url).toLowerCase();
+  return imageExtensions.some((ext) => lowerUrl.includes(ext));
+}
+
 function getRoleLabel(role) {
   return localizedRoleLabels[state.language]?.[role] || roleLabelMap[role] || role || "-";
 }
@@ -937,6 +1085,18 @@ function setMessage(text, type = "") {
   toast.className = `message-box ${normalizedType}`.trim();
   toast.textContent = text;
   messageBox.prepend(toast);
+
+  // Limit to 2 toasts at a time
+  const toasts = messageBox.querySelectorAll(".message-box");
+  if (toasts.length > 2) {
+    for (let i = toasts.length - 1; i >= 2; i--) {
+      const existingTimer = toastTimers.get(toasts[i]);
+      if (existingTimer) {
+        window.clearTimeout(existingTimer);
+      }
+      toasts[i].remove();
+    }
+  }
 
   const removeToast = () => {
     if (!toast.isConnected) return;
@@ -1011,6 +1171,8 @@ function setAuthUi(isAuthenticated) {
   if (appView) {
     appView.classList.toggle("hidden", !isAuthenticated);
   }
+  // Re-apply translations when view changes to ensure both login and main views are synced
+  applyTranslations();
 }
 
 function toggleProfileMenu(forceOpen) {
@@ -1253,6 +1415,25 @@ function applyTranslations() {
   if (loginUsernameInput) loginUsernameInput.placeholder = t("login_username_placeholder");
   if (loginPasswordLabel) loginPasswordLabel.textContent = t("login_password_label");
   if (loginPasswordInput) loginPasswordInput.placeholder = t("login_password_placeholder");
+  
+  // Registration form translations
+  if (registerAuthEyebrow) registerAuthEyebrow.textContent = t("register_title");
+  if (registerAuthTitle) registerAuthTitle.textContent = t("register_title");
+  if (registerFullNameLabel) registerFullNameLabel.textContent = t("full_name");
+  if (registerFullNameInput) registerFullNameInput.placeholder = t("full_name");
+  if (registerUsernameLabel) registerUsernameLabel.textContent = t("username");
+  if (registerUsernameInput) registerUsernameInput.placeholder = t("username");
+  if (registerEmailLabel) registerEmailLabel.textContent = t("email");
+  if (registerEmailInput) registerEmailInput.placeholder = t("email");
+  if (registerPasswordLabel) registerPasswordLabel.textContent = t("password");
+  if (registerPasswordInput) registerPasswordInput.placeholder = t("password");
+  if (registerPasswordConfirmLabel) registerPasswordConfirmLabel.textContent = t("password_confirm");
+  if (registerPasswordConfirmInput) registerPasswordConfirmInput.placeholder = t("password_confirm");
+  if (registerSubmitButton) registerSubmitButton.textContent = t("register_button");
+  if (showRegisterButton) showRegisterButton.textContent = t("register_button");
+  if (showLoginButton) showLoginButton.textContent = t("login_badge");
+  if (loginSwitchText) loginSwitchText.textContent = t("register_switch_text");
+  if (registerSwitchText) registerSwitchText.textContent = t("login_switch_text");
   if (loginSubmitButton) loginSubmitButton.textContent = t("login_submit");
   if (loginFootnote) loginFootnote.textContent = t("login_footnote");
   if (loginManualKeyLabel) loginManualKeyLabel.textContent = t("login_manual_key");
@@ -1312,6 +1493,8 @@ function applyTranslations() {
     homeSection: "sidebar_home",
     notificationsSection: "sidebar_notifications",
     reportsSection: "sidebar_documents",
+    leavesSection: "sidebar_leaves",
+    usersSection: "sidebar_employees",
     institutionsSection: "sidebar_institutions",
   };
   navLinks.forEach((button) => {
@@ -1360,29 +1543,6 @@ function applyTranslations() {
     const badges = statCards[3].querySelectorAll(".dashboard-badge");
     if (badges[0]) badges[0].childNodes[0].textContent = `${t("rejected")}: `;
     if (badges[1]) badges[1].childNodes[0].textContent = `${t("approved_request")}: `;
-  }
-
-  const historySection = homeSection?.querySelector(".dashboard-history-panel");
-  if (historySection) {
-    historySection.querySelector(".eyebrow")?.replaceChildren(document.createTextNode(t("activity_history")));
-    historySection.querySelector("h3")?.replaceChildren(document.createTextNode(t("activity_watch")));
-    historySection.querySelector('[data-activity-filter="all"]')?.replaceChildren(document.createTextNode(t("all")));
-    historySection.querySelectorAll('[data-activity-filter="requests"]').forEach((node) => {
-      if (node.closest(".dashboard-history-panel")) {
-        node.textContent = t("requests");
-      }
-    });
-    historySection.querySelectorAll('[data-activity-filter="reports"]').forEach((node) => {
-      if (node.closest(".dashboard-history-panel")) {
-        node.textContent = t("reports_short");
-      }
-    });
-  }
-
-  const feedbackPanel = homeSection?.querySelector(".dashboard-feedback-panel");
-  if (feedbackPanel) {
-    feedbackPanel.querySelector(".eyebrow")?.replaceChildren(document.createTextNode(t("rating")));
-    feedbackPanel.querySelector("h3")?.replaceChildren(document.createTextNode(t("feedback_comments")));
   }
 
   if (meButton) {
@@ -1443,6 +1603,14 @@ function applyTranslations() {
   renderDepartmentOptions();
   renderUsers();
   renderProfile();
+
+  // Translate all elements with data-translate attribute
+  document.querySelectorAll('[data-translate]').forEach(el => {
+    const key = el.getAttribute('data-translate');
+    if (key) {
+      el.textContent = t(key);
+    }
+  });
 }
 
 function applyRoleBasedUi() {
@@ -1465,10 +1633,8 @@ function applyRoleBasedUi() {
   leavesSection?.classList.toggle("hidden", role === "DIRECTOR");
   createMenuItems.forEach((button) => {
     const action = button.dataset.createAction;
-    const allowed =
-      action === "leave"
-        ? role !== "DIRECTOR"
-        : true;
+    // All roles can see all create menu items
+    const allowed = true;
     button.classList.toggle("hidden", !allowed);
   });
 }
@@ -1542,13 +1708,192 @@ function openUserProfileModal(profile) {
           <strong>${escapeHtml(twoFactorText)}</strong>
         </article>
       </div>
+      <div class="profile-actions" style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
+        <button type="button" class="ghost-btn" id="openSecuritySettingsBtn" title="Xavfsizlik sozlamalari">
+          <span style="display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Xavfsizlik sozlamalari
+          </span>
+        </button>
+      </div>
     </section>
   `;
+
+  setTimeout(() => {
+    document.getElementById("openSecuritySettingsBtn")?.addEventListener("click", openSecuritySettingsModal);
+  }, 0);
+
   if (sectionModalTitle) {
     sectionModalTitle.textContent = t("profile_details");
   }
   sectionModal.classList.remove("hidden");
   sectionModal.setAttribute("aria-hidden", "false");
+}
+
+function openSecuritySettingsModal() {
+  if (!sectionModal || !sectionModalContent) return;
+  restoreModalSection();
+
+  const twoFactorEnabled = state.currentUser?.two_factor_enabled || false;
+  const twoFactorStatusText = twoFactorEnabled ? t("active") : t("inactive");
+  const twoFactorButtonText = twoFactorEnabled ? "2FA ni o'chirish" : "QR yaratish";
+
+  sectionModalContent.innerHTML = `
+    <section class="security-settings-card">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Xavfsizlik</p>
+          <h3>Xavfsizlik sozlamalari</h3>
+        </div>
+      </div>
+
+      <div class="security-section">
+        <h4>Parolni o'zgartirish</h4>
+        <form id="modalPasswordForm" class="form-grid">
+          <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
+          <label><span>Yangi parol</span><input name="new_password" type="password" required /></label>
+          <button type="submit" class="ghost-btn">Parolni yangilash</button>
+        </form>
+      </div>
+
+      <div class="security-divider"></div>
+
+      <div class="security-section">
+        <h4>Google Authenticator (2FA)</h4>
+        <div class="two-factor-status-row">
+          <span>Holat</span>
+          <strong class="pill role">${twoFactorStatusText}</strong>
+        </div>
+        <div class="inline-actions auth-actions" style="margin-top: 12px;">
+          <button id="modalSetupTwoFactorButton" type="button" class="primary-btn">${twoFactorButtonText}</button>
+        </div>
+        <div id="modalTwoFactorSetupPanel" class="two-factor-setup hidden">
+          <img id="modalTwoFactorQrImage" class="two-factor-qr" alt="2FA QR code" />
+          <div class="mono-list">
+            <span>Manual key: <strong id="modalTwoFactorSecretLabel">-</strong></span>
+          </div>
+          <p class="session-footnote">
+            QR ishlamasa, yuqoridagi kalitni Google Authenticator ichida qo'lda kiriting.
+          </p>
+          <form id="modalTwoFactorVerifyForm" class="form-grid compact-form">
+            <label>
+              <span>6 xonali kod</span>
+              <input name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required />
+            </label>
+            <button type="submit" class="ghost-btn">2FA ni yoqish</button>
+          </form>
+        </div>
+        <form id="modalTwoFactorDisableForm" class="form-grid compact-form ${twoFactorEnabled ? "" : "hidden"}">
+          <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
+          <label>
+            <span>Authenticator kodi</span>
+            <input name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required />
+          </label>
+          <button type="submit" class="ghost-btn">2FA ni o'chirish</button>
+        </form>
+      </div>
+    </section>
+  `;
+
+  if (sectionModalTitle) {
+    sectionModalTitle.textContent = "Xavfsizlik sozlamalari";
+  }
+  sectionModal.classList.remove("hidden");
+  sectionModal.setAttribute("aria-hidden", "false");
+
+  setTimeout(() => {
+    bindSecurityModalEvents();
+  }, 0);
+}
+
+function bindSecurityModalEvents() {
+  const modalPasswordForm = document.getElementById("modalPasswordForm");
+  const modalSetupTwoFactorButton = document.getElementById("modalSetupTwoFactorButton");
+  const modalTwoFactorVerifyForm = document.getElementById("modalTwoFactorVerifyForm");
+  const modalTwoFactorDisableForm = document.getElementById("modalTwoFactorDisableForm");
+
+  modalPasswordForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(modalPasswordForm);
+    try {
+      await apiRequest("/api/v1/users/change-password/", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({
+          current_password: formData.get("current_password"),
+          new_password: formData.get("new_password"),
+        }),
+      });
+      modalPasswordForm.reset();
+      setMessage("Parol muvaffaqiyatli yangilandi.", "success");
+    } catch (error) {
+      setMessage(error.message || "Parolni yangilashda xato.", "error");
+    }
+  });
+
+  modalSetupTwoFactorButton?.addEventListener("click", async () => {
+    if (state.currentUser?.two_factor_enabled) {
+      document.getElementById("modalTwoFactorDisableForm")?.classList.remove("hidden");
+      return;
+    }
+    try {
+      const result = await apiRequest("/api/v1/users/2fa/setup/", {
+        method: "POST",
+        headers: getHeaders(),
+      });
+      state.twoFactorSetup = result;
+      const qrImage = document.getElementById("modalTwoFactorQrImage");
+      const secretLabel = document.getElementById("modalTwoFactorSecretLabel");
+      if (qrImage && result?.qr_code) qrImage.src = result.qr_code;
+      if (secretLabel && result?.secret) secretLabel.textContent = result.secret;
+      document.getElementById("modalTwoFactorSetupPanel")?.classList.remove("hidden");
+    } catch (error) {
+      setMessage(error.message || "2FA sozlamada xato.", "error");
+    }
+  });
+
+  modalTwoFactorVerifyForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(modalTwoFactorVerifyForm);
+    try {
+      await apiRequest("/api/v1/users/2fa/verify/", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({
+          code: formData.get("code"),
+          secret: state.twoFactorSetup?.secret,
+        }),
+      });
+      state.currentUser.two_factor_enabled = true;
+      setMessage("2FA muvaffaqiyatli yoqildi.", "success");
+      openSecuritySettingsModal();
+    } catch (error) {
+      setMessage(error.message || "2FA tekshiruvida xato.", "error");
+    }
+  });
+
+  modalTwoFactorDisableForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(modalTwoFactorDisableForm);
+    try {
+      await apiRequest("/api/v1/users/2fa/disable/", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({
+          current_password: formData.get("current_password"),
+          code: formData.get("code"),
+        }),
+      });
+      state.currentUser.two_factor_enabled = false;
+      setMessage("2FA o'chirildi.", "success");
+      openSecuritySettingsModal();
+    } catch (error) {
+      setMessage(error.message || "2FA o'chirishda xato.", "error");
+    }
+  });
 }
 
 function openContentModal(title, eyebrow, innerHtml) {
@@ -1624,6 +1969,36 @@ function openLeaveDetailModal(leave) {
 }
 
 function openNotificationDetailModal(item) {
+  const hasAttachment = item.attachment_url || item.screenshot_url || item.file_url;
+  const attachmentUrl = item.attachment_url || item.screenshot_url || item.file_url;
+  let attachmentHtml = "";
+
+  if (hasAttachment) {
+    if (isImageUrl(attachmentUrl)) {
+      attachmentHtml = `
+        <div class="detail-attachment-preview">
+          <p class="eyebrow">Biriktirma (Rasm)</p>
+          <a href="${attachmentUrl}" target="_blank" class="attachment-link">
+            <img src="${attachmentUrl}" class="attachment-preview-image" alt="Biriktirilgan rasm" />
+          </a>
+          <a href="${attachmentUrl}" target="_blank" class="ghost-btn" download>Yuklab olish</a>
+        </div>
+      `;
+    } else {
+      const fileName = attachmentUrl.split("/").pop() || "Fayl";
+      attachmentHtml = `
+        <div class="detail-attachment-preview">
+          <p class="eyebrow">Biriktirma (Fayl)</p>
+          <div class="file-attachment-box">
+            <span class="file-icon">📄</span>
+            <span class="file-name">${escapeHtml(fileName)}</span>
+          </div>
+          <a href="${attachmentUrl}" target="_blank" class="ghost-btn" download>Faylni yuklab olish</a>
+        </div>
+      `;
+    }
+  }
+
   openContentModal(
     item.title || t("collection_title_notifications"),
     t("collection_title_notifications"),
@@ -1635,7 +2010,7 @@ function openNotificationDetailModal(item) {
       ["ID", item.id || "-"],
       ["Sana", formatDate(item.created_at)],
       ["Reference", item.reference_type || "-"],
-    ])
+    ]) + attachmentHtml
   );
 }
 
@@ -1996,6 +2371,37 @@ function finalizeAuthenticatedSession(payload) {
   resetPendingLogin();
   setAuthUi(true);
   applyRoleBasedUi();
+
+  // Show welcome toast notification
+  showWelcomeToast(payload.data.user.full_name || payload.data.user.username);
+}
+
+function showWelcomeToast(userName) {
+  // Create welcome toast
+  const toast = document.createElement("div");
+  toast.className = "welcome-toast";
+  toast.innerHTML = `
+    <div class="welcome-toast-content">
+      <span class="welcome-toast-icon">👋</span>
+      <div class="welcome-toast-text">
+        <strong>Assalomu alaykum, ${escapeHtml(userName)}!</strong>
+        <span>Bildirishnomalar, hisobotlar va arizalar bo'yicha umumiy holat shu yerda jamlanadi.</span>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(toast);
+
+  // Animate in
+  requestAnimationFrame(() => {
+    toast.classList.add("show");
+  });
+
+  // Remove after 5 seconds
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 5000);
 }
 
 function openVerificationStep(payload) {
@@ -2457,17 +2863,27 @@ function renderNotifications() {
 
   notificationsList.innerHTML = filteredNotifications
     .map(
-      (item) => `
-        <div class="feed-item ${item.is_read ? "" : "unread-item"}">
-          <strong>${item.title}</strong>
-          <span>${item.message}</span>
-          <small>${item.type} - ${formatDate(item.created_at)}</small>
+      (item) => {
+        const hasAttachment = item.attachment_url || item.screenshot_url || item.file_url;
+        const attachmentIcon = hasAttachment ? `<span class="attachment-indicator" title="Biriktirma bor">📎</span>` : "";
+        const thumbnail = hasAttachment && isImageUrl(item.attachment_url || item.screenshot_url || item.file_url)
+          ? `<img src="${item.attachment_url || item.screenshot_url || item.file_url}" class="notification-thumbnail" alt="Biriktirma" loading="lazy" />`
+          : "";
+        return `
+        <div class="feed-item ${item.is_read ? "" : "unread-item"} ${hasAttachment ? "has-attachment" : ""}">
+          ${thumbnail}
+          <div class="notification-content">
+            <strong>${escapeHtml(item.title)} ${attachmentIcon}</strong>
+            <span>${escapeHtml(item.message)}</span>
+            <small>${item.type} - ${formatDate(item.created_at)}</small>
+          </div>
           <div class="inline-actions">
-            <button class="ghost-btn small-btn mark-read-btn" data-id="${item.id}" type="button">Mark read</button>
+            <button class="ghost-btn small-btn mark-read-btn" data-id="${item.id}" type="button">O'qilgan deb belgilash</button>
             <button class="ghost-btn small-btn notification-detail-btn" data-id="${item.id}" type="button">${t("open_details")}</button>
           </div>
         </div>
-      `
+      `;
+      }
     )
     .join("");
 
@@ -2495,14 +2911,17 @@ function renderAdminDashboard() {
   adminActiveReportsValue.textContent = String(data?.employees?.active_reports || 0);
 
   const pending = data?.pending_approvals || [];
+  // Store pending approvals in state for dashboard cards
+  state.pendingApprovals = pending;
+
   adminPendingList.innerHTML = pending.length
     ? pending
         .map(
           (item) => `
-            <button type="button" class="feed-item feed-item-button admin-pending-detail-btn" data-report-id="${item.id}">
-              <strong>${item.report_number}</strong>
-              <span>${item.title}</span>
-              <small>${item.status} - ${item.created_by__full_name}</small>
+            <button type="button" class="feed-item feed-item-button admin-pending-detail-btn" data-report-id="${item.id}" data-item-type="${item.item_type || 'report'}">
+              <strong>${item.report_number || item.leave_number || item.id}</strong>
+              <span>${item.title || item.reason || 'Noma\'lum'}</span>
+              <small>${item.status} - ${item.created_by__full_name || item.employee_name || '-'}</small>
             </button>
           `
         )
@@ -2511,10 +2930,98 @@ function renderAdminDashboard() {
 
   document.querySelectorAll(".admin-pending-detail-btn").forEach((button) => {
     button.addEventListener("click", () => {
-      const report = state.reports.find((item) => item.id === button.dataset.reportId);
-      if (report) openReportDetailModal(report);
+      const itemId = button.dataset.reportId;
+      const itemType = button.dataset.itemType;
+
+      if (itemType === 'leave') {
+        const leave = state.leaves.find((item) => item.id === itemId);
+        if (leave) openLeaveDetailModal(leave);
+      } else {
+        const report = state.reports.find((item) => item.id === itemId);
+        if (report) openReportDetailModal(report);
+      }
     });
   });
+
+  // Render pending items in dashboard cards
+  renderPendingItemsInDashboard();
+}
+
+function renderPendingItemsInDashboard() {
+  const role = state.currentUser?.role || "";
+  const isManager = ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role);
+  const userId = state.currentUser?.id;
+
+  // For managers: use pending approvals from admin dashboard
+  // For regular users: use their own leaves and reports
+  let pendingLeaves = [];
+  let pendingReports = [];
+
+  if (isManager) {
+    const pending = state.pendingApprovals || [];
+    pendingLeaves = pending.filter(item => item.item_type === 'leave' || item.leave_type);
+    pendingReports = pending.filter(item => !item.item_type || item.item_type === 'report' || item.report_number);
+  } else {
+    // Regular users see their own pending items
+    pendingLeaves = state.leaves.filter(l =>
+      l.employee_id === userId &&
+      ['PENDING_L1', 'PENDING_L2', 'PENDING_L3', 'PENDING_L4'].includes(l.status)
+    );
+    pendingReports = state.reports.filter(r =>
+      r.created_by === userId &&
+      ['DRAFT', 'PENDING_L1', 'PENDING_L2', 'PENDING_L3', 'PENDING_L4', 'REVISION'].includes(r.status)
+    );
+  }
+
+  // Render pending leaves in "Yangi arizalar" card
+  const pendingLeavesList = document.getElementById('pendingLeavesList');
+  if (pendingLeavesList) {
+    pendingLeavesList.innerHTML = pendingLeaves.length
+      ? pendingLeaves.slice(0, 3).map(item => `
+          <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="leave">
+            <span class="pending-title">${escapeHtml(item.reason || 'Ariza')}</span>
+            <span class="pending-meta">${item.status} - ${isManager ? (item.employee_name || '-') : 'Sizning arizangiz'}</span>
+          </button>
+        `).join('')
+      : '<div class="dashboard-pending-empty">Kutilayotgan ariza yo\'q</div>';
+
+    // Add click handlers
+    pendingLeavesList.querySelectorAll('.dashboard-pending-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const leave = state.leaves.find(l => l.id === btn.dataset.id);
+        if (leave) openLeaveDetailModal(leave);
+      });
+    });
+  }
+
+  // Render pending reports in "Mening hisobotlarim" card
+  const pendingReportsList = document.getElementById('pendingReportsDashboardList');
+  if (pendingReportsList) {
+    pendingReportsList.innerHTML = pendingReports.length
+      ? pendingReports.slice(0, 3).map(item => `
+          <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="report">
+            <span class="pending-title">${escapeHtml(item.title || item.report_number || 'Hisobot')}</span>
+            <span class="pending-meta">${item.status} - ${isManager ? (item.created_by__full_name || '-') : 'Sizning hisobotingiz'}</span>
+          </button>
+        `).join('')
+      : '<div class="dashboard-pending-empty">Kutilayotgan hisobot yo\'q</div>';
+
+    // Add click handlers
+    pendingReportsList.querySelectorAll('.dashboard-pending-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const report = state.reports.find(r => r.id === btn.dataset.id);
+        if (report) openReportDetailModal(report);
+      });
+    });
+  }
+
+  // Update counts in the cards
+  if (pendingLeavesValue) {
+    pendingLeavesValue.textContent = String(pendingLeaves.length);
+  }
+  if (pendingReportsValue) {
+    pendingReportsValue.textContent = String(pendingReports.length);
+  }
 }
 
 function renderAnalyticsDashboard() {
@@ -2622,6 +3129,11 @@ async function loadReports() {
   const payload = await apiRequest(`/api/v1/reports/${query}`, { headers: getHeaders(false) });
   state.reports = payload.results || [];
   renderReports();
+  // Update dashboard cards for regular users
+  const role = state.currentUser?.role || "";
+  if (!["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
+    renderPendingItemsInDashboard();
+  }
 }
 
 async function loadLeaves() {
@@ -2632,6 +3144,11 @@ async function loadLeaves() {
   const payload = await apiRequest(`/api/v1/leaves/${query}`, { headers: getHeaders(false) });
   state.leaves = payload.results || [];
   renderLeaves();
+  // Update dashboard cards for regular users
+  const role = state.currentUser?.role || "";
+  if (!["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
+    renderPendingItemsInDashboard();
+  }
 }
 
 async function loadAuditLogs() {
@@ -2655,6 +3172,11 @@ async function loadDashboard() {
     );
   }
   renderRecentLists(payload);
+  // Render pending items for regular users (managers get this from admin dashboard)
+  const role = state.currentUser?.role || "";
+  if (!["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
+    renderPendingItemsInDashboard();
+  }
 }
 
 async function loadMe() {
@@ -2810,7 +3332,6 @@ otpForm.addEventListener("submit", async (event) => {
   }
 
   try {
-    setMessage("6 xonali kod tekshirilmoqda...");
     const payload = await apiRequest(
       state.pendingVerificationMethod === "email"
         ? "/api/v1/auth/login/verify-email-otp/"
@@ -2828,7 +3349,6 @@ otpForm.addEventListener("submit", async (event) => {
     finalizeAuthenticatedSession(payload);
     const departmentCount = await loadDepartments();
     await loadAllData();
-    setMessage(`Tasdiqlash yakunlandi. Tizim ochildi, departmentlar: ${departmentCount} ta.`, "success");
   } catch (error) {
     setMessage(error.message || "Tasdiqlash kodini tekshirishda xato bo'ldi.", "error");
   }
@@ -2837,6 +3357,70 @@ otpForm.addEventListener("submit", async (event) => {
 backToLoginButton.addEventListener("click", () => {
   resetPendingLogin();
   setMessage("Login bosqichiga qaytdingiz.", "success");
+});
+
+// Registration form switching
+showRegisterButton?.addEventListener("click", () => {
+  loginCredentialsStep?.classList.add("hidden");
+  registerStep?.classList.remove("hidden");
+});
+
+showLoginButton?.addEventListener("click", () => {
+  registerStep?.classList.add("hidden");
+  loginCredentialsStep?.classList.remove("hidden");
+});
+
+// Registration form submission
+registerForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const fullName = registerFullNameInput?.value.trim();
+  const username = registerUsernameInput?.value.trim();
+  const email = registerEmailInput?.value.trim();
+  const password = registerPasswordInput?.value;
+  const passwordConfirm = registerPasswordConfirmInput?.value;
+
+  if (!fullName || !username || !email || !password || !passwordConfirm) {
+    registerStatusBox.textContent = "Barcha maydonlarni to'ldiring.";
+    registerStatusBox.className = "login-status-box error";
+    return;
+  }
+
+  if (password !== passwordConfirm) {
+    registerStatusBox.textContent = "Parollar mos kelmadi.";
+    registerStatusBox.className = "login-status-box error";
+    return;
+  }
+
+  try {
+    registerStatusBox.textContent = "Ro'yxatdan o'tish...";
+    registerStatusBox.className = "login-status-box";
+
+    await apiRequest("/api/v1/auth/register/", {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        full_name: fullName,
+        username: username,
+        email: email,
+        password: password,
+      }),
+    });
+
+    registerStatusBox.textContent = "Ro'yxatdan o'tdingiz! Endi kiring.";
+    registerStatusBox.className = "login-status-box success";
+
+    // Clear form and switch back to login
+    setTimeout(() => {
+      registerForm.reset();
+      registerStep?.classList.add("hidden");
+      loginCredentialsStep?.classList.remove("hidden");
+      registerStatusBox.textContent = "Ma'lumotlarni kiriting.";
+      registerStatusBox.className = "login-status-box";
+    }, 2000);
+  } catch (error) {
+    registerStatusBox.textContent = error.message || "Ro'yxatdan o'tishda xato.";
+    registerStatusBox.className = "login-status-box error";
+  }
 });
 
 passwordForm.addEventListener("submit", async (event) => {
@@ -3005,27 +3589,82 @@ workflowForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(workflowForm);
   const reportId = String(formData.get("report_id") || "").trim();
+  const action = String(formData.get("action") || "").trim();
+  const comment = String(formData.get("comment") || "").trim();
+
   if (!isUuid(reportId)) {
-    setMessage("Report ID noto'g'ri. Bu maydonga report UUID kiriting.", "error");
+    setMessage("Hisobot ID noto'g'ri. Bu maydonga hisobot UUID kiriting.", "error");
     return;
   }
 
   try {
+    setMessage("Hisobot ma'lumotlari yuklanmoqda...");
+    const report = await getReportDetail(reportId);
+
+    if (!report) {
+      setMessage("Hisobot topilmadi yoki sizda unga kirish huquqi yo'q.", "error");
+      return;
+    }
+
+    const validActions = getValidActionsForStatus(report.status);
+    if (!validActions.includes(action)) {
+      setMessage(`"${action}" harakati ${report.status} holatidagi hisobot uchun mumkin emas. Ruxsat etilgan harakatlar: ${validActions.join(", ")}`, "error");
+      return;
+    }
+
+    if (action === "REJECT" && !comment) {
+      setMessage("Rad etish uchun izoh majburiy.", "error");
+      return;
+    }
+
+    if (action === "REQUEST_REVISION" && !comment) {
+      setMessage("Qayta ko'rib chiqishni so'rash uchun izoh majburiy.", "error");
+      return;
+    }
+
     setMessage("Workflow action bajarilmoqda...");
     await apiRequest(`/api/v1/reports/${reportId}/actions/`, {
       method: "POST",
       headers: getHeaders(),
       body: JSON.stringify({
-        action: formData.get("action"),
-        comment: formData.get("comment"),
+        action: action,
+        comment: comment,
       }),
     });
+    workflowForm.reset();
     await Promise.all([loadReports(), loadDashboard(), loadAuditLogs()]);
-    setMessage("Workflow action bajarildi.", "success");
+    setMessage("Workflow action muvaffaqiyatli bajarildi.", "success");
+
+    // Show rating modal if action was APPROVE and report is now APPROVED
+    if (action === "APPROVE") {
+      const updatedReport = state.reports.find(r => r.id === reportId);
+      if (updatedReport && updatedReport.status === "APPROVED") {
+        // Get approver info
+        const approverInfo = {
+          id: state.currentUser?.id,
+          name: state.currentUser?.full_name || state.currentUser?.username
+        };
+        // Show rating modal for the report owner
+        openRatingModal(updatedReport, "report", approverInfo);
+      }
+    }
   } catch (error) {
     setMessage(error.message || "Workflow action xatoligi.", "error");
   }
 });
+
+function getValidActionsForStatus(status) {
+  const actionMap = {
+    "DRAFT": ["SUBMIT"],
+    "REVISION": ["SUBMIT"],
+    "PENDING_L2": ["APPROVE", "REJECT", "REQUEST_REVISION"],
+    "PENDING_L3": ["APPROVE", "REJECT", "REQUEST_REVISION"],
+    "PENDING_L4": ["APPROVE", "REJECT", "REQUEST_REVISION"],
+    "APPROVED": ["ARCHIVE"],
+    "REJECTED": ["ARCHIVE"],
+  };
+  return actionMap[status] || [];
+}
 
 attachmentForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -3221,16 +3860,29 @@ leaveReviewForm.addEventListener("submit", async (event) => {
 
   try {
     setMessage("Leave action bajarilmoqda...");
+    const action = formData.get("action");
     await apiRequest(`/api/v1/leaves/${leaveId}/review/`, {
       method: "POST",
       headers: getHeaders(),
       body: JSON.stringify({
-        action: formData.get("action"),
+        action: action,
         review_comment: formData.get("review_comment"),
       }),
     });
     await Promise.all([loadLeaves(), loadDashboard(), loadAuditLogs()]);
     setMessage("Leave action bajarildi.", "success");
+
+    // Show rating modal if action was APPROVE and leave is now APPROVED
+    if (action === "APPROVE") {
+      const updatedLeave = state.leaves.find(l => l.id === leaveId);
+      if (updatedLeave && updatedLeave.status === "APPROVED") {
+        const approverInfo = {
+          id: state.currentUser?.id,
+          name: state.currentUser?.full_name || state.currentUser?.username
+        };
+        openRatingModal(updatedLeave, "leave", approverInfo);
+      }
+    }
   } catch (error) {
     setMessage(error.message || "Leave review xatoligi.", "error");
   }
@@ -3314,6 +3966,27 @@ authStateDot?.classList.add("offline");
 setAuthUi(false);
 applyRoleBasedUi();
 resetPendingLogin();
+
+// Auxiliary Drawer functionality (must be defined before profile icons use them)
+const openAuxMenuButton = document.getElementById("openAuxMenuButton");
+const auxiliaryDrawer = document.getElementById("auxiliaryDrawer");
+const auxiliaryDrawerBackdrop = document.getElementById("auxiliaryDrawerBackdrop");
+const closeAuxiliaryDrawer = document.getElementById("closeAuxiliaryDrawer");
+const auxTabs = document.querySelectorAll(".aux-tab");
+const auxPanels = document.querySelectorAll(".aux-panel");
+
+function openAuxiliaryDrawer() {
+  auxiliaryDrawer?.classList.remove("hidden");
+  auxiliaryDrawerBackdrop?.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeAuxiliaryDrawerFunc() {
+  auxiliaryDrawer?.classList.add("hidden");
+  auxiliaryDrawerBackdrop?.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
 profileMenuButton?.addEventListener("click", (event) => {
   event.stopPropagation();
   toggleProfileMenu();
@@ -3321,6 +3994,56 @@ profileMenuButton?.addEventListener("click", (event) => {
 profileDropdown?.addEventListener("click", (event) => {
   event.stopPropagation();
 });
+
+// Profile quick icons functionality
+const profileUserIcon = document.getElementById("profileUserIcon");
+const profileCalendarIcon = document.getElementById("profileCalendarIcon");
+const profileMenuIcon = document.getElementById("profileMenuIcon");
+const profileSignalIcon = document.getElementById("profileSignalIcon");
+
+profileUserIcon?.addEventListener("click", () => {
+  toggleProfileMenu(false);
+  openSectionModal("meSection");
+});
+
+profileCalendarIcon?.addEventListener("click", () => {
+  toggleProfileMenu(false);
+  openAuxiliaryDrawer();
+  // Switch to calendar tab
+  auxTabs.forEach((t) => t.classList.remove("active"));
+  document.querySelector('[data-aux-tab="calendar"]')?.classList.add("active");
+  auxPanels.forEach((panel) => {
+    panel.classList.toggle("hidden", panel.id !== "auxCalendarPanel");
+  });
+});
+
+profileMenuIcon?.addEventListener("click", () => {
+  toggleProfileMenu(false);
+  openAuxiliaryDrawer();
+});
+
+profileSignalIcon?.addEventListener("click", () => {
+  toggleProfileMenu(false);
+  // Show connection status toast
+  setMessage("Serverga ulanish faol", "success");
+});
+
+// Auxiliary drawer event listeners
+openAuxMenuButton?.addEventListener("click", openAuxiliaryDrawer);
+closeAuxiliaryDrawer?.addEventListener("click", closeAuxiliaryDrawerFunc);
+auxiliaryDrawerBackdrop?.addEventListener("click", closeAuxiliaryDrawerFunc);
+
+auxTabs?.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    auxTabs.forEach((t) => t.classList.remove("active"));
+    tab.classList.add("active");
+    const target = tab.dataset.auxTab;
+    auxPanels.forEach((panel) => {
+      panel.classList.toggle("hidden", panel.id !== `aux${target.charAt(0).toUpperCase() + target.slice(1)}Panel`);
+    });
+  });
+});
+
 createMenuButton?.addEventListener("click", (event) => {
   event.stopPropagation();
   toggleCreateMenu();
@@ -3420,6 +4143,234 @@ navLinks.forEach((button) => {
     openSectionModal(button.dataset.target, button.textContent.trim());
   });
 });
+
+// Bottom Section Navigation event listeners
+document.querySelectorAll(".bottom-section-nav .section-nav-btn").forEach((button) => {
+  button.addEventListener("click", () => {
+    // Remove active from all nav buttons
+    document.querySelectorAll(".bottom-section-nav .section-nav-btn").forEach((btn) => btn.classList.remove("active"));
+    button.classList.add("active");
+    
+    const targetId = button.dataset.target;
+    if (targetId) {
+      const section = document.getElementById(targetId);
+      if (section) {
+        // Hide all sections first
+        document.querySelectorAll(".app-section").forEach((sec) => {
+          if (!sec.classList.contains("hidden")) {
+            sec.classList.add("hidden");
+          }
+        });
+        // Show target section
+        section.classList.remove("hidden");
+        // Scroll to section
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  });
+});
+
+// Rating Modal functionality
+const ratingModal = document.getElementById("ratingModal");
+const ratingOverlay = document.getElementById("ratingOverlay");
+const ratingClose = document.getElementById("ratingClose");
+const ratingForm = document.getElementById("ratingForm");
+const ratingStars = document.getElementById("ratingStars");
+const ratingValue = document.getElementById("ratingValue");
+const ratingHint = document.getElementById("ratingHint");
+const submitRatingBtn = document.getElementById("submitRatingBtn");
+const skipRatingBtn = document.getElementById("skipRatingBtn");
+
+let pendingRatingItem = null;
+
+function openRatingModal(item, itemType, approverInfo) {
+  pendingRatingItem = { item, itemType };
+  document.getElementById("ratingItemId").value = item.id;
+  document.getElementById("ratingItemType").value = itemType;
+  document.getElementById("ratingApproverId").value = approverInfo?.id || "";
+
+  const itemName = itemType === "leave" ? item.reason : (item.title || item.report_number);
+  document.getElementById("ratingItemInfo").textContent = `${itemType === "leave" ? "Ariza" : "Hisobot"}: ${itemName}`;
+  document.getElementById("ratingApproverInfo").textContent = `Tasdiqlovchi: ${approverInfo?.name || "Noma'lum"}`;
+
+  ratingValue.value = "0";
+  setRatingStars(0);
+  ratingHint.textContent = "Bahoni tanlang";
+  submitRatingBtn.disabled = true;
+  ratingForm.reset();
+
+  ratingModal?.classList.remove("hidden");
+}
+
+function closeRatingModal() {
+  ratingModal?.classList.add("hidden");
+  pendingRatingItem = null;
+}
+
+function setRatingStars(rating) {
+  const stars = ratingStars?.querySelectorAll(".star-btn-large");
+  stars?.forEach((star, index) => {
+    if (index < rating) {
+      star.classList.add("selected");
+      star.textContent = "★";
+    } else {
+      star.classList.remove("selected");
+      star.textContent = "☆";
+    }
+  });
+}
+
+ratingStars?.addEventListener("click", (event) => {
+  const button = event.target.closest(".star-btn-large");
+  if (!button) return;
+  const rating = parseInt(button.dataset.rating, 10);
+  ratingValue.value = rating;
+  setRatingStars(rating);
+  ratingHint.textContent = `${rating} yulduz`;
+  submitRatingBtn.disabled = false;
+});
+
+ratingClose?.addEventListener("click", closeRatingModal);
+ratingOverlay?.addEventListener("click", closeRatingModal);
+skipRatingBtn?.addEventListener("click", closeRatingModal);
+
+ratingForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!ratingValue.value || ratingValue.value === "0") {
+    setMessage("Iltimos, bahoni tanlang", "error");
+    return;
+  }
+
+  const formData = new FormData(ratingForm);
+  const rating = parseInt(formData.get("rating"), 10);
+  const comment = formData.get("comment") || "";
+  const itemId = formData.get("item_id");
+  const itemType = formData.get("item_type");
+
+  try {
+    // Submit rating to backend
+    await apiRequest("/api/v1/ratings/", {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        item_id: itemId,
+        item_type: itemType,
+        rating: rating,
+        comment: comment,
+        approver_id: formData.get("approver_id"),
+      }),
+    });
+
+    // Auto-archive the item
+    await archiveItem(itemId, itemType);
+
+    setMessage("Baholash saqlandi va arxivga o'tkazildi", "success");
+    closeRatingModal();
+
+    // Refresh lists
+    await Promise.all([
+      itemType === "leave" ? loadLeaves() : loadReports(),
+      loadDashboard(),
+      loadAuditLogs(),
+    ]);
+  } catch (error) {
+    setMessage(error.message || "Baholash saqlashda xato", "error");
+  }
+});
+
+async function archiveItem(itemId, itemType) {
+  try {
+    const endpoint = itemType === "leave"
+      ? `/api/v1/leaves/${itemId}/archive/`
+      : `/api/v1/reports/${itemId}/archive/`;
+
+    await apiRequest(endpoint, {
+      method: "POST",
+      headers: getHeaders(),
+    });
+  } catch (error) {
+    console.error("Arxivlash xatosi:", error);
+  }
+}
+
+// Function to check if item needs rating after approval
+function needsRatingAfterApproval(item, itemType, approverRole) {
+  // Check if approver is DEPT_HEAD, UNIT_HEAD, or DIRECTOR
+  const isManagerApproval = ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(approverRole);
+  // Check if final status is APPROVED
+  const isFinalApproval = item.status === "APPROVED";
+
+  return isManagerApproval && isFinalApproval;
+}
+
+// CSS for rating stars
+const ratingStyles = `
+.rating-stars-large {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.star-btn-large {
+  width: 44px;
+  height: 44px;
+  font-size: 28px;
+  color: #94a3b8;
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.star-btn-large:hover,
+.star-btn-large.selected {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+  transform: scale(1.05);
+}
+
+.rating-info-box {
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.rating-item-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.rating-approver-name {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.rating-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.char-count {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: right;
+  display: block;
+  margin-top: 4px;
+}
+`;
+
+// Inject styles
+const styleSheet = document.createElement("style");
+styleSheet.textContent = ratingStyles;
+document.head.appendChild(styleSheet);
 feedbackStars?.querySelectorAll(".star-btn").forEach((button) => {
   button.addEventListener("click", () => setFeedbackRating(button.dataset.rating));
 });
@@ -3515,3 +4466,92 @@ setFeedbackRating(0);
 applyTranslations();
 bindDashboardDrilldowns();
 updateFeedbackAvailability();
+
+// Theme toggle functionality
+const themeToggleButton = document.getElementById("themeToggleButton");
+const themeIconSun = document.getElementById("themeIconSun");
+const themeIconMoon = document.getElementById("themeIconMoon");
+
+function initTheme() {
+  const savedTheme = window.localStorage.getItem("hrmm_theme") || "light";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  updateThemeIcons(savedTheme);
+}
+
+function updateThemeIcons(theme) {
+  if (theme === "dark") {
+    themeIconSun?.classList.add("hidden");
+    themeIconMoon?.classList.remove("hidden");
+  } else {
+    themeIconSun?.classList.remove("hidden");
+    themeIconMoon?.classList.add("hidden");
+  }
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", newTheme);
+  window.localStorage.setItem("hrmm_theme", newTheme);
+  updateThemeIcons(newTheme);
+  setMessage(newTheme === "dark" ? "Tun rejimi yoqildi" : "Kunduz rejimi yoqildi", "info");
+}
+
+themeToggleButton?.addEventListener("click", toggleTheme);
+
+// Initialize theme on load
+initTheme();
+
+// Role-based UI update to include new sidebar items
+function applyRoleBasedUi() {
+  const role = state.currentUser?.role || "";
+  const navVisibility = {
+    homeSection: true,
+    notificationsSection: true,
+    reportsSection: true,
+    leavesSection: role !== "DIRECTOR",
+    usersSection: ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role),
+    institutionsSection: ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role),
+  };
+
+  navLinks.forEach((button) => {
+    const isVisible = navVisibility[button.dataset.target] !== false;
+    button.classList.toggle("hidden", !isVisible);
+  });
+
+  const usersSection = document.getElementById("usersSection");
+  const leavesSection = document.getElementById("leavesSection");
+  usersSection?.classList.toggle("hidden", !["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role));
+  leavesSection?.classList.toggle("hidden", role === "DIRECTOR");
+  createMenuItems.forEach((button) => {
+    const action = button.dataset.createAction;
+    // All roles can see all create menu items
+    const allowed = true;
+    button.classList.toggle("hidden", !allowed);
+  });
+}
+
+// Workflow form action select handler for comment hint
+const workflowActionSelect = document.getElementById("workflowActionSelect");
+const workflowComment = document.getElementById("workflowComment");
+const commentHint = document.getElementById("commentHint");
+
+function updateCommentHint() {
+  const action = workflowActionSelect?.value;
+  if (action === "REJECT" || action === "REQUEST_REVISION") {
+    commentHint.textContent = "(majburiy)";
+    workflowComment?.setAttribute("required", "true");
+    workflowComment?.setAttribute("placeholder", "Rad etish sababini yoki qayta ko'rib chiqish talablarini yozing...");
+  } else if (action === "APPROVE") {
+    commentHint.textContent = "(ixtiyoriy, tavsiya etiladi)";
+    workflowComment?.removeAttribute("required");
+    workflowComment?.setAttribute("placeholder", "Tasdiqlash izohi (ixtiyoriy)...");
+  } else {
+    commentHint.textContent = "(ixtiyoriy)";
+    workflowComment?.removeAttribute("required");
+    workflowComment?.setAttribute("placeholder", "Tasdiqlash yoki rad etish izohi...");
+  }
+}
+
+workflowActionSelect?.addEventListener("change", updateCommentHint);
+updateCommentHint();

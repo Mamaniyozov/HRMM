@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
   </head>
   <body>
     <section id="loginView" class="login-view">
@@ -55,10 +55,10 @@
                 <strong id="loginCurrentLanguageLabel">O'zbek tili</strong>
               </button>
               <div id="loginLanguageDropdown" class="login-language-dropdown hidden" role="menu">
-                <button type="button" class="login-language-option" data-language="uz">O'zbek tili</button>
-                <button type="button" class="login-language-option" data-language="ru">Rus tili</button>
-                <button type="button" class="login-language-option" data-language="en">Ingliz tili</button>
-                <button type="button" class="login-language-option" data-language="tr">Turk tili</button>
+                <button type="button" class="login-language-option" data-language="uz">O'zbekcha</button>
+                <button type="button" class="login-language-option" data-language="ru">Русский</button>
+                <button type="button" class="login-language-option" data-language="en">English</button>
+                <button type="button" class="login-language-option" data-language="tr">Türkçe</button>
               </div>
             </div>
           </div>
@@ -81,6 +81,45 @@
             <div id="loginStatusBox" class="login-status-box">Login uchun tayyor.</div>
             <div id="loginFootnote" class="session-footnote">
               Tizimga kirgandan keyin asosiy boshqaruv paneli avtomatik ochiladi.
+            </div>
+            <div class="login-switch">
+              <span id="loginSwitchText">Hisobingiz yo'qmi?</span>
+              <button id="showRegisterButton" type="button" class="ghost-btn">Ro'yxatdan o'tish</button>
+            </div>
+          </div>
+
+          <div id="registerStep" class="hidden">
+            <div class="panel-heading">
+              <p id="registerAuthEyebrow" class="eyebrow">Registration</p>
+              <h3 id="registerAuthTitle">Yangi hisob yaratish</h3>
+            </div>
+            <form id="registerForm" class="form-grid">
+              <label>
+                <span id="registerFullNameLabel">To'liq ism</span>
+                <input id="registerFullNameInput" name="full_name" type="text" placeholder="Ism familiya" required />
+              </label>
+              <label>
+                <span id="registerUsernameLabel">Username</span>
+                <input id="registerUsernameInput" name="username" type="text" placeholder="Username tanlang" required />
+              </label>
+              <label>
+                <span id="registerEmailLabel">Email</span>
+                <input id="registerEmailInput" name="email" type="email" placeholder="Email manzil" required />
+              </label>
+              <label>
+                <span id="registerPasswordLabel">Parol</span>
+                <input id="registerPasswordInput" name="password" type="password" placeholder="Parol yarating" required />
+              </label>
+              <label>
+                <span id="registerPasswordConfirmLabel">Parolni tasdiqlash</span>
+                <input id="registerPasswordConfirmInput" name="password_confirm" type="password" placeholder="Parolni qayta kiriting" required />
+              </label>
+              <button id="registerSubmitButton" type="submit" class="primary-btn">Ro'yxatdan o'tish</button>
+            </form>
+            <div id="registerStatusBox" class="login-status-box">Ma'lumotlarni kiriting.</div>
+            <div class="login-switch">
+              <span id="registerSwitchText">Hisobingiz bormi?</span>
+              <button id="showLoginButton" type="button" class="ghost-btn">Kirish</button>
             </div>
           </div>
 
@@ -167,6 +206,24 @@
             </span>
             <span class="nav-link-label">Hujjatlar</span>
           </button>
+          <button class="nav-link" type="button" data-target="leavesSection">
+            <span class="nav-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+              </svg>
+            </span>
+            <span class="nav-link-label">Arizalar</span>
+          </button>
+          <button class="nav-link" type="button" data-target="usersSection">
+            <span class="nav-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+              </svg>
+            </span>
+            <span class="nav-link-label">Xodimlar</span>
+          </button>
           <button class="nav-link" type="button" data-target="institutionsSection">
             <span class="nav-link-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" role="presentation">
@@ -185,16 +242,38 @@
         <section class="topbar-panel">
           <div class="topbar-searches">
             <label class="search-shell">
-              <span>Global qidiruv</span>
-              <input id="globalSearchInput" type="text" placeholder="Bildirishnoma, report, xodim..." />
+              <span><svg viewBox="0 0 24 24" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:6px;opacity:0.6;"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Global qidiruv</span>
+              <div class="search-input-wrap">
+                <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <input id="globalSearchInput" type="text" placeholder="Bildirishnoma, report, xodim..." />
+              </div>
             </label>
             <label class="search-shell">
-              <span>Holat bo'yicha tezkor filter</span>
-              <input id="globalStatusInput" type="text" placeholder="pending, approved, active..." />
+              <span><svg viewBox="0 0 24 24" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:6px;opacity:0.6;"><path d="M4 7V4h3M4 17v3h3M20 7V4h-3M20 17v3h-3M9 9h6v6H9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Holat bo'yicha tezkor filter</span>
+              <div class="search-input-wrap">
+                <svg viewBox="0 0 24 24" width="16" height="16"><path d="M4 7V4h3M4 17v3h3M20 7V4h-3M20 17v3h-3M9 9h6v6H9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <input id="globalStatusInput" type="text" placeholder="pending, approved, active..." />
+              </div>
             </label>
           </div>
           <div class="topbar-actions">
-            <button id="refreshAllButton" type="button" class="ghost-btn">Yangilash</button>
+            <button id="openAuxMenuButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Qo'shimcha modullar" aria-label="Qo'shimcha modullar">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button id="themeToggleButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Tun/kunduz rejimi" aria-label="Tun/kunduz rejimi">
+              <svg id="themeIconSun" viewBox="0 0 24 24" width="20" height="20">
+                <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+              </svg>
+              <svg id="themeIconMoon" class="hidden" viewBox="0 0 24 24" width="20" height="20">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+              </svg>
+            </button>
+            <button id="refreshAllButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Yangilash" aria-label="Yangilash">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
             <div class="create-menu-shell">
               <button
                 id="createMenuButton"
@@ -227,19 +306,20 @@
               <button
                 id="languageMenuButton"
                 type="button"
-                class="language-chip"
+                class="topbar-btn"
                 aria-haspopup="menu"
                 aria-expanded="false"
                 aria-controls="languageDropdown"
               >
+                <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
                 <span id="languageMenuLabel">Til</span>
                 <strong id="currentLanguageLabel">O'zbek tili</strong>
               </button>
               <div id="languageDropdown" class="language-dropdown hidden" role="menu">
-                <button type="button" class="language-option" data-language="uz">O'zbek tili</button>
-                <button type="button" class="language-option" data-language="ru">Rus tili</button>
-                <button type="button" class="language-option" data-language="en">Ingliz tili</button>
-                <button type="button" class="language-option" data-language="tr">Turk tili</button>
+                <button type="button" class="language-option" data-language="uz">O'zbekcha</button>
+                <button type="button" class="language-option" data-language="ru">Русский</button>
+                <button type="button" class="language-option" data-language="en">English</button>
+                <button type="button" class="language-option" data-language="tr">Türkçe</button>
               </div>
             </div>
             <div class="profile-menu-shell">
@@ -255,6 +335,45 @@
                 <strong id="topbarUserLabel">Mehmon</strong>
               </button>
               <div id="profileDropdown" class="profile-dropdown hidden" role="menu">
+                <!-- Profile Quick Icons Section -->
+                <div class="profile-quick-section">
+                  <div class="profile-status-pill">
+                    <span id="profileStatusDot" class="status-dot online"></span>
+                    <strong id="profileStatusLabel">Online</strong>
+                  </div>
+                  <div class="profile-quick-icons" aria-label="Tezkor profil ikonkalari">
+                    <button id="profileUserIcon" type="button" class="quick-icon-chip" title="Profil">
+                      <svg viewBox="0 0 24 24" role="presentation">
+                        <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <path d="M5 20a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                      </svg>
+                    </button>
+                    <button id="profileCalendarIcon" type="button" class="quick-icon-chip" title="Kalendar">
+                      <svg viewBox="0 0 24 24" role="presentation">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <line x1="16" y1="2" x2="16" y2="6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <line x1="8" y1="2" x2="8" y2="6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <line x1="3" y1="10" x2="21" y2="10" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                      </svg>
+                    </button>
+                    <button id="profileMenuIcon" type="button" class="quick-icon-chip" title="Menyu">
+                      <svg viewBox="0 0 24 24" role="presentation">
+                        <line x1="3" y1="12" x2="21" y2="12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <line x1="3" y1="6" x2="21" y2="6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <line x1="3" y1="18" x2="21" y2="18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                      </svg>
+                    </button>
+                    <button id="profileSignalIcon" type="button" class="quick-icon-chip" title="Ulanish">
+                      <svg viewBox="0 0 24 24" role="presentation">
+                        <path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <path d="M5 12a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <path d="M8 12a4 4 0 0 1 8 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                        <circle cx="12" cy="12" r="1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="profile-dropdown-divider"></div>
                 <button
                   id="meButton"
                   type="button"
@@ -326,50 +445,8 @@
 
         <section id="homeSection" class="dashboard-home app-section">
           <div class="dashboard-home-header">
-            <div>
-              <p class="eyebrow">Uy</p>
-              <h2>Assalomu alaykum, <span id="dashboardWelcomeName">Mehmon</span></h2>
-              <p class="hero-copy">Bildirishnomalar, hisobotlar va arizalar bo'yicha umumiy holat shu yerda jamlanadi.</p>
-            </div>
-            <div class="dashboard-user-note">
-              <div class="status-pill">
-                <span id="authStateDot" class="status-dot"></span>
-                <strong id="authStateLabel">Offline</strong>
-              </div>
-              <div class="dashboard-quick-icons" aria-label="Tezkor holat ikonkalari">
-                <button id="profileRoleIcon" type="button" class="quick-icon-chip" title="Rol">
-                  <svg viewBox="0 0 24 24" role="presentation">
-                    <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                    <path d="M5 20a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                  </svg>
-                </button>
-                <button id="profileDeptIcon" type="button" class="quick-icon-chip" title="Bo'lim">
-                  <svg viewBox="0 0 24 24" role="presentation">
-                    <path d="M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                    <path d="M6 20V8h12v12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                    <path d="M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>
-                    <path d="M8 8V5h8v3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                  </svg>
-                </button>
-                <button id="profileUnitIcon" type="button" class="quick-icon-chip" title="Birlik">
-                  <svg viewBox="0 0 24 24" role="presentation">
-                    <path d="M4 7h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                    <path d="M4 12h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                    <path d="M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                  </svg>
-                </button>
-                <button id="apiBaseIcon" type="button" class="quick-icon-chip" title="Gateway">
-                  <svg viewBox="0 0 24 24" role="presentation">
-                    <path d="M5 12a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                    <path d="M8 12a4 4 0 0 1 8 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                    <path d="M12 16h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>
-                  </svg>
-                </button>
-              </div>
-              <small id="currentUserLabel" class="sr-only">-</small>
-            </div>
+            <div id="homeQuickActions" class="toolbar"></div>
           </div>
-
           <div class="dashboard-card-grid">
             <article class="dashboard-stat-card">
               <div class="dashboard-stat-head">
@@ -377,6 +454,9 @@
                 <span class="stat-icon blue">A</span>
               </div>
               <strong id="pendingLeavesValue">0</strong>
+              <div class="dashboard-pending-list" id="pendingLeavesList">
+                <div class="dashboard-pending-empty">Kutilayotgan ariza yo'q</div>
+              </div>
               <div class="dashboard-chip-row">
                 <button class="dashboard-filter-chip active" type="button" data-activity-filter="requests">Hozir yaratilgan ariza</button>
               </div>
@@ -388,6 +468,9 @@
                 <span class="stat-icon red">H</span>
               </div>
               <strong id="totalReportsValue">0</strong>
+              <div class="dashboard-pending-list" id="pendingReportsDashboardList">
+                <div class="dashboard-pending-empty">Kutilayotgan hisobot yo'q</div>
+              </div>
               <div class="dashboard-chip-row">
                 <button class="dashboard-filter-chip" type="button" data-activity-filter="reports">Hisobotlar</button>
                 <button class="dashboard-filter-chip" type="button" data-activity-filter="all">Hammasi</button>
@@ -419,59 +502,18 @@
             </article>
           </div>
 
-          <div class="dashboard-main-grid">
-            <section class="dashboard-history-panel">
-              <div class="panel-heading inline">
-                <div>
-                  <p class="eyebrow">Faoliyat tarixi</p>
-                  <h3>Userlar nima qilayotganini ko'rish</h3>
-                </div>
-                <div class="toolbar dashboard-toolbar">
-                  <button class="dashboard-filter-chip active" type="button" data-activity-filter="all">Hammasi</button>
-                  <button class="dashboard-filter-chip" type="button" data-activity-filter="requests">Arizalar</button>
-                  <button class="dashboard-filter-chip" type="button" data-activity-filter="reports">Hisobotlar</button>
-                </div>
-              </div>
-              <div id="activityHistoryList" class="activity-history-grid"></div>
-            </section>
-
-            <aside class="dashboard-side-stack">
-              <section class="dashboard-feedback-panel">
-                <div class="panel-heading">
-                  <p class="eyebrow">Baholash</p>
-                  <h3>Fikr va kommentariya</h3>
-                </div>
-                <form id="feedbackForm" class="form-grid">
-                  <div class="feedback-stars" id="feedbackStars" aria-label="Baholash yulduzlari">
-                    <button type="button" class="star-btn" data-rating="1">★</button>
-                    <button type="button" class="star-btn" data-rating="2">★</button>
-                    <button type="button" class="star-btn" data-rating="3">★</button>
-                    <button type="button" class="star-btn" data-rating="4">★</button>
-                    <button type="button" class="star-btn" data-rating="5">★</button>
-                  </div>
-                  <input id="feedbackRatingValue" name="rating" type="hidden" value="0" />
-                  <label>
-                    <span>Kommentariya</span>
-                    <textarea id="feedbackCommentInput" name="comment" rows="4" placeholder="Bu bo'lim haqida fikringizni yozing..." required></textarea>
-                  </label>
-                  <button type="submit" class="primary-btn">Yuborish</button>
-                </form>
-                <div id="feedbackList" class="feedback-list"></div>
-              </section>
-            </aside>
-          </div>
         </section>
 
-        <section class="workspace-grid">
+        <section id="securitySection" class="workspace-grid app-section hidden">
           <div class="panel">
             <div class="panel-heading">
-              <p class="eyebrow">Security</p>
-              <h3>Change password</h3>
+              <p class="eyebrow">Xavfsizlik</p>
+              <h3>Parolni o'zgartirish</h3>
             </div>
             <form id="passwordForm" class="form-grid">
-              <label><span>Current password</span><input name="current_password" type="password" required /></label>
-              <label><span>New password</span><input name="new_password" type="password" required /></label>
-              <button type="submit" class="ghost-btn">Update password</button>
+              <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
+              <label><span>Yangi parol</span><input name="new_password" type="password" required /></label>
+              <button type="submit" class="ghost-btn">Parolni yangilash</button>
             </form>
             <div class="security-divider"></div>
             <div class="panel-heading">
@@ -480,7 +522,7 @@
             </div>
             <div class="two-factor-status-row">
               <span>Holat</span>
-              <strong id="twoFactorStatusLabel" class="pill role">Inactive</strong>
+              <strong id="twoFactorStatusLabel" class="pill role">Nofaol</strong>
             </div>
             <div class="inline-actions auth-actions">
               <button id="setupTwoFactorButton" type="button" class="primary-btn">QR yaratish</button>
@@ -510,9 +552,9 @@
               </form>
             </div>
             <form id="twoFactorDisableForm" class="form-grid compact-form hidden">
-              <label><span>Current password</span><input name="current_password" type="password" required /></label>
+              <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
               <label>
-                <span>Authenticator code</span>
+                <span>Authenticator kodi</span>
                 <input
                   name="code"
                   type="text"
@@ -523,15 +565,15 @@
                   required
                 />
               </label>
-              <button type="submit" class="ghost-btn">2FA ni o‘chirish</button>
+              <button type="submit" class="ghost-btn">2FA ni o'chirish</button>
             </form>
           </div>
 
-          <div id="notificationsSection" class="panel app-section">
+          <div id="notificationsSection" class="panel app-section hidden">
             <div class="panel-heading inline">
               <div>
-                <p class="eyebrow">Notifications</p>
-                <h3>Inbox</h3>
+                <p class="eyebrow">Bildirishnomalar</p>
+                <h3>Kiruvchi xabarlar</h3>
               </div>
               <div class="toolbar">
                 <input id="notificationSearchInput" type="text" placeholder="Bildirishnoma qidirish..." />
@@ -540,31 +582,31 @@
                   <option value="unread">O'qilmagan</option>
                   <option value="read">O'qilgan</option>
                 </select>
-                <button id="refreshNotifications" class="ghost-btn" type="button">Refresh inbox</button>
-                <button id="readAllNotifications" class="ghost-btn" type="button">Read all</button>
+                <button id="refreshNotifications" class="ghost-btn" type="button">Xabarlarni yangilash</button>
+                <button id="readAllNotifications" class="ghost-btn" type="button">Hammasini o'qilgan deb belgilash</button>
               </div>
             </div>
             <div id="notificationsList" class="feed-list"></div>
           </div>
         </section>
 
-        <section class="panel">
+        <section id="dashboardSection" class="panel app-section">
           <div class="panel-heading inline">
             <div>
-              <p class="eyebrow">Dashboard</p>
-              <h3>Operational summary</h3>
+              <p class="eyebrow" data-translate="section_dashboard">Asosiy panel</p>
+              <h3 data-translate="section_summary">Umumiy xulosa</h3>
             </div>
-            <button id="refreshDashboard" class="ghost-btn" type="button">Refresh dashboard</button>
+            <button id="refreshDashboard" class="ghost-btn" type="button" data-translate="refresh">Panelni yangilash</button>
           </div>
           <div class="summary-grid">
-            <div class="summary-card"><span>Draft reports</span><strong id="draftReportsValue">0</strong></div>
-            <div class="summary-card"><span>Approved reports</span><strong id="approvedReportsValue">0</strong></div>
-            <div class="summary-card"><span>Rejected reports</span><strong id="rejectedReportsValue">0</strong></div>
-            <div class="summary-card"><span>Approved leaves</span><strong id="approvedLeavesValue">0</strong></div>
+            <div class="summary-card"><span>Qoralama hisobotlar</span><strong id="draftReportsValue">0</strong></div>
+            <div class="summary-card"><span>Tasdiqlangan hisobotlar</span><strong id="approvedReportsValue">0</strong></div>
+            <div class="summary-card"><span>Rad etilgan hisobotlar</span><strong id="rejectedReportsValue">0</strong></div>
+            <div class="summary-card"><span>Tasdiqlangan arizalar</span><strong id="approvedLeavesValue">0</strong></div>
           </div>
           <div class="dual-feed">
-            <div class="feed-card"><h4>Recent reports</h4><div id="recentReportsList" class="feed-list"></div></div>
-            <div class="feed-card"><h4>Recent leave requests</h4><div id="recentLeavesList" class="feed-list"></div></div>
+            <div class="feed-card"><h4>So'nggi hisobotlar</h4><div id="recentReportsList" class="feed-list"></div></div>
+            <div class="feed-card"><h4>So'nggi arizalar</h4><div id="recentLeavesList" class="feed-list"></div></div>
           </div>
         </section>
 
@@ -572,18 +614,18 @@
           <div class="panel">
             <div class="panel-heading inline">
               <div>
-                <p class="eyebrow">Muassasalar</p>
-                <h3>Managerial operations</h3>
+                <p class="eyebrow" data-translate="section_institutions">Muassasalar</p>
+                <h3 data-translate="section_operations">Boshqaruv operatsiyalari</h3>
               </div>
-              <button id="refreshAdminDashboard" class="ghost-btn" type="button">Refresh admin</button>
+              <button id="refreshAdminDashboard" class="ghost-btn" type="button">Admin panelni yangilash</button>
             </div>
             <div class="summary-grid compact-grid">
-              <div class="summary-card"><span>Total employees</span><strong id="adminEmployeesValue">0</strong></div>
-              <div class="summary-card"><span>On leave</span><strong id="adminOnLeaveValue">0</strong></div>
-              <div class="summary-card"><span>Active reports</span><strong id="adminActiveReportsValue">0</strong></div>
+              <div class="summary-card"><span>Jami xodimlar</span><strong id="adminEmployeesValue">0</strong></div>
+              <div class="summary-card"><span>Ta'tilda</span><strong id="adminOnLeaveValue">0</strong></div>
+              <div class="summary-card"><span>Faol hisobotlar</span><strong id="adminActiveReportsValue">0</strong></div>
             </div>
             <div class="feed-card">
-              <h4>Pending approvals</h4>
+              <h4>Kutilayotgan tasdiqlar</h4>
               <div id="adminPendingList" class="feed-list"></div>
             </div>
           </div>
@@ -591,21 +633,21 @@
           <div class="panel">
             <div class="panel-heading inline">
               <div>
-                <p class="eyebrow">Muassasalar tahlili</p>
-                <h3>Department comparison</h3>
+                <p class="eyebrow" data-translate="section_analytics">Muassasalar tahlili</p>
+                <h3 data-translate="section_dept_compare">Bo'limlar taqqoslash</h3>
               </div>
               <div class="toolbar">
                 <input id="departmentSearchInput" type="text" placeholder="Muassasa qidirish..." />
-                <button id="refreshAnalyticsDashboard" class="ghost-btn" type="button">Refresh analytics</button>
+                <button id="refreshAnalyticsDashboard" class="ghost-btn" type="button">Analitikani yangilash</button>
               </div>
             </div>
             <div class="summary-grid compact-grid">
-              <div class="summary-card"><span>Total reports</span><strong id="analyticsTotalReportsValue">0</strong></div>
-              <div class="summary-card"><span>Approved</span><strong id="analyticsApprovedReportsValue">0</strong></div>
-              <div class="summary-card"><span>Archived</span><strong id="analyticsArchivedReportsValue">0</strong></div>
+              <div class="summary-card"><span>Jami hisobotlar</span><strong id="analyticsTotalReportsValue">0</strong></div>
+              <div class="summary-card"><span>Tasdiqlangan</span><strong id="analyticsApprovedReportsValue">0</strong></div>
+              <div class="summary-card"><span>Arxivlangan</span><strong id="analyticsArchivedReportsValue">0</strong></div>
             </div>
             <div class="feed-card">
-              <h4>Department comparison</h4>
+              <h4>Bo'limlar taqqoslash</h4>
               <div id="analyticsDepartmentsList" class="feed-list"></div>
             </div>
           </div>
@@ -613,75 +655,84 @@
 
         <section id="usersSection" class="panel app-section">
           <div class="panel-heading inline">
-            <div><p class="eyebrow">Roster</p><h3>IT staff overview</h3></div>
+            <div><p class="eyebrow">Xodimlar ro'yxati</p><h3>IT xodimlar ko'rinishi</h3></div>
             <div class="toolbar">
               <input id="userSearchInput" type="text" placeholder="Xodim qidirish..." />
-              <select id="roleFilter"><option value="">All positions</option><option value="DEVOPS">DevOps</option><option value="IT_ENGINEER">IT Engineer</option><option value="ANDROID_DEV">Android Developer</option><option value="BACKEND_DEV">Backend Developer</option><option value="FRONTEND_DEV">Frontend Developer</option><option value="MANAGER">Manager</option><option value="DIRECTOR">Director</option></select>
-              <select id="levelFilter"><option value="">All levels</option><option value="JUNIOR">Junior</option><option value="MIDDLE">Middle</option><option value="SENIOR">Senior</option></select>
-              <button id="refreshUsers" class="ghost-btn" type="button">Refresh users</button>
+              <select id="roleFilter"><option value="">Barcha lavozimlar</option><option value="DEVOPS">DevOps</option><option value="IT_ENGINEER">IT muhandis</option><option value="ANDROID_DEV">Android dasturchi</option><option value="BACKEND_DEV">Backend dasturchi</option><option value="FRONTEND_DEV">Frontend dasturchi</option><option value="MANAGER">Menejer</option><option value="DIRECTOR">Direktor</option></select>
+              <select id="levelFilter"><option value="">Barcha darajalar</option><option value="JUNIOR">Junior</option><option value="MIDDLE">Middle</option><option value="SENIOR">Senior</option></select>
+              <button id="refreshUsers" class="ghost-btn" type="button">Xodimlarni yangilash</button>
             </div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Employee</th><th>Management role</th><th>IT position</th><th>Level</th><th>Department</th><th>Status</th></tr></thead>
+              <thead><tr><th>Xodim</th><th>Boshqaruv roli</th><th>IT lavozimi</th><th>Daraja</th><th>Bo'lim</th><th>Holat</th></tr></thead>
               <tbody id="usersTableBody"><tr><td colspan="6" class="empty-state">Ma'lumot yuklanmagan</td></tr></tbody>
             </table>
           </div>
         </section>
 
-        <section class="workspace-grid reports-grid app-section">
+        <section id="reportsCreateSection" class="workspace-grid reports-grid app-section">
             <div id="reportCreatePanel" class="panel hidden">
-              <div class="panel-heading"><p class="eyebrow">Reports</p><h3>Create report</h3></div>
+              <div class="panel-heading"><p class="eyebrow">Hisobotlar</p><h3>Hisobot yaratish</h3></div>
               <form id="reportForm" class="form-grid">
-                <label><span>Title</span><input name="title" type="text" placeholder="Quarterly operations summary" required /></label>
-                <label><span>Comment</span><textarea name="summary" rows="4" placeholder="Report haqida qisqa izoh (commit/comment)" required></textarea></label>
-                <label><span>Content</span><textarea name="content" rows="6" placeholder="Detailed report content"></textarea></label>
-                <label><span>Screenshot yoki rasm</span><input name="screenshot" type="file" accept="image/*" /></label>
+                <label><span>Sarlavha</span><input name="title" type="text" placeholder="Choraklik operatsion xulosa" required /></label>
+                <label><span>Izoh</span><textarea name="summary" rows="4" placeholder="Report haqida qisqa izoh (commit/comment)" required></textarea></label>
+                <label><span>Mazmun</span><textarea name="content" rows="6" placeholder="Batafsil report mazmuni"></textarea></label>
+                <label><span>Biriktirma (rasm, skrinshot yoki fayl)</span><input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" /></label>
                 <label>
-                  <span>Department</span>
+                  <span>Bo'lim</span>
                   <select name="department_id" id="reportDepartmentSelect">
                   <option value="">Login qiling (departmentlar yuklanadi)</option>
                 </select>
               </label>
-              <button type="submit" class="primary-btn">Create report</button>
+              <button type="submit" class="primary-btn">Hisobot yaratish</button>
             </form>
             <div class="report-id-helper">
               <div class="report-id-meta">
-                <span>Yangi report UUID</span>
+                <span>Yangi hisobot UUID</span>
                 <strong id="latestReportIdLabel">Hali yaratilmagan</strong>
               </div>
               <div class="inline-actions">
-                <button id="copyLatestReportIdButton" type="button" class="ghost-btn">Copy UUID</button>
+                <button id="copyLatestReportIdButton" type="button" class="ghost-btn">UUID nusxalash</button>
                 <button id="useLatestReportIdButton" type="button" class="ghost-btn">ID ni pastdagi formlarga qo'yish</button>
               </div>
             </div>
           </div>
 
           <div class="panel">
-            <div class="panel-heading"><p class="eyebrow">Workflow</p><h3>Report actions and attachments</h3></div>
+            <div class="panel-heading">
+              <p class="eyebrow" data-translate="section_workflow">Ish jarayoni</p>
+              <h3 data-translate="section_report_actions">Hisobot harakatlari va biriktirmalar</h3>
+            </div>
             <form id="workflowForm" class="form-grid">
-              <label><span>Report ID</span><input name="report_id" type="text" placeholder="Paste report UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
-              <label><span>Action</span><select name="action" required><option value="SUBMIT">Submit</option><option value="APPROVE">Approve</option><option value="REJECT">Reject</option><option value="REQUEST_REVISION">Request revision</option><option value="ARCHIVE">Archive</option></select></label>
-              <label><span>Comment</span><textarea name="comment" rows="4" placeholder="Approval or rejection comment"></textarea></label>
-              <button type="submit" class="primary-btn">Run workflow action</button>
+              <label><span>Hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID sini qo'ying" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
+              <label><span>Harakat</span><select name="action" id="workflowActionSelect" required>
+                <option value="SUBMIT">Yuborish (faqat DRAFT/REVISION)</option>
+                <option value="APPROVE">Tasdiqlash (faqat PENDING)</option>
+                <option value="REJECT">Rad etish (faqat PENDING, izoh majburiy)</option>
+                <option value="REQUEST_REVISION">Qayta ko'rib chiqishni so'rash (faqat PENDING, izoh majburiy)</option>
+                <option value="ARCHIVE">Arxivlash (faqat APPROVED/REJECTED)</option>
+              </select></label>
+              <label><span>Izoh <small id="commentHint" style="color: var(--muted); font-weight: normal;"></small></span><textarea name="comment" id="workflowComment" rows="4" placeholder="Tasdiqlash yoki rad etish izohi"></textarea></label>
+              <button type="submit" class="primary-btn">Ish jarayoni harakatini ishga tushirish</button>
             </form>
             <form id="attachmentForm" class="form-grid compact-form">
-              <label><span>Attachment report ID</span><input name="report_id" type="text" placeholder="Report UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
-              <label><span>File</span><input name="file" type="file" required /></label>
-              <button type="submit" class="ghost-btn">Upload attachment</button>
+              <label><span>Biriktiriladigan hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
+              <label><span>Fayl</span><input name="file" type="file" required /></label>
+              <button type="submit" class="ghost-btn">Biriktirma yuklash</button>
             </form>
             <form id="attachmentToolsForm" class="form-grid compact-form">
-              <label><span>Attachment ID</span><input name="attachment_id" type="text" placeholder="Attachment UUID" required /></label>
+              <label><span>Biriktirma ID</span><input name="attachment_id" type="text" placeholder="Biriktirma UUID" required /></label>
               <div class="inline-actions">
-                <button id="downloadAttachmentButton" type="button" class="ghost-btn">Download attachment</button>
-                <button id="deleteAttachmentButton" type="button" class="ghost-btn">Delete attachment</button>
+                <button id="downloadAttachmentButton" type="button" class="ghost-btn">Biriktirmani yuklash</button>
+                <button id="deleteAttachmentButton" type="button" class="ghost-btn">Biriktirmani o'chirish</button>
               </div>
             </form>
             <form id="reportToolsForm" class="form-grid compact-form">
-              <label><span>Report ID for history/delete</span><input name="report_id" type="text" placeholder="Report UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
+              <label><span>Tarix/o'chirish uchun hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
               <div class="inline-actions">
-                <button id="loadHistoryButton" type="button" class="ghost-btn">Load history</button>
-                <button id="deleteReportButton" type="button" class="ghost-btn">Delete report</button>
+                <button id="loadHistoryButton" type="button" class="ghost-btn">Tarixni yuklash</button>
+                <button id="deleteReportButton" type="button" class="ghost-btn">Hisobotni o'chirish</button>
               </div>
             </form>
           </div>
@@ -689,90 +740,163 @@
 
         <section id="reportsSection" class="panel app-section section-surface reports-surface">
           <div class="panel-heading inline">
-            <div><p class="eyebrow">Reports registry</p><h3>Reports list</h3></div>
+            <div>
+              <p class="eyebrow" data-translate="section_reports_registry">Hisobotlar reyesti</p>
+              <h3 data-translate="section_reports_list">Hisobotlar ro'yxati</h3>
+            </div>
             <div class="toolbar">
-              <input id="reportSearchInput" type="text" placeholder="Report qidirish..." />
-              <select id="reportStatusFilter"><option value="">All statuses</option><option value="DRAFT">Draft</option><option value="PENDING_L2">Pending L2</option><option value="PENDING_L3">Pending L3</option><option value="PENDING_L4">Pending L4</option><option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option><option value="REVISION">Revision</option><option value="ARCHIVED">Archived</option></select>
-              <button id="refreshReports" class="ghost-btn" type="button">Refresh reports</button>
+              <input id="reportSearchInput" type="text" placeholder="Hisobot qidirish..." />
+              <select id="reportStatusFilter"><option value="">Barcha holatlar</option><option value="DRAFT">Qoralama</option><option value="PENDING_L2">L2 kutilmoqda</option><option value="PENDING_L3">L3 kutilmoqda</option><option value="PENDING_L4">L4 kutilmoqda</option><option value="APPROVED">Tasdiqlangan</option><option value="REJECTED">Rad etilgan</option><option value="REVISION">Qayta ko'rib chiqish</option><option value="ARCHIVED">Arxivlangan</option></select>
+              <button id="refreshReports" class="ghost-btn" type="button">Hisobotlarni yangilash</button>
             </div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Report</th><th>Status</th><th>Level</th><th>Department</th><th>Owner</th><th>Created</th></tr></thead>
-              <tbody id="reportsTableBody"><tr><td colspan="6" class="empty-state">Reportlar yuklanmagan</td></tr></tbody>
+              <thead><tr><th>Hisobot</th><th>Holat</th><th>Daraja</th><th>Bo'lim</th><th>Egasi</th><th>Yaratilgan</th></tr></thead>
+              <tbody id="reportsTableBody"><tr><td colspan="6" class="empty-state">Hisobotlar yuklanmagan</td></tr></tbody>
             </table>
           </div>
         </section>
 
         <section id="leavesSection" class="workspace-grid app-section">
             <div class="panel">
-              <div class="panel-heading"><p class="eyebrow">Leave requests</p><h3>Create leave request</h3></div>
+              <div class="panel-heading">
+                <p class="eyebrow" data-translate="section_leaves">Ta'til arizalari</p>
+                <h3 data-translate="section_create_leave">Ta'til arizasi yaratish</h3>
+              </div>
               <form id="leaveForm" class="form-grid">
-                <label><span>Leave type</span><select name="leave_type" required><option value="ANNUAL">Annual</option><option value="SICK">Sick</option><option value="UNPAID">Unpaid</option><option value="MATERNITY">Maternity</option><option value="OTHER">Other</option></select></label>
-                <label><span>Start date</span><input name="start_date" type="date" required /></label>
-                <label><span>End date</span><input name="end_date" type="date" required /></label>
-                <label><span>Reason</span><textarea name="reason" rows="5" placeholder="Leave reason" required></textarea></label>
-                <label><span>Screenshot yoki rasm</span><input name="screenshot" type="file" accept="image/*" /></label>
-                <button type="submit" class="primary-btn">Create leave request</button>
+                <label><span>Ta'til turi</span><select name="leave_type" required><option value="ANNUAL">Yillik</option><option value="SICK">Kasallik</option><option value="UNPAID">To'lanmaydigan</option><option value="MATERNITY">Dekret</option><option value="OTHER">Boshqa</option></select></label>
+                <label><span>Boshlanish sanasi</span><input name="start_date" type="date" required /></label>
+                <label><span>Tugash sanasi</span><input name="end_date" type="date" required /></label>
+                <label><span>Sabab</span><textarea name="reason" rows="5" placeholder="Ta'til sababi" required></textarea></label>
+                <label><span>Biriktirma (rasm, skrinshot yoki fayl)</span><input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" /></label>
+                <button type="submit" class="primary-btn">Ta'til arizasi yaratish</button>
               </form>
             </div>
 
           <div class="panel">
-            <div class="panel-heading"><p class="eyebrow">Leave review</p><h3>Approve or reject request</h3></div>
+            <div class="panel-heading">
+              <p class="eyebrow" data-translate="section_leave_review">Ta'til ko'rib chiqish</p>
+              <h3 data-translate="section_approve_leave">Arizani tasdiqlash yoki rad etish</h3>
+            </div>
             <form id="leaveReviewForm" class="form-grid">
-              <label><span>Leave ID</span><input name="leave_id" type="text" placeholder="Paste leave UUID" required /></label>
-              <label><span>Action</span><select name="action" required><option value="APPROVE">Approve</option><option value="REJECT">Reject</option><option value="CANCEL">Cancel</option></select></label>
-              <label><span>Comment</span><textarea name="review_comment" rows="4" placeholder="Review comment"></textarea></label>
-              <button type="submit" class="ghost-btn">Process leave action</button>
+              <label><span>Ta'til ID</span><input name="leave_id" type="text" placeholder="Ta'til UUID sini qo'ying" required /></label>
+              <label><span>Harakat</span><select name="action" required><option value="APPROVE">Tasdiqlash</option><option value="REJECT">Rad etish</option><option value="CANCEL">Bekor qilish</option></select></label>
+              <label><span>Izoh</span><textarea name="review_comment" rows="4" placeholder="Ko'rib chiqish izohi"></textarea></label>
+              <button type="submit" class="ghost-btn">Ta'til harakatini ishga tushirish</button>
             </form>
           </div>
         </section>
 
-        <section class="panel">
+        <section id="reportHistorySection" class="panel app-section">
           <div class="panel-heading">
-            <p class="eyebrow">Report history</p>
-            <h3>Approval history feed</h3>
+            <p class="eyebrow" data-translate="section_report_history">Hisobot tarixi</p>
+            <h3 data-translate="section_approval_history">Tasdiqlash tarixi</h3>
           </div>
           <div id="reportHistoryList" class="feed-list"></div>
         </section>
 
-        <section class="panel app-section">
+        <section id="leavesRegistrySection" class="panel app-section">
           <div class="panel-heading inline">
-            <div><p class="eyebrow">Leaves registry</p><h3>Leave requests list</h3></div>
+            <div>
+              <p class="eyebrow" data-translate="section_leaves_registry">Ta'tillar reyesti</p>
+              <h3 data-translate="section_leaves_list">Ta'til arizalari ro'yxati</h3>
+            </div>
             <div class="toolbar">
-              <input id="leaveSearchInput" type="text" placeholder="Ta'til so'rovi qidirish..." />
-              <select id="leaveStatusFilter"><option value="">All statuses</option><option value="PENDING">Pending</option><option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option><option value="CANCELLED">Cancelled</option></select>
-              <button id="refreshLeaves" class="ghost-btn" type="button">Refresh leaves</button>
+              <input id="leaveSearchInput" type="text" placeholder="Ta'til arizasi qidirish..." />
+              <select id="leaveStatusFilter"><option value="">Barcha holatlar</option><option value="PENDING">Kutilmoqda</option><option value="APPROVED">Tasdiqlangan</option><option value="REJECTED">Rad etilgan</option><option value="CANCELLED">Bekor qilingan</option></select>
+              <button id="refreshLeaves" class="ghost-btn" type="button">Ta'tillarni yangilash</button>
             </div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Employee</th><th>Type</th><th>Period</th><th>Days</th><th>Status</th><th>Reviewer</th></tr></thead>
-              <tbody id="leavesTableBody"><tr><td colspan="6" class="empty-state">Leave requests yuklanmagan</td></tr></tbody>
+              <thead><tr><th>Xodim</th><th>Turi</th><th>Davri</th><th>Kunlar</th><th>Holat</th><th>Ko'rib chiquvchi</th></tr></thead>
+              <tbody id="leavesTableBody"><tr><td colspan="6" class="empty-state">Ta'til arizalari yuklanmagan</td></tr></tbody>
             </table>
           </div>
         </section>
 
-        <section class="panel">
-          <div class="panel-heading inline">
-            <div><p class="eyebrow">Leave calendar</p><h3>Approved leave timeline</h3></div>
-            <button id="refreshLeaveCalendar" class="ghost-btn" type="button">Refresh calendar</button>
+        <!-- Side Drawer for Auxiliary Modules -->
+        <aside id="auxiliaryDrawer" class="auxiliary-drawer hidden">
+          <div class="auxiliary-drawer-header">
+            <h3>Qo'shimcha modullar</h3>
+            <button id="closeAuxiliaryDrawer" class="ghost-btn icon-btn" type="button" aria-label="Yopish">
+              <svg viewBox="0 0 24 24" width="20" height="20" role="presentation">
+                <path d="M18 6L6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
           </div>
-          <div id="leaveCalendarList" class="feed-list"></div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-heading inline">
-            <div><p class="eyebrow">Audit</p><h3>Latest audit logs</h3></div>
-            <button id="refreshAudit" class="ghost-btn" type="button">Refresh audit</button>
+          <div class="auxiliary-drawer-tabs">
+            <button class="aux-tab active" data-aux-tab="audit">Audit</button>
+            <button class="aux-tab" data-aux-tab="calendar">Ta'til taqvimi</button>
+            <button class="aux-tab" data-aux-tab="activity">Faoliyat</button>
+            <button class="aux-tab" data-aux-tab="feedback">Baholash</button>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Action</th><th>Target</th><th>Description</th><th>Actor</th><th>Time</th></tr></thead>
-              <tbody id="auditTableBody"><tr><td colspan="5" class="empty-state">Audit loglar yuklanmagan</td></tr></tbody>
-            </table>
+          <div class="auxiliary-drawer-content">
+            <div id="auxAuditPanel" class="aux-panel">
+              <div class="panel-heading inline" style="margin-bottom: 12px;">
+                <div><p class="eyebrow">Audit</p><h4>So'nggi audit qaydlari</h4></div>
+                <button id="refreshAudit" class="ghost-btn" type="button">Yangilash</button>
+              </div>
+              <div class="table-wrap" style="max-height: 400px; overflow-y: auto;">
+                <table>
+                  <thead><tr><th>Harakat</th><th>Maqsad</th><th>Tavsif</th><th>Ijrochi</th><th>Vaqt</th></tr></thead>
+                  <tbody id="auditTableBody"><tr><td colspan="5" class="empty-state">Audit qaydlari yuklanmagan</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+            <div id="auxCalendarPanel" class="aux-panel hidden">
+              <div class="panel-heading inline" style="margin-bottom: 12px;">
+                <div><p class="eyebrow">Ta'til taqvimi</p><h4>Tasdiqlangan ta'tillar jadvali</h4></div>
+                <button id="refreshLeaveCalendar" class="ghost-btn" type="button">Yangilash</button>
+              </div>
+              <div id="leaveCalendarList" class="feed-list" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+            <div id="auxActivityPanel" class="aux-panel hidden">
+              <div class="panel-heading inline" style="margin-bottom: 12px;">
+                <div><p class="eyebrow">Faoliyat</p><h4>So'nggi harakatlar</h4></div>
+                <div class="dashboard-chip-row">
+                  <button class="dashboard-filter-chip active" type="button" data-activity-filter="all">Hammasi</button>
+                  <button class="dashboard-filter-chip" type="button" data-activity-filter="requests">Arizalar</button>
+                  <button class="dashboard-filter-chip" type="button" data-activity-filter="reports">Hisobotlar</button>
+                </div>
+              </div>
+              <div id="activityHistoryList" class="feed-list" style="max-height: 400px; overflow-y: auto;">
+                <div class="feed-item muted-item">Faoliyat tarixi yuklanmagan</div>
+              </div>
+            </div>
+            <div id="auxFeedbackPanel" class="aux-panel hidden">
+              <div class="panel-heading inline" style="margin-bottom: 12px;">
+                <div><p class="eyebrow">Baholash</p><h4>Fikr-mulohaza</h4></div>
+              </div>
+              <form id="auxFeedbackForm" class="feedback-form" style="margin-bottom: 16px;">
+                <div class="form-field">
+                  <label class="label">Bahoyingiz</label>
+                  <div class="feedback-stars" id="auxFeedbackStars">
+                    <button type="button" data-rating="1" class="star-btn">★</button>
+                    <button type="button" data-rating="2" class="star-btn">★</button>
+                    <button type="button" data-rating="3" class="star-btn">★</button>
+                    <button type="button" data-rating="4" class="star-btn">★</button>
+                    <button type="button" data-rating="5" class="star-btn">★</button>
+                  </div>
+                  <input type="hidden" id="auxFeedbackRatingValue" value="0">
+                </div>
+                <div class="form-field">
+                  <label class="label">Izoh</label>
+                  <textarea id="auxFeedbackCommentInput" class="input" rows="3" placeholder="Fikringizni yozing..."></textarea>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="primary-btn">Yuborish</button>
+                  <button type="button" class="ghost-btn" id="skipAuxFeedback">O'tkazib yuborish</button>
+                </div>
+              </form>
+              <div id="auxFeedbackList" class="feed-list" style="max-height: 300px; overflow-y: auto;">
+                <div class="feed-item muted-item">Fikr-mulohazalar yo'q</div>
+              </div>
+            </div>
           </div>
-        </section>
+        </aside>
+        <div id="auxiliaryDrawerBackdrop" class="auxiliary-drawer-backdrop hidden"></div>
 
         <section class="status-strip">
           <div id="messageBox" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
@@ -821,7 +945,7 @@
               <textarea id="quickCreateMessageInput" name="message" rows="5" placeholder="Kerakli talab yoki bildirish matni" required></textarea>
             </label>
             <label>
-              <span>Screenshot yoki rasm</span>
+              <span>Rasm yoki skrinshot biriktirish (faqat rasm fayllari)</span>
               <input id="quickCreateScreenshotInput" name="screenshot" type="file" accept="image/*" />
             </label>
             <button type="submit" class="primary-btn">Saqlash</button>
@@ -846,6 +970,88 @@
           </div>
         </div>
       </div>
+      <!-- Rating Modal for Post-Approval Feedback -->
+      <div id="ratingModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ratingTitle">
+        <div class="modal-overlay" id="ratingOverlay"></div>
+        <div class="modal-panel">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow" id="ratingEyebrow">Baholash</p>
+              <h3 id="ratingTitle">Tasdiqlashni baholang</h3>
+            </div>
+            <button type="button" class="modal-close" id="ratingClose" aria-label="Yopish">×</button>
+          </div>
+          <div class="modal-body">
+            <form id="ratingForm" class="form-grid">
+              <input type="hidden" id="ratingItemId" name="item_id" />
+              <input type="hidden" id="ratingItemType" name="item_type" />
+              <input type="hidden" id="ratingApproverId" name="approver_id" />
+              
+              <div class="rating-info-box">
+                <p id="ratingItemInfo" class="rating-item-name"></p>
+                <p id="ratingApproverInfo" class="rating-approver-name"></p>
+              </div>
+
+              <div class="form-field">
+                <label>Tasdiqlash sifatini baholang</label>
+                <div class="rating-stars-large" id="ratingStars" aria-label="Baholash yulduzlari">
+                  <button type="button" class="star-btn-large" data-rating="1">★</button>
+                  <button type="button" class="star-btn-large" data-rating="2">★</button>
+                  <button type="button" class="star-btn-large" data-rating="3">★</button>
+                  <button type="button" class="star-btn-large" data-rating="4">★</button>
+                  <button type="button" class="star-btn-large" data-rating="5">★</button>
+                </div>
+                <input id="ratingValue" name="rating" type="hidden" value="0" required />
+                <p class="rating-hint" id="ratingHint">Bahoni tanlang</p>
+              </div>
+
+              <div class="form-field">
+                <label for="ratingComment">Fikr va mulohazalar (ixtiyoriy)</label>
+                <textarea id="ratingComment" name="comment" rows="3" placeholder="Tasdiqlash jarayoni haqida fikringiz..." maxlength="500"></textarea>
+                <small class="char-count">Max 500 belgi</small>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="ghost-btn" id="skipRatingBtn">Keyinroq</button>
+                <button type="submit" class="primary-btn" id="submitRatingBtn" disabled>Baholash va arxivlash</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation for Sections -->
+      <nav class="bottom-section-nav">
+        <button type="button" class="section-nav-btn" data-target="dashboardSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9.5V20h13V9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_dashboard">Asosiy panel</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="institutionsSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 20V8h12v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 8V5h8v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_institutions">Muassasalar</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="reportsCreateSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3.5V8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_workflow">Ish jarayoni</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="reportsSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3.5V8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_reports_registry">Hisobotlar</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="leavesSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_leaves">Arizalar</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="reportHistorySection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 8v4l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <span data-translate="section_report_history">Tarix</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="leavesRegistrySection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_leaves_registry">Ta'tillar</span>
+        </button>
+      </nav>
+
       <script src="./app.js"></script>
     </body>
   </html>
