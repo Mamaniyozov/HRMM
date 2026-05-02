@@ -238,21 +238,74 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/v1/leaves/{leave_id}/review/:
+  /api/v1/leaves/{leaveId}/review/:
     post:
-      operationId: v1_leaves_review_create
+      summary: Leave review action (approve/reject)
+      tags: [Leaves]
       parameters:
-      - in: path
-        name: leave_id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - v1
+        - in: path
+          name: leaveId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action: { type: string, enum: [APPROVE, REJECT] }
+                review_comment: { type: string }
       responses:
-        '200':
-          description: No response body
+        200:
+          description: Review submitted
+  /api/v1/leaves/{leaveId}/archive/:
+    post:
+      summary: Archive leave after rating
+      tags: [Leaves]
+      parameters:
+        - in: path
+          name: leaveId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Leave archived
+
+  /api/v1/reports/{reportId}/archive/:
+    post:
+      summary: Archive report after rating
+      tags: [Reports]
+      parameters:
+        - in: path
+          name: reportId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Report archived
+
+  /api/v1/ratings/:
+    post:
+      summary: Submit rating for approved item
+      tags: [Ratings]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                item_id: { type: string }
+                item_type: { type: string, enum: [leave, report] }
+                rating: { type: integer, minimum: 1, maximum: 5 }
+                comment: { type: string }
+                approver_id: { type: string }
+              required: [item_id, item_type, rating, approver_id]
+      responses:
+        201:
+          description: Rating submitted
   /api/v1/reports/:
     get:
       operationId: v1_reports_retrieve
