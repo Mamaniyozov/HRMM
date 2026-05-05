@@ -2315,6 +2315,13 @@ tbody tr:hover {
   color: #c4b5fd;
 }
 
+#themeIconSun,
+#themeIconMoon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
 /* Theme icon visibility */
 #themeIconMoon.hidden,
 #themeIconSun.hidden {

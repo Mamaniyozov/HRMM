@@ -35,9 +35,9 @@ def _report_queryset_for_user(user):
 
     if user.role == "DIRECTOR":
         return queryset
-    if user.role == "DEPT_HEAD" and user.department_id_id:
+    if user.role == "DEPT_HEAD" and user.department_id:
         return queryset.filter(department_id=user.department_id)
-    if user.role == "UNIT_HEAD" and user.unit_id_id:
+    if user.role == "UNIT_HEAD" and user.unit_id:
         return queryset.filter(created_by__unit_id=user.unit_id)
     return queryset.filter(created_by=user)
 
@@ -220,7 +220,7 @@ class AttachmentDownloadView(APIView):
         if not attachment:
             raise Http404("Attachment not found")
 
-        report = _report_queryset_for_user(request.user).filter(id=attachment.report_id_id).first()
+        report = _report_queryset_for_user(request.user).filter(id=attachment.report_id.id).first()
         if not report:
             return api_success(message="Attachment not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
 

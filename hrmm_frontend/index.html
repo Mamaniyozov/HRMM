@@ -166,7 +166,7 @@
       </div>
     </section>
 
-    <div id="appView" class="page-shell">
+    <div id="appView" class="page-shell hidden">
       <aside class="sidebar">
         <div class="brand-block">
           <div class="brand-mark">HR</div>
@@ -206,35 +206,7 @@
             </span>
             <span class="nav-link-label">Hujjatlar</span>
           </button>
-          <button class="nav-link" type="button" data-target="leavesSection">
-            <span class="nav-link-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="presentation">
-                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                <path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-              </svg>
-            </span>
-            <span class="nav-link-label">Arizalar</span>
-          </button>
-          <button class="nav-link" type="button" data-target="usersSection">
-            <span class="nav-link-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="presentation">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-              </svg>
-            </span>
-            <span class="nav-link-label">Xodimlar</span>
-          </button>
-          <button class="nav-link" type="button" data-target="institutionsSection">
-            <span class="nav-link-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="presentation">
-                <path d="M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                <path d="M6 20V8h12v12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                <path d="M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>
-                <path d="M8 8V5h8v3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-              </svg>
-            </span>
-            <span class="nav-link-label">Muassasalar</span>
-          </button>
+
         </nav>
       </aside>
 
@@ -504,6 +476,63 @@
 
         </section>
 
+        <section id="reviewShortcutSection" class="panel app-section hidden">
+          <div class="panel-heading inline">
+            <div>
+              <p class="eyebrow">Tezkor ko'rinish</p>
+              <h3>Tasdiqlovchilar uchun kichik oynacha</h3>
+            </div>
+          </div>
+          <div class="dashboard-card-grid">
+            <article class="dashboard-stat-card">
+              <div class="dashboard-stat-head">
+                <span>Tasdiqlangan arizalar</span>
+                <span class="stat-icon green">A</span>
+              </div>
+              <strong id="approvedLeavesShortcutValue">0</strong>
+              <div class="dashboard-badge-row">
+                <span class="dashboard-badge neutral">Tasdiqlangan arizalar</span>
+              </div>
+            </article>
+            <article class="dashboard-stat-card">
+              <div class="dashboard-stat-head">
+                <span>Bildirishnomalar</span>
+                <span class="stat-icon purple">B</span>
+              </div>
+              <strong id="notificationsShortcutValue">0</strong>
+              <div class="dashboard-badge-row">
+                <span class="dashboard-badge neutral">Yangi xabarlar</span>
+              </div>
+            </article>
+            <article class="dashboard-stat-card">
+              <div class="dashboard-stat-head">
+                <span>Kutilayotgan talablar</span>
+                <span class="stat-icon orange">T</span>
+              </div>
+              <strong id="pendingRequestsShortcutValue">0</strong>
+              <div class="dashboard-badge-row">
+                <span class="dashboard-badge neutral">Kutilayotgan tasdiqlar</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="auditSection" class="panel app-section">
+          <div class="panel-heading inline">
+            <div>
+              <p class="eyebrow">Audit</p>
+              <h3>So'nggi audit qaydlari</h3>
+            </div>
+            <button id="refreshAudit" class="ghost-btn" type="button">Yangilash</button>
+          </div>
+          <div class="table-wrap" style="max-height: 440px; overflow-y: auto;">
+            <table>
+              <thead><tr><th>Harakat</th><th>Maqsad</th><th>Tavsif</th><th>Ijrochi</th><th>Vaqt</th></tr></thead>
+              <tbody id="auditTableBody"><tr><td colspan="5" class="empty-state">Audit loglar yuklanmagan</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
         <section id="securitySection" class="workspace-grid app-section hidden">
           <div class="panel">
             <div class="panel-heading">
@@ -758,35 +787,7 @@
           </div>
         </section>
 
-        <section id="leavesSection" class="workspace-grid app-section">
-            <div class="panel">
-              <div class="panel-heading">
-                <p class="eyebrow" data-translate="section_leaves">Ta'til arizalari</p>
-                <h3 data-translate="section_create_leave">Ta'til arizasi yaratish</h3>
-              </div>
-              <form id="leaveForm" class="form-grid">
-                <label><span>Ta'til turi</span><select name="leave_type" required><option value="ANNUAL">Yillik</option><option value="SICK">Kasallik</option><option value="UNPAID">To'lanmaydigan</option><option value="MATERNITY">Dekret</option><option value="OTHER">Boshqa</option></select></label>
-                <label><span>Boshlanish sanasi</span><input name="start_date" type="date" required /></label>
-                <label><span>Tugash sanasi</span><input name="end_date" type="date" required /></label>
-                <label><span>Sabab</span><textarea name="reason" rows="5" placeholder="Ta'til sababi" required></textarea></label>
-                <label><span>Biriktirma (rasm, skrinshot yoki fayl)</span><input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" /></label>
-                <button type="submit" class="primary-btn">Ta'til arizasi yaratish</button>
-              </form>
-            </div>
 
-          <div class="panel">
-            <div class="panel-heading">
-              <p class="eyebrow" data-translate="section_leave_review">Ta'til ko'rib chiqish</p>
-              <h3 data-translate="section_approve_leave">Arizani tasdiqlash yoki rad etish</h3>
-            </div>
-            <form id="leaveReviewForm" class="form-grid">
-              <label><span>Ta'til ID</span><input name="leave_id" type="text" placeholder="Ta'til UUID sini qo'ying" required /></label>
-              <label><span>Harakat</span><select name="action" required><option value="APPROVE">Tasdiqlash</option><option value="REJECT">Rad etish</option><option value="CANCEL">Bekor qilish</option></select></label>
-              <label><span>Izoh</span><textarea name="review_comment" rows="4" placeholder="Ko'rib chiqish izohi"></textarea></label>
-              <button type="submit" class="ghost-btn">Ta'til harakatini ishga tushirish</button>
-            </form>
-          </div>
-        </section>
 
         <section id="reportHistorySection" class="panel app-section">
           <div class="panel-heading">
@@ -796,25 +797,7 @@
           <div id="reportHistoryList" class="feed-list"></div>
         </section>
 
-        <section id="leavesRegistrySection" class="panel app-section">
-          <div class="panel-heading inline">
-            <div>
-              <p class="eyebrow" data-translate="section_leaves_registry">Ta'tillar reyesti</p>
-              <h3 data-translate="section_leaves_list">Ta'til arizalari ro'yxati</h3>
-            </div>
-            <div class="toolbar">
-              <input id="leaveSearchInput" type="text" placeholder="Ta'til arizasi qidirish..." />
-              <select id="leaveStatusFilter"><option value="">Barcha holatlar</option><option value="PENDING">Kutilmoqda</option><option value="APPROVED">Tasdiqlangan</option><option value="REJECTED">Rad etilgan</option><option value="CANCELLED">Bekor qilingan</option></select>
-              <button id="refreshLeaves" class="ghost-btn" type="button">Ta'tillarni yangilash</button>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Xodim</th><th>Turi</th><th>Davri</th><th>Kunlar</th><th>Holat</th><th>Ko'rib chiquvchi</th></tr></thead>
-              <tbody id="leavesTableBody"><tr><td colspan="6" class="empty-state">Ta'til arizalari yuklanmagan</td></tr></tbody>
-            </table>
-          </div>
-        </section>
+
 
         <!-- Side Drawer for Auxiliary Modules -->
         <aside id="auxiliaryDrawer" class="auxiliary-drawer hidden">
@@ -827,25 +810,11 @@
             </button>
           </div>
           <div class="auxiliary-drawer-tabs">
-            <button class="aux-tab active" data-aux-tab="audit">Audit</button>
-            <button class="aux-tab" data-aux-tab="calendar">Ta'til taqvimi</button>
+            <button class="aux-tab active" data-aux-tab="calendar">Ta'til taqvimi</button>
             <button class="aux-tab" data-aux-tab="activity">Faoliyat</button>
-            <button class="aux-tab" data-aux-tab="feedback">Baholash</button>
           </div>
           <div class="auxiliary-drawer-content">
-            <div id="auxAuditPanel" class="aux-panel">
-              <div class="panel-heading inline" style="margin-bottom: 12px;">
-                <div><p class="eyebrow">Audit</p><h4>So'nggi audit qaydlari</h4></div>
-                <button id="refreshAudit" class="ghost-btn" type="button">Yangilash</button>
-              </div>
-              <div class="table-wrap" style="max-height: 400px; overflow-y: auto;">
-                <table>
-                  <thead><tr><th>Harakat</th><th>Maqsad</th><th>Tavsif</th><th>Ijrochi</th><th>Vaqt</th></tr></thead>
-                  <tbody id="auditTableBody"><tr><td colspan="5" class="empty-state">Audit qaydlari yuklanmagan</td></tr></tbody>
-                </table>
-              </div>
-            </div>
-            <div id="auxCalendarPanel" class="aux-panel hidden">
+            <div id="auxCalendarPanel" class="aux-panel">
               <div class="panel-heading inline" style="margin-bottom: 12px;">
                 <div><p class="eyebrow">Ta'til taqvimi</p><h4>Tasdiqlangan ta'tillar jadvali</h4></div>
                 <button id="refreshLeaveCalendar" class="ghost-btn" type="button">Yangilash</button>
@@ -865,35 +834,6 @@
                 <div class="feed-item muted-item">Faoliyat tarixi yuklanmagan</div>
               </div>
             </div>
-            <div id="auxFeedbackPanel" class="aux-panel hidden">
-              <div class="panel-heading inline" style="margin-bottom: 12px;">
-                <div><p class="eyebrow">Baholash</p><h4>Fikr-mulohaza</h4></div>
-              </div>
-              <form id="auxFeedbackForm" class="feedback-form" style="margin-bottom: 16px;">
-                <div class="form-field">
-                  <label class="label">Bahoyingiz</label>
-                  <div class="feedback-stars" id="auxFeedbackStars">
-                    <button type="button" data-rating="1" class="star-btn">★</button>
-                    <button type="button" data-rating="2" class="star-btn">★</button>
-                    <button type="button" data-rating="3" class="star-btn">★</button>
-                    <button type="button" data-rating="4" class="star-btn">★</button>
-                    <button type="button" data-rating="5" class="star-btn">★</button>
-                  </div>
-                  <input type="hidden" id="auxFeedbackRatingValue" value="0">
-                </div>
-                <div class="form-field">
-                  <label class="label">Izoh</label>
-                  <textarea id="auxFeedbackCommentInput" class="input" rows="3" placeholder="Fikringizni yozing..."></textarea>
-                </div>
-                <div class="form-actions">
-                  <button type="submit" class="primary-btn">Yuborish</button>
-                  <button type="button" class="ghost-btn" id="skipAuxFeedback">O'tkazib yuborish</button>
-                </div>
-              </form>
-              <div id="auxFeedbackList" class="feed-list" style="max-height: 300px; overflow-y: auto;">
-                <div class="feed-item muted-item">Fikr-mulohazalar yo'q</div>
-              </div>
-            </div>
           </div>
         </aside>
         <div id="auxiliaryDrawerBackdrop" class="auxiliary-drawer-backdrop hidden"></div>
@@ -906,7 +846,31 @@
           <strong id="loggedInAsLabel">-</strong>
         </footer>
       </main>
-    </div>
+      <nav class="bottom-section-nav hidden" aria-hidden="true">
+        <button type="button" class="section-nav-btn" data-target="dashboardSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9.5V20h13V9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_dashboard">Asosiy panel</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="institutionsSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 20V8h12v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 8V5h8v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_institutions">Muassasalar</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="reportsCreateSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3.5V8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_workflow">Ish jarayoni</span>
+        </button>
+        <button type="button" class="section-nav-btn" data-target="reportsSection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3.5V8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-translate="section_reports_registry">Hisobotlar</span>
+        </button>
+
+        <button type="button" class="section-nav-btn" data-target="reportHistorySection">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 8v4l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <span data-translate="section_report_history">Tarix</span>
+        </button>
+
+      </nav>
+
       <div id="sectionModal" class="section-modal hidden" aria-hidden="true">
         <div id="sectionModalBackdrop" class="section-modal-backdrop"></div>
         <div class="section-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="sectionModalTitle">
@@ -1019,38 +983,7 @@
           </div>
         </div>
       </div>
-
-      <!-- Bottom Navigation for Sections -->
-      <nav class="bottom-section-nav">
-        <button type="button" class="section-nav-btn" data-target="dashboardSection">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9.5V20h13V9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span data-translate="section_dashboard">Asosiy panel</span>
-        </button>
-        <button type="button" class="section-nav-btn" data-target="institutionsSection">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 20V8h12v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 8V5h8v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span data-translate="section_institutions">Muassasalar</span>
-        </button>
-        <button type="button" class="section-nav-btn" data-target="reportsCreateSection">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3.5V8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span data-translate="section_workflow">Ish jarayoni</span>
-        </button>
-        <button type="button" class="section-nav-btn" data-target="reportsSection">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3.5V8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span data-translate="section_reports_registry">Hisobotlar</span>
-        </button>
-        <button type="button" class="section-nav-btn" data-target="leavesSection">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span data-translate="section_leaves">Arizalar</span>
-        </button>
-        <button type="button" class="section-nav-btn" data-target="reportHistorySection">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 8v4l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-          <span data-translate="section_report_history">Tarix</span>
-        </button>
-        <button type="button" class="section-nav-btn" data-target="leavesRegistrySection">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span data-translate="section_leaves_registry">Ta'tillar</span>
-        </button>
-      </nav>
+    </div>
 
       <script src="./app.js"></script>
     </body>

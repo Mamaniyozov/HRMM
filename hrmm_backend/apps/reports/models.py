@@ -4,7 +4,7 @@ from django.db import models
 
 
 def report_attachment_upload_to(instance, filename):
-    return f"reports/{instance.report_id_id}/attachments/{filename}"
+    return f"reports/{instance.report_id.id}/attachments/{filename}"
 
 
 class Report(models.Model):

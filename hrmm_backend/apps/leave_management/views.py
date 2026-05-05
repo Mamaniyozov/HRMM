@@ -22,7 +22,7 @@ class LeaveListCreateView(APIView):
         queryset = LeaveRequest.objects.select_related("requested_by", "reviewed_by", "requested_by__department_id")
         if user.role == "DIRECTOR":
             return queryset
-        if user.role == "DEPT_HEAD" and user.department_id_id:
+        if user.role == "DEPT_HEAD" and user.department_id:
             return queryset.filter(requested_by__department_id=user.department_id)
         return queryset.filter(requested_by=user)
 
@@ -50,7 +50,7 @@ class LeaveListCreateView(APIView):
             description="Yangi ta'til so'rovi yaratildi",
             request=request,
         )
-        if request.user.department_id_id:
+        if request.user.department_id:
             reviewers = User.objects.filter(
                 department_id=request.user.department_id,
                 role__in=["DEPT_HEAD", "DIRECTOR"],
@@ -79,7 +79,7 @@ class LeaveDetailView(APIView):
         queryset = LeaveRequest.objects.select_related("requested_by", "reviewed_by")
         if user.role == "DIRECTOR":
             return queryset
-        if user.role == "DEPT_HEAD" and user.department_id_id:
+        if user.role == "DEPT_HEAD" and user.department_id:
             return queryset.filter(requested_by__department_id=user.department_id)
         return queryset.filter(requested_by=user)
 
@@ -134,7 +134,7 @@ class LeaveReviewView(APIView):
         if request.user.role not in {"DEPT_HEAD", "DIRECTOR"}:
             return api_success(message="Sizda leave review vakolati yo'q", data=None, status_code=403)
 
-        if request.user.role == "DEPT_HEAD" and request.user.department_id_id != leave_request.requested_by.department_id_id:
+        if request.user.role == "DEPT_HEAD" and request.user.department_id.id != leave_request.requested_by.department_id.id:
             return api_success(message="Faqat o'z bo'limingiz so'rovlarini ko'ra olasiz", data=None, status_code=403)
 
         leave_request.status = "APPROVED" if action == "APPROVE" else "REJECTED"
@@ -167,7 +167,7 @@ class LeaveCalendarView(APIView):
         queryset = LeaveRequest.objects.select_related("requested_by", "requested_by__department_id").filter(status="APPROVED")
         if user.role == "DIRECTOR":
             return queryset
-        if user.role == "DEPT_HEAD" and user.department_id_id:
+        if user.role == "DEPT_HEAD" and user.department_id:
             return queryset.filter(requested_by__department_id=user.department_id)
         return queryset.filter(requested_by=user)
 

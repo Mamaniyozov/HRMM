@@ -31,6 +31,7 @@ const loginForm = document.getElementById("loginForm");
 const otpForm = document.getElementById("otpForm");
 const loginView = document.getElementById("loginView");
 const appView = document.getElementById("appView");
+const bottomSectionNav = document.querySelector(".bottom-section-nav");
 const loginCredentialsStep = document.getElementById("loginCredentialsStep");
 const loginTwoFactorStep = document.getElementById("loginTwoFactorStep");
 const backToLoginButton = document.getElementById("backToLoginButton");
@@ -94,8 +95,6 @@ const reportForm = document.getElementById("reportForm");
 const workflowForm = document.getElementById("workflowForm");
 const attachmentForm = document.getElementById("attachmentForm");
 const attachmentToolsForm = document.getElementById("attachmentToolsForm");
-const leaveForm = document.getElementById("leaveForm");
-const leaveReviewForm = document.getElementById("leaveReviewForm");
 const passwordForm = document.getElementById("passwordForm");
 const reportToolsForm = document.getElementById("reportToolsForm");
 const twoFactorVerifyForm = document.getElementById("twoFactorVerifyForm");
@@ -107,7 +106,6 @@ const reportDepartmentSelect = document.getElementById("reportDepartmentSelect")
 const messageBox = document.getElementById("messageBox");
 const usersTableBody = document.getElementById("usersTableBody");
 const reportsTableBody = document.getElementById("reportsTableBody");
-const leavesTableBody = document.getElementById("leavesTableBody");
 const auditTableBody = document.getElementById("auditTableBody");
 const recentReportsList = document.getElementById("recentReportsList");
 const recentLeavesList = document.getElementById("recentLeavesList");
@@ -129,6 +127,10 @@ const languageOptions = document.querySelectorAll(".language-option");
 const topbarNotificationsButton = document.getElementById("topbarNotificationsButton");
 const dashboardWelcomeName = document.getElementById("dashboardWelcomeName");
 const unreadNotificationsValue = document.getElementById("unreadNotificationsValue");
+const approvedLeavesShortcutValue = document.getElementById("approvedLeavesShortcutValue");
+const notificationsShortcutValue = document.getElementById("notificationsShortcutValue");
+const pendingRequestsShortcutValue = document.getElementById("pendingRequestsShortcutValue");
+const reviewShortcutSection = document.getElementById("reviewShortcutSection");
 const resolvedLeavesValue = document.getElementById("resolvedLeavesValue");
 const activityHistoryList = document.getElementById("activityHistoryList");
 const feedbackForm = document.getElementById("feedbackForm");
@@ -142,7 +144,6 @@ const notificationSearchInput = document.getElementById("notificationSearchInput
 const notificationReadFilter = document.getElementById("notificationReadFilter");
 const reportSearchInput = document.getElementById("reportSearchInput");
 const userSearchInput = document.getElementById("userSearchInput");
-const leaveSearchInput = document.getElementById("leaveSearchInput");
 const departmentSearchInput = document.getElementById("departmentSearchInput");
 const refreshAllButton = document.getElementById("refreshAllButton");
 const navLinks = document.querySelectorAll(".nav-link");
@@ -150,11 +151,9 @@ const navLinks = document.querySelectorAll(".nav-link");
 const roleFilter = document.getElementById("roleFilter");
 const levelFilter = document.getElementById("levelFilter");
 const reportStatusFilter = document.getElementById("reportStatusFilter");
-const leaveStatusFilter = document.getElementById("leaveStatusFilter");
 
 const refreshUsersButton = document.getElementById("refreshUsers");
 const refreshReportsButton = document.getElementById("refreshReports");
-const refreshLeavesButton = document.getElementById("refreshLeaves");
 const refreshAuditButton = document.getElementById("refreshAudit");
 const refreshDashboardButton = document.getElementById("refreshDashboard");
 const refreshNotificationsButton = document.getElementById("refreshNotifications");
@@ -1171,6 +1170,21 @@ function setAuthUi(isAuthenticated) {
   if (appView) {
     appView.classList.toggle("hidden", !isAuthenticated);
   }
+  if (bottomSectionNav) {
+    bottomSectionNav.classList.toggle("hidden", !isAuthenticated);
+  }
+  
+  // Hide all sections except homeSection and auditSection on initial login
+  if (isAuthenticated) {
+    document.querySelectorAll(".app-section").forEach((sec) => {
+      if (sec.id === "homeSection" || sec.id === "auditSection") {
+        sec.classList.remove("hidden");
+      } else {
+        sec.classList.add("hidden");
+      }
+    });
+  }
+  
   // Re-apply translations when view changes to ensure both login and main views are synced
   applyTranslations();
 }
@@ -1480,7 +1494,7 @@ function applyTranslations() {
   if (languageMenuButton?.querySelector("span")) {
     languageMenuButton.querySelector("span").textContent = t("language");
   }
-  if (refreshAllButton) refreshAllButton.textContent = t("refresh");
+  if (refreshAllButton) refreshAllButton.setAttribute("aria-label", t("refresh"));
   if (createMenuButton?.querySelector("#createMenuLabel")) {
     createMenuButton.querySelector("#createMenuLabel").textContent = t("new");
   }
@@ -1628,9 +1642,7 @@ function applyRoleBasedUi() {
   });
 
   const usersSection = document.getElementById("usersSection");
-  const leavesSection = document.getElementById("leavesSection");
   usersSection?.classList.toggle("hidden", role !== "DIRECTOR");
-  leavesSection?.classList.toggle("hidden", role === "DIRECTOR");
   createMenuItems.forEach((button) => {
     const action = button.dataset.createAction;
     // All roles can see all create menu items
@@ -2265,6 +2277,24 @@ function renderActivityFilters() {
   });
 }
 
+function formatAuditActivityTitle(log) {
+  const actor = log.actor_name || "Foydalanuvchi";
+  const action = String(log.action || "").toUpperCase();
+  const targetId = String(log.target_id || "").trim();
+  const shortTargetId = targetId ? targetId.slice(0, 8) : "";
+  const description = String(log.description || "").trim();
+
+  if (description) return description;
+  if (action.includes("REPORT_CREATE")) return `${actor} ${shortTargetId} hisobot yaratdi`.trim();
+  if (action.includes("REPORT_UPDATE")) return `${actor} ${shortTargetId} hisobotni yangiladi`.trim();
+  if (action.includes("LEAVE") && action.includes("CREATE")) return `${actor} ${shortTargetId} talab yaratdi`.trim();
+  if (action.includes("LEAVE") && action.includes("APPROVE")) return `${actor} ${shortTargetId} talabni tasdiqladi`.trim();
+  if (action.includes("NOTIFICATION_CREATE")) return `${actor} bildirishnoma yaratdi`;
+  if (action) return `${actor} ${action.replace(/_/g, " ").toLowerCase()}`.trim();
+
+  return `${actor} amal bajardi`;
+}
+
 function buildActivityItems() {
   const reportItems = state.reports.map((report) => ({
     type: "reports",
@@ -2285,7 +2315,7 @@ function buildActivityItems() {
   const auditItems = state.auditLogs.map((log) => ({
     type: /LEAVE|REQUEST/i.test(log.action || "") ? "requests" : "reports",
     actor: log.actor_name || "Tizim",
-    title: log.description || `${log.actor_name || "User"} amal bajardi`,
+    title: formatAuditActivityTitle(log),
     meta: log.action || log.target_type || "Audit",
     time: log.created_at,
   }));
@@ -2513,7 +2543,10 @@ function renderDepartmentOptions() {
     }
     reportDepartmentSelect.innerHTML = `<option value="">${t("no_departments")}</option>`;
     if (state.accessToken || state.currentUser) {
-      setMessage("Department ro'yxati topilmadi. Avval backendda department yaratilganini tekshiring.", "error");
+      setMessage(
+        "Kafedra ro'yxati topilmadi. Avval backendda bo'limlar yaratilganini tekshiring.",
+        "warning"
+      );
     }
     return;
   }
@@ -2735,7 +2768,7 @@ function renderAudit() {
         <tr>
           <td>${log.action}</td>
           <td>${log.target_type}</td>
-          <td>${log.description || "-"}</td>
+          <td>${formatAuditActivityTitle(log)}</td>
           <td>${log.actor_name || "-"}</td>
           <td>${formatDate(log.created_at)}</td>
         </tr>
@@ -3022,6 +3055,29 @@ function renderPendingItemsInDashboard() {
   if (pendingReportsValue) {
     pendingReportsValue.textContent = String(pendingReports.length);
   }
+
+  renderReviewShortcutPanel();
+}
+
+function renderReviewShortcutPanel() {
+  const role = state.currentUser?.role || "";
+  const isManager = ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role);
+  if (!reviewShortcutSection) return;
+
+  reviewShortcutSection.classList.toggle("hidden", !isManager);
+  if (!isManager) return;
+
+  const approvedLeaves = state.leaves.length
+    ? state.leaves.filter((leave) => leave.status === "APPROVED").length
+    : Number(approvedLeavesValue?.textContent || 0);
+  const notificationsCount = state.notifications.filter((item) => !item.is_read).length;
+  const pendingRequests = (state.pendingApprovals || []).filter(
+    (item) => !item.item_type || item.item_type === "report" || item.report_number
+  ).length;
+
+  if (approvedLeavesShortcutValue) approvedLeavesShortcutValue.textContent = String(approvedLeaves);
+  if (notificationsShortcutValue) notificationsShortcutValue.textContent = String(notificationsCount);
+  if (pendingRequestsShortcutValue) pendingRequestsShortcutValue.textContent = String(pendingRequests);
 }
 
 function renderAnalyticsDashboard() {
@@ -3192,6 +3248,7 @@ async function loadNotifications() {
   const payload = await apiRequest("/api/v1/notifications/", { headers: getHeaders(false) });
   state.notifications = payload.results || [];
   renderNotifications();
+  renderReviewShortcutPanel();
 }
 
 async function loadAdminDashboard() {
@@ -3815,84 +3872,10 @@ useLatestReportIdButton.addEventListener("click", () => {
   setMessage("UUID workflow/attachment/history formalariga qo'yildi.", "success");
 });
 
-leaveForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!(await requestCreationWarning("leave"))) return;
-  const formData = new FormData(leaveForm);
-
-  try {
-    setMessage("Leave request yaratilmoqda...");
-    const payload = new FormData();
-    payload.append("leave_type", formData.get("leave_type"));
-    payload.append("reason", formData.get("reason"));
-    payload.append("start_date", formData.get("start_date"));
-    payload.append("end_date", formData.get("end_date"));
-    const screenshot = formData.get("screenshot");
-    if (screenshot instanceof File && screenshot.size > 0) {
-      payload.append("screenshot", screenshot);
-    }
-    const createdLeave = await apiRequest("/api/v1/leaves/", {
-      method: "POST",
-      headers: getHeaders(false),
-      body: payload,
-    });
-    await Promise.all([loadLeaves(), loadDashboard(), loadAuditLogs()]);
-    leaveForm.reset();
-    if (createdLeave?.data?.id) {
-      applyLeaveIdToReviewTool(createdLeave.data.id);
-      setMessage(`Leave request yaratildi. UUID: ${createdLeave.data.id}`, "success");
-      return;
-    }
-    setMessage("Leave request yaratildi.", "success");
-  } catch (error) {
-    setMessage(error.message || "Leave request xatoligi.", "error");
-  }
-});
-
-leaveReviewForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const formData = new FormData(leaveReviewForm);
-  const leaveId = String(formData.get("leave_id") || "").trim();
-  if (!isUuid(leaveId)) {
-    setMessage("Leave ID noto'g'ri. Bu maydonga leave UUID kiriting.", "error");
-    return;
-  }
-
-  try {
-    setMessage("Leave action bajarilmoqda...");
-    const action = formData.get("action");
-    await apiRequest(`/api/v1/leaves/${leaveId}/review/`, {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({
-        action: action,
-        review_comment: formData.get("review_comment"),
-      }),
-    });
-    await Promise.all([loadLeaves(), loadDashboard(), loadAuditLogs()]);
-    setMessage("Leave action bajarildi.", "success");
-
-    // Show rating modal if action was APPROVE and leave is now APPROVED
-    if (action === "APPROVE") {
-      const updatedLeave = state.leaves.find(l => l.id === leaveId);
-      if (updatedLeave && updatedLeave.status === "APPROVED") {
-        const approverInfo = {
-          id: state.currentUser?.id,
-          name: state.currentUser?.full_name || state.currentUser?.username
-        };
-        openRatingModal(updatedLeave, "leave", approverInfo);
-      }
-    }
-  } catch (error) {
-    setMessage(error.message || "Leave review xatoligi.", "error");
-  }
-});
-
 departmentSelect?.addEventListener("change", renderUnits);
 refreshUsersButton.addEventListener("click", () => loadUsers().catch((error) => setMessage(error.message, "error")));
 refreshReportsButton.addEventListener("click", () => loadReports().catch((error) => setMessage(error.message, "error")));
-refreshLeavesButton.addEventListener("click", () => loadLeaves().catch((error) => setMessage(error.message, "error")));
-refreshAuditButton.addEventListener("click", () => loadAuditLogs().catch((error) => setMessage(error.message, "error")));
+refreshAuditButton.addEventListener("click", () => loadAuditLogs().catch((error) => setMessage(error.message, "error"))); 
 refreshDashboardButton.addEventListener("click", () => loadDashboard().catch((error) => setMessage(error.message, "error")));
 refreshNotificationsButton.addEventListener("click", () => loadNotifications().catch((error) => setMessage(error.message, "error")));
 readAllNotificationsButton.addEventListener("click", async () => {
@@ -4137,7 +4120,16 @@ navLinks.forEach((button) => {
     button.classList.add("active");
     if (button.dataset.target === "homeSection") {
       closeSectionModal();
-      document.getElementById("homeSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.querySelectorAll(".app-section").forEach((sec) => sec.classList.add("hidden"));
+      const homeSection = document.getElementById("homeSection");
+      const auditSection = document.getElementById("auditSection");
+      if (homeSection) {
+        homeSection.classList.remove("hidden");
+      }
+      if (auditSection) {
+        auditSection.classList.remove("hidden");
+      }
+      homeSection?.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
     openSectionModal(button.dataset.target, button.textContent.trim());
@@ -4468,17 +4460,35 @@ bindDashboardDrilldowns();
 updateFeedbackAvailability();
 
 // Theme toggle functionality
-const themeToggleButton = document.getElementById("themeToggleButton");
-const themeIconSun = document.getElementById("themeIconSun");
-const themeIconMoon = document.getElementById("themeIconMoon");
+function getPreferredTheme() {
+  const savedTheme = window.localStorage.getItem("hrmm_theme");
+  if (savedTheme === "light" || savedTheme === "dark") {
+    return savedTheme;
+  }
 
-function initTheme() {
-  const savedTheme = window.localStorage.getItem("hrmm_theme") || "light";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-  updateThemeIcons(savedTheme);
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-function updateThemeIcons(theme) {
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  document.body.setAttribute("data-theme", theme);
+}
+
+function initTheme() {
+  const themeToggleButton = document.getElementById("themeToggleButton");
+  const themeIconSun = document.getElementById("themeIconSun");
+  const themeIconMoon = document.getElementById("themeIconMoon");
+
+  const preferredTheme = getPreferredTheme();
+  applyTheme(preferredTheme);
+  updateThemeIcons(preferredTheme, themeToggleButton, themeIconSun, themeIconMoon);
+
+  if (themeToggleButton) {
+    themeToggleButton.addEventListener("click", () => toggleTheme(themeToggleButton, themeIconSun, themeIconMoon));
+  }
+}
+
+function updateThemeIcons(theme, themeToggleButton, themeIconSun, themeIconMoon) {
   if (theme === "dark") {
     themeIconSun?.classList.add("hidden");
     themeIconMoon?.classList.remove("hidden");
@@ -4486,21 +4496,28 @@ function updateThemeIcons(theme) {
     themeIconSun?.classList.remove("hidden");
     themeIconMoon?.classList.add("hidden");
   }
+
+  themeToggleButton?.setAttribute(
+    "aria-label",
+    theme === "dark" ? "Kunduz rejimiga o'tish" : "Tun rejimiga o'tish"
+  );
 }
 
-function toggleTheme() {
+function toggleTheme(themeToggleButton, themeIconSun, themeIconMoon) {
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
   const newTheme = currentTheme === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-theme", newTheme);
+  applyTheme(newTheme);
   window.localStorage.setItem("hrmm_theme", newTheme);
-  updateThemeIcons(newTheme);
+  updateThemeIcons(newTheme, themeToggleButton, themeIconSun, themeIconMoon);
+  console.debug("Theme toggled", { currentTheme, newTheme });
   setMessage(newTheme === "dark" ? "Tun rejimi yoqildi" : "Kunduz rejimi yoqildi", "info");
 }
 
-themeToggleButton?.addEventListener("click", toggleTheme);
-
-// Initialize theme on load
-initTheme();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initTheme);
+} else {
+  initTheme();
+}
 
 // Role-based UI update to include new sidebar items
 function applyRoleBasedUi() {

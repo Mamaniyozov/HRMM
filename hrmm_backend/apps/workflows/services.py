@@ -60,10 +60,10 @@ def _notify_users(users, *, title, message, notification_type, reference_type, r
 
 
 def _next_approvers_for_report(report):
-    if report.status == "PENDING_L2" and report.created_by.unit_id_id:
-        return User.objects.filter(id=report.created_by.unit_id.head_user_id_id, is_active=True)
-    if report.status == "PENDING_L3" and report.department_id_id:
-        return User.objects.filter(id=report.department_id.head_user_id_id, is_active=True)
+    if report.status == "PENDING_L2" and report.created_by.unit_id:
+        return User.objects.filter(id=report.created_by.unit_id.head_user_id, is_active=True)
+    if report.status == "PENDING_L3" and report.department_id:
+        return User.objects.filter(id=report.department_id.head_user_id, is_active=True)
     if report.status == "PENDING_L4":
         return User.objects.filter(role="DIRECTOR", is_active=True)
     return User.objects.none()

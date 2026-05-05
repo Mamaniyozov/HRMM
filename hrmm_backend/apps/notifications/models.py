@@ -9,7 +9,7 @@ def notification_attachment_upload_to(instance, filename):
     suffix = Path(original_name).suffix[:20]
     stem = Path(original_name).stem[:40] or "attachment"
     short_name = f"{stem}_{uuid.uuid4().hex[:8]}{suffix}"
-    return f"notifications/{instance.user_id_id}/{instance.id}/{short_name}"
+    return f"notifications/{instance.user_id.id}/{instance.id}/{short_name}"
 
 
 class Notification(models.Model):

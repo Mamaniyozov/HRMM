@@ -16,9 +16,9 @@ class DashboardStatsView(APIView):
         queryset = Report.objects.all()
         if user.role == "DIRECTOR":
             return queryset
-        if user.role == "DEPT_HEAD" and user.department_id_id:
+        if user.role == "DEPT_HEAD" and user.department_id:
             return queryset.filter(department_id=user.department_id)
-        if user.role == "UNIT_HEAD" and user.unit_id_id:
+        if user.role == "UNIT_HEAD" and user.unit_id:
             return queryset.filter(created_by__unit_id=user.unit_id)
         return queryset.filter(created_by=user)
 
@@ -26,7 +26,7 @@ class DashboardStatsView(APIView):
         queryset = LeaveRequest.objects.all()
         if user.role == "DIRECTOR":
             return queryset
-        if user.role == "DEPT_HEAD" and user.department_id_id:
+        if user.role == "DEPT_HEAD" and user.department_id:
             return queryset.filter(requested_by__department_id=user.department_id)
         return queryset.filter(requested_by=user)
 
@@ -125,7 +125,7 @@ class DashboardAnalyticsView(DashboardStatsView):
         department_comparison = []
         for department in departments:
             department_reports = reports.filter(department_id=department)
-            if request.user.role == "DEPT_HEAD" and request.user.department_id_id != department.id:
+            if request.user.role == "DEPT_HEAD" and request.user.department_id.id != department.id:
                 continue
 
             department_comparison.append(
