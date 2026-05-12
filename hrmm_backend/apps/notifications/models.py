@@ -21,6 +21,7 @@ class Notification(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    notification_number = models.PositiveIntegerField(unique=True, null=True, blank=True)
     user_id = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,

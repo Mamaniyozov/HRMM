@@ -51,12 +51,52 @@ class MeSerializer(serializers.ModelSerializer):
             "department_name",
             "unit_id",
             "unit_name",
+            "language",
+            "is_active",
             "phone",
             "avatar_url",
-            "last_login_at",
+            "created_at",
             "two_factor_enabled",
             "two_factor_confirmed_at",
         ]
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+    password_confirm = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "email",
+            "full_name",
+            "password",
+            "password_confirm",
+        ]
+
+    def validate_username(self, value):
+        if User.objects.filter(username__iexact=value).exists():
+            raise serializers.ValidationError("Bu username allaqachon ro'yxatdan o'tgan.")
+        return value
+
+    def validate_email(self, value):
+        if User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("Bu email allaqachon ro'yxatdan o'tgan.")
+        return value
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["password_confirm"]:
+            raise serializers.ValidationError({"password_confirm": "Parollar mos kelmadi."})
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop("password_confirm")
+        password = validated_data.pop("password")
+        validated_data["password_hash"] = make_password(password)
+        validated_data["role"] = "SPECIALIST"
+        validated_data["language"] = "uz"
+        return User.objects.create(**validated_data)
 
 
 class LogoutSerializer(serializers.Serializer):

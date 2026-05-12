@@ -91,8 +91,14 @@ const registerStatusBox = document.getElementById("registerStatusBox");
 const showRegisterButton = document.getElementById("showRegisterButton");
 const showLoginButton = document.getElementById("showLoginButton");
 const userForm = document.getElementById("userForm");
+const roleManagementForm = document.getElementById("roleManagementForm");
+const roleManagementUserSelect = document.getElementById("roleManagementUserSelect");
+const roleManagementRoleSelect = document.getElementById("roleManagementRoleSelect");
+const roleManagementUserList = document.getElementById("roleManagementUserList");
+const refreshUsersForRoleManagement = document.getElementById("refreshUsersForRoleManagement");
 const reportForm = document.getElementById("reportForm");
 const workflowForm = document.getElementById("workflowForm");
+const leaveReviewForm = document.getElementById("leaveReviewForm");
 const attachmentForm = document.getElementById("attachmentForm");
 const attachmentToolsForm = document.getElementById("attachmentToolsForm");
 const passwordForm = document.getElementById("passwordForm");
@@ -294,6 +300,29 @@ const translations = {
     section_approval_history: "Tasdiqlash tarixi",
     section_leaves_registry: "Ta'tillar reyesti",
     section_leaves_list: "Ta'til arizalari ro'yxati",
+    section_audit: "Audit",
+    section_audit_records: "So'nggi audit qaydlari",
+    audit_action: "Harakat",
+    audit_target: "Maqsad",
+    audit_description: "Tavsif",
+    audit_performer: "Ijrochi",
+    audit_time: "Vaqt",
+    audit_logs_not_found: "Audit loglar topilmadi",
+    section_security: "Xavfsizlik",
+    change_password: "Parolni o'zgartirish",
+    current_password: "Joriy parol",
+    new_password: "Yangi parol",
+    update_password: "Parolni yangilash",
+    google_authenticator: "Google Authenticator",
+    two_factor_protection: "6 xonali 2FA himoyasi",
+    status: "Holat",
+    create_qr: "QR yaratish",
+    manual_key: "Manual kalit",
+    qr_manual_hint: "QR ishlamasa, yuqoridagi kalitni Google Authenticator ichida qo'lda kiriting.",
+    six_digit_code: "6 xonali kod",
+    enable_2fa: "2FA ni yoqish",
+    authenticator_code: "Authenticator kodi",
+    disable_2fa: "2FA ni o'chirish",
     login_badge: "Kirish",
     login_hero_eyebrow: "HRMM enterprise workspace",
     login_hero_title: "Rasmiy boshqaruv paneli, xavfsiz kirish va zamonaviy ish jarayoni",
@@ -372,6 +401,8 @@ const translations = {
     no_items_found: "Ma'lumot topilmadi",
     feedback_locked: "Baholash faqat tasdiqlangan yoki ko'rib chiqilgan ariza/hisobotdan keyin ochiladi.",
     reports_count: "Hisobotlar soni",
+    approve: "Tasdiqlash",
+    reject: "Rad etish",
     employee_profile: "Xodim profili",
     full_name: "To'liq ism",
     username: "Username",
@@ -468,6 +499,29 @@ const translations = {
     section_approval_history: "История утверждений",
     section_leaves_registry: "Реестр отпусков",
     section_leaves_list: "Список заявок на отпуск",
+    section_audit: "Аудит",
+    section_audit_records: "Последние записи аудита",
+    audit_action: "Действие",
+    audit_target: "Цель",
+    audit_description: "Описание",
+    audit_performer: "Исполнитель",
+    audit_time: "Время",
+    audit_logs_not_found: "Записи аудита не найдены",
+    section_security: "Безопасность",
+    change_password: "Изменить пароль",
+    current_password: "Текущий пароль",
+    new_password: "Новый пароль",
+    update_password: "Обновить пароль",
+    google_authenticator: "Google Authenticator",
+    two_factor_protection: "6-значная защита 2FA",
+    status: "Статус",
+    create_qr: "Создать QR",
+    manual_key: "Ручной ключ",
+    qr_manual_hint: "Если QR не работает, введите ключ вручную в Google Authenticator.",
+    six_digit_code: "6-значный код",
+    enable_2fa: "Включить 2FA",
+    authenticator_code: "Код Authenticator",
+    disable_2fa: "Отключить 2FA",
     sidebar_home: "Главная",
     sidebar_notifications: "Уведомления",
     sidebar_documents: "Документы",
@@ -605,6 +659,29 @@ const translations = {
     section_approval_history: "Approval History",
     section_leaves_registry: "Leaves Registry",
     section_leaves_list: "Leave Requests List",
+    section_audit: "Audit",
+    section_audit_records: "Latest Audit Records",
+    audit_action: "Action",
+    audit_target: "Target",
+    audit_description: "Description",
+    audit_performer: "Performer",
+    audit_time: "Time",
+    audit_logs_not_found: "Audit logs not found",
+    section_security: "Security",
+    change_password: "Change Password",
+    current_password: "Current Password",
+    new_password: "New Password",
+    update_password: "Update Password",
+    google_authenticator: "Google Authenticator",
+    two_factor_protection: "6-digit 2FA Protection",
+    status: "Status",
+    create_qr: "Create QR",
+    manual_key: "Manual Key",
+    qr_manual_hint: "If QR doesn't work, enter the key manually in Google Authenticator.",
+    six_digit_code: "6-digit Code",
+    enable_2fa: "Enable 2FA",
+    authenticator_code: "Authenticator Code",
+    disable_2fa: "Disable 2FA",
     sidebar_home: "Home",
     sidebar_notifications: "Notifications",
     sidebar_documents: "Documents",
@@ -647,6 +724,8 @@ const translations = {
     no_items_found: "No data found",
     feedback_locked: "Feedback is available only after an approved or processed request/report.",
     reports_count: "Reports count",
+    approve: "Approve",
+    reject: "Reject",
     employee_profile: "Employee profile",
     full_name: "Full name",
     username: "Username",
@@ -742,7 +821,30 @@ const translations = {
     section_approval_history: "Onay Gecmisi",
     section_leaves_registry: "Izin Kaydi",
     section_leaves_list: "Izin Talepleri Listesi",
-    sidebar_home: "Ana sayfa",
+    section_audit: "Denetim",
+    section_audit_records: "Son Denetim Kayitlari",
+    audit_action: "Islem",
+    audit_target: "Hedef",
+    audit_description: "Aciklama",
+    audit_performer: "Yurutucu",
+    audit_time: "Zaman",
+    audit_logs_not_found: "Denetim kayitlari bulunamadi",
+    section_security: "Guvenlik",
+    change_password: "Sifre Degistir",
+    current_password: "Mevcut Sifre",
+    new_password: "Yeni Sifre",
+    update_password: "Sifreyi Guncelle",
+    google_authenticator: "Google Authenticator",
+    two_factor_protection: "6 haneli 2FA Korunmasi",
+    status: "Durum",
+    create_qr: "QR Olustur",
+    manual_key: "Manuel Anahtar",
+    qr_manual_hint: "QR calismazsa, anahtari Google Authenticator'da manuel olarak girin.",
+    six_digit_code: "6 haneli kod",
+    enable_2fa: "2FA'yi Ac",
+    authenticator_code: "Authenticator Kodu",
+    disable_2fa: "2FA'yi Kapat",
+    sidebar_home: "Ana Sayfa",
     sidebar_notifications: "Bildirimler",
     sidebar_documents: "Belgeler",
     sidebar_institutions: "Kurumlar",
@@ -784,6 +886,8 @@ const translations = {
     no_items_found: "Veri bulunamadi",
     feedback_locked: "Degerlendirme sadece onaylanan veya islenen talep/rapordan sonra acilir.",
     reports_count: "Rapor sayisi",
+    approve: "Onayla",
+    reject: "Reddet",
     employee_profile: "Calisan profili",
     full_name: "Tam ad",
     username: "Kullanici adi",
@@ -1977,7 +2081,7 @@ function openLeaveDetailModal(leave) {
       ["Kun", leave.total_days ?? "-"],
       ["Reviewer", leave.reviewed_by_name || "-"],
       ["Sabab", leave.reason || "-"],
-      ["ID", leave.id || "-"],
+      ["ID", leave.leave_number || leave.id || "-"],
     ])
   );
 }
@@ -1988,29 +2092,14 @@ function openNotificationDetailModal(item) {
   let attachmentHtml = "";
 
   if (hasAttachment) {
-    if (isImageUrl(attachmentUrl)) {
-      attachmentHtml = `
-        <div class="detail-attachment-preview">
-          <p class="eyebrow">Biriktirma (Rasm)</p>
-          <a href="${attachmentUrl}" target="_blank" class="attachment-link">
-            <img src="${attachmentUrl}" class="attachment-preview-image" alt="Biriktirilgan rasm" />
-          </a>
-          <a href="${attachmentUrl}" target="_blank" class="ghost-btn" download>Yuklab olish</a>
+    attachmentHtml = `
+      <div class="attachment-preview">
+        <img src="${attachmentUrl}" alt="Attachment" style="max-width:100%;max-height:200px;margin-top:10px;border-radius:4px;" />
+        <div class="inline-actions">
+          <button class="ghost-btn small-btn" onclick="window.open('${attachmentUrl}', '_blank')">Yuklab olish</button>
         </div>
-      `;
-    } else {
-      const fileName = attachmentUrl.split("/").pop() || "Fayl";
-      attachmentHtml = `
-        <div class="detail-attachment-preview">
-          <p class="eyebrow">Biriktirma (Fayl)</p>
-          <div class="file-attachment-box">
-            <span class="file-icon">📄</span>
-            <span class="file-name">${escapeHtml(fileName)}</span>
-          </div>
-          <a href="${attachmentUrl}" target="_blank" class="ghost-btn" download>Faylni yuklab olish</a>
-        </div>
-      `;
-    }
+      </div>
+    `;
   }
 
   openContentModal(
@@ -2021,7 +2110,7 @@ function openNotificationDetailModal(item) {
       [t("report_comment"), item.message || "-"],
       ["Type", item.type || "-"],
       ["Read", item.is_read ? t("active") : t("inactive")],
-      ["ID", item.id || "-"],
+      ["ID", item.notification_number || item.id || "-"],
       ["Sana", formatDate(item.created_at)],
       ["Reference", item.reference_type || "-"],
     ]) + attachmentHtml
@@ -2309,7 +2398,7 @@ function buildActivityItems() {
   const leaveItems = state.leaves.map((leave) => ({
     type: "requests",
     actor: leave.requested_by_name || "Foydalanuvchi",
-    title: `${String(leave.id || "ARIZA").slice(0, 8)} ${leave.requested_by_name || "foydalanuvchi"} arizani yaratdi`,
+    title: `#${leave.leave_number || leave.id?.slice(0, 8)} ${leave.requested_by_name || "foydalanuvchi"} arizani yaratdi`,
     meta: `${leave.leave_type || "Ariza"} / ${leave.status || "Holat yo'q"}`,
     time: leave.created_at || leave.start_date,
   }));
@@ -2403,6 +2492,13 @@ function finalizeAuthenticatedSession(payload) {
   resetPendingLogin();
   setAuthUi(true);
   applyRoleBasedUi();
+
+  // Sync language with user preference
+  if (payload.data.user.language && payload.data.user.language !== state.language) {
+    state.language = payload.data.user.language;
+    window.localStorage.setItem("hrmm_language", state.language);
+    applyTranslations();
+  }
 
   // Show welcome toast notification
   showWelcomeToast(payload.data.user.full_name || payload.data.user.username);
@@ -2725,7 +2821,7 @@ function renderLeaves() {
           <td>
             <div class="employee-cell">
               <strong>${leave.requested_by_name || "-"}</strong>
-              <small>ID: ${leave.id}</small>
+              <small>ID: #${leave.leave_number || leave.id?.slice(0, 8)}</small>
               <button class="ghost-btn small-btn use-leave-id-btn" data-id="${leave.id}" type="button">Use leave ID</button>
               <button class="ghost-btn small-btn leave-detail-btn" data-id="${leave.id}" type="button">${t("open_details")}</button>
             </div>
@@ -2759,7 +2855,7 @@ function renderLeaves() {
 
 function renderAudit() {
   if (!state.auditLogs.length) {
-    auditTableBody.innerHTML = makeEmptyRow(5, "Audit loglar topilmadi");
+    auditTableBody.innerHTML = makeEmptyRow(5, t("audit_logs_not_found"));
     renderActivityHistory();
     return;
   }
@@ -2907,8 +3003,9 @@ function renderNotifications() {
         return `
         <div class="feed-item ${item.is_read ? "" : "unread-item"} ${hasAttachment ? "has-attachment" : ""}">
           ${thumbnail}
-          <div class="notification-content">
-            <strong>${escapeHtml(item.title)} ${attachmentIcon}</strong>
+          <div class="feed-item">
+          <div>
+            <strong>#${item.notification_number || item.id?.slice(0, 8)} ${item.title}</strong>
             <span>${escapeHtml(item.message)}</span>
             <small>${item.type} - ${formatDate(item.created_at)}</small>
           </div>
@@ -2953,27 +3050,74 @@ function renderAdminDashboard() {
     ? pending
         .map(
           (item) => `
-            <button type="button" class="feed-item feed-item-button admin-pending-detail-btn" data-report-id="${item.id}" data-item-type="${item.item_type || 'report'}">
-              <strong>${item.report_number || item.leave_number || item.id}</strong>
-              <span>${item.title || item.reason || 'Noma\'lum'}</span>
-              <small>${item.status} - ${item.created_by__full_name || item.employee_name || '-'}</small>
-            </button>
+            <div class="feed-item">
+              <div class="feed-item-content">
+                <strong>#${item.leave_number || item.report_number || item.id?.slice(0, 8)}</strong>
+                <span>${item.title || item.reason || 'Noma\'lum'}</span>
+                <small>${item.status} - ${item.created_by__full_name || item.employee_name || '-'}</small>
+              </div>
+              <div class="feed-item-actions">
+                <button type="button" class="ghost-btn small-btn admin-approve-btn" data-id="${item.id}" data-type="${item.item_type || 'report'}" data-action="APPROVE">${t("approve")}</button>
+                <button type="button" class="ghost-btn small-btn admin-reject-btn" data-id="${item.id}" data-type="${item.item_type || 'report'}" data-action="REJECT">${t("reject")}</button>
+              </div>
+            </div>
           `
         )
         .join("")
     : '<div class="feed-item muted-item">Pending approvals yoq</div>';
 
-  document.querySelectorAll(".admin-pending-detail-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      const itemId = button.dataset.reportId;
-      const itemType = button.dataset.itemType;
+  document.querySelectorAll(".admin-approve-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const itemId = button.dataset.id;
+      const itemType = button.dataset.type;
+      const action = button.dataset.action;
+      
+      try {
+        if (itemType === 'leave') {
+          await apiRequest(`/api/v1/leaves/${itemId}/review/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, review_comment: "Admin tomonidan tasdiqlandi" }),
+          });
+        } else {
+          await apiRequest(`/api/v1/reports/${itemId}/actions/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, comment: "Admin tomonidan tasdiqlandi" }),
+          });
+        }
+        await Promise.all([loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+        setMessage("Muvaffaqiyatli tasdiqlandi", "success");
+      } catch (error) {
+        setMessage(error.message || "Tasdiqlashda xato bo'ldi", "error");
+      }
+    });
+  });
 
-      if (itemType === 'leave') {
-        const leave = state.leaves.find((item) => item.id === itemId);
-        if (leave) openLeaveDetailModal(leave);
-      } else {
-        const report = state.reports.find((item) => item.id === itemId);
-        if (report) openReportDetailModal(report);
+  document.querySelectorAll(".admin-reject-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const itemId = button.dataset.id;
+      const itemType = button.dataset.type;
+      const action = button.dataset.action;
+      
+      try {
+        if (itemType === 'leave') {
+          await apiRequest(`/api/v1/leaves/${itemId}/review/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, review_comment: "Admin tomonidan rad etildi" }),
+          });
+        } else {
+          await apiRequest(`/api/v1/reports/${itemId}/actions/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, comment: "Admin tomonidan rad etildi" }),
+          });
+        }
+        await Promise.all([loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+        setMessage("Muvaffaqiyatli rad etildi", "success");
+      } catch (error) {
+        setMessage(error.message || "Rad etishda xato bo'ldi", "error");
       }
     });
   });
@@ -3155,15 +3299,14 @@ function renderLeaveCalendar() {
 }
 
 async function loadDepartments() {
-  const payload = await apiRequest("/api/v1/departments/", { headers: getHeaders(false) });
+  const payload = await apiRequest("/api/v1/departments/", { headers: getHeaders(true) });
   state.departments = payload.results || [];
   renderDepartmentOptions();
-  renderUnits();
   return state.departments.length;
 }
 
 async function loadUnits() {
-  const payload = await apiRequest("/api/v1/units/", { headers: getHeaders(false) });
+  const payload = await apiRequest("/api/v1/units/", { headers: getHeaders(true) });
   state.units = payload.results || [];
   renderUnits();
 }
@@ -3174,9 +3317,45 @@ async function loadUsers() {
   if (levelFilter.value) params.set("job_level", levelFilter.value);
 
   const query = params.toString() ? `?${params.toString()}` : "";
-  const payload = await apiRequest(`/api/v1/users/${query}`, { headers: getHeaders(false) });
+  const payload = await apiRequest(`/api/v1/users/${query}`, { headers: getHeaders(true) });
   state.users = payload.results || [];
   renderUsers();
+}
+
+async function loadUsersForRoleManagement() {
+  try {
+    const payload = await apiRequest("/api/v1/users/", { headers: getHeaders(true) });
+    const users = payload.results || [];
+    
+    // Populate user select dropdown
+    roleManagementUserSelect.innerHTML = '<option value="">Foydalanuvchi tanlang...</option>';
+    users.forEach(user => {
+      const option = document.createElement("option");
+      option.value = user.id;
+      option.textContent = `${user.full_name} (${user.username}) - ${user.role}`;
+      roleManagementUserSelect.appendChild(option);
+    });
+
+    // Render user list
+    roleManagementUserList.innerHTML = users.length
+      ? users
+          .map(
+            (user) => `
+              <div class="feed-item">
+                <div class="feed-item-content">
+                  <strong>${user.full_name}</strong>
+                  <span>@${user.username}</span>
+                  <small>Hozirgi rol: ${user.role}</small>
+                </div>
+              </div>
+            `
+          )
+          .join("")
+      : '<div class="feed-item muted-item">Foydalanuvchilar topilmadi</div>';
+  } catch (error) {
+    console.error("Foydalanuvchilarni yuklashda xato:", error);
+    setMessage("Foydalanuvchilarni yuklashda xato bo'ldi", "error");
+  }
 }
 
 async function loadReports() {
@@ -3184,7 +3363,7 @@ async function loadReports() {
   if (reportStatusFilter.value) params.set("status", reportStatusFilter.value);
 
   const query = params.toString() ? `?${params.toString()}` : "";
-  const payload = await apiRequest(`/api/v1/reports/${query}`, { headers: getHeaders(false) });
+  const payload = await apiRequest(`/api/v1/reports/${query}`, { headers: getHeaders(true) });
   state.reports = payload.results || [];
   renderReports();
   // Update dashboard cards for regular users
@@ -3199,7 +3378,7 @@ async function loadLeaves() {
   if (leaveStatusFilter.value) params.set("status", leaveStatusFilter.value);
 
   const query = params.toString() ? `?${params.toString()}` : "";
-  const payload = await apiRequest(`/api/v1/leaves/${query}`, { headers: getHeaders(false) });
+  const payload = await apiRequest(`/api/v1/leaves/${query}`, { headers: getHeaders(true) });
   state.leaves = payload.results || [];
   renderLeaves();
   // Update dashboard cards for regular users
@@ -3210,13 +3389,13 @@ async function loadLeaves() {
 }
 
 async function loadAuditLogs() {
-  const payload = await apiRequest("/api/v1/audit/", { headers: getHeaders(false) });
+  const payload = await apiRequest("/api/v1/audit/", { headers: getHeaders(true) });
   state.auditLogs = payload.results || [];
   renderAudit();
 }
 
 async function loadDashboard() {
-  const payload = await apiRequest("/api/v1/dashboard/stats/", { headers: getHeaders(false) });
+  const payload = await apiRequest("/api/v1/dashboard/stats/", { headers: getHeaders(true) });
   totalReportsValue.textContent = String(payload.reports?.total_reports || 0);
   pendingReportsValue.textContent = String(payload.reports?.pending_reports || 0);
   pendingLeavesValue.textContent = String(payload.leaves?.pending_leave_requests || 0);
@@ -3238,7 +3417,7 @@ async function loadDashboard() {
 }
 
 async function loadMe() {
-  const payload = await apiRequest("/api/v1/auth/me/", { headers: getHeaders(false) });
+  const payload = await apiRequest("/api/v1/auth/me/", { headers: getHeaders(true) });
   state.currentUser = payload.data;
   if (currentUserLabel) {
     currentUserLabel.textContent = `${payload.data.full_name} (${payload.data.role})`;
@@ -3255,7 +3434,7 @@ async function loadNotifications() {
 
 async function loadAdminDashboard() {
   try {
-    state.adminDashboard = await apiRequest("/api/v1/dashboard/admin/", { headers: getHeaders(false) });
+    state.adminDashboard = await apiRequest("/api/v1/dashboard/admin/", { headers: getHeaders(true) });
   } catch (error) {
     state.adminDashboard = null;
   }
@@ -3278,7 +3457,7 @@ async function loadLeaveCalendar() {
 }
 
 async function loadReportHistory(reportId) {
-  const payload = await apiRequest(`/api/v1/reports/${reportId}/history/`, { headers: getHeaders(false) });
+  const payload = await apiRequest(`/api/v1/reports/${reportId}/history/`, { headers: getHeaders(true) });
   state.reportHistory = payload.data || [];
   renderReportHistory();
 }
@@ -3292,7 +3471,7 @@ async function markNotificationRead(notificationId) {
   try {
     await apiRequest(`/api/v1/notifications/${notificationId}/read/`, {
       method: "PUT",
-      headers: getHeaders(false),
+      headers: getHeaders(true),
     });
     await loadNotifications();
   } catch (error) {
@@ -3596,6 +3775,38 @@ userForm?.addEventListener("submit", async (event) => {
   }
 });
 
+roleManagementForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const formData = new FormData(roleManagementForm);
+  const userId = formData.get("user_id");
+  const newRole = formData.get("role");
+
+  if (!userId || !newRole) {
+    setMessage("Foydalanuvchi va yangi rolni tanlang", "error");
+    return;
+  }
+
+  try {
+    setMessage("Rol o'zgartirilmoqda...");
+    await apiRequest(`/api/v1/users/${userId}/`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({ role: newRole }),
+    });
+    await Promise.all([loadUsersForRoleManagement(), loadAuditLogs()]);
+    roleManagementForm.reset();
+    setMessage("Rol muvaffaqiyatli o'zgartirildi", "success");
+  } catch (error) {
+    console.error("Rol o'zgartirish xatosi:", error);
+    setMessage(error.message || "Rol o'zgartirishda xato bo'ldi", "error");
+  }
+});
+
+refreshUsersForRoleManagement?.addEventListener("click", async () => {
+  await loadUsersForRoleManagement();
+  setMessage("Foydalanuvchilar yangilandi", "success");
+});
+
 reportForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!(await requestCreationWarning("report"))) return;
@@ -3632,13 +3843,6 @@ reportForm.addEventListener("submit", async (event) => {
     }
     await Promise.all([loadReports(), loadDashboard(), loadAuditLogs()]);
     reportForm.reset();
-    renderDepartmentOptions();
-    setMessage(
-      isUuid(createdReportId)
-        ? `Report yaratildi. UUID: ${createdReportId}`
-        : "Report yaratildi.",
-      "success"
-    );
   } catch (error) {
     setMessage(error.message || "Report yaratishda xato bo'ldi.", "error");
   }
@@ -3709,6 +3913,37 @@ workflowForm.addEventListener("submit", async (event) => {
     }
   } catch (error) {
     setMessage(error.message || "Workflow action xatoligi.", "error");
+  }
+});
+
+leaveReviewForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const formData = new FormData(leaveReviewForm);
+  const leaveId = String(formData.get("leave_id") || "").trim();
+  const action = String(formData.get("action") || "").trim();
+  const reviewComment = String(formData.get("review_comment") || "").trim();
+
+  if (!isUuid(leaveId)) {
+    setMessage("Ariza ID noto'g'ri. Bu maydonga ariza UUID kiriting.", "error");
+    return;
+  }
+
+  try {
+    setMessage("Arizani ko'rib chiqilmoqda...");
+    const payload = await apiRequest(`/api/v1/leaves/${leaveId}/review/`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        action: action,
+        review_comment: reviewComment,
+      }),
+    });
+    leaveReviewForm.reset();
+    await Promise.all([loadLeaves(), loadDashboard(), loadAuditLogs()]);
+    setMessage("Ariza muvaffaqiyatli ko'rib chiqildi.", "success");
+  } catch (error) {
+    console.error("Leave review xatosi:", error);
+    setMessage(error.message || "Arizani ko'rib chiqishda xato bo'ldi.", "error");
   }
 });
 
@@ -4090,12 +4325,23 @@ createMenuItems.forEach((button) => {
   });
 });
 languageOptions.forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", async () => {
     state.language = button.dataset.language || "uz";
     window.localStorage.setItem("hrmm_language", state.language);
     toggleLanguageMenu(false);
     toggleLoginLanguageMenu(false);
     applyTranslations();
+    
+    // Update user language preference on backend
+    try {
+      await apiRequest("/api/v1/auth/me/", {
+        method: "PUT",
+        headers: getHeaders(),
+        body: JSON.stringify({ language: state.language }),
+      });
+    } catch (error) {
+      console.error("Language preference update failed:", error);
+    }
   });
 });
 loginLanguageOptions.forEach((button) => {
@@ -4540,8 +4786,12 @@ function applyRoleBasedUi() {
 
   const usersSection = document.getElementById("usersSection");
   const leavesSection = document.getElementById("leavesSection");
+  const roleManagementPanel = roleManagementForm?.closest(".panel");
+  
   usersSection?.classList.toggle("hidden", !["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role));
   leavesSection?.classList.toggle("hidden", role === "DIRECTOR");
+  roleManagementPanel?.classList.toggle("hidden", role !== "DIRECTOR");
+  
   createMenuItems.forEach((button) => {
     const action = button.dataset.createAction;
     // All roles can see all create menu items

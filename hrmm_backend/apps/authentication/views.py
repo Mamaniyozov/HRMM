@@ -13,6 +13,7 @@ from .serializers import (
     LogoutSerializer,
     MeSerializer,
     PasswordChangeSerializer,
+    RegisterSerializer,
     TwoFactorDisableSerializer,
     TwoFactorLoginVerifySerializer,
     TwoFactorSetupSerializer,
@@ -68,19 +69,11 @@ class LoginView(APIView):
 
         if user.two_factor_enabled and user.totp_secret:
             return api_success(
-                message="Two-factor authentication required",
+                message="2FA verification required",
                 data={
                     "requires_two_factor": True,
                     "verification_method": "authenticator",
                     "challenge_token": build_login_challenge(user),
-                    "user": {
-                        "id": user.id,
-                        "username": user.username,
-                        "full_name": user.full_name,
-                        "role": user.role,
-                        "job_role": user.job_role,
-                        "job_level": user.job_level,
-                    },
                 },
                 status_code=status.HTTP_200_OK,
             )
@@ -136,6 +129,42 @@ class LoginView(APIView):
             },
             status_code=status.HTTP_200_OK,
         )
+
+
+class RegisterView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        try:
+            serializer = RegisterSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.save()
+            user.totp_secret = generate_totp_secret()
+            user.save(update_fields=["totp_secret", "updated_at"])
+            create_audit_log(
+                actor=user,
+                action="USER_REGISTER",
+                target_type="users.User",
+                target_id=user.id,
+                description=f"{user.username} ro'yxatdan o'tdi",
+                request=request,
+            )
+            return api_success(
+                message="Registration successful",
+                data={
+                    "id": str(user.id),
+                    "username": user.username,
+                    "full_name": user.full_name,
+                },
+                status_code=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return api_success(
+                message=str(e),
+                data=None,
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class VerifyLoginEmailOTPView(APIView):
@@ -249,6 +278,12 @@ class MeView(APIView):
     permission_classes = [IsAuthenticatedHRMM]
 
     def get(self, request):
+        return api_success(data=MeSerializer(request.user).data)
+    
+    def put(self, request):
+        serializer = MeSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return api_success(data=MeSerializer(request.user).data)
 
 

@@ -24,6 +24,7 @@ class LeaveRequest(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    leave_number = models.PositiveIntegerField(unique=True, null=True, blank=True)
     requested_by = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,

@@ -4,6 +4,7 @@ from .views import (
     LogoutView,
     MeView,
     PasswordChangeView,
+    RegisterView,
     TwoFactorDisableView,
     TwoFactorSetupView,
     TwoFactorVerifySetupView,
@@ -13,6 +14,7 @@ from .views import (
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
+    path("register/", RegisterView.as_view(), name="register"),
     path("login/", LoginView.as_view(), name="login"),
     path("login/verify-email-otp/", VerifyLoginEmailOTPView.as_view(), name="login_verify_email_otp"),
     path("login/verify-2fa/", VerifyLoginTwoFactorView.as_view(), name="login_verify_2fa"),

@@ -5,11 +5,13 @@ from apps.notifications.models import Notification
 
 class NotificationSerializer(serializers.ModelSerializer):
     screenshot_url = serializers.SerializerMethodField()
+    notification_number = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Notification
         fields = [
             "id",
+            "notification_number",
             "title",
             "message",
             "type",

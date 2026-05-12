@@ -36,11 +36,13 @@ class LeaveRequestListSerializer(serializers.ModelSerializer):
     requested_by_name = serializers.CharField(source="requested_by.full_name", read_only=True)
     reviewed_by_name = serializers.CharField(source="reviewed_by.full_name", read_only=True)
     screenshot_url = serializers.SerializerMethodField()
+    leave_number = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = LeaveRequest
         fields = [
             "id",
+            "leave_number",
             "requested_by",
             "requested_by_name",
             "reviewed_by",

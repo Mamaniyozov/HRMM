@@ -206,6 +206,14 @@
             </span>
             <span class="nav-link-label">Hujjatlar</span>
           </button>
+          <button class="nav-link" type="button" data-target="institutionsSection">
+            <span class="nav-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-9a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+              </svg>
+            </span>
+            <span class="nav-link-label" data-translate="sidebar_institutions">Bo'limlar</span>
+          </button>
 
         </nav>
       </aside>
@@ -344,6 +352,11 @@
                       </svg>
                     </button>
                   </div>
+                  <div class="profile-detail-icons">
+                    <span id="profileRoleIcon" class="profile-detail-icon" title="Rol">-</span>
+                    <span id="profileDeptIcon" class="profile-detail-icon" title="Bo'lim">-</span>
+                    <span id="profileUnitIcon" class="profile-detail-icon" title="Birlik">-</span>
+                  </div>
                 </div>
                 <div class="profile-dropdown-divider"></div>
                 <button
@@ -417,6 +430,8 @@
 
         <section id="homeSection" class="dashboard-home app-section">
           <div class="dashboard-home-header">
+            <p class="eyebrow">Boshlash</p>
+            <h3 id="dashboardWelcomeName">Xush kelibsiz</h3>
             <div id="homeQuickActions" class="toolbar"></div>
           </div>
           <div class="dashboard-card-grid">
@@ -520,15 +535,15 @@
         <section id="auditSection" class="panel app-section">
           <div class="panel-heading inline">
             <div>
-              <p class="eyebrow">Audit</p>
-              <h3>So'nggi audit qaydlari</h3>
+              <p class="eyebrow" data-translate="section_audit">Audit</p>
+              <h3 data-translate="section_audit_records">So'nggi audit qaydlari</h3>
             </div>
-            <button id="refreshAudit" class="ghost-btn" type="button">Yangilash</button>
+            <button id="refreshAudit" class="ghost-btn" type="button" data-translate="refresh">Yangilash</button>
           </div>
           <div class="table-wrap" style="max-height: 440px; overflow-y: auto;">
             <table>
-              <thead><tr><th>Harakat</th><th>Maqsad</th><th>Tavsif</th><th>Ijrochi</th><th>Vaqt</th></tr></thead>
-              <tbody id="auditTableBody"><tr><td colspan="5" class="empty-state">Audit loglar yuklanmagan</td></tr></tbody>
+              <thead><tr><th data-translate="audit_action">Harakat</th><th data-translate="audit_target">Maqsad</th><th data-translate="audit_description">Tavsif</th><th data-translate="audit_performer">Ijrochi</th><th data-translate="audit_time">Vaqt</th></tr></thead>
+              <tbody id="auditTableBody"><tr><td colspan="5" class="empty-state" data-translate="audit_logs_not_found">Audit loglar yuklanmagan</td></tr></tbody>
             </table>
           </div>
         </section>
@@ -536,37 +551,37 @@
         <section id="securitySection" class="workspace-grid app-section hidden">
           <div class="panel">
             <div class="panel-heading">
-              <p class="eyebrow">Xavfsizlik</p>
-              <h3>Parolni o'zgartirish</h3>
+              <p class="eyebrow" data-translate="section_security">Xavfsizlik</p>
+              <h3 data-translate="change_password">Parolni o'zgartirish</h3>
             </div>
             <form id="passwordForm" class="form-grid">
-              <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
-              <label><span>Yangi parol</span><input name="new_password" type="password" required /></label>
-              <button type="submit" class="ghost-btn">Parolni yangilash</button>
+              <label><span data-translate="current_password">Joriy parol</span><input name="current_password" type="password" required /></label>
+              <label><span data-translate="new_password">Yangi parol</span><input name="new_password" type="password" required /></label>
+              <button type="submit" class="ghost-btn" data-translate="update_password">Parolni yangilash</button>
             </form>
             <div class="security-divider"></div>
             <div class="panel-heading">
-              <p class="eyebrow">Google Authenticator</p>
-              <h3>6 xonali 2FA himoyasi</h3>
+              <p class="eyebrow" data-translate="google_authenticator">Google Authenticator</p>
+              <h3 data-translate="two_factor_protection">6 xonali 2FA himoyasi</h3>
             </div>
             <div class="two-factor-status-row">
-              <span>Holat</span>
+              <span data-translate="status">Holat</span>
               <strong id="twoFactorStatusLabel" class="pill role">Nofaol</strong>
             </div>
             <div class="inline-actions auth-actions">
-              <button id="setupTwoFactorButton" type="button" class="primary-btn">QR yaratish</button>
+              <button id="setupTwoFactorButton" type="button" class="primary-btn" data-translate="create_qr">QR yaratish</button>
             </div>
             <div id="twoFactorSetupPanel" class="two-factor-setup hidden">
               <img id="twoFactorQrImage" class="two-factor-qr" alt="2FA QR code" />
               <div class="mono-list">
-                <span>Manual key: <strong id="twoFactorSecretLabel">-</strong></span>
+                <span data-translate="manual_key">Manual key</span>: <strong id="twoFactorSecretLabel">-</strong>
               </div>
-              <p class="session-footnote">
-                QR ishlamasa, yuqoridagi kalitni Google Authenticator ichida qo‘lda kiriting.
+              <p class="session-footnote" data-translate="qr_manual_hint">
+                QR ishlamasa, yuqoridagi kalitni Google Authenticator ichida qo'lda kiriting.
               </p>
               <form id="twoFactorVerifyForm" class="form-grid compact-form">
                 <label>
-                  <span>6 xonali kod</span>
+                  <span data-translate="six_digit_code">6 xonali kod</span>
                   <input
                     name="code"
                     type="text"
@@ -577,13 +592,13 @@
                     required
                   />
                 </label>
-                <button type="submit" class="ghost-btn">2FA ni yoqish</button>
+                <button type="submit" class="ghost-btn" data-translate="enable_2fa">2FA ni yoqish</button>
               </form>
             </div>
             <form id="twoFactorDisableForm" class="form-grid compact-form hidden">
-              <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
+              <label><span data-translate="current_password">Joriy parol</span><input name="current_password" type="password" required /></label>
               <label>
-                <span>Authenticator kodi</span>
+                <span data-translate="authenticator_code">Authenticator kodi</span>
                 <input
                   name="code"
                   type="text"
@@ -594,7 +609,7 @@
                   required
                 />
               </label>
-              <button type="submit" class="ghost-btn">2FA ni o'chirish</button>
+              <button type="submit" class="ghost-btn" data-translate="disable_2fa">2FA ni o'chirish</button>
             </form>
           </div>
 
@@ -680,6 +695,38 @@
               <div id="analyticsDepartmentsList" class="feed-list"></div>
             </div>
           </div>
+
+          <div class="panel">
+            <div class="panel-heading inline">
+              <div>
+                <p class="eyebrow">Foydalanuvchi rollarini boshqarish</p>
+                <h3>Rol o'zgartirish</h3>
+              </div>
+              <div class="toolbar">
+                <button id="refreshUsersForRoleManagement" class="ghost-btn" type="button">Foydalanuvchilarni yangilash</button>
+              </div>
+            </div>
+            <form id="roleManagementForm" class="form-grid">
+              <label><span>Foydalanuvchi tanlang</span>
+                <select name="user_id" id="roleManagementUserSelect" required>
+                  <option value="">Foydalanuvchi tanlang...</option>
+                </select>
+              </label>
+              <label><span>Yangi rol</span>
+                <select name="role" id="roleManagementRoleSelect" required>
+                  <option value="SPECIALIST">SPECIALIST (Mutaxassis)</option>
+                  <option value="UNIT_HEAD">UNIT_HEAD (Bo'lim boshlig'i)</option>
+                  <option value="DEPT_HEAD">DEPT_HEAD (Kafedra mudiri)</option>
+                  <option value="DIRECTOR">DIRECTOR (Direktor)</option>
+                </select>
+              </label>
+              <button type="submit" class="primary-btn">Rolni o'zgartirish</button>
+            </form>
+            <div class="feed-card" style="margin-top: 20px;">
+              <h4>Foydalanuvchilar ro'yxati</h4>
+              <div id="roleManagementUserList" class="feed-list"></div>
+            </div>
+          </div>
         </section>
 
         <section id="usersSection" class="panel app-section">
@@ -714,6 +761,28 @@
                   <option value="">Login qiling (departmentlar yuklanadi)</option>
                 </select>
               </label>
+              <label>
+                <span>Boshqaruv roli</span>
+                <select name="role" id="roleFilterSelect">
+                  <option value="">Tanlang</option>
+                  <option value="SPECIALIST">Specialist</option>
+                  <option value="UNIT_HEAD">Unit Head</option>
+                  <option value="DEPT_HEAD">Department Head</option>
+                  <option value="DIRECTOR">Director</option>
+                </select>
+              </label>
+              <label>
+                <span>Birlik</span>
+                <select name="unit_id" id="unitSelect">
+                  <option value="">Login qiling (birliklar yuklanadi)</option>
+                </select>
+              </label>
+              <label>
+                <span>Bo'lim</span>
+                <select name="department_id" id="departmentSelect">
+                  <option value="">Login qiling (departmentlar yuklanadi)</option>
+                </select>
+              </label>
               <button type="submit" class="primary-btn">Hisobot yaratish</button>
             </form>
             <div class="report-id-helper">
@@ -743,7 +812,43 @@
                 <option value="ARCHIVE">Arxivlash (faqat APPROVED/REJECTED)</option>
               </select></label>
               <label><span>Izoh <small id="commentHint" style="color: var(--muted); font-weight: normal;"></small></span><textarea name="comment" id="workflowComment" rows="4" placeholder="Tasdiqlash yoki rad etish izohi"></textarea></label>
-              <button type="submit" class="primary-btn">Ish jarayoni harakatini ishga tushirish</button>
+              <button type="submit" class="primary-btn">Ish jarayoni harakatini ishga tushurish</button>
+            </form>
+            <form id="leaveReviewForm" class="form-grid hidden">
+              <label><span>Ariza ID</span><input name="leave_id" type="text" placeholder="Ariza UUID sini qo'ying" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
+              <label><span>Harakat</span><select name="action" id="leaveActionSelect" required>
+                <option value="APPROVE">Tasdiqlash</option>
+                <option value="REJECT">Rad etish</option>
+                <option value="CANCEL">Bekor qilish</option>
+              </select></label>
+              <label><span>Izoh</span><textarea name="review_comment" id="leaveReviewComment" rows="4" placeholder="Tasdiqlash yoki rad etish izohi"></textarea></label>
+              <button type="submit" class="primary-btn">Arizani ko'rib chiqish</button>
+            </form>
+            <form id="userForm" class="form-grid hidden">
+              <label><span>To'liq ism</span><input name="full_name" type="text" placeholder="Ism familiya" /></label>
+              <label><span>Username</span><input name="username" type="text" placeholder="Username" /></label>
+              <label><span>Email</span><input name="email" type="email" placeholder="Email" /></label>
+              <label><span>Boshqaruv roli</span><select name="role">
+                <option value="SPECIALIST">Specialist</option>
+                <option value="UNIT_HEAD">Unit Head</option>
+                <option value="DEPT_HEAD">Department Head</option>
+                <option value="DIRECTOR">Director</option>
+              </select></label>
+              <label><span>IT lavozimi</span><select name="job_role">
+                <option value="DEVOPS">DevOps</option>
+                <option value="IT_ENGINEER">IT Engineer</option>
+                <option value="ANDROID_DEV">Android Developer</option>
+                <option value="BACKEND_DEV">Backend Developer</option>
+                <option value="FRONTEND_DEV">Frontend Developer</option>
+                <option value="MANAGER">Manager</option>
+                <option value="DIRECTOR">Director</option>
+              </select></label>
+              <label><span>Daraja</span><select name="job_level">
+                <option value="JUNIOR">Junior</option>
+                <option value="MIDDLE">Middle</option>
+                <option value="SENIOR">Senior</option>
+              </select></label>
+              <button type="submit" class="primary-btn">Saqlash</button>
             </form>
             <form id="attachmentForm" class="form-grid compact-form">
               <label><span>Biriktiriladigan hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
@@ -797,7 +902,56 @@
           <div id="reportHistoryList" class="feed-list"></div>
         </section>
 
+        <section id="leavesSection" class="panel app-section">
+          <div class="panel-heading inline">
+            <div>
+              <p class="eyebrow" data-translate="section_leaves">Ta'til arizalari</p>
+              <h3 data-translate="section_leaves_list">Ta'til arizalari ro'yxati</h3>
+            </div>
+            <div class="toolbar">
+              <input id="leaveSearchInput" type="text" placeholder="Ariza qidirush..." />
+              <select id="leaveStatusFilter">
+                <option value="">Barcha holatlar</option>
+                <option value="PENDING">Kutilmoqda</option>
+                <option value="APPROVED">Tasdiqlangan</option>
+                <option value="REJECTED">Rad etilgan</option>
+              </select>
+              <button id="refreshLeaves" class="ghost-btn" type="button">Arizalarni yangilash</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Xodim</th><th>Sana</th><th>Kunlar soni</th><th>Holat</th><th>Izoh</th></tr></thead>
+              <tbody id="leavesTableBody"><tr><td colspan="5" class="empty-state">Arizalar yuklanmagan</td></tr></tbody>
+            </table>
+          </div>
+        </section>
 
+        <section id="feedbackSection" class="panel app-section hidden">
+          <div class="panel-heading">
+            <p class="eyebrow">Baholash</p>
+            <h3>Fikr va kommentariya</h3>
+          </div>
+          <form id="feedbackForm" class="form-grid">
+            <label>
+              <span>Baholash</span>
+              <div id="feedbackStars" class="rating-stars">
+                <button type="button" data-rating="1">★</button>
+                <button type="button" data-rating="2">★</button>
+                <button type="button" data-rating="3">★</button>
+                <button type="button" data-rating="4">★</button>
+                <button type="button" data-rating="5">★</button>
+              </div>
+              <input id="feedbackRatingValue" name="rating" type="hidden" value="0" />
+            </label>
+            <label>
+              <span>Fikr</span>
+              <textarea id="feedbackCommentInput" name="comment" rows="4" placeholder="Fikringizni yozing..."></textarea>
+            </label>
+            <button type="submit" class="primary-btn">Yuborish</button>
+          </form>
+          <div id="feedbackList" class="feed-list"></div>
+        </section>
 
         <!-- Side Drawer for Auxiliary Modules -->
         <aside id="auxiliaryDrawer" class="auxiliary-drawer hidden">
@@ -840,6 +994,12 @@
 
         <section class="status-strip">
           <div id="messageBox" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
+          <div class="debug-info" style="font-size: 11px; color: var(--muted); margin-top: 8px;">
+            <span id="apiBaseIcon">API:</span>
+            <span id="authStateLabel">Auth:</span>
+            <span id="authStateDot">●</span>
+            <span id="currentUserLabel">User:</span>
+          </div>
         </section>
         <footer class="session-footer">
           <span>Kirish foydalanuvchisi:</span>

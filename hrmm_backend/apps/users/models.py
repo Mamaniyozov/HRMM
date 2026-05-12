@@ -24,21 +24,27 @@ class User(models.Model):
         ("MIDDLE", "Middle"),
         ("SENIOR", "Senior"),
     ]
+    LANGUAGE_CHOICES = [
+        ("uz", "Uzbek"),
+        ("ru", "Russian"),
+        ("en", "English"),
+        ("tr", "Turkish"),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     password_hash = models.CharField(max_length=255)
     full_name = models.CharField(max_length=200)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="SPECIALIST")
     job_role = models.CharField(max_length=30, choices=JOB_ROLE_CHOICES, null=True, blank=True)
-    job_level = models.CharField(max_length=10, choices=JOB_LEVEL_CHOICES, null=True, blank=True)
+    job_level = models.CharField(max_length=20, choices=JOB_LEVEL_CHOICES, null=True, blank=True)
     department_id = models.ForeignKey(
         "departments.Department",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="users",
+        related_name="department_users",
         db_column="department_id",
     )
     unit_id = models.ForeignKey(
@@ -46,18 +52,20 @@ class User(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="users",
+        related_name="unit_users",
         db_column="unit_id",
     )
+    avatar_url = models.URLField(max_length=500, null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    phone = models.CharField(max_length=20, null=True, blank=True)
-    avatar_url = models.CharField(max_length=500, null=True, blank=True)
-    totp_secret = models.CharField(max_length=64, null=True, blank=True)
+    language = models.CharField(max_length=5, choices=LANGUAGE_CHOICES, default="uz")
     two_factor_enabled = models.BooleanField(default=False)
+    two_factor_secret = models.CharField(max_length=32, null=True, blank=True)
     two_factor_confirmed_at = models.DateTimeField(null=True, blank=True)
     last_login_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    totp_secret = models.CharField(max_length=64, null=True, blank=True)
 
     @property
     def is_authenticated(self):

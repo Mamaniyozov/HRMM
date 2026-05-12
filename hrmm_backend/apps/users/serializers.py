@@ -63,9 +63,9 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "job_level",
             "department_id",
             "unit_id",
-            "is_active",
-            "phone",
             "avatar_url",
+            "is_active",
+            "language",
             "created_at",
         ]
 
@@ -81,6 +81,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "job_level",
             "department_id",
             "unit_id",
+            "language",
             "is_active",
             "phone",
             "avatar_url",
