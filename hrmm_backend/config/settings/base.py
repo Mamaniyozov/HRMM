@@ -66,11 +66,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-db_name = os.getenv("DB_NAME")
-db_user = os.getenv("DB_USER")
-db_password = os.getenv("DB_PASSWORD")
-db_host = os.getenv("DB_HOST")
-db_port = os.getenv("DB_PORT")
+db_name = os.getenv("DB_NAME") or os.getenv("PGDATABASE")
+db_user = os.getenv("DB_USER") or os.getenv("PGUSER")
+db_password = os.getenv("DB_PASSWORD") or os.getenv("PGPASSWORD")
+db_host = os.getenv("DB_HOST") or os.getenv("PGHOST")
+db_port = os.getenv("DB_PORT") or os.getenv("PGPORT")
 
 if all([db_name, db_user, db_password, db_host, db_port]):
     DATABASES = {
