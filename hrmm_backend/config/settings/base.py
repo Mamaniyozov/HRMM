@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta
 from pathlib import Path
-
+import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -152,7 +152,6 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 import dj_database_url
 
 database_url = os.getenv("DATABASE_URL")
@@ -162,9 +161,27 @@ if database_url:
         "default": dj_database_url.parse(database_url)
     }
 else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+    db_name = os.getenv("DB_NAME") or os.getenv("PGDATABASE")
+    db_user = os.getenv("DB_USER") or os.getenv("PGUSER")
+    db_password = os.getenv("DB_PASSWORD") or os.getenv("PGPASSWORD")
+    db_host = os.getenv("DB_HOST") or os.getenv("PGHOST")
+    db_port = os.getenv("DB_PORT") or os.getenv("PGPORT")
+
+    if all([db_name, db_user, db_password, db_host, db_port]):
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": db_name,
+                "USER": db_user,
+                "PASSWORD": db_password,
+                "HOST": db_host,
+                "PORT": db_port,
+            }
         }
-    }
+    else:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
