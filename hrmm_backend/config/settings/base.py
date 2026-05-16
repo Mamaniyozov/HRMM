@@ -148,3 +148,5 @@ TOTP_ISSUER_NAME = os.getenv("TOTP_ISSUER_NAME", "HRMM Control Center")
 
 
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = []
