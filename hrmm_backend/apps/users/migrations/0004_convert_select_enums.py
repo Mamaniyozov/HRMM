@@ -15,13 +15,8 @@ class Migration(migrations.Migration):
             sql="""
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_type t
-    JOIN pg_namespace n ON n.oid=t.typnamespace
-    WHERE n.nspname='hrmm' AND t.typname='status_enum'
-  ) THEN
-    CREATE TYPE hrmm.status_enum AS ENUM (
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='status_enum') THEN
+    CREATE TYPE status_enum AS ENUM (
       'DRAFT','PENDING_L2','PENDING_L3','PENDING_L4',
       'APPROVED','REJECTED','REVISION','ARCHIVED'
     );
@@ -34,13 +29,8 @@ END $$;
             sql="""
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_type t
-    JOIN pg_namespace n ON n.oid=t.typnamespace
-    WHERE n.nspname='hrmm' AND t.typname='leave_type_enum'
-  ) THEN
-    CREATE TYPE hrmm.leave_type_enum AS ENUM ('ANNUAL','SICK','MATERNITY','UNPAID','OTHER');
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='leave_type_enum') THEN
+    CREATE TYPE leave_type_enum AS ENUM ('ANNUAL','SICK','MATERNITY','UNPAID','OTHER');
   END IF;
 END $$;
 """,
@@ -50,13 +40,8 @@ END $$;
             sql="""
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_type t
-    JOIN pg_namespace n ON n.oid=t.typnamespace
-    WHERE n.nspname='hrmm' AND t.typname='leave_status_enum'
-  ) THEN
-    CREATE TYPE hrmm.leave_status_enum AS ENUM ('PENDING','APPROVED','REJECTED','CANCELLED');
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='leave_status_enum') THEN
+    CREATE TYPE leave_status_enum AS ENUM ('PENDING','APPROVED','REJECTED','CANCELLED');
   END IF;
 END $$;
 """,
@@ -66,13 +51,8 @@ END $$;
             sql="""
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_type t
-    JOIN pg_namespace n ON n.oid=t.typnamespace
-    WHERE n.nspname='hrmm' AND t.typname='action_enum'
-  ) THEN
-    CREATE TYPE hrmm.action_enum AS ENUM ('SUBMIT','APPROVE','REJECT','REQUEST_REVISION','ARCHIVE');
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='action_enum') THEN
+    CREATE TYPE action_enum AS ENUM ('SUBMIT','APPROVE','REJECT','REQUEST_REVISION','ARCHIVE');
   END IF;
 END $$;
 """,
@@ -82,13 +62,8 @@ END $$;
             sql="""
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_type t
-    JOIN pg_namespace n ON n.oid=t.typnamespace
-    WHERE n.nspname='hrmm' AND t.typname='notif_type_enum'
-  ) THEN
-    CREATE TYPE hrmm.notif_type_enum AS ENUM ('APPROVAL','REJECTION','INFO','REMINDER');
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='notif_type_enum') THEN
+    CREATE TYPE notif_type_enum AS ENUM ('APPROVAL','REJECTION','INFO','REMINDER');
   END IF;
 END $$;
 """,
@@ -97,38 +72,37 @@ END $$;
         migrations.RunSQL(
             sql="""
 ALTER TABLE public.users_user
-  ALTER COLUMN role TYPE hrmm.role_enum
-  USING role::text::hrmm.role_enum;
+  ALTER COLUMN role TYPE status_enum
+  USING role::text::status_enum;
 
 ALTER TABLE public.reports_report
-  ALTER COLUMN status TYPE hrmm.status_enum
-  USING status::text::hrmm.status_enum;
+  ALTER COLUMN status TYPE status_enum
+  USING status::text::status_enum;
 
 ALTER TABLE public.leave_management_leaverequest
-  ALTER COLUMN leave_type TYPE hrmm.leave_type_enum
-  USING leave_type::text::hrmm.leave_type_enum;
+  ALTER COLUMN leave_type TYPE leave_type_enum
+  USING leave_type::text::leave_type_enum;
 
 ALTER TABLE public.leave_management_leaverequest
-  ALTER COLUMN status TYPE hrmm.leave_status_enum
-  USING status::text::hrmm.leave_status_enum;
+  ALTER COLUMN status TYPE leave_status_enum
+  USING status::text::leave_status_enum;
 
 ALTER TABLE public.workflows_approvalhistory
-  ALTER COLUMN action TYPE hrmm.action_enum
-  USING action::text::hrmm.action_enum;
+  ALTER COLUMN action TYPE action_enum
+  USING action::text::action_enum;
 
 ALTER TABLE public.workflows_approvalhistory
-  ALTER COLUMN previous_status TYPE hrmm.status_enum
-  USING previous_status::text::hrmm.status_enum;
+  ALTER COLUMN previous_status TYPE status_enum
+  USING previous_status::text::status_enum;
 
 ALTER TABLE public.workflows_approvalhistory
-  ALTER COLUMN new_status TYPE hrmm.status_enum
-  USING new_status::text::hrmm.status_enum;
+  ALTER COLUMN new_status TYPE status_enum
+  USING new_status::text::status_enum;
 
 ALTER TABLE public.notifications_notification
-  ALTER COLUMN type TYPE hrmm.notif_type_enum
-  USING type::text::hrmm.notif_type_enum;
+  ALTER COLUMN type TYPE notif_type_enum
+  USING type::text::notif_type_enum;
 """,
             reverse_sql=migrations.RunSQL.noop,
         ),
     ]
-
