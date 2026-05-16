@@ -1,6 +1,6 @@
 const DEFAULT_API_BASE =
   window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8000";
-
+const API_URL = "https://hrmm-production-9c37.up.railway.app";
 const state = {
   apiBase: DEFAULT_API_BASE,
   language: window.localStorage.getItem("hrmm_language") || "uz",
