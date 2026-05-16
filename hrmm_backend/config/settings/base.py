@@ -152,3 +152,19 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+import dj_database_url
+
+database_url = os.getenv("DATABASE_URL")
+
+if database_url:
+    DATABASES = {
+        "default": dj_database_url.parse(database_url)
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
