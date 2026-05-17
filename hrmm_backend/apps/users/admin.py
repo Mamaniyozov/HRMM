@@ -219,3 +219,8 @@ class UserAdmin(admin.ModelAdmin):
             kwargs["form"] = self.form
         return super().get_form(request, obj, **kwargs)
 
+    def get_fieldsets(self, request, obj=None):
+        if obj is None:
+            return self.add_fieldsets
+        return self.fieldsets
+
