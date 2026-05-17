@@ -170,8 +170,6 @@ class UserAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "password_hash",
-                    "new_password",
-                    "confirm_new_password",
                     "two_factor_enabled",
                     "totp_secret",
                     "two_factor_confirmed_at",
