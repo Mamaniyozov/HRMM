@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
 from pathlib import Path
-import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -37,11 +36,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "config.middleware.SimpleCORSMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -153,13 +151,10 @@ TOTP_ISSUER_NAME = os.getenv("TOTP_ISSUER_NAME", "HRMM Control Center")
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CORS_ALLOWED_ORIGINS = [
-    "https://exemplary-elegance-production-8efe.up.railway.app",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 STATICFILES_DIRS = []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-import dj_database_url
 
 database_url = os.getenv("DATABASE_URL")
 
