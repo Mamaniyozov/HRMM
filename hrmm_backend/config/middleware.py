@@ -11,6 +11,7 @@ class SimpleCORSMiddleware:
         "http://localhost:5500",
         "http://127.0.0.1:8080",
         "http://localhost:8080",
+        "https://exemplary-elegance-production-8efe.up.railway.app",
         "null",
     }
     ALLOWED_HEADERS = "Authorization, Content-Type"
