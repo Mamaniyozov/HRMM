@@ -2307,7 +2307,15 @@ async function apiRequest(path, options = {}) {
       response.status === 404
         ? `API topilmadi. Backend server ${state.apiBase} da ishga tushganini tekshiring.`
         : `So'rov bajarilmadi (${response.status}).`;
-    const message = data?.message || data?.detail || JSON.stringify(data?.data || data) || fallbackMessage;
+
+    let payloadText = "";
+    if (typeof data?.data === "string") payloadText = data.data;
+    else if (typeof data === "string") payloadText = data;
+    else if (data?.data && typeof data.data === "object") payloadText = JSON.stringify(data.data);
+    else if (data && typeof data === "object") payloadText = JSON.stringify(data);
+
+    const normalizedPayloadText = payloadText && payloadText !== "null" ? payloadText : "";
+    const message = data?.message || data?.detail || normalizedPayloadText || fallbackMessage;
     throw new Error(message);
   }
 
