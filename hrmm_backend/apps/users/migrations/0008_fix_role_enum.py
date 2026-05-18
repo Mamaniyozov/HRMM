@@ -10,10 +10,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # Drop the enum constraint and convert role to simple varchar
+        # First, alter the column to remove the enum constraint
         migrations.RunSQL(
-            sql="ALTER TABLE users_user ALTER COLUMN role TYPE varchar(20)",
-            reverse_sql="ALTER TABLE users_user ALTER COLUMN role TYPE varchar(20)",
+            sql="""
+            ALTER TABLE users_user ALTER COLUMN role TYPE varchar(20) USING role::text;
+            DROP TYPE IF EXISTS status_enum;
+            """,
+            reverse_sql="SELECT 1",  # No reverse needed
         ),
         migrations.AlterField(
             model_name='user',
