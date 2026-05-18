@@ -1,6 +1,12 @@
-const DEFAULT_API_BASE =
-  window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8000";
 const API_URL = "https://exemplary-elegance-production-8efe.up.railway.app";
+const DEFAULT_API_BASE = (() => {
+  const configuredBase = window.__HRMM_API_BASE__ || window.localStorage.getItem("hrmm_api_base") || "";
+  if (configuredBase) return configuredBase.replace(/\/$/, "");
+  if (window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")) {
+    return "http://127.0.0.1:8000";
+  }
+  return API_URL;
+})();
 const state = {
   apiBase: DEFAULT_API_BASE,
   language: window.localStorage.getItem("hrmm_language") || "uz",
@@ -2288,7 +2294,12 @@ function getHeaders(isJson = true) {
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(`${state.apiBase}${path}`, options);
+  let response;
+  try {
+    response = await fetch(`${state.apiBase}${path}`, options);
+  } catch (_networkError) {
+    throw new Error(`Failed to fetch. API serverga ulanishda xato: ${state.apiBase}`);
+  }
   const data = await response.json().catch(() => null);
 
   if (!response.ok || data?.success === false) {
