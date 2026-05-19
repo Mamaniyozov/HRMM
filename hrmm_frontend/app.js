@@ -1,6 +1,20 @@
-const DEFAULT_API_BASE =
-  window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8000";
 const API_URL = "https://exemplary-elegance-production-8efe.up.railway.app";
+const DEFAULT_API_BASE = (() => {
+  const configuredBase = window.__HRMM_API_BASE__ || window.localStorage.getItem("hrmm_api_base") || "";
+  if (configuredBase) return configuredBase.replace(/\/$/, "");
+
+  const origin = window.location.origin || "";
+  if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+    return "http://127.0.0.1:8000";
+  }
+
+  // Productionda odatda API shu hostning o'zida bo'ladi.
+  if (origin.startsWith("http://") || origin.startsWith("https://")) {
+    return origin.replace(/\/$/, "");
+  }
+
+  return API_URL;
+})();
 const state = {
   apiBase: DEFAULT_API_BASE,
   language: window.localStorage.getItem("hrmm_language") || "uz",
@@ -2288,7 +2302,12 @@ function getHeaders(isJson = true) {
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(`${state.apiBase}${path}`, options);
+  let response;
+  try {
+    response = await fetch(`${state.apiBase}${path}`, options);
+  } catch (_networkError) {
+    throw new Error(`Failed to fetch. API serverga ulanishda xato: ${state.apiBase}`);
+  }
   const data = await response.json().catch(() => null);
 
   if (!response.ok || data?.success === false) {
@@ -2296,7 +2315,15 @@ async function apiRequest(path, options = {}) {
       response.status === 404
         ? `API topilmadi. Backend server ${state.apiBase} da ishga tushganini tekshiring.`
         : `So'rov bajarilmadi (${response.status}).`;
-    const message = data?.message || data?.detail || JSON.stringify(data?.data || data) || fallbackMessage;
+
+    let payloadText = "";
+    if (typeof data?.data === "string") payloadText = data.data;
+    else if (typeof data === "string") payloadText = data;
+    else if (data?.data && typeof data.data === "object") payloadText = JSON.stringify(data.data);
+    else if (data && typeof data === "object") payloadText = JSON.stringify(data);
+
+    const normalizedPayloadText = payloadText && payloadText !== "null" ? payloadText : "";
+    const message = data?.message || data?.detail || normalizedPayloadText || fallbackMessage;
     throw new Error(message);
   }
 
@@ -2534,13 +2561,15 @@ function showWelcomeToast(userName) {
 
 function openVerificationStep(payload) {
   state.pendingLoginUser = payload.data.user || null;
-  state.pendingVerificationMethod = payload.data.verification_method || "authenticator";
+  const hasQrSetupPayload = Boolean(payload.data?.qr_code_url || payload.data?.otpauth_url || payload.data?.secret);
+  state.pendingVerificationMethod =
+    payload.data.verification_method || (hasQrSetupPayload ? "authenticator_setup" : "authenticator");
   state.pendingEmailChallengeId = payload.data.challenge_id || "";
   state.pendingChallengeToken = payload.data.challenge_token || "";
   loginCredentialsStep.classList.add("hidden");
   loginTwoFactorStep.classList.remove("hidden");
   if (otpCodeInput) otpCodeInput.focus();
-  if (state.pendingVerificationMethod === "authenticator_setup") {
+  if (state.pendingVerificationMethod === "authenticator_setup" || hasQrSetupPayload) {
     if (loginVerificationEyebrow) {
       loginVerificationEyebrow.textContent = t("login_qr_setup_eyebrow");
     }
