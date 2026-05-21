@@ -83,6 +83,7 @@ if all([db_name, db_user, db_password, db_host, db_port]):
             "PASSWORD": db_password,
             "HOST": db_host,
             "PORT": db_port,
+            "OPTIONS": {"connect_timeout": PG_CONNECT_TIMEOUT},
         }
     }
 else:
@@ -157,12 +158,16 @@ CORS_ALLOW_CREDENTIALS = True
 STATICFILES_DIRS = []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+PG_CONNECT_TIMEOUT = int(os.getenv("PG_CONNECT_TIMEOUT", "5"))
+
 database_url = os.getenv("DATABASE_URL")
 
 if database_url:
     DATABASES = {
-        "default": dj_database_url.parse(database_url)
+        "default": dj_database_url.parse(database_url, conn_max_age=600)
     }
+    DATABASES["default"].setdefault("OPTIONS", {})
+    DATABASES["default"]["OPTIONS"]["connect_timeout"] = PG_CONNECT_TIMEOUT
 else:
     db_name = os.getenv("DB_NAME") or os.getenv("PGDATABASE")
     db_user = os.getenv("DB_USER") or os.getenv("PGUSER")
