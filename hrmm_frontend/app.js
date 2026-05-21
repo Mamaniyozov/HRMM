@@ -2,7 +2,7 @@ const API_URL = "https://exemplary-elegance-production-8efe.up.railway.app";
 const DEFAULT_API_BASE = (() => {
   const configuredBase = window.__HRMM_API_BASE__ || window.localStorage.getItem("hrmm_api_base") || "";
   if (configuredBase) return configuredBase.replace(/\/$/, "");
-<<<<<<< HEAD
+HEAD
 
   const origin = window.location.origin || "";
   if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
@@ -14,11 +14,11 @@ const DEFAULT_API_BASE = (() => {
     return origin.replace(/\/$/, "");
   }
 
-=======
+
   if (window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")) {
     return "http://127.0.0.1:8000";
   }
->>>>>>> main
+main
   return API_URL;
 })();
 const state = {
