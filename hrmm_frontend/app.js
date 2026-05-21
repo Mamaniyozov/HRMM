@@ -2,7 +2,10 @@ const API_URL = "https://exemplary-elegance-production-8efe.up.railway.app";
 const DEFAULT_API_BASE = (() => {
   const configuredBase = window.__HRMM_API_BASE__ || window.localStorage.getItem("hrmm_api_base") || "";
   if (configuredBase) return configuredBase.replace(/\/$/, "");
-<<<<<<< HEAD
+ codex/fix-invalid-enum-input-for-status_enum-2qg9nv
+
+HEAD
+main
 
   const origin = window.location.origin || "";
   if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
@@ -14,11 +17,12 @@ const DEFAULT_API_BASE = (() => {
     return origin.replace(/\/$/, "");
   }
 
-=======
+codex/fix-invalid-enum-input-for-status_enum-2qg9nv
   if (window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")) {
     return "http://127.0.0.1:8000";
   }
->>>>>>> main
+main
+main
   return API_URL;
 })();
 const state = {
@@ -2567,13 +2571,15 @@ function showWelcomeToast(userName) {
 
 function openVerificationStep(payload) {
   state.pendingLoginUser = payload.data.user || null;
-  state.pendingVerificationMethod = payload.data.verification_method || "authenticator";
+  const hasQrSetupPayload = Boolean(payload.data?.qr_code_url || payload.data?.otpauth_url || payload.data?.secret);
+  state.pendingVerificationMethod =
+    payload.data.verification_method || (hasQrSetupPayload ? "authenticator_setup" : "authenticator");
   state.pendingEmailChallengeId = payload.data.challenge_id || "";
   state.pendingChallengeToken = payload.data.challenge_token || "";
   loginCredentialsStep.classList.add("hidden");
   loginTwoFactorStep.classList.remove("hidden");
   if (otpCodeInput) otpCodeInput.focus();
-  if (state.pendingVerificationMethod === "authenticator_setup") {
+  if (state.pendingVerificationMethod === "authenticator_setup" || hasQrSetupPayload) {
     if (loginVerificationEyebrow) {
       loginVerificationEyebrow.textContent = t("login_qr_setup_eyebrow");
     }
