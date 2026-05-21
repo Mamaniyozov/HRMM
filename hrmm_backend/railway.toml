@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "pip install -r requirements.txt && pip install gunicorn"
+buildCommand = "pip install -r requirements.txt"
 
 [deploy]
-startCommand = "python manage.py collectstatic --noinput && python manage.py migrate && python manage.py shell -c \"from django.contrib.auth import get_user_model; U=get_user_model(); U.objects.filter(username='admin').exists() or U.objects.create_superuser('admin','mamaniyozoavmuhammadyusuf5@gmail.com','yusuf5538')\" && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120"
+startCommand = '''bash -lc 'python manage.py collectstatic --noinput && for i in $(seq 1 ${DB_MIGRATE_RETRIES:-20}); do python manage.py migrate && break; echo "[startup] migrate failed ($i/${DB_MIGRATE_RETRIES:-20}), retrying..."; sleep ${DB_MIGRATE_DELAY:-6}; done && python manage.py shell -c "from django.contrib.auth import get_user_model; from apps.users.models import User as AppUser; Admin=get_user_model(); Admin.objects.filter(username=\"admin\").exists() or Admin.objects.create_superuser(\"admin\",\"admin@example.com\",\"admin123\"); AppUser.objects.filter(username=\"admin\").exists() or AppUser.objects.create(username=\"admin\", email=\"admin@example.com\", full_name=\"System Admin\", password_hash=\"admin123\", role=\"DIRECTOR\", is_active=True)" && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120' '''

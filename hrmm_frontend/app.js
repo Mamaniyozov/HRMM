@@ -1,6 +1,20 @@
-const DEFAULT_API_BASE =
-  window.location.port === "8000" ? window.location.origin : "http://127.0.0.1:8000";
 const API_URL = "https://exemplary-elegance-production-8efe.up.railway.app";
+const DEFAULT_API_BASE = (() => {
+  const configuredBase = window.__HRMM_API_BASE__ || window.localStorage.getItem("hrmm_api_base") || "";
+  if (configuredBase) return configuredBase.replace(/\/$/, "");
+
+  const origin = window.location.origin || "";
+  if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+    return "http://127.0.0.1:8000";
+  }
+
+  // Productionda odatda API shu hostning o'zida bo'ladi.
+  if (origin.startsWith("http://") || origin.startsWith("https://")) {
+    return origin.replace(/\/$/, "");
+  }
+
+  return API_URL;
+})();
 const state = {
   apiBase: DEFAULT_API_BASE,
   language: window.localStorage.getItem("hrmm_language") || "uz",
@@ -55,6 +69,9 @@ const loginLanguageDropdown = document.getElementById("loginLanguageDropdown");
 const loginCurrentLanguageLabel = document.getElementById("loginCurrentLanguageLabel");
 const loginLanguageLabel = document.getElementById("loginLanguageLabel");
 const loginLanguageOptions = document.querySelectorAll(".login-language-option");
+const loginThemeToggleButton = document.getElementById("loginThemeToggleButton");
+const loginThemeIconSun = document.getElementById("loginThemeIconSun");
+const loginThemeIconMoon = document.getElementById("loginThemeIconMoon");
 const loginAuthEyebrow = document.getElementById("loginAuthEyebrow");
 const loginAuthTitle = document.getElementById("loginAuthTitle");
 const loginUsernameLabel = document.getElementById("loginUsernameLabel");
@@ -1216,7 +1233,7 @@ function setMessage(text, type = "") {
   const timer = window.setTimeout(removeToast, 20000);
   toastTimers.set(toast, timer);
 
-  toast.addEventListener("click", () => {
+  toast?.addEventListener("click", () => {
     const existingTimer = toastTimers.get(toast);
     if (existingTimer) {
       window.clearTimeout(existingTimer);
@@ -2143,7 +2160,7 @@ function openUsersByDepartmentModal(departmentName) {
   );
 
   document.querySelectorAll(".user-profile-open-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button?.addEventListener("click", () => {
       const user = state.users.find((item) => item.id === button.dataset.userId);
       if (user) {
         const department = state.departments.find((item) => item.id === user.department_id);
@@ -2194,7 +2211,7 @@ function openCollectionModal(title, items, type) {
   openContentModal(title, title, html);
 
   document.querySelectorAll(".entity-detail-open-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button?.addEventListener("click", () => {
       const typeName = button.dataset.type;
       const id = button.dataset.id;
       if (typeName === "report") {
@@ -2288,7 +2305,12 @@ function getHeaders(isJson = true) {
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(`${state.apiBase}${path}`, options);
+  let response;
+  try {
+    response = await fetch(`${state.apiBase}${path}`, options);
+  } catch (_networkError) {
+    throw new Error(`Failed to fetch. API serverga ulanishda xato: ${state.apiBase}`);
+  }
   const data = await response.json().catch(() => null);
 
   if (!response.ok || data?.success === false) {
@@ -2296,7 +2318,15 @@ async function apiRequest(path, options = {}) {
       response.status === 404
         ? `API topilmadi. Backend server ${state.apiBase} da ishga tushganini tekshiring.`
         : `So'rov bajarilmadi (${response.status}).`;
-    const message = data?.message || data?.detail || JSON.stringify(data?.data || data) || fallbackMessage;
+
+    let payloadText = "";
+    if (typeof data?.data === "string") payloadText = data.data;
+    else if (typeof data === "string") payloadText = data;
+    else if (data?.data && typeof data.data === "object") payloadText = JSON.stringify(data.data);
+    else if (data && typeof data === "object") payloadText = JSON.stringify(data);
+
+    const normalizedPayloadText = payloadText && payloadText !== "null" ? payloadText : "";
+    const message = data?.message || data?.detail || normalizedPayloadText || fallbackMessage;
     throw new Error(message);
   }
 
@@ -2534,13 +2564,15 @@ function showWelcomeToast(userName) {
 
 function openVerificationStep(payload) {
   state.pendingLoginUser = payload.data.user || null;
-  state.pendingVerificationMethod = payload.data.verification_method || "authenticator";
+  const hasQrSetupPayload = Boolean(payload.data?.qr_code_url || payload.data?.otpauth_url || payload.data?.secret);
+  state.pendingVerificationMethod =
+    payload.data.verification_method || (hasQrSetupPayload ? "authenticator_setup" : "authenticator");
   state.pendingEmailChallengeId = payload.data.challenge_id || "";
   state.pendingChallengeToken = payload.data.challenge_token || "";
   loginCredentialsStep.classList.add("hidden");
   loginTwoFactorStep.classList.remove("hidden");
   if (otpCodeInput) otpCodeInput.focus();
-  if (state.pendingVerificationMethod === "authenticator_setup") {
+  if (state.pendingVerificationMethod === "authenticator_setup" || hasQrSetupPayload) {
     if (loginVerificationEyebrow) {
       loginVerificationEyebrow.textContent = t("login_qr_setup_eyebrow");
     }
@@ -2776,13 +2808,13 @@ function renderReports() {
     .join("");
 
   document.querySelectorAll(".use-report-id-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button?.addEventListener("click", () => {
       applyReportIdToAllTools(button.dataset.id);
       setMessage("Report ID workflow/attachment/history formalariga qo'yildi.", "success");
     });
   });
   document.querySelectorAll(".report-detail-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button?.addEventListener("click", () => {
       const report = state.reports.find((item) => item.id === button.dataset.id);
       if (report) openReportDetailModal(report);
     });
@@ -2837,13 +2869,13 @@ function renderLeaves() {
     .join("");
 
   document.querySelectorAll(".use-leave-id-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button?.addEventListener("click", () => {
       applyLeaveIdToReviewTool(button.dataset.id);
       setMessage("Leave ID review formasiga qo'yildi.", "success");
     });
   });
   document.querySelectorAll(".leave-detail-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button?.addEventListener("click", () => {
       const leave = state.leaves.find((item) => item.id === button.dataset.id);
       if (leave) openLeaveDetailModal(leave);
     });
@@ -3020,10 +3052,10 @@ function renderNotifications() {
     .join("");
 
   document.querySelectorAll(".mark-read-btn").forEach((button) => {
-    button.addEventListener("click", () => markNotificationRead(button.dataset.id));
+    button?.addEventListener("click", () => markNotificationRead(button.dataset.id));
   });
   document.querySelectorAll(".notification-detail-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button?.addEventListener("click", () => {
       const item = state.notifications.find((entry) => entry.id === button.dataset.id);
       if (item) openNotificationDetailModal(item);
     });
@@ -3067,7 +3099,7 @@ function renderAdminDashboard() {
     : '<div class="feed-item muted-item">Pending approvals yoq</div>';
 
   document.querySelectorAll(".admin-approve-btn").forEach((button) => {
-    button.addEventListener("click", async () => {
+    button?.addEventListener("click", async () => {
       const itemId = button.dataset.id;
       const itemType = button.dataset.type;
       const action = button.dataset.action;
@@ -3095,7 +3127,7 @@ function renderAdminDashboard() {
   });
 
   document.querySelectorAll(".admin-reject-btn").forEach((button) => {
-    button.addEventListener("click", async () => {
+    button?.addEventListener("click", async () => {
       const itemId = button.dataset.id;
       const itemType = button.dataset.type;
       const action = button.dataset.action;
@@ -3166,7 +3198,7 @@ function renderPendingItemsInDashboard() {
 
     // Add click handlers
     pendingLeavesList.querySelectorAll('.dashboard-pending-item').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn?.addEventListener('click', () => {
         const leave = state.leaves.find(l => l.id === btn.dataset.id);
         if (leave) openLeaveDetailModal(leave);
       });
@@ -3187,7 +3219,7 @@ function renderPendingItemsInDashboard() {
 
     // Add click handlers
     pendingReportsList.querySelectorAll('.dashboard-pending-item').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn?.addEventListener('click', () => {
         const report = state.reports.find(r => r.id === btn.dataset.id);
         if (report) openReportDetailModal(report);
       });
@@ -3262,7 +3294,7 @@ function renderAnalyticsDashboard() {
     : '<div class="feed-item muted-item">Analytics data yoq</div>';
 
   document.querySelectorAll(".analytics-department-btn").forEach((button) => {
-    button.addEventListener("click", () => openUsersByDepartmentModal(button.dataset.departmentName));
+    button?.addEventListener("click", () => openUsersByDepartmentModal(button.dataset.departmentName));
   });
 }
 
@@ -3512,7 +3544,7 @@ async function loadAllData() {
   }
 }
 
-loginForm.addEventListener("submit", async (event) => {
+loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(loginForm);
 
@@ -3561,7 +3593,7 @@ loginForm.addEventListener("submit", async (event) => {
   }
 });
 
-otpForm.addEventListener("submit", async (event) => {
+otpForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!state.pendingChallengeToken && !state.pendingEmailChallengeId) {
     setMessage("Tasdiqlash sessiyasi topilmadi. Loginni qayta boshlang.", "error");
@@ -3592,7 +3624,7 @@ otpForm.addEventListener("submit", async (event) => {
   }
 });
 
-backToLoginButton.addEventListener("click", () => {
+backToLoginButton?.addEventListener("click", () => {
   resetPendingLogin();
   setMessage("Login bosqichiga qaytdingiz.", "success");
 });
@@ -3661,7 +3693,7 @@ registerForm?.addEventListener("submit", async (event) => {
   }
 });
 
-passwordForm.addEventListener("submit", async (event) => {
+passwordForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(passwordForm);
 
@@ -3682,7 +3714,7 @@ passwordForm.addEventListener("submit", async (event) => {
   }
 });
 
-setupTwoFactorButton.addEventListener("click", async () => {
+setupTwoFactorButton?.addEventListener("click", async () => {
   try {
     setMessage("2FA uchun QR va maxfiy kalit yaratilmoqda...");
     const payload = await apiRequest("/api/v1/auth/two-factor/setup/", {
@@ -3698,7 +3730,7 @@ setupTwoFactorButton.addEventListener("click", async () => {
   }
 });
 
-twoFactorVerifyForm.addEventListener("submit", async (event) => {
+twoFactorVerifyForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
     setMessage("2FA faollashtirilmoqda...");
@@ -3719,7 +3751,7 @@ twoFactorVerifyForm.addEventListener("submit", async (event) => {
   }
 });
 
-twoFactorDisableForm.addEventListener("submit", async (event) => {
+twoFactorDisableForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
     setMessage("2FA o'chirilmoqda...");
@@ -3807,7 +3839,7 @@ refreshUsersForRoleManagement?.addEventListener("click", async () => {
   setMessage("Foydalanuvchilar yangilandi", "success");
 });
 
-reportForm.addEventListener("submit", async (event) => {
+reportForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!(await requestCreationWarning("report"))) return;
   const formData = new FormData(reportForm);
@@ -3848,7 +3880,7 @@ reportForm.addEventListener("submit", async (event) => {
   }
 });
 
-workflowForm.addEventListener("submit", async (event) => {
+workflowForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(workflowForm);
   const reportId = String(formData.get("report_id") || "").trim();
@@ -3916,7 +3948,7 @@ workflowForm.addEventListener("submit", async (event) => {
   }
 });
 
-leaveReviewForm.addEventListener("submit", async (event) => {
+leaveReviewForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(leaveReviewForm);
   const leaveId = String(formData.get("leave_id") || "").trim();
@@ -3960,7 +3992,7 @@ function getValidActionsForStatus(status) {
   return actionMap[status] || [];
 }
 
-attachmentForm.addEventListener("submit", async (event) => {
+attachmentForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(attachmentForm);
   const reportId = String(formData.get("report_id") || "").trim();
@@ -3993,7 +4025,7 @@ attachmentForm.addEventListener("submit", async (event) => {
   }
 });
 
-downloadAttachmentButton.addEventListener("click", async () => {
+downloadAttachmentButton?.addEventListener("click", async () => {
   const formData = new FormData(attachmentToolsForm);
   const inputId = String(formData.get("attachment_id") || "").trim();
   if (!inputId || !state.accessToken) return;
@@ -4026,7 +4058,7 @@ downloadAttachmentButton.addEventListener("click", async () => {
   }
 });
 
-deleteAttachmentButton.addEventListener("click", async () => {
+deleteAttachmentButton?.addEventListener("click", async () => {
   const formData = new FormData(attachmentToolsForm);
   const inputId = String(formData.get("attachment_id") || "").trim();
   if (!inputId) return;
@@ -4047,7 +4079,7 @@ deleteAttachmentButton.addEventListener("click", async () => {
   }
 });
 
-loadHistoryButton.addEventListener("click", async () => {
+loadHistoryButton?.addEventListener("click", async () => {
   const formData = new FormData(reportToolsForm);
   const reportId = String(formData.get("report_id") || "").trim();
   if (!isUuid(reportId)) {
@@ -4063,7 +4095,7 @@ loadHistoryButton.addEventListener("click", async () => {
   }
 });
 
-deleteReportButton.addEventListener("click", async () => {
+deleteReportButton?.addEventListener("click", async () => {
   const formData = new FormData(reportToolsForm);
   const reportId = String(formData.get("report_id") || "").trim();
   if (!isUuid(reportId)) {
@@ -4085,7 +4117,7 @@ deleteReportButton.addEventListener("click", async () => {
   }
 });
 
-copyLatestReportIdButton.addEventListener("click", async () => {
+copyLatestReportIdButton?.addEventListener("click", async () => {
   const reportId = state.lastCreatedReportId;
   if (!isUuid(reportId)) {
     setMessage("Avval report yarating, keyin UUID nusxalanadi.", "error");
@@ -4099,7 +4131,7 @@ copyLatestReportIdButton.addEventListener("click", async () => {
   }
 });
 
-useLatestReportIdButton.addEventListener("click", () => {
+useLatestReportIdButton?.addEventListener("click", () => {
   const reportId = state.lastCreatedReportId;
   if (!isUuid(reportId)) {
     setMessage("Avval report yarating, keyin UUID formlarga qo'yiladi.", "error");
@@ -4110,12 +4142,12 @@ useLatestReportIdButton.addEventListener("click", () => {
 });
 
 departmentSelect?.addEventListener("change", renderUnits);
-refreshUsersButton.addEventListener("click", () => loadUsers().catch((error) => setMessage(error.message, "error")));
-refreshReportsButton.addEventListener("click", () => loadReports().catch((error) => setMessage(error.message, "error")));
-refreshAuditButton.addEventListener("click", () => loadAuditLogs().catch((error) => setMessage(error.message, "error"))); 
-refreshDashboardButton.addEventListener("click", () => loadDashboard().catch((error) => setMessage(error.message, "error")));
-refreshNotificationsButton.addEventListener("click", () => loadNotifications().catch((error) => setMessage(error.message, "error")));
-readAllNotificationsButton.addEventListener("click", async () => {
+refreshUsersButton?.addEventListener("click", () => loadUsers().catch((error) => setMessage(error.message, "error")));
+refreshReportsButton?.addEventListener("click", () => loadReports().catch((error) => setMessage(error.message, "error")));
+refreshAuditButton?.addEventListener("click", () => loadAuditLogs().catch((error) => setMessage(error.message, "error"))); 
+refreshDashboardButton?.addEventListener("click", () => loadDashboard().catch((error) => setMessage(error.message, "error")));
+refreshNotificationsButton?.addEventListener("click", () => loadNotifications().catch((error) => setMessage(error.message, "error")));
+readAllNotificationsButton?.addEventListener("click", async () => {
   try {
     await apiRequest("/api/v1/notifications/read-all/", {
       method: "PUT",
@@ -4127,10 +4159,10 @@ readAllNotificationsButton.addEventListener("click", async () => {
     setMessage(error.message || "Notificationlarni yangilashda xato bo'ldi.", "error");
   }
 });
-refreshAdminDashboardButton.addEventListener("click", () => loadAdminDashboard().catch((error) => setMessage(error.message, "error")));
-refreshAnalyticsDashboardButton.addEventListener("click", () => loadAnalyticsDashboard().catch((error) => setMessage(error.message, "error")));
-refreshLeaveCalendarButton.addEventListener("click", () => loadLeaveCalendar().catch((error) => setMessage(error.message, "error")));
-meButton.addEventListener("click", () => {
+refreshAdminDashboardButton?.addEventListener("click", () => loadAdminDashboard().catch((error) => setMessage(error.message, "error")));
+refreshAnalyticsDashboardButton?.addEventListener("click", () => loadAnalyticsDashboard().catch((error) => setMessage(error.message, "error")));
+refreshLeaveCalendarButton?.addEventListener("click", () => loadLeaveCalendar().catch((error) => setMessage(error.message, "error")));
+meButton?.addEventListener("click", () => {
   toggleProfileMenu(false);
   loadMe().then(() => openProfileDetailsModal()).catch((error) => setMessage(error.message, "error"));
 });
@@ -4146,12 +4178,12 @@ profileUnitIcon?.addEventListener("click", () => {
 apiBaseIcon?.addEventListener("click", () => {
   refreshAllButton?.click();
 });
-refreshAllButton.addEventListener("click", () => {
+refreshAllButton?.addEventListener("click", () => {
   loadAllData()
     .then(() => setMessage("Barcha bo'limlar yangilandi.", "success"))
     .catch((error) => setMessage(error.message, "error"));
 });
-logoutButton.addEventListener("click", async () => {
+logoutButton?.addEventListener("click", async () => {
   try {
     await apiRequest("/api/v1/auth/logout/", {
       method: "POST",
@@ -4254,7 +4286,7 @@ closeAuxiliaryDrawer?.addEventListener("click", closeAuxiliaryDrawerFunc);
 auxiliaryDrawerBackdrop?.addEventListener("click", closeAuxiliaryDrawerFunc);
 
 auxTabs?.forEach((tab) => {
-  tab.addEventListener("click", () => {
+  tab?.addEventListener("click", () => {
     auxTabs.forEach((t) => t.classList.remove("active"));
     tab.classList.add("active");
     const target = tab.dataset.auxTab;
@@ -4285,7 +4317,7 @@ loginLanguageButton?.addEventListener("click", (event) => {
 loginLanguageDropdown?.addEventListener("click", (event) => {
   event.stopPropagation();
 });
-document.addEventListener("click", () => {
+document?.addEventListener("click", () => {
   toggleProfileMenu(false);
   toggleCreateMenu(false);
   toggleLanguageMenu(false);
@@ -4298,7 +4330,7 @@ quickCreateClose?.addEventListener("click", closeQuickCreate);
 creationWarningBackdrop?.addEventListener("click", () => closeCreationWarning(false));
 creationWarningClose?.addEventListener("click", () => closeCreationWarning(false));
 creationWarningConfirm?.addEventListener("click", () => closeCreationWarning(true));
-document.addEventListener("keydown", (event) => {
+document?.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
       toggleProfileMenu(false);
       toggleCreateMenu(false);
@@ -4310,7 +4342,7 @@ document.addEventListener("keydown", (event) => {
   }
 });
 createMenuItems.forEach((button) => {
-  button.addEventListener("click", () => {
+  button?.addEventListener("click", () => {
     const action = button.dataset.createAction;
     toggleCreateMenu(false);
     if (action === "report") {
@@ -4325,7 +4357,7 @@ createMenuItems.forEach((button) => {
   });
 });
 languageOptions.forEach((button) => {
-  button.addEventListener("click", async () => {
+  button?.addEventListener("click", async () => {
     state.language = button.dataset.language || "uz";
     window.localStorage.setItem("hrmm_language", state.language);
     toggleLanguageMenu(false);
@@ -4345,7 +4377,7 @@ languageOptions.forEach((button) => {
   });
 });
 loginLanguageOptions.forEach((button) => {
-  button.addEventListener("click", () => {
+  button?.addEventListener("click", () => {
     state.language = button.dataset.language || "uz";
     window.localStorage.setItem("hrmm_language", state.language);
     toggleLanguageMenu(false);
@@ -4357,13 +4389,13 @@ topbarNotificationsButton?.addEventListener("click", () => {
   openSectionModal("notificationsSection", t("sidebar_notifications"));
 });
 document.querySelectorAll("[data-activity-filter]").forEach((button) => {
-  button.addEventListener("click", () => {
+  button?.addEventListener("click", () => {
     state.homeActivityFilter = button.dataset.activityFilter || "all";
     renderActivityHistory();
   });
 });
 navLinks.forEach((button) => {
-  button.addEventListener("click", () => {
+  button?.addEventListener("click", () => {
     navLinks.forEach((item) => item.classList.remove("active"));
     button.classList.add("active");
     if (button.dataset.target === "homeSection") {
@@ -4386,7 +4418,7 @@ navLinks.forEach((button) => {
 
 // Bottom Section Navigation event listeners
 document.querySelectorAll(".bottom-section-nav .section-nav-btn").forEach((button) => {
-  button.addEventListener("click", () => {
+  button?.addEventListener("click", () => {
     // Remove active from all nav buttons
     document.querySelectorAll(".bottom-section-nav .section-nav-btn").forEach((btn) => btn.classList.remove("active"));
     button.classList.add("active");
@@ -4612,7 +4644,7 @@ const styleSheet = document.createElement("style");
 styleSheet.textContent = ratingStyles;
 document.head.appendChild(styleSheet);
 feedbackStars?.querySelectorAll(".star-btn").forEach((button) => {
-  button.addEventListener("click", () => setFeedbackRating(button.dataset.rating));
+  button?.addEventListener("click", () => setFeedbackRating(button.dataset.rating));
 });
 feedbackForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -4678,28 +4710,28 @@ quickCreateForm?.addEventListener("submit", async (event) => {
     setMessage(error.message || "Yangi yozuv yaratishda xato bo'ldi.", "error");
   }
 });
-globalSearchInput.addEventListener("input", () => {
+globalSearchInput?.addEventListener("input", () => {
   renderUsers();
   renderReports();
   renderLeaves();
   renderNotifications();
   renderAnalyticsDashboard();
 });
-globalStatusInput.addEventListener("input", () => {
+globalStatusInput?.addEventListener("input", () => {
   renderUsers();
   renderReports();
   renderLeaves();
   renderAnalyticsDashboard();
 });
-notificationSearchInput.addEventListener("input", renderNotifications);
-notificationReadFilter.addEventListener("change", renderNotifications);
-userSearchInput.addEventListener("input", renderUsers);
-reportSearchInput.addEventListener("input", renderReports);
+notificationSearchInput?.addEventListener("input", renderNotifications);
+notificationReadFilter?.addEventListener("change", renderNotifications);
+userSearchInput?.addEventListener("input", renderUsers);
+reportSearchInput?.addEventListener("input", renderReports);
 leaveSearchInput?.addEventListener("input", renderLeaves);
-departmentSearchInput.addEventListener("input", renderAnalyticsDashboard);
-roleFilter.addEventListener("change", () => loadUsers().catch((error) => setMessage(error.message, "error")));
-levelFilter.addEventListener("change", () => loadUsers().catch((error) => setMessage(error.message, "error")));
-reportStatusFilter.addEventListener("change", () => loadReports().catch((error) => setMessage(error.message, "error")));
+departmentSearchInput?.addEventListener("input", renderAnalyticsDashboard);
+roleFilter?.addEventListener("change", () => loadUsers().catch((error) => setMessage(error.message, "error")));
+levelFilter?.addEventListener("change", () => loadUsers().catch((error) => setMessage(error.message, "error")));
+reportStatusFilter?.addEventListener("change", () => loadReports().catch((error) => setMessage(error.message, "error")));
 leaveStatusFilter?.addEventListener("change", () => loadLeaves().catch((error) => setMessage(error.message, "error")));
 renderFeedbackList();
 setFeedbackRating(0);
@@ -4732,7 +4764,7 @@ function initTheme() {
   updateThemeIcons(preferredTheme, themeToggleButton, themeIconSun, themeIconMoon);
 
   if (themeToggleButton) {
-    themeToggleButton.addEventListener("click", () => toggleTheme(themeToggleButton, themeIconSun, themeIconMoon));
+    themeToggleButton?.addEventListener("click", () => toggleTheme(themeToggleButton, themeIconSun, themeIconMoon));
   }
 }
 
@@ -4757,12 +4789,13 @@ function toggleTheme(themeToggleButton, themeIconSun, themeIconMoon) {
   applyTheme(newTheme);
   window.localStorage.setItem("hrmm_theme", newTheme);
   updateThemeIcons(newTheme, themeToggleButton, themeIconSun, themeIconMoon);
+  updateThemeIcons(newTheme, loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
   console.debug("Theme toggled", { currentTheme, newTheme });
   setMessage(newTheme === "dark" ? "Tun rejimi yoqildi" : "Kunduz rejimi yoqildi", "info");
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initTheme);
+  document?.addEventListener("DOMContentLoaded", initTheme);
 } else {
   initTheme();
 }
