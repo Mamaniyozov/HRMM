@@ -73,7 +73,6 @@ db_user = os.getenv("DB_USER") or os.getenv("PGUSER")
 db_password = os.getenv("DB_PASSWORD") or os.getenv("PGPASSWORD")
 db_host = os.getenv("DB_HOST") or os.getenv("PGHOST")
 db_port = os.getenv("DB_PORT") or os.getenv("PGPORT")
-pg_connect_timeout = int(os.getenv("PG_CONNECT_TIMEOUT", "10"))
 
 if all([db_name, db_user, db_password, db_host, db_port]):
     DATABASES = {
@@ -84,7 +83,7 @@ if all([db_name, db_user, db_password, db_host, db_port]):
             "PASSWORD": db_password,
             "HOST": db_host,
             "PORT": db_port,
-            "OPTIONS": {"connect_timeout": pg_connect_timeout},
+            "OPTIONS": {"connect_timeout": PG_CONNECT_TIMEOUT},
         }
     }
 else:
