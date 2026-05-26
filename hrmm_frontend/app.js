@@ -8,11 +8,7 @@ const DEFAULT_API_BASE = (() => {
     return "http://127.0.0.1:8000";
   }
 
-  // Productionda odatda API shu hostning o'zida bo'ladi.
-  if (origin.startsWith("http://") || origin.startsWith("https://")) {
-    return origin.replace(/\/$/, "");
-  }
-
+  // Productionda Railway backend API URL ishlatamiz
   return API_URL;
 })();
 const state = {

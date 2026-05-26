@@ -23,7 +23,6 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from config.frontend_views import frontend_app_js, frontend_index, frontend_styles_css
 
 urlpatterns = [
-    path("", frontend_index, name="frontend-index"),
     path("app.js", frontend_app_js, name="frontend-app-js"),
     path("styles.css", frontend_styles_css, name="frontend-styles-css"),
     path('admin/', admin.site.urls),
@@ -38,6 +37,8 @@ urlpatterns = [
     path("api/v1/notifications/", include("apps.notifications.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    # Catch-all route for SPA - must be last
+    path("", frontend_index, name="frontend-index"),
 ]
 
 if settings.DEBUG:
