@@ -167,8 +167,9 @@ if database_url:
     DATABASES = {
         "default": dj_database_url.parse(database_url, conn_max_age=600)
     }
-    DATABASES["default"].setdefault("OPTIONS", {})
-    DATABASES["default"]["OPTIONS"]["connect_timeout"] = PG_CONNECT_TIMEOUT
+    # ensure OPTIONS exists and set connect_timeout without direct TypedDict indexing
+    opts = DATABASES["default"].setdefault("OPTIONS", {})
+    opts["connect_timeout"] = PG_CONNECT_TIMEOUT
 else:
     db_name = os.getenv("DB_NAME") or os.getenv("PGDATABASE")
     db_user = os.getenv("DB_USER") or os.getenv("PGUSER")

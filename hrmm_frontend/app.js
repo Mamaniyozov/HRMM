@@ -2,22 +2,6 @@ const API_URL = "https://exemplary-elegance-production-8efe.up.railway.app";
 const DEFAULT_API_BASE = (() => {
   const configuredBase = window.__HRMM_API_BASE__ || window.localStorage.getItem("hrmm_api_base") || "";
   if (configuredBase) return configuredBase.replace(/\/$/, "");
- codex/fix-invalid-enum-input-for-status_enum-dz2u5s
-
- codex/fix-invalid-enum-input-for-status_enum-y4s2wi
-
- codex/fix-invalid-enum-input-for-status_enum-7nuvqe
-
- codex/fix-invalid-enum-input-for-status_enum-2qsrit
-
- codex/fix-invalid-enum-input-for-status_enum-2qg9nv
-
-HEAD
-main
- main
-main
- main
- main
 
   const origin = window.location.origin || "";
   if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
@@ -29,24 +13,6 @@ main
     return origin.replace(/\/$/, "");
   }
 
- codex/fix-invalid-enum-input-for-status_enum-dz2u5s
-
- codex/fix-invalid-enum-input-for-status_enum-y4s2wi
-
-codex/fix-invalid-enum-input-for-status_enum-7nuvqe
-
-codex/fix-invalid-enum-input-for-status_enum-2qsrit
-
-codex/fix-invalid-enum-input-for-status_enum-2qg9nv
-  if (window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")) {
-    return "http://127.0.0.1:8000";
-  }
-main
-main
-main
- main
- main
- main
   return API_URL;
 })();
 const state = {
@@ -3578,101 +3544,117 @@ async function loadAllData() {
   }
 }
 
-loginForm?.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const formData = new FormData(loginForm);
+if (loginForm) {
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(loginForm);
 
-  try {
-    setMessage("Login bajarilmoqda...");
-    const payload = await apiRequest("/api/v1/auth/login/", {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({
-        username: formData.get("username"),
-        password: formData.get("password"),
-      }),
-    });
+    try {
+      setMessage("Login bajarilmoqda...");
+      const payload = await apiRequest("/api/v1/auth/login/", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({
+          username: formData.get("username"),
+          password: formData.get("password"),
+        }),
+      });
 
-    if (payload.data?.requires_two_factor) {
-      openVerificationStep(payload);
-        setMessage(
-          payload.data?.verification_method === "email"
-            ? `Parol tasdiqlandi. 6 xonali kod ${payload.data.masked_email || "email"} manziliga yuborildi.`
-            : payload.data?.verification_method === "authenticator_setup"
-            ? "Parol tasdiqlandi. Birinchi kirish uchun QR kodni scan qiling va 6 xonali kodni kiriting."
-            : "Parol tasdiqlandi. Endi 6 xonali authenticator kodni kiriting.",
-          "success"
-        );
+      console.log("Login payload:", payload);
+
+      if (payload.data?.requires_two_factor) {
+        openVerificationStep(payload);
+          setMessage(
+            payload.data?.verification_method === "email"
+              ? `Parol tasdiqlandi. 6 xonali kod ${payload.data.masked_email || "email"} manziliga yuborildi.`
+              : payload.data?.verification_method === "authenticator_setup"
+              ? "Parol tasdiqlandi. Birinchi kirish uchun QR kodni scan qiling va 6 xonali kodni kiriting."
+              : "Parol tasdiqlandi. Endi 6 xonali authenticator kodni kiriting.",
+            "success"
+          );
+        return;
+      }
+
+      finalizeAuthenticatedSession(payload);
+      const departmentCount = await loadDepartments();
+      await loadAllData();
+      setMessage(`Frontend backend bilan ulandi. Departmentlar yuklandi: ${departmentCount} ta.`, "success");
+    } catch (error) {
+      state.accessToken = "";
+      state.refreshToken = "";
+      state.currentUser = null;
+      if (authStateLabel) authStateLabel.textContent = "Offline";
+      authStateDot?.classList.remove("online");
+      authStateDot?.classList.add("offline");
+      if (currentUserLabel) currentUserLabel.textContent = "-";
+      loggedInAsLabel.textContent = "-";
+      state.twoFactorSetup = null;
+      resetPendingLogin();
+      setAuthUi(false);
+      renderProfile();
+      setMessage(error.message || "Login xatoligi yuz berdi.", "error");
+    }
+  });
+} else {
+  console.error("loginForm elementi topilmadi!");
+}
+
+if (otpForm) {
+  otpForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!state.pendingChallengeToken && !state.pendingEmailChallengeId) {
+      setMessage("Tasdiqlash sessiyasi topilmadi. Loginni qayta boshlang.", "error");
+      resetPendingLogin();
       return;
     }
 
-    finalizeAuthenticatedSession(payload);
-    const departmentCount = await loadDepartments();
-    await loadAllData();
-    setMessage(`Frontend backend bilan ulandi. Departmentlar yuklandi: ${departmentCount} ta.`, "success");
-  } catch (error) {
-    state.accessToken = "";
-    state.refreshToken = "";
-    state.currentUser = null;
-    if (authStateLabel) authStateLabel.textContent = "Offline";
-    authStateDot?.classList.remove("online");
-    authStateDot?.classList.add("offline");
-    if (currentUserLabel) currentUserLabel.textContent = "-";
-    loggedInAsLabel.textContent = "-";
-    state.twoFactorSetup = null;
+    try {
+      const payload = await apiRequest(
+        state.pendingVerificationMethod === "email"
+          ? "/api/v1/auth/login/verify-email-otp/"
+          : "/api/v1/auth/login/verify-2fa/",
+        {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({
+          challenge_id: state.pendingEmailChallengeId,
+          challenge_token: state.pendingChallengeToken,
+          code: new FormData(otpForm).get("code"),
+        }),
+        }
+      );
+      finalizeAuthenticatedSession(payload);
+      const departmentCount = await loadDepartments();
+      await loadAllData();
+    } catch (error) {
+      setMessage(error.message || "Tasdiqlash kodini tekshirishda xato bo'ldi.", "error");
+    }
+  });
+} else {
+  console.error("otpForm elementi topilmadi!");
+}
+
+if (backToLoginButton) {
+  backToLoginButton.addEventListener("click", () => {
     resetPendingLogin();
-    setAuthUi(false);
-    renderProfile();
-    setMessage(error.message || "Login xatoligi yuz berdi.", "error");
-  }
-});
-
-otpForm?.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!state.pendingChallengeToken && !state.pendingEmailChallengeId) {
-    setMessage("Tasdiqlash sessiyasi topilmadi. Loginni qayta boshlang.", "error");
-    resetPendingLogin();
-    return;
-  }
-
-  try {
-    const payload = await apiRequest(
-      state.pendingVerificationMethod === "email"
-        ? "/api/v1/auth/login/verify-email-otp/"
-        : "/api/v1/auth/login/verify-2fa/",
-      {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({
-        challenge_id: state.pendingEmailChallengeId,
-        challenge_token: state.pendingChallengeToken,
-        code: new FormData(otpForm).get("code"),
-      }),
-      }
-    );
-    finalizeAuthenticatedSession(payload);
-    const departmentCount = await loadDepartments();
-    await loadAllData();
-  } catch (error) {
-    setMessage(error.message || "Tasdiqlash kodini tekshirishda xato bo'ldi.", "error");
-  }
-});
-
-backToLoginButton?.addEventListener("click", () => {
-  resetPendingLogin();
-  setMessage("Login bosqichiga qaytdingiz.", "success");
-});
+    setMessage("Login bosqichiga qaytdingiz.", "success");
+  });
+}
 
 // Registration form switching
-showRegisterButton?.addEventListener("click", () => {
-  loginCredentialsStep?.classList.add("hidden");
-  registerStep?.classList.remove("hidden");
-});
+if (showRegisterButton) {
+  showRegisterButton.addEventListener("click", () => {
+    loginCredentialsStep?.classList.add("hidden");
+    registerStep?.classList.remove("hidden");
+  });
+}
 
-showLoginButton?.addEventListener("click", () => {
-  registerStep?.classList.add("hidden");
-  loginCredentialsStep?.classList.remove("hidden");
-});
+if (showLoginButton) {
+  showLoginButton.addEventListener("click", () => {
+    registerStep?.classList.add("hidden");
+    loginCredentialsStep?.classList.remove("hidden");
+  });
+}
 
 // Registration form submission
 registerForm?.addEventListener("submit", async (event) => {
