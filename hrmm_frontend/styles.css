@@ -1147,6 +1147,10 @@ body::before {
   cursor: pointer;
 }
 
+.dashboard-badge strong {
+  display: none;
+}
+
 .dashboard-filter-chip.active {
   background: linear-gradient(135deg, #4b74d8, #5f8df8);
   color: #fff;
