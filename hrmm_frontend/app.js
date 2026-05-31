@@ -136,6 +136,7 @@ const leaveCalendarList = document.getElementById("leaveCalendarList");
 const topbarUserLabel = document.getElementById("topbarUserLabel");
 const profileMenuButton = document.getElementById("profileMenuButton");
 const profileDropdown = document.getElementById("profileDropdown");
+const profileAddUserButton = document.getElementById("profileAddUserButton");
 const createMenuButton = document.getElementById("createMenuButton");
 const createMenuDropdown = document.getElementById("createMenuDropdown");
 const createMenuItems = document.querySelectorAll(".create-menu-item");
@@ -4372,6 +4373,15 @@ createMenuItems.forEach((button) => {
     openQuickCreate(action);
   });
 });
+
+profileAddUserButton?.addEventListener("click", (event) => {
+  event.stopPropagation();
+  renderDepartmentOptions();
+  renderUnits();
+  openSectionModal("userForm", "Xodim qo'shish");
+  toggleProfileMenu(false);
+});
+
 languageOptions.forEach((button) => {
   button?.addEventListener("click", async () => {
     state.language = button.dataset.language || "uz";
@@ -4840,6 +4850,7 @@ function applyRoleBasedUi() {
   usersSection?.classList.toggle("hidden", !["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role));
   leavesSection?.classList.toggle("hidden", role === "DIRECTOR");
   roleManagementPanel?.classList.toggle("hidden", role !== "DIRECTOR");
+  profileAddUserButton?.classList.toggle("hidden", !["DIRECTOR", "DEPT_HEAD"].includes(role));
   
   createMenuItems.forEach((button) => {
     const action = button.dataset.createAction;
