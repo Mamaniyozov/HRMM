@@ -112,6 +112,7 @@ const refreshUsersForRoleManagement = document.getElementById("refreshUsersForRo
 const reportForm = document.getElementById("reportForm");
 const workflowForm = document.getElementById("workflowForm");
 const leaveReviewForm = document.getElementById("leaveReviewForm");
+const leaveCreateForm = document.getElementById("leaveCreateForm");
 const attachmentForm = document.getElementById("attachmentForm");
 const attachmentToolsForm = document.getElementById("attachmentToolsForm");
 const passwordForm = document.getElementById("passwordForm");
@@ -4367,11 +4368,53 @@ createMenuItems.forEach((button) => {
       return;
     }
     if (action === "leave") {
-      openSectionModal("leavesSection", t("create_leave_menu"));
+      openSectionModal("leaveCreatePanel", t("create_leave_menu"));
       return;
     }
     openQuickCreate(action);
   });
+});
+
+leaveCreateForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const formData = new FormData(leaveCreateForm);
+  const leaveType = String(formData.get("leave_type") || "").trim();
+  const reason = String(formData.get("reason") || "").trim();
+  const startDate = String(formData.get("start_date") || "").trim();
+  const endDate = String(formData.get("end_date") || "").trim();
+
+  if (!leaveType || !reason || !startDate || !endDate) {
+    setMessage("Iltimos, barcha majburiy maydonlarni to'ldiring.", "error");
+    return;
+  }
+
+  try {
+    setMessage("Ta'til arizasi yaratilmoqda...");
+    const payload = new FormData();
+    payload.append("leave_type", leaveType);
+    payload.append("reason", reason);
+    payload.append("start_date", startDate);
+    payload.append("end_date", endDate);
+
+    const screenshot = formData.get("screenshot");
+    if (screenshot instanceof File && screenshot.size > 0) {
+      payload.append("screenshot", screenshot);
+    }
+
+    await apiRequest("/api/v1/leaves/", {
+      method: "POST",
+      headers: getHeaders(false),
+      body: payload,
+    });
+
+    await Promise.all([loadLeaves(), loadDashboard(), loadAuditLogs()]);
+    leaveCreateForm.reset();
+    closeSectionModal();
+    setMessage("Ta'til arizasi yuborildi.", "success");
+  } catch (error) {
+    console.error("Leave create xatosi:", error);
+    setMessage(error.message || "Ta'til arizasi yaratishda xato bo'ldi.", "error");
+  }
 });
 
 profileAddUserButton?.addEventListener("click", (event) => {

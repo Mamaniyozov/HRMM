@@ -812,6 +812,43 @@
             </div>
           </div>
 
+          <div id="leaveCreatePanel" class="panel hidden">
+            <div class="panel-heading">
+              <p class="eyebrow">Ta'til</p>
+              <h3>Yangi ta'til arizasi</h3>
+            </div>
+            <form id="leaveCreateForm" class="form-grid">
+              <label>
+                <span>Ta'til turi</span>
+                <select name="leave_type" required>
+                  <option value="">Tanlang</option>
+                  <option value="ANNUAL">Annual</option>
+                  <option value="SICK">Sick</option>
+                  <option value="UNPAID">Unpaid</option>
+                  <option value="MATERNITY">Maternity</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </label>
+              <label>
+                <span>Boshlanish sanasi</span>
+                <input name="start_date" type="date" required />
+              </label>
+              <label>
+                <span>Tugash sanasi</span>
+                <input name="end_date" type="date" required />
+              </label>
+              <label>
+                <span>Sabab</span>
+                <textarea name="reason" rows="5" placeholder="Ta'til sababi" required></textarea>
+              </label>
+              <label>
+                <span>Biriktirma (rasm yoki fayl)</span>
+                <input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" />
+              </label>
+              <button type="submit" class="primary-btn">Ariza yuborish</button>
+            </form>
+          </div>
+
           <div class="panel">
             <div class="panel-heading">
               <p class="eyebrow" data-translate="section_workflow">Ish jarayoni</p>
