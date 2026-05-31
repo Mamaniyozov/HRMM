@@ -403,7 +403,7 @@ const translations = {
     feedback_comments: "Fikr va kommentariya",
     online: "Online",
     offline: "Offline",
-    profile_details: "Profil ma'lumotlari",
+    profile_details: "Profil",
     collection_title_reports: "Hisobotlar ro'yxati",
     collection_title_requests: "Arizalar ro'yxati",
     collection_title_notifications: "Bildirishnomalar ro'yxati",
@@ -566,7 +566,7 @@ const translations = {
     feedback_comments: "Отзывы и комментарии",
     online: "Online",
     offline: "Offline",
-    profile_details: "Данные профиля",
+    profile_details: "Профиль",
     collection_title_reports: "Список отчетов",
     collection_title_requests: "Список заявок",
     collection_title_notifications: "Список уведомлений",
@@ -726,7 +726,7 @@ const translations = {
     feedback_comments: "Feedback and comments",
     online: "Online",
     offline: "Offline",
-    profile_details: "Profile details",
+    profile_details: "Profile",
     collection_title_reports: "Reports list",
     collection_title_requests: "Requests list",
     collection_title_notifications: "Notifications list",
@@ -888,7 +888,7 @@ const translations = {
     feedback_comments: "Gorus ve yorumlar",
     online: "Online",
     offline: "Offline",
-    profile_details: "Profil bilgileri",
+    profile_details: "Profil",
     collection_title_reports: "Rapor listesi",
     collection_title_requests: "Talep listesi",
     collection_title_notifications: "Bildirim listesi",
@@ -1681,8 +1681,8 @@ function applyTranslations() {
   }
 
   if (meButton) {
-    meButton.title = t("profile_details");
-    meButton.setAttribute("aria-label", t("profile_details"));
+    meButton.title = t("profile");
+    meButton.setAttribute("aria-label", t("profile"));
   }
   if (logoutButton) {
     logoutButton.title = t("logout");
@@ -1860,7 +1860,7 @@ function openUserProfileModal(profile) {
   }, 0);
 
   if (sectionModalTitle) {
-    sectionModalTitle.textContent = t("profile_details");
+    sectionModalTitle.textContent = t("profile");
   }
   sectionModal.classList.remove("hidden");
   sectionModal.setAttribute("aria-hidden", "false");
@@ -2951,18 +2951,21 @@ function renderProfile() {
   }
   if (profileRoleIcon) {
     const roleText = profile?.role ? getRoleLabel(profile.role) : t("role_generic");
-    profileRoleIcon.title = `${t("profile_details")}: ${roleText}`;
+    profileRoleIcon.title = `${t("profile")}: ${roleText}`;
     profileRoleIcon.setAttribute("aria-label", profileRoleIcon.title);
+    profileRoleIcon.textContent = "";
   }
   if (profileDeptIcon) {
     const departmentText = profile?.department_name || t("department_unassigned");
     profileDeptIcon.title = `${t("sidebar_institutions")}: ${departmentText}`;
     profileDeptIcon.setAttribute("aria-label", profileDeptIcon.title);
+    profileDeptIcon.textContent = "";
   }
   if (profileUnitIcon) {
     const unitText = profile?.unit_name || t("unit_unassigned");
     profileUnitIcon.title = `${t("employees_section")}: ${unitText}`;
     profileUnitIcon.setAttribute("aria-label", profileUnitIcon.title);
+    profileUnitIcon.textContent = "";
   }
   if (apiBaseIcon) {
     apiBaseIcon.title = t("sync_system");
