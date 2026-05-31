@@ -4329,6 +4329,10 @@ loginLanguageButton?.addEventListener("click", (event) => {
 loginLanguageDropdown?.addEventListener("click", (event) => {
   event.stopPropagation();
 });
+loginThemeToggleButton?.addEventListener("click", (event) => {
+  event.stopPropagation();
+  toggleTheme(loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
+});
 document?.addEventListener("click", () => {
   toggleProfileMenu(false);
   toggleCreateMenu(false);
