@@ -1,4 +1,4 @@
-const API_URL = "https://exemplary-elegance-production-8efe.up.railway.app";
+const API_URL = "https://hrmm-production-9c37.up.railway.app";
 const DEFAULT_API_BASE = (() => {
   const configuredBase = window.__HRMM_API_BASE__ || window.localStorage.getItem("hrmm_api_base") || "";
   if (configuredBase) return configuredBase.replace(/\/$/, "");
