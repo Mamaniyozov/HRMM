@@ -4265,15 +4265,9 @@ profileDropdown?.addEventListener("click", (event) => {
 });
 
 // Profile quick icons functionality
-const profileUserIcon = document.getElementById("profileUserIcon");
 const profileCalendarIcon = document.getElementById("profileCalendarIcon");
 const profileMenuIcon = document.getElementById("profileMenuIcon");
 const profileSignalIcon = document.getElementById("profileSignalIcon");
-
-profileUserIcon?.addEventListener("click", () => {
-  toggleProfileMenu(false);
-  loadMe().then(() => openProfileDetailsModal()).catch((error) => setMessage(error.message, "error"));
-});
 
 profileCalendarIcon?.addEventListener("click", () => {
   toggleProfileMenu(false);
