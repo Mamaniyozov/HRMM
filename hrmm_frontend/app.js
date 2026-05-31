@@ -4272,7 +4272,7 @@ const profileSignalIcon = document.getElementById("profileSignalIcon");
 
 profileUserIcon?.addEventListener("click", () => {
   toggleProfileMenu(false);
-  openSectionModal("meSection");
+  loadMe().then(() => openProfileDetailsModal()).catch((error) => setMessage(error.message, "error"));
 });
 
 profileCalendarIcon?.addEventListener("click", () => {
