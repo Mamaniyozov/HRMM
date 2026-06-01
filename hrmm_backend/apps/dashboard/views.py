@@ -93,10 +93,23 @@ class DashboardAdminView(DashboardStatsView):
             reports.values("status").annotate(count=Count("id")).order_by("status")
         )
         employees_on_leave = leaves.filter(status="APPROVED").values("requested_by__full_name", "start_date", "end_date")[:10]
-        pending_approvals = list(
+        pending_reports = list(
             reports.filter(status__in=["PENDING_L2", "PENDING_L3", "PENDING_L4"])
             .values("id", "report_number", "title", "status", "created_by__full_name")[:10]
         )
+        for item in pending_reports:
+            item["item_type"] = "report"
+
+        pending_leaves = list(
+            leaves.filter(status="PENDING")
+            .values("id", "leave_number", "leave_type", "reason", "status", "requested_by__full_name")[:10]
+        )
+        for item in pending_leaves:
+            item["item_type"] = "leave"
+            item["title"] = item.get("reason") or item.get("leave_type")
+            item["created_by__full_name"] = item.pop("requested_by__full_name", None)
+
+        pending_approvals = pending_reports + pending_leaves
 
         return Response(
             {

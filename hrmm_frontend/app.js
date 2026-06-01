@@ -418,6 +418,9 @@ const translations = {
     reports_count: "Hisobotlar soni",
     approve: "Tasdiqlash",
     reject: "Rad etish",
+    review_check: "Tekshirish va baholash",
+    request_revision: "Qayta ko'rish",
+    review_comment_placeholder: "Izoh (rad etish yoki qayta ko'rish uchun majburiy)",
     employee_profile: "Xodim profili",
     full_name: "To'liq ism",
     username: "Username",
@@ -579,6 +582,11 @@ const translations = {
     no_items_found: "Данные не найдены",
     feedback_locked: "Оценка откроется только после подтвержденной или обработанной заявки/отчета.",
     reports_count: "Количество отчетов",
+    approve: "Утвердить",
+    reject: "Отклонить",
+    review_check: "Проверить и оценить",
+    request_revision: "На доработку",
+    review_comment_placeholder: "Комментарий (обязателен при отклонении или доработке)",
     employee_profile: "Профиль сотрудника",
     full_name: "Полное имя",
     username: "Имя пользователя",
@@ -741,6 +749,9 @@ const translations = {
     reports_count: "Reports count",
     approve: "Approve",
     reject: "Reject",
+    review_check: "Review and rate",
+    request_revision: "Request revision",
+    review_comment_placeholder: "Comment (required for reject or revision)",
     employee_profile: "Employee profile",
     full_name: "Full name",
     username: "Username",
@@ -903,6 +914,9 @@ const translations = {
     reports_count: "Rapor sayisi",
     approve: "Onayla",
     reject: "Reddet",
+    review_check: "Incele ve degerlendir",
+    request_revision: "Revizyona gonder",
+    review_comment_placeholder: "Yorum (red veya revizyon icin zorunlu)",
     employee_profile: "Calisan profili",
     full_name: "Tam ad",
     username: "Kullanici adi",
@@ -1315,6 +1329,9 @@ function toggleProfileMenu(forceOpen) {
   const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : profileDropdown.classList.contains("hidden");
   profileDropdown.classList.toggle("hidden", !shouldOpen);
   profileMenuButton.setAttribute("aria-expanded", String(shouldOpen));
+  // Rotate chevron
+  const chevron = document.getElementById("profileMenuChevron");
+  if (chevron) chevron.style.transform = shouldOpen ? "rotate(180deg)" : "rotate(0deg)";
 }
 
 function toggleCreateMenu(forceOpen) {
@@ -2065,7 +2082,104 @@ function makeDetailItems(entries) {
   `;
 }
 
+function isDeptHeadOrDirector() {
+  const role = state.currentUser?.role || "";
+  return role === "DEPT_HEAD" || role === "DIRECTOR";
+}
+
+const ROLE_PENDING_REPORT_STATUS = {
+  DEPT_HEAD: "PENDING_L3",
+  DIRECTOR: "PENDING_L4",
+};
+
+function canManagerReviewReport(report) {
+  if (!isDeptHeadOrDirector() || !report) return false;
+  const role = state.currentUser.role;
+  return report.status === ROLE_PENDING_REPORT_STATUS[role];
+}
+
+function canManagerReviewLeave(leave) {
+  if (!isDeptHeadOrDirector() || !leave) return false;
+  return leave.status === "PENDING";
+}
+
+function makeReviewActionBar(itemType, itemId, options = {}) {
+  const { showApprove = true, showReject = true, showRevision = false } = options;
+  if (!isDeptHeadOrDirector()) return "";
+  const buttons = [];
+  if (showApprove) {
+    buttons.push(
+      `<button type="button" class="primary-btn small-btn review-action-btn" data-item-type="${itemType}" data-item-id="${itemId}" data-action="APPROVE">${escapeHtml(t("approve"))}</button>`
+    );
+  }
+  if (showReject) {
+    buttons.push(
+      `<button type="button" class="ghost-btn small-btn review-action-btn" data-item-type="${itemType}" data-item-id="${itemId}" data-action="REJECT">${escapeHtml(t("reject"))}</button>`
+    );
+  }
+  if (showRevision) {
+    buttons.push(
+      `<button type="button" class="ghost-btn small-btn review-action-btn" data-item-type="${itemType}" data-item-id="${itemId}" data-action="REQUEST_REVISION">${escapeHtml(t("request_revision"))}</button>`
+    );
+  }
+  if (!buttons.length) return "";
+  return `
+    <div class="review-action-panel">
+      <label class="field-label" for="inlineReviewComment">${escapeHtml(t("review_comment_placeholder"))}</label>
+      <textarea id="inlineReviewComment" class="text-input" rows="2" placeholder="${escapeHtml(t("review_comment_placeholder"))}"></textarea>
+      <div class="inline-actions">${buttons.join("")}</div>
+    </div>
+  `;
+}
+
+function bindReviewActionButtons(container) {
+  const root = container || sectionModalContent;
+  if (!root) return;
+  root.querySelectorAll(".review-action-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const itemType = button.dataset.itemType;
+      const itemId = button.dataset.itemId;
+      const action = button.dataset.action;
+      const commentEl = root.querySelector("#inlineReviewComment");
+      const comment = commentEl?.value?.trim() || "";
+      try {
+        if (itemType === "report") {
+          if ((action === "REJECT" || action === "REQUEST_REVISION") && !comment) {
+            setMessage("Rad etish yoki qayta ko'rish uchun izoh majburiy.", "error");
+            return;
+          }
+          await apiRequest(`/api/v1/reports/${itemId}/actions/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, comment }),
+          });
+          await Promise.all([loadReports(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+        } else if (itemType === "leave") {
+          if (action === "REJECT" && !comment) {
+            setMessage("Rad etish uchun izoh majburiy.", "error");
+            return;
+          }
+          await apiRequest(`/api/v1/leaves/${itemId}/review/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, review_comment: comment }),
+          });
+          await Promise.all([loadLeaves(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+        }
+        sectionModal?.classList.add("hidden");
+        sectionModal?.setAttribute("aria-hidden", "true");
+        setMessage("Muvaffaqiyatli ko'rib chiqildi.", "success");
+      } catch (error) {
+        setMessage(error.message || "Ko'rib chiqishda xato bo'ldi.", "error");
+      }
+    });
+  });
+}
+
 function openReportDetailModal(report) {
+  const reviewBar = canManagerReviewReport(report)
+    ? makeReviewActionBar("report", report.id, { showRevision: true })
+    : "";
   openContentModal(
     report.report_number || t("collection_title_reports"),
     t("collection_title_reports"),
@@ -2079,11 +2193,13 @@ function openReportDetailModal(report) {
       ["Level", report.current_approval_level ? `L${report.current_approval_level}` : "-"],
       ["ID", report.id || "-"],
       ["Sana", formatDate(report.created_at)],
-    ])
+    ]) + reviewBar
   );
+  bindReviewActionButtons();
 }
 
 function openLeaveDetailModal(leave) {
+  const reviewBar = canManagerReviewLeave(leave) ? makeReviewActionBar("leave", leave.id) : "";
   openContentModal(
     leave.requested_by_name || t("collection_title_requests"),
     t("collection_title_requests"),
@@ -2097,8 +2213,9 @@ function openLeaveDetailModal(leave) {
       ["Reviewer", leave.reviewed_by_name || "-"],
       ["Sabab", leave.reason || "-"],
       ["ID", leave.leave_number || leave.id || "-"],
-    ])
+    ]) + reviewBar
   );
+  bindReviewActionButtons();
 }
 
 function openNotificationDetailModal(item) {
@@ -2191,16 +2308,28 @@ function openCollectionModal(title, items, type) {
                   : item.message;
             const meta =
               type === "report"
-                ? `${item.created_by_name || "-"} / ${item.status || "-"}`
+                ? `${item.created_by_name || item.created_by__full_name || "-"} / ${item.status || "-"}`
                 : type === "leave"
                   ? `${item.start_date || "-"} - ${item.end_date || "-"}`
                   : `${item.type || "-"} / ${formatDate(item.created_at)}`;
+            const canReview =
+              type === "report"
+                ? canManagerReviewReport(item)
+                : type === "leave"
+                  ? canManagerReviewLeave(item)
+                  : false;
+            const reviewBtn = canReview
+              ? `<button type="button" class="primary-btn small-btn collection-review-btn" data-type="${type}" data-id="${item.id}">${escapeHtml(t("review_check"))}</button>`
+              : "";
             return `
-              <button type="button" class="detail-list-item entity-detail-open-btn" data-type="${type}" data-id="${item.id}">
-                <strong>${escapeHtml(primary || "-")}</strong>
-                <span>${escapeHtml(secondary || "-")}</span>
-                <small>${escapeHtml(meta || "-")}</small>
-              </button>
+              <div class="detail-list-row">
+                <button type="button" class="detail-list-item entity-detail-open-btn" data-type="${type}" data-id="${item.id}">
+                  <strong>${escapeHtml(primary || "-")}</strong>
+                  <span>${escapeHtml(secondary || "-")}</span>
+                  <small>${escapeHtml(meta || "-")}</small>
+                </button>
+                ${reviewBtn}
+              </div>
             `;
           })
           .join("")}
@@ -2223,6 +2352,22 @@ function openCollectionModal(title, items, type) {
       if (typeName === "notification") {
         const item = state.notifications.find((entry) => entry.id === id);
         if (item) openNotificationDetailModal(item);
+      }
+    });
+  });
+
+  document.querySelectorAll(".collection-review-btn").forEach((button) => {
+    button?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const typeName = button.dataset.type;
+      const id = button.dataset.id;
+      if (typeName === "report") {
+        const report = state.reports.find((item) => item.id === id);
+        if (report) openReportDetailModal(report);
+      }
+      if (typeName === "leave") {
+        const leave = state.leaves.find((item) => item.id === id);
+        if (leave) openLeaveDetailModal(leave);
       }
     });
   });
@@ -3131,7 +3276,13 @@ function renderAdminDashboard() {
             body: JSON.stringify({ action, comment: "Admin tomonidan tasdiqlandi" }),
           });
         }
-        await Promise.all([loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+        await Promise.all([
+          loadReports(),
+          loadLeaves(),
+          loadAdminDashboard(),
+          loadDashboard(),
+          loadAuditLogs(),
+        ]);
         setMessage("Muvaffaqiyatli tasdiqlandi", "success");
       } catch (error) {
         setMessage(error.message || "Tasdiqlashda xato bo'ldi", "error");
@@ -3159,7 +3310,13 @@ function renderAdminDashboard() {
             body: JSON.stringify({ action, comment: "Admin tomonidan rad etildi" }),
           });
         }
-        await Promise.all([loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+        await Promise.all([
+          loadReports(),
+          loadLeaves(),
+          loadAdminDashboard(),
+          loadDashboard(),
+          loadAuditLogs(),
+        ]);
         setMessage("Muvaffaqiyatli rad etildi", "success");
       } catch (error) {
         setMessage(error.message || "Rad etishda xato bo'ldi", "error");
@@ -3183,8 +3340,18 @@ function renderPendingItemsInDashboard() {
 
   if (isManager) {
     const pending = state.pendingApprovals || [];
-    pendingLeaves = pending.filter(item => item.item_type === 'leave' || item.leave_type);
-    pendingReports = pending.filter(item => !item.item_type || item.item_type === 'report' || item.report_number);
+    const pendingFromApiLeaves = pending.filter((item) => item.item_type === "leave" || item.leave_type);
+    const pendingFromApiReports = pending.filter(
+      (item) => !item.item_type || item.item_type === "report" || item.report_number
+    );
+    pendingLeaves = state.leaves.length
+      ? state.leaves.filter((leave) => leave.status === "PENDING")
+      : pendingFromApiLeaves;
+    pendingReports = state.reports.length
+      ? state.reports.filter((report) =>
+          ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
+        )
+      : pendingFromApiReports;
   } else {
     // Regular users see their own pending items
     pendingLeaves = state.leaves.filter(l =>
@@ -3262,9 +3429,11 @@ function renderReviewShortcutPanel() {
     ? state.leaves.filter((leave) => leave.status === "APPROVED").length
     : Number(approvedLeavesValue?.textContent || 0);
   const notificationsCount = state.notifications.filter((item) => !item.is_read).length;
-  const pendingRequests = (state.pendingApprovals || []).filter(
-    (item) => !item.item_type || item.item_type === "report" || item.report_number
+  const pendingLeavesCount = state.leaves.filter((leave) => leave.status === "PENDING").length;
+  const pendingReportsCount = state.reports.filter((report) =>
+    ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
   ).length;
+  const pendingRequests = pendingLeavesCount + pendingReportsCount;
 
   if (approvedLeavesShortcutValue) approvedLeavesShortcutValue.textContent = String(approvedLeaves);
   if (notificationsShortcutValue) notificationsShortcutValue.textContent = String(notificationsCount);
@@ -3403,32 +3572,55 @@ async function loadUsersForRoleManagement() {
   }
 }
 
+async function fetchAllPaginatedResults(path, params = new URLSearchParams()) {
+  params.set("page_size", "100");
+  let page = 1;
+  let totalPages = 1;
+  const results = [];
+  do {
+    params.set("page", String(page));
+    const query = params.toString();
+    const payload = await apiRequest(`${path}?${query}`, { headers: getHeaders(true) });
+    results.push(...(payload.results || []));
+    totalPages = payload.total_pages || 1;
+    page += 1;
+  } while (page <= totalPages);
+  return results;
+}
+
+function shouldLoadFullLists() {
+  const role = state.currentUser?.role || "";
+  return ["DIRECTOR", "DEPT_HEAD"].includes(role);
+}
+
 async function loadReports() {
   const params = new URLSearchParams();
-  if (reportStatusFilter.value) params.set("status", reportStatusFilter.value);
+  if (reportStatusFilter?.value) params.set("status", reportStatusFilter.value);
 
-  const query = params.toString() ? `?${params.toString()}` : "";
-  const payload = await apiRequest(`/api/v1/reports/${query}`, { headers: getHeaders(true) });
-  state.reports = payload.results || [];
+  state.reports = shouldLoadFullLists()
+    ? await fetchAllPaginatedResults("/api/v1/reports/", params)
+    : (await apiRequest(`/api/v1/reports/${params.toString() ? `?${params.toString()}` : ""}`, { headers: getHeaders(true) })).results || [];
   renderReports();
-  // Update dashboard cards for regular users
-  const role = state.currentUser?.role || "";
-  if (!["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
+  if (["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(state.currentUser?.role || "")) {
+    renderPendingItemsInDashboard();
+    renderReviewShortcutPanel();
+  } else {
     renderPendingItemsInDashboard();
   }
 }
 
 async function loadLeaves() {
   const params = new URLSearchParams();
-  if (leaveStatusFilter.value) params.set("status", leaveStatusFilter.value);
+  if (leaveStatusFilter?.value) params.set("status", leaveStatusFilter.value);
 
-  const query = params.toString() ? `?${params.toString()}` : "";
-  const payload = await apiRequest(`/api/v1/leaves/${query}`, { headers: getHeaders(true) });
-  state.leaves = payload.results || [];
+  state.leaves = shouldLoadFullLists()
+    ? await fetchAllPaginatedResults("/api/v1/leaves/", params)
+    : (await apiRequest(`/api/v1/leaves/${params.toString() ? `?${params.toString()}` : ""}`, { headers: getHeaders(true) })).results || [];
   renderLeaves();
-  // Update dashboard cards for regular users
-  const role = state.currentUser?.role || "";
-  if (!["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
+  if (["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(state.currentUser?.role || "")) {
+    renderPendingItemsInDashboard();
+    renderReviewShortcutPanel();
+  } else {
     renderPendingItemsInDashboard();
   }
 }
@@ -3537,9 +3729,7 @@ async function loadAllData() {
     loadAuditLogs(),
   ];
 
-  if (role !== "DIRECTOR") {
-    tasks.push(loadLeaves(), loadLeaveCalendar());
-  }
+  tasks.push(loadLeaves(), loadLeaveCalendar());
 
   if (["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
     tasks.push(loadAdminDashboard(), loadAnalyticsDashboard());
