@@ -4329,14 +4329,13 @@ profileToggleRow?.addEventListener('click', (e) => {
 
 profileInfoToggle?.addEventListener('click', (e) => {
   e.stopPropagation();
-  const isOpen = profileInfoPanel && profileInfoPanel.style.display === 'flex';
-  if (profileInfoPanel) profileInfoPanel.style.display = isOpen ? 'none' : 'flex';
-  if (profileChevron) profileChevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
-  if (profileInfoToggle) {
-    profileInfoToggle.style.color = isOpen ? 'var(--muted)' : 'var(--accent)';
-    profileInfoToggle.style.background = isOpen ? 'transparent' : 'rgba(23,74,139,0.1)';
-    profileInfoToggle.classList.toggle('active', !isOpen);
-  }
+  // Open full profile modal (load current user first)
+  toggleProfileMenu(false);
+  loadMe()
+    .then(() => {
+      openUserProfileModal(state.currentUser);
+    })
+    .catch((error) => setMessage(error.message, 'error'));
 });
 
 // Profile quick icons functionality
