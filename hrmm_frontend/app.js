@@ -2967,6 +2967,18 @@ function renderProfile() {
     profileUnitIcon.setAttribute("aria-label", profileUnitIcon.title);
     profileUnitIcon.textContent = "";
   }
+  // Avatar initials va ism yangilash
+  try {
+    const initials = (profile?.full_name || '??').split(' ').slice(0,2).map(w => w[0]?.toUpperCase() || '').join('');
+    const avatarEl = document.getElementById('profileAvatarInitials');
+    const nameEl = document.getElementById('profileFullName');
+    const roleEl = document.getElementById('profileRoleBadge');
+    if (avatarEl) avatarEl.textContent = initials;
+    if (nameEl) nameEl.textContent = profile?.full_name || '—';
+    if (roleEl) roleEl.textContent = getRoleLabel(profile?.role) || '—';
+  } catch (e) {
+    // defensive: ignore if elements not present
+  }
   if (apiBaseIcon) {
     apiBaseIcon.title = t("sync_system");
     apiBaseIcon.setAttribute("aria-label", apiBaseIcon.title);
@@ -4262,6 +4274,31 @@ profileMenuButton?.addEventListener("click", (event) => {
 });
 profileDropdown?.addEventListener("click", (event) => {
   event.stopPropagation();
+});
+
+// Profil info toggle
+const profileToggleRow = document.getElementById('profileToggleRow');
+const profileInfoPanel = document.getElementById('profileInfoPanel');
+const profileChevron = document.getElementById('profileChevron');
+const profileInfoToggle = document.getElementById('profileInfoToggle');
+
+profileToggleRow?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const isOpen = profileInfoPanel && profileInfoPanel.style.display === 'flex';
+  if (profileInfoPanel) profileInfoPanel.style.display = isOpen ? 'none' : 'flex';
+  if (profileChevron) profileChevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+});
+
+profileInfoToggle?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const isOpen = profileInfoPanel && profileInfoPanel.style.display === 'flex';
+  if (profileInfoPanel) profileInfoPanel.style.display = isOpen ? 'none' : 'flex';
+  if (profileChevron) profileChevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+  if (profileInfoToggle) {
+    profileInfoToggle.style.color = isOpen ? 'var(--muted)' : 'var(--accent)';
+    profileInfoToggle.style.background = isOpen ? 'transparent' : 'rgba(23,74,139,0.1)';
+    profileInfoToggle.classList.toggle('active', !isOpen);
+  }
 });
 
 // Profile quick icons functionality
