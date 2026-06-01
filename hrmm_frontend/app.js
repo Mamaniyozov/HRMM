@@ -4193,7 +4193,45 @@ refreshAnalyticsDashboardButton?.addEventListener("click", () => loadAnalyticsDa
 refreshLeaveCalendarButton?.addEventListener("click", () => loadLeaveCalendar().catch((error) => setMessage(error.message, "error")));
 meButton?.addEventListener("click", () => {
   toggleProfileMenu(false);
-  loadMe().then(() => openProfileDetailsModal()).catch((error) => setMessage(error.message, "error"));
+  // Open password change modal
+  if (sectionModal && sectionModalContent && sectionModalTitle) {
+    restoreModalSection();
+    sectionModalContent.innerHTML = `
+      <section class="security-settings-card">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Xavfsizlik</p>
+            <h3>Parolni o'zgartirish</h3>
+          </div>
+        </div>
+        <form id="modalPasswordForm" class="form-grid">
+          <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
+          <label><span>Yangi parol</span><input name="new_password" type="password" required /></label>
+          <button type="submit" class="ghost-btn">Parolni yangilash</button>
+        </form>
+      </section>
+    `;
+    sectionModalTitle.textContent = t("change_password");
+    sectionModal.classList.remove("hidden");
+    sectionModal.setAttribute("aria-hidden", "false");
+    setTimeout(() => {
+      document.getElementById("modalPasswordForm")?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(document.getElementById("modalPasswordForm"));
+        try {
+          await apiRequest("/api/v1/auth/change-password/", {
+            method: "POST",
+            headers: getHeaders(false),
+            body: JSON.stringify(Object.fromEntries(formData)),
+          });
+          setMessage("Parol muvaffaqiyatli o'zgartirildi.", "success");
+          sectionModal.classList.add("hidden");
+        } catch (error) {
+          setMessage(error.message || "Parolni o'zgartirishda xato bo'ldi.", "error");
+        }
+      });
+    }, 0);
+  }
 });
 profileRoleIcon?.addEventListener("click", () => {
   loadMe().then(() => openProfileDetailsModal()).catch((error) => setMessage(error.message, "error"));
