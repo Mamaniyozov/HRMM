@@ -1,9 +1,19 @@
 from apps.notifications.models import Notification
 
 
-def create_notification(*, user, title, message, notification_type="INFO", reference_type="", reference_id=""):
+def create_notification(
+    *,
+    user,
+    title,
+    message,
+    notification_type="INFO",
+    reference_type="",
+    reference_id="",
+    submitted_by=None,
+):
     return Notification.objects.create(
         user_id=user,
+        submitted_by=submitted_by,
         title=title,
         message=message,
         type=notification_type,

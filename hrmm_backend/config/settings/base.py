@@ -7,7 +7,8 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key")
+# JWT HS256 tavsiya qiladi: kamida 32 belgi. Productionda .env da uzun kalit qo'ying.
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-local-hrmm-dev-secret-key-32b")
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 

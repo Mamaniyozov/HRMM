@@ -226,6 +226,8 @@ const pendingLeavesValue = document.getElementById("pendingLeavesValue");
 const userDepartmentSelect = document.getElementById("userDepartmentSelect");
 const userUnitSelect = document.getElementById("userUnitSelect");
 const unreadNotificationsBadgeCount = document.getElementById("unreadNotificationsBadgeCount");
+const pendingNotificationsBadgeCount = document.getElementById("pendingNotificationsBadgeCount");
+const approvedNotificationsCount = document.getElementById("approvedNotificationsCount");
 const totalNotificationsCount = document.getElementById("totalNotificationsCount");
 const draftReportsValue = document.getElementById("draftReportsValue");
 const approvedReportsValue = document.getElementById("approvedReportsValue");
@@ -402,7 +404,14 @@ const translations = {
     rejected: "Rad etilgan",
     approved_request: "Tasdiqlangan ariza",
     notifications_unread: "O'qilmagan",
+    notifications_pending: "Kutilmoqda",
+    notifications_approved: "Tasdiqlangan",
     notifications_total: "Jami bildirishnomalar",
+    submit_report: "Yuborish",
+    edit_report: "Tahrirlash",
+    save_changes: "Saqlash",
+    collection_title_approved_notifications: "Tasdiqlangan bildirishnomalar",
+    report_submit_hint: "Rahbarlar tasdiqlashi uchun avval hisobotni yuboring.",
     password: "Parol",
     password_confirm: "Parolni tasdiqlash",
     select_department: "Bo'limni tanlang",
@@ -762,6 +771,13 @@ const translations = {
     reports_count: "Reports count",
     approve: "Approve",
     reject: "Reject",
+    notifications_pending: "Pending",
+    notifications_approved: "Approved",
+    submit_report: "Submit",
+    edit_report: "Edit",
+    save_changes: "Save",
+    collection_title_approved_notifications: "Approved notifications",
+    report_submit_hint: "Submit the report before managers can approve it.",
     review_check: "Review and rate",
     request_revision: "Request revision",
     review_comment_placeholder: "Comment (required for reject or revision)",
@@ -1706,8 +1722,8 @@ function applyTranslations() {
   if (statCards?.[3]) {
     statCards[3].querySelector(".dashboard-stat-head span")?.replaceChildren(document.createTextNode(t("notifications")));
     const badges = statCards[3].querySelectorAll(".dashboard-badge");
-    if (badges[0]) badges[0].childNodes[0].textContent = `${t("notifications_unread")}: `;
-    if (badges[1]) badges[1].childNodes[0].textContent = `${t("notifications_total")}: `;
+    if (badges[0]) badges[0].childNodes[0].textContent = `${t("notifications_pending")}: `;
+    if (badges[1]) badges[1].childNodes[0].textContent = `${t("notifications_approved")}: `;
   }
 
   if (meButton) {
@@ -2105,10 +2121,67 @@ const ROLE_PENDING_REPORT_STATUS = {
   DIRECTOR: "PENDING_L4",
 };
 
+function getReportOwnerId(report) {
+  return report?.created_by ?? report?.created_by_id ?? "";
+}
+
 function canManagerReviewReport(report) {
   if (!isDeptHeadOrDirector() || !report) return false;
+  if (getReportOwnerId(report) === state.currentUser?.id) return false;
   const role = state.currentUser.role;
   return report.status === ROLE_PENDING_REPORT_STATUS[role];
+}
+
+function canOwnerManageReport(report) {
+  if (!report || !state.currentUser?.id) return false;
+  return getReportOwnerId(report) === state.currentUser.id && ["DRAFT", "REVISION"].includes(report.status);
+}
+
+function canRateReport(report) {
+  if (!report || !state.currentUser?.id) return false;
+  return getReportOwnerId(report) === state.currentUser.id && report.status === "APPROVED";
+}
+
+function isNotificationAlertCopy(item) {
+  return (
+    item.reference_type === "REVIEWER_ALERT" ||
+    (item.type === "APPROVAL" && String(item.title || "").startsWith("Yangi so'rov:"))
+  );
+}
+
+function shouldShowNotificationInMainList(item) {
+  if (isNotificationAlertCopy(item)) return false;
+
+  if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) {
+    return true;
+  }
+
+  const isOwn =
+    item.submitted_by === state.currentUser?.id ||
+    (!item.submitted_by && item.user_id === state.currentUser?.id);
+
+  if (isOwn) {
+    return !item.status || item.status === "PENDING";
+  }
+
+  if (isDeptHeadOrDirector()) {
+    return canManagerReviewNotification(item);
+  }
+
+  return true;
+}
+
+function getApprovedReviewNotifications() {
+  return state.notifications.filter((item) => {
+    if (isNotificationAlertCopy(item)) return false;
+    if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) return false;
+    if (!["APPROVED", "REJECTED"].includes(item.status || "")) return false;
+    if (isDeptHeadOrDirector()) return true;
+    return (
+      item.submitted_by === state.currentUser?.id ||
+      (!item.submitted_by && item.user_id === state.currentUser?.id)
+    );
+  });
 }
 
 function canManagerReviewLeave(leave) {
@@ -2120,8 +2193,9 @@ const REVIEWABLE_NOTIFICATION_TYPES = new Set(["FEATURE_REQUEST", "USER_NOTIFICA
 
 function canManagerReviewNotification(item) {
   if (!isDeptHeadOrDirector() || !item) return false;
+  if (isNotificationAlertCopy(item)) return false;
   if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) return false;
-  if (!["PENDING", null, undefined, ""].includes(item.status)) return false;
+  if (item.status && item.status !== "PENDING") return false;
   if (item.submitted_by && item.submitted_by === state.currentUser?.id) return false;
   return true;
 }
@@ -2193,12 +2267,18 @@ function bindReviewActionButtons(container) {
             setMessage("Rad etish uchun izoh majburiy.", "error");
             return;
           }
-          await apiRequest(`/api/v1/notifications/${itemId}/review/`, {
+          const reviewPayload = await apiRequest(`/api/v1/notifications/${itemId}/review/`, {
             method: "POST",
             headers: getHeaders(),
             body: JSON.stringify({ action, review_comment: comment }),
           });
+          const reviewed = reviewPayload?.data;
+          if (reviewed?.id) {
+            const index = state.notifications.findIndex((entry) => entry.id === reviewed.id);
+            if (index >= 0) state.notifications[index] = reviewed;
+          }
           await Promise.all([loadNotifications(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+          refreshHomeDashboard();
         }
         sectionModal?.classList.add("hidden");
         sectionModal?.setAttribute("aria-hidden", "true");
@@ -2210,10 +2290,114 @@ function bindReviewActionButtons(container) {
   });
 }
 
+function makeReportDetailActionBar(report) {
+  const parts = [];
+
+  if (canOwnerManageReport(report)) {
+    parts.push(`
+      <div class="review-action-panel report-owner-panel">
+        <div class="inline-actions">
+          <button type="button" class="primary-btn small-btn report-detail-action-btn" data-report-id="${report.id}" data-action="SUBMIT">${escapeHtml(t("submit_report"))}</button>
+          <button type="button" class="ghost-btn small-btn report-detail-action-btn" data-report-id="${report.id}" data-action="EDIT">${escapeHtml(t("edit_report"))}</button>
+        </div>
+        <div class="report-inline-edit hidden" id="reportInlineEditPanel">
+          <label class="field-label" for="inlineReportTitle">${escapeHtml(t("report_title"))}</label>
+          <input id="inlineReportTitle" class="text-input" type="text" value="${escapeHtml(report.title || "")}" />
+          <label class="field-label" for="inlineReportSummary">${escapeHtml(t("report_comment"))}</label>
+          <textarea id="inlineReportSummary" class="text-input" rows="3">${escapeHtml(report.summary || "")}</textarea>
+          <div class="inline-actions">
+            <button type="button" class="primary-btn small-btn report-detail-action-btn" data-report-id="${report.id}" data-action="SAVE_EDIT">${escapeHtml(t("save_changes"))}</button>
+          </div>
+        </div>
+      </div>
+    `);
+  } else if (isDeptHeadOrDirector() && getReportOwnerId(report) === state.currentUser?.id && report.status === "DRAFT") {
+    parts.push(`<div class="feed-item muted-item">${escapeHtml(t("report_submit_hint"))}</div>`);
+  }
+
+  if (canManagerReviewReport(report)) {
+    parts.push(makeReviewActionBar("report", report.id, { showRevision: true }));
+  }
+
+  if (canRateReport(report)) {
+    parts.push(`
+      <div class="review-action-panel">
+        <button type="button" class="primary-btn small-btn report-detail-action-btn" data-report-id="${report.id}" data-action="RATE">${escapeHtml(t("review_check"))}</button>
+      </div>
+    `);
+  }
+
+  return parts.join("");
+}
+
+function bindReportDetailActionButtons(report) {
+  const root = sectionModalContent;
+  if (!root) return;
+
+  root.querySelectorAll(".report-detail-action-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const reportId = button.dataset.reportId;
+      const action = button.dataset.action;
+      const currentReport = state.reports.find((item) => item.id === reportId) || report;
+
+      try {
+        if (action === "EDIT") {
+          root.querySelector("#reportInlineEditPanel")?.classList.remove("hidden");
+          return;
+        }
+
+        if (action === "SAVE_EDIT") {
+          const title = root.querySelector("#inlineReportTitle")?.value?.trim() || "";
+          const summary = root.querySelector("#inlineReportSummary")?.value?.trim() || "";
+          if (!title || !summary) {
+            setMessage("Sarlavha va izohni to'ldiring.", "error");
+            return;
+          }
+          await apiRequest(`/api/v1/reports/${reportId}/`, {
+            method: "PUT",
+            headers: getHeaders(),
+            body: JSON.stringify({ title, summary }),
+          });
+          await loadReports();
+          const updated = state.reports.find((item) => item.id === reportId);
+          if (updated) openReportDetailModal(updated);
+          setMessage("Hisobot yangilandi.", "success");
+          return;
+        }
+
+        if (action === "SUBMIT") {
+          await apiRequest(`/api/v1/reports/${reportId}/actions/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action: "SUBMIT", comment: "" }),
+          });
+          await Promise.all([loadReports(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+          refreshHomeDashboard();
+          const updated = state.reports.find((item) => item.id === reportId);
+          sectionModal?.classList.add("hidden");
+          sectionModal?.setAttribute("aria-hidden", "true");
+          setMessage("Hisobot yuborildi va tasdiqlash navbatiga tushdi.", "success");
+          if (updated) {
+            setTimeout(() => openReportDetailModal(updated), 300);
+          }
+          return;
+        }
+
+        if (action === "RATE") {
+          openRatingModal(currentReport, "report", {
+            id: state.currentUser?.id,
+            name: state.currentUser?.full_name || state.currentUser?.username,
+          });
+        }
+      } catch (error) {
+        setMessage(error.message || "Amal bajarilmadi.", "error");
+      }
+    });
+  });
+}
+
 function openReportDetailModal(report) {
-  const reviewBar = canManagerReviewReport(report)
-    ? makeReviewActionBar("report", report.id, { showRevision: true })
-    : "";
+  const actionBar = makeReportDetailActionBar(report);
   openContentModal(
     report.report_number || t("collection_title_reports"),
     t("collection_title_reports"),
@@ -2227,9 +2411,10 @@ function openReportDetailModal(report) {
       ["Level", report.current_approval_level ? `L${report.current_approval_level}` : "-"],
       ["ID", report.id || "-"],
       ["Sana", formatDate(report.created_at)],
-    ]) + reviewBar
+    ]) + actionBar
   );
   bindReviewActionButtons();
+  bindReportDetailActionButtons(report);
 }
 
 function openLeaveDetailModal(leave) {
@@ -2482,19 +2667,23 @@ function bindDashboardDrilldowns() {
   });
 
   const notificationsCard = statCards[3];
-  notificationsCard?.querySelector('[data-notification-filter="unread"]')?.addEventListener("click", () => {
+  notificationsCard?.querySelector('[data-notification-filter="pending"]')?.addEventListener("click", () => {
     const items = isDeptHeadOrDirector()
       ? getPendingNotificationsForDashboard()
-      : state.notifications.filter((item) => !item.is_read);
+      : state.notifications.filter((item) => shouldShowNotificationInMainList(item));
     openCollectionModal(t("collection_title_notifications"), items, "notification");
   });
-  notificationsCard?.querySelector('[data-notification-filter="all"]')?.addEventListener("click", () => {
-    openCollectionModal(t("collection_title_notifications"), state.notifications, "notification");
+  notificationsCard?.querySelector('[data-notification-filter="approved"]')?.addEventListener("click", () => {
+    openCollectionModal(
+      t("collection_title_approved_notifications"),
+      getApprovedReviewNotifications(),
+      "notification"
+    );
   });
   notificationsCard?.querySelector("strong")?.addEventListener("click", () => {
     const items = isDeptHeadOrDirector()
       ? getPendingNotificationsForDashboard()
-      : state.notifications.filter((item) => !item.is_read);
+      : state.notifications.filter((item) => shouldShowNotificationInMainList(item));
     openCollectionModal(t("collection_title_notifications"), items, "notification");
   });
 }
@@ -3323,7 +3512,8 @@ function renderNotifications() {
   const searchNeedle = normalizeSearchValue(notificationSearchInput?.value || getCombinedSearchNeedle());
   const readFilterValue = notificationReadFilter?.value || "";
   const filteredNotifications = state.notifications.filter((item) => {
-    const haystack = [item.title, item.message, item.type].join(" ").toLowerCase();
+    if (!shouldShowNotificationInMainList(item)) return false;
+    const haystack = [item.title, item.message, item.type, item.status].join(" ").toLowerCase();
     const matchesSearch = !searchNeedle || haystack.includes(searchNeedle);
     const matchesRead =
       !readFilterValue ||
@@ -3333,10 +3523,13 @@ function renderNotifications() {
   });
 
   if (!filteredNotifications.length) {
-    notificationsList.innerHTML = '<div class="feed-item muted-item">Notificationlar yoq</div>';
+    notificationsList.innerHTML = `<div class="feed-item muted-item">${escapeHtml(
+      isDeptHeadOrDirector() ? "Kutilayotgan bildirishnoma yo'q" : "Notificationlar yo'q"
+    )}</div>`;
     if (unreadNotificationsValue) {
       unreadNotificationsValue.textContent = String(state.notifications.filter((item) => !item.is_read).length);
     }
+    renderNotificationDashboardCard();
     renderActivityHistory();
     return;
   }
@@ -3589,15 +3782,25 @@ function renderPendingItemsInDashboard() {
 
 function renderNotificationDashboardCard() {
   const unread = state.notifications.filter((item) => !item.is_read).length;
-  const total = state.notifications.length;
-  const pendingReview = state.notifications.filter((item) => canManagerReviewNotification(item)).length;
+  const pendingReview = getPendingNotificationsForDashboard().length;
+  const approvedReview = getApprovedReviewNotifications().length;
   if (unreadNotificationsValue) {
     unreadNotificationsValue.textContent = String(
-      isDeptHeadOrDirector() && pendingReview > 0 ? pendingReview : unread
+      isDeptHeadOrDirector() ? pendingReview : unread
     );
   }
-  if (unreadNotificationsBadgeCount) unreadNotificationsBadgeCount.textContent = String(unread);
-  if (totalNotificationsCount) totalNotificationsCount.textContent = String(total);
+  if (pendingNotificationsBadgeCount) {
+    pendingNotificationsBadgeCount.textContent = String(pendingReview);
+  }
+  if (unreadNotificationsBadgeCount) {
+    unreadNotificationsBadgeCount.textContent = String(unread);
+  }
+  if (approvedNotificationsCount) {
+    approvedNotificationsCount.textContent = String(approvedReview);
+  }
+  if (totalNotificationsCount) {
+    totalNotificationsCount.textContent = String(state.notifications.length);
+  }
 }
 
 function getPendingNotificationsForDashboard() {

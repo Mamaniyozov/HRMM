@@ -25,6 +25,7 @@ class Notification(models.Model):
         ("REJECTED", "Rejected"),
     ]
     REVIEWABLE_REFERENCE_TYPES = frozenset({"FEATURE_REQUEST", "USER_NOTIFICATION"})
+    REVIEWER_ALERT_REFERENCE_TYPE = "REVIEWER_ALERT"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     notification_number = models.PositiveIntegerField(unique=True, null=True, blank=True)

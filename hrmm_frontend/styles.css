@@ -1818,6 +1818,20 @@ tbody tr:hover {
   gap: 8px;
 }
 
+.report-inline-edit {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.report-inline-edit.hidden {
+  display: none;
+}
+
+.report-owner-panel {
+  margin-bottom: 4px;
+}
+
 .creation-warning-body {
   display: grid;
   gap: 14px;
