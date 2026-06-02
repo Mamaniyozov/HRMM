@@ -861,6 +861,21 @@ body::before {
   border: 0;
   text-align: left;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profile-chip-button:hover {
+  background: rgba(23, 74, 139, 0.05) !important;
+  border-color: var(--accent) !important;
+}
+
+.profile-chip-button[aria-expanded="true"] {
+  background: rgba(23, 74, 139, 0.08) !important;
+  border-color: var(--accent) !important;
+}
+
+.profile-chip-button[aria-expanded="true"] #profileMenuChevron {
+  transform: rotate(90deg);
 }
 
 .sr-only {
@@ -877,21 +892,38 @@ body::before {
 
 .profile-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 12px);
   right: 0;
-  width: 260px;
-  min-width: 260px;
-  max-width: 260px;
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
   display: flex;
   flex-direction: column;
   gap: 0;
   padding: 0;
-  border-radius: 16px;
+  border-radius: 18px;
   background: var(--panel);
-  border: 1px solid var(--line);
-  box-shadow: 0 18px 40px rgba(20, 38, 66, 0.18);
+  border: 1.5px solid var(--line);
+  box-shadow: 0 20px 50px rgba(20, 38, 66, 0.22);
   z-index: 50;
   overflow: hidden;
+  animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Profile info panel animation */
+#profileInfoPanel {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .profile-quick-section {

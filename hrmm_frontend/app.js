@@ -3065,6 +3065,28 @@ function finalizeAuthenticatedSession(payload) {
     currentUserLabel.textContent = `${payload.data.user.full_name} (${payload.data.user.role})`;
   }
   loggedInAsLabel.textContent = payload.data.user.full_name || "-";
+
+  // Update profile avatar with user initials
+  const profileButtonAvatar = document.getElementById("profileButtonAvatar");
+  const profileAvatarInitials = document.getElementById("profileAvatarInitials");
+  const topbarUserLabel = document.getElementById("topbarUserLabel");
+
+  if (payload.data.user.full_name) {
+    const initials = payload.data.user.full_name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+
+    if (profileButtonAvatar) profileButtonAvatar.textContent = initials;
+    if (profileAvatarInitials) profileAvatarInitials.textContent = initials;
+  }
+
+  if (topbarUserLabel) {
+    topbarUserLabel.textContent = payload.data.user.full_name || payload.data.user.username || "Mehmon";
+  }
+
   resetPendingLogin();
   setAuthUi(true);
   applyRoleBasedUi();
