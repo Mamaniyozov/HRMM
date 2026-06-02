@@ -2116,6 +2116,16 @@ function canManagerReviewLeave(leave) {
   return leave.status === "PENDING";
 }
 
+const REVIEWABLE_NOTIFICATION_TYPES = new Set(["FEATURE_REQUEST", "USER_NOTIFICATION"]);
+
+function canManagerReviewNotification(item) {
+  if (!isDeptHeadOrDirector() || !item) return false;
+  if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) return false;
+  if (!["PENDING", null, undefined, ""].includes(item.status)) return false;
+  if (item.submitted_by && item.submitted_by === state.currentUser?.id) return false;
+  return true;
+}
+
 function makeReviewActionBar(itemType, itemId, options = {}) {
   const { showApprove = true, showReject = true, showRevision = false } = options;
   if (!isDeptHeadOrDirector()) return "";
@@ -2178,6 +2188,17 @@ function bindReviewActionButtons(container) {
             body: JSON.stringify({ action, review_comment: comment }),
           });
           await Promise.all([loadLeaves(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+        } else if (itemType === "notification") {
+          if (action === "REJECT" && !comment) {
+            setMessage("Rad etish uchun izoh majburiy.", "error");
+            return;
+          }
+          await apiRequest(`/api/v1/notifications/${itemId}/review/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, review_comment: comment }),
+          });
+          await Promise.all([loadNotifications(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
         }
         sectionModal?.classList.add("hidden");
         sectionModal?.setAttribute("aria-hidden", "true");
@@ -2247,6 +2268,8 @@ function openNotificationDetailModal(item) {
     `;
   }
 
+  const reviewBar = canManagerReviewNotification(item) ? makeReviewActionBar("notification", item.id) : "";
+
   openContentModal(
     item.title || t("collection_title_notifications"),
     t("collection_title_notifications"),
@@ -2254,12 +2277,15 @@ function openNotificationDetailModal(item) {
       [t("report_title"), item.title || "-"],
       [t("report_comment"), item.message || "-"],
       ["Type", item.type || "-"],
+      ["Status", item.status || (canManagerReviewNotification(item) ? "PENDING" : "-")],
+      [t("full_name"), item.submitted_by_name || "-"],
       ["Read", item.is_read ? t("active") : t("inactive")],
       ["ID", item.notification_number || item.id || "-"],
       ["Sana", formatDate(item.created_at)],
       ["Reference", item.reference_type || "-"],
-    ]) + attachmentHtml
+    ]) + attachmentHtml + reviewBar
   );
+  bindReviewActionButtons();
 }
 
 function openUsersByDepartmentModal(departmentName) {
@@ -2329,13 +2355,15 @@ function openCollectionModal(title, items, type) {
                 ? `${item.created_by_name || item.created_by__full_name || "-"} / ${item.status || "-"}`
                 : itemType === "leave"
                   ? `${item.start_date || "-"} - ${item.end_date || "-"}`
-                  : `${item.type || "-"} / ${formatDate(item.created_at)}`;
+                  : `${item.submitted_by_name || "-"} / ${item.status || item.type || "-"} / ${formatDate(item.created_at)}`;
             const canReview =
               itemType === "report"
                 ? canManagerReviewReport(item)
                 : itemType === "leave"
                   ? canManagerReviewLeave(item)
-                  : false;
+                  : itemType === "notification"
+                    ? canManagerReviewNotification(item)
+                    : false;
             const reviewBtn = canReview
               ? `<button type="button" class="primary-btn small-btn collection-review-btn" data-type="${itemType}" data-id="${item.id}">${escapeHtml(t("review_check"))}</button>`
               : "";
@@ -2386,6 +2414,10 @@ function openCollectionModal(title, items, type) {
       if (typeName === "leave") {
         const leave = state.leaves.find((item) => item.id === id);
         if (leave) openLeaveDetailModal(leave);
+      }
+      if (typeName === "notification") {
+        const item = state.notifications.find((entry) => entry.id === id);
+        if (item) openNotificationDetailModal(item);
       }
     });
   });
@@ -2451,21 +2483,19 @@ function bindDashboardDrilldowns() {
 
   const notificationsCard = statCards[3];
   notificationsCard?.querySelector('[data-notification-filter="unread"]')?.addEventListener("click", () => {
-    openCollectionModal(
-      t("collection_title_notifications"),
-      state.notifications.filter((item) => !item.is_read),
-      "notification"
-    );
+    const items = isDeptHeadOrDirector()
+      ? getPendingNotificationsForDashboard()
+      : state.notifications.filter((item) => !item.is_read);
+    openCollectionModal(t("collection_title_notifications"), items, "notification");
   });
   notificationsCard?.querySelector('[data-notification-filter="all"]')?.addEventListener("click", () => {
     openCollectionModal(t("collection_title_notifications"), state.notifications, "notification");
   });
   notificationsCard?.querySelector("strong")?.addEventListener("click", () => {
-    openCollectionModal(
-      t("collection_title_notifications"),
-      state.notifications.filter((item) => !item.is_read),
-      "notification"
-    );
+    const items = isDeptHeadOrDirector()
+      ? getPendingNotificationsForDashboard()
+      : state.notifications.filter((item) => !item.is_read);
+    openCollectionModal(t("collection_title_notifications"), items, "notification");
   });
 }
 
@@ -2494,9 +2524,11 @@ function openManagerPendingApprovalsModal() {
   const pendingReports = state.reports.filter((report) =>
     ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
   );
+  const pendingNotifications = getPendingNotificationsForDashboard();
   const combined = [
     ...pendingLeaves.map((item) => ({ ...item, _collectionType: "leave" })),
     ...pendingReports.map((item) => ({ ...item, _collectionType: "report" })),
+    ...pendingNotifications.map((item) => ({ ...item, _collectionType: "notification" })),
   ];
   if (!combined.length) {
     setMessage("Kutilayotgan tasdiqlash uchun element yo'q.", "warning");
@@ -3324,9 +3356,14 @@ function renderNotifications() {
           <div>
             <strong>#${item.notification_number || item.id?.slice(0, 8)} ${item.title}</strong>
             <span>${escapeHtml(item.message)}</span>
-            <small>${item.type} - ${formatDate(item.created_at)}</small>
+            <small>${item.type} / ${item.status || "-"} / ${item.submitted_by_name || "-"} - ${formatDate(item.created_at)}</small>
           </div>
           <div class="inline-actions">
+            ${
+              canManagerReviewNotification(item)
+                ? `<button class="primary-btn small-btn notification-review-btn" data-id="${item.id}" type="button">${escapeHtml(t("review_check"))}</button>`
+                : ""
+            }
             <button class="ghost-btn small-btn mark-read-btn" data-id="${item.id}" type="button">O'qilgan deb belgilash</button>
             <button class="ghost-btn small-btn notification-detail-btn" data-id="${item.id}" type="button">${t("open_details")}</button>
           </div>
@@ -3345,10 +3382,14 @@ function renderNotifications() {
       if (item) openNotificationDetailModal(item);
     });
   });
+  document.querySelectorAll(".notification-review-btn").forEach((button) => {
+    button?.addEventListener("click", () => {
+      const item = state.notifications.find((entry) => entry.id === button.dataset.id);
+      if (item) openNotificationDetailModal(item);
+    });
+  });
 
-  if (unreadNotificationsValue) {
-    unreadNotificationsValue.textContent = String(state.notifications.filter((item) => !item.is_read).length);
-  }
+  renderNotificationDashboardCard();
   renderActivityHistory();
   updateFeedbackAvailability();
 }
@@ -3549,9 +3590,18 @@ function renderPendingItemsInDashboard() {
 function renderNotificationDashboardCard() {
   const unread = state.notifications.filter((item) => !item.is_read).length;
   const total = state.notifications.length;
-  if (unreadNotificationsValue) unreadNotificationsValue.textContent = String(unread);
+  const pendingReview = state.notifications.filter((item) => canManagerReviewNotification(item)).length;
+  if (unreadNotificationsValue) {
+    unreadNotificationsValue.textContent = String(
+      isDeptHeadOrDirector() && pendingReview > 0 ? pendingReview : unread
+    );
+  }
   if (unreadNotificationsBadgeCount) unreadNotificationsBadgeCount.textContent = String(unread);
   if (totalNotificationsCount) totalNotificationsCount.textContent = String(total);
+}
+
+function getPendingNotificationsForDashboard() {
+  return state.notifications.filter((item) => canManagerReviewNotification(item));
 }
 
 function refreshHomeDashboard() {
@@ -3576,7 +3626,8 @@ function renderReviewShortcutPanel() {
   const pendingReportsCount = state.reports.filter((report) =>
     ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
   ).length;
-  const pendingRequests = pendingLeavesCount + pendingReportsCount;
+  const pendingNotificationsCount = state.notifications.filter((item) => canManagerReviewNotification(item)).length;
+  const pendingRequests = pendingLeavesCount + pendingReportsCount + pendingNotificationsCount;
 
   if (approvedLeavesShortcutValue) approvedLeavesShortcutValue.textContent = String(approvedLeaves);
   if (notificationsShortcutValue) notificationsShortcutValue.textContent = String(notificationsCount);
