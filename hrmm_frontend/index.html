@@ -550,22 +550,22 @@
                 <span>Tasdiqlash holati</span>
                 <span class="stat-icon green">T</span>
               </div>
-              <strong id="pendingReportsValue">0</strong>
+              <strong id="pendingApprovalStatusValue">0</strong>
               <div class="dashboard-badge-row">
-                <span class="dashboard-badge danger">Hal qilingan arizalar: <strong id="resolvedLeavesValue">0</strong></span>
-                <span class="dashboard-badge danger">Tasdiqlangan hisobotlar: <strong id="approvedReportsValue">0</strong></span>
+                <span class="dashboard-badge danger" data-dashboard-filter="resolved-leaves">Hal qilingan arizalar: <strong id="resolvedLeavesValue">0</strong></span>
+                <span class="dashboard-badge danger" data-dashboard-filter="approved-reports">Tasdiqlangan hisobotlar: <strong id="approvedReportsValue">0</strong></span>
               </div>
             </article>
 
-            <article class="dashboard-stat-card">
+            <article class="dashboard-stat-card dashboard-stat-card--notifications">
               <div class="dashboard-stat-head">
                 <span>Bildirishnomalar</span>
                 <span class="stat-icon purple">B</span>
               </div>
               <strong id="unreadNotificationsValue">0</strong>
               <div class="dashboard-badge-row">
-                <span class="dashboard-badge neutral">Rad etilgan: <strong id="rejectedReportsValue">0</strong></span>
-                <span class="dashboard-badge neutral">Tasdiqlangan ariza: <strong id="approvedLeavesValue">0</strong></span>
+                <span class="dashboard-badge neutral" data-notification-filter="unread">O'qilmagan: <strong id="unreadNotificationsBadgeCount">0</strong></span>
+                <span class="dashboard-badge neutral" data-notification-filter="all">Jami bildirishnomalar: <strong id="totalNotificationsCount">0</strong></span>
               </div>
             </article>
           </div>
@@ -943,16 +943,25 @@
               <button type="submit" class="primary-btn">Arizani ko'rib chiqish</button>
             </form>
             <form id="userForm" class="form-grid hidden">
-              <label><span>To'liq ism</span><input name="full_name" type="text" placeholder="Ism familiya" /></label>
-              <label><span>Username</span><input name="username" type="text" placeholder="Username" /></label>
-              <label><span>Email</span><input name="email" type="email" placeholder="Email" /></label>
-              <label><span>Boshqaruv roli</span><select name="role">
+              <label><span>To'liq ism</span><input name="full_name" type="text" placeholder="Ism familiya" required /></label>
+              <label><span>Username</span><input name="username" type="text" placeholder="Username" required /></label>
+              <label><span>Email</span><input name="email" type="email" placeholder="Email" required /></label>
+              <label><span>Parol</span><input name="password" type="password" placeholder="Kamida 8 belgi" minlength="8" required autocomplete="new-password" /></label>
+              <label><span>Parolni tasdiqlash</span><input name="password_confirm" type="password" placeholder="Parolni qayta kiriting" minlength="8" required autocomplete="new-password" /></label>
+              <label><span>Bo'lim</span><select name="department_id" id="userDepartmentSelect">
+                <option value="">Bo'limni tanlang</option>
+              </select></label>
+              <label><span>Birlik</span><select name="unit_id" id="userUnitSelect">
+                <option value="">Birlik (ixtiyoriy)</option>
+              </select></label>
+              <label><span>Boshqaruv roli</span><select name="role" required>
                 <option value="SPECIALIST">Specialist</option>
                 <option value="UNIT_HEAD">Unit Head</option>
                 <option value="DEPT_HEAD">Department Head</option>
                 <option value="DIRECTOR">Director</option>
               </select></label>
               <label><span>IT lavozimi</span><select name="job_role">
+                <option value="">Tanlanmagan</option>
                 <option value="DEVOPS">DevOps</option>
                 <option value="IT_ENGINEER">IT Engineer</option>
                 <option value="ANDROID_DEV">Android Developer</option>
@@ -962,6 +971,7 @@
                 <option value="DIRECTOR">Director</option>
               </select></label>
               <label><span>Daraja</span><select name="job_level">
+                <option value="">Tanlanmagan</option>
                 <option value="JUNIOR">Junior</option>
                 <option value="MIDDLE">Middle</option>
                 <option value="SENIOR">Senior</option>

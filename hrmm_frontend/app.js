@@ -221,7 +221,12 @@ const currentUserLabel = document.getElementById("currentUserLabel");
 const loggedInAsLabel = document.getElementById("loggedInAsLabel");
 const totalReportsValue = document.getElementById("totalReportsValue");
 const pendingReportsValue = document.getElementById("pendingReportsValue");
+const pendingApprovalStatusValue = document.getElementById("pendingApprovalStatusValue");
 const pendingLeavesValue = document.getElementById("pendingLeavesValue");
+const userDepartmentSelect = document.getElementById("userDepartmentSelect");
+const userUnitSelect = document.getElementById("userUnitSelect");
+const unreadNotificationsBadgeCount = document.getElementById("unreadNotificationsBadgeCount");
+const totalNotificationsCount = document.getElementById("totalNotificationsCount");
 const draftReportsValue = document.getElementById("draftReportsValue");
 const approvedReportsValue = document.getElementById("approvedReportsValue");
 const rejectedReportsValue = document.getElementById("rejectedReportsValue");
@@ -396,6 +401,14 @@ const translations = {
     approved_reports: "Tasdiqlangan hisobotlar",
     rejected: "Rad etilgan",
     approved_request: "Tasdiqlangan ariza",
+    notifications_unread: "O'qilmagan",
+    notifications_total: "Jami bildirishnomalar",
+    password: "Parol",
+    password_confirm: "Parolni tasdiqlash",
+    select_department: "Bo'limni tanlang",
+    user_create_password_mismatch: "Parollar mos kelmaydi",
+    user_create_password_required: "Parol kamida 8 belgidan iborat bo'lishi kerak",
+    user_create_department_required: "Bo'limni tanlang",
     activity_history: "Faoliyat tarixi",
     activity_watch: "Userlar nima qilayotganini ko'rish",
     requests: "Arizalar",
@@ -1693,8 +1706,8 @@ function applyTranslations() {
   if (statCards?.[3]) {
     statCards[3].querySelector(".dashboard-stat-head span")?.replaceChildren(document.createTextNode(t("notifications")));
     const badges = statCards[3].querySelectorAll(".dashboard-badge");
-    if (badges[0]) badges[0].childNodes[0].textContent = `${t("rejected")}: `;
-    if (badges[1]) badges[1].childNodes[0].textContent = `${t("approved_request")}: `;
+    if (badges[0]) badges[0].childNodes[0].textContent = `${t("notifications_unread")}: `;
+    if (badges[1]) badges[1].childNodes[0].textContent = `${t("notifications_total")}: `;
   }
 
   if (meButton) {
@@ -2289,41 +2302,46 @@ function openUsersByDepartmentModal(departmentName) {
   });
 }
 
+function resolveCollectionItemType(item, fallbackType) {
+  return item._collectionType || item.item_type || fallbackType;
+}
+
 function openCollectionModal(title, items, type) {
   const html = items.length
     ? `<div class="detail-list">
         ${items
           .map((item, index) => {
+            const itemType = resolveCollectionItemType(item, type);
             const primary =
-              type === "report"
+              itemType === "report"
                 ? item.report_number || item.title
-                : type === "leave"
+                : itemType === "leave"
                   ? item.requested_by_name || item.leave_type
-                  : item.title || item.id || `${type} ${index + 1}`;
+                  : item.title || item.id || `${itemType} ${index + 1}`;
             const secondary =
-              type === "report"
+              itemType === "report"
                 ? item.title
-                : type === "leave"
+                : itemType === "leave"
                   ? `${item.leave_type || "-"} / ${item.status || "-"}`
                   : item.message;
             const meta =
-              type === "report"
+              itemType === "report"
                 ? `${item.created_by_name || item.created_by__full_name || "-"} / ${item.status || "-"}`
-                : type === "leave"
+                : itemType === "leave"
                   ? `${item.start_date || "-"} - ${item.end_date || "-"}`
                   : `${item.type || "-"} / ${formatDate(item.created_at)}`;
             const canReview =
-              type === "report"
+              itemType === "report"
                 ? canManagerReviewReport(item)
-                : type === "leave"
+                : itemType === "leave"
                   ? canManagerReviewLeave(item)
                   : false;
             const reviewBtn = canReview
-              ? `<button type="button" class="primary-btn small-btn collection-review-btn" data-type="${type}" data-id="${item.id}">${escapeHtml(t("review_check"))}</button>`
+              ? `<button type="button" class="primary-btn small-btn collection-review-btn" data-type="${itemType}" data-id="${item.id}">${escapeHtml(t("review_check"))}</button>`
               : "";
             return `
               <div class="detail-list-row">
-                <button type="button" class="detail-list-item entity-detail-open-btn" data-type="${type}" data-id="${item.id}">
+                <button type="button" class="detail-list-item entity-detail-open-btn" data-type="${itemType}" data-id="${item.id}">
                   <strong>${escapeHtml(primary || "-")}</strong>
                   <span>${escapeHtml(secondary || "-")}</span>
                   <small>${escapeHtml(meta || "-")}</small>
@@ -2402,42 +2420,89 @@ function updateFeedbackAvailability() {
 function bindDashboardDrilldowns() {
   const statCards = document.querySelectorAll("#homeSection .dashboard-stat-card");
   statCards[0]?.querySelector('[data-activity-filter="requests"]')?.addEventListener("click", () => {
-    openCollectionModal(t("collection_title_requests"), state.leaves, "leave");
+    openCollectionModal(t("collection_title_requests"), getVisibleLeavesForDashboard(), "leave");
   });
   statCards[1]?.querySelector('[data-activity-filter="reports"]')?.addEventListener("click", () => {
-    openCollectionModal(t("collection_title_reports"), state.reports, "report");
+    openCollectionModal(t("collection_title_reports"), getVisibleReportsForDashboard(), "report");
   });
   statCards[1]?.querySelector('[data-activity-filter="all"]')?.addEventListener("click", () => {
-    openCollectionModal(t("collection_title_reports"), state.reports, "report");
+    openCollectionModal(t("collection_title_reports"), getVisibleReportsForDashboard(), "report");
   });
-  statCards[2]?.querySelectorAll(".dashboard-badge")[0]?.addEventListener("click", () => {
+  statCards[2]?.querySelector('[data-dashboard-filter="resolved-leaves"]')?.addEventListener("click", () => {
     openCollectionModal(
       t("collection_title_resolved_requests"),
       state.leaves.filter((leave) => ["APPROVED", "REJECTED"].includes(leave.status)),
       "leave"
     );
   });
-  statCards[2]?.querySelectorAll(".dashboard-badge")[1]?.addEventListener("click", () => {
+  statCards[2]?.querySelector('[data-dashboard-filter="approved-reports"]')?.addEventListener("click", () => {
     openCollectionModal(
       t("collection_title_approved_reports"),
       state.reports.filter((report) => report.status === "APPROVED"),
       "report"
     );
   });
-  statCards[3]?.querySelectorAll(".dashboard-badge")[0]?.addEventListener("click", () => {
+  statCards[2]?.querySelector(".dashboard-stat-head")?.addEventListener("click", () => {
+    openManagerPendingApprovalsModal();
+  });
+  statCards[2]?.querySelector("strong")?.addEventListener("click", () => {
+    openManagerPendingApprovalsModal();
+  });
+
+  const notificationsCard = statCards[3];
+  notificationsCard?.querySelector('[data-notification-filter="unread"]')?.addEventListener("click", () => {
     openCollectionModal(
-      t("collection_title_rejected_reports"),
-      state.reports.filter((report) => report.status === "REJECTED"),
-      "report"
+      t("collection_title_notifications"),
+      state.notifications.filter((item) => !item.is_read),
+      "notification"
     );
   });
-  statCards[3]?.querySelectorAll(".dashboard-badge")[1]?.addEventListener("click", () => {
+  notificationsCard?.querySelector('[data-notification-filter="all"]')?.addEventListener("click", () => {
+    openCollectionModal(t("collection_title_notifications"), state.notifications, "notification");
+  });
+  notificationsCard?.querySelector("strong")?.addEventListener("click", () => {
     openCollectionModal(
-      t("collection_title_approved_leaves"),
-      state.leaves.filter((leave) => leave.status === "APPROVED"),
-      "leave"
+      t("collection_title_notifications"),
+      state.notifications.filter((item) => !item.is_read),
+      "notification"
     );
   });
+}
+
+function getVisibleLeavesForDashboard() {
+  const role = state.currentUser?.role || "";
+  if (["DIRECTOR", "DEPT_HEAD"].includes(role)) {
+    return state.leaves;
+  }
+  return state.leaves.filter((leave) => leave.requested_by === state.currentUser?.id);
+}
+
+function getVisibleReportsForDashboard() {
+  const role = state.currentUser?.role || "";
+  if (["DIRECTOR", "DEPT_HEAD"].includes(role)) {
+    return state.reports;
+  }
+  return state.reports.filter((report) => report.created_by === state.currentUser?.id);
+}
+
+function openManagerPendingApprovalsModal() {
+  const role = state.currentUser?.role || "";
+  if (!["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
+    return;
+  }
+  const pendingLeaves = state.leaves.filter((leave) => leave.status === "PENDING");
+  const pendingReports = state.reports.filter((report) =>
+    ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
+  );
+  const combined = [
+    ...pendingLeaves.map((item) => ({ ...item, _collectionType: "leave" })),
+    ...pendingReports.map((item) => ({ ...item, _collectionType: "report" })),
+  ];
+  if (!combined.length) {
+    setMessage("Kutilayotgan tasdiqlash uchun element yo'q.", "warning");
+    return;
+  }
+  openCollectionModal(t("approval_status"), combined, "mixed");
 }
 
 function getHeaders(isJson = true) {
@@ -2469,11 +2534,29 @@ async function apiRequest(path, options = {}) {
     else if (data && typeof data === "object") payloadText = JSON.stringify(data);
 
     const normalizedPayloadText = payloadText && payloadText !== "null" ? payloadText : "";
-    const message = data?.message || data?.detail || normalizedPayloadText || fallbackMessage;
+    const message = formatApiErrorMessage(data) || data?.detail || normalizedPayloadText || fallbackMessage;
     throw new Error(message);
   }
 
   return data || {};
+}
+
+function formatApiErrorMessage(data) {
+  if (!data) return "";
+  if (data.errors && typeof data.errors === "object") {
+    const parts = [];
+    Object.entries(data.errors).forEach(([field, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((entry) => parts.push(`${field}: ${entry}`));
+      } else if (value && typeof value === "object") {
+        parts.push(`${field}: ${JSON.stringify(value)}`);
+      } else if (value) {
+        parts.push(`${field}: ${value}`);
+      }
+    });
+    if (parts.length) return parts.join("; ");
+  }
+  return data.message || "";
 }
 
 function formatDate(value) {
@@ -2795,9 +2878,53 @@ function makeEmptyRow(colspan, text) {
   return `<tr><td colspan="${colspan}" class="empty-state">${text}</td></tr>`;
 }
 
+function renderUserDepartmentOptions() {
+  if (!userDepartmentSelect) return;
+  const previousValue = userDepartmentSelect.value;
+  userDepartmentSelect.innerHTML = `<option value="">${escapeHtml(t("select_department"))}</option>`;
+  state.departments.forEach((department) => {
+    const option = document.createElement("option");
+    option.value = department.id;
+    option.textContent = `${department.name} (${department.code})`;
+    userDepartmentSelect.appendChild(option);
+  });
+  if (previousValue && state.departments.some((department) => department.id === previousValue)) {
+    userDepartmentSelect.value = previousValue;
+  }
+  renderUserUnits();
+}
+
+function renderUserUnits() {
+  if (!userUnitSelect || !userDepartmentSelect) return;
+  userUnitSelect.innerHTML = `<option value="">${escapeHtml(t("unit"))} (${t("all")})</option>`;
+  const selectedDepartmentId = userDepartmentSelect.value;
+  if (!selectedDepartmentId) return;
+  state.units
+    .filter((unit) => unit.department_id === selectedDepartmentId)
+    .forEach((unit) => {
+      const option = document.createElement("option");
+      option.value = unit.id;
+      option.textContent = `${unit.name} (${unit.code})`;
+      userUnitSelect.appendChild(option);
+    });
+}
+
+function syncUserFormByRole() {
+  if (!userForm) return;
+  const role = userForm.querySelector('[name="role"]')?.value || "SPECIALIST";
+  if (userDepartmentSelect) {
+    userDepartmentSelect.required = role !== "DIRECTOR";
+  }
+  if (userUnitSelect) {
+    userUnitSelect.required = role === "UNIT_HEAD";
+    userUnitSelect.disabled = role === "DEPT_HEAD" || role === "DIRECTOR";
+  }
+}
+
 function renderDepartmentOptions() {
   if (!reportDepartmentSelect) return;
   const previousDepartmentValue = departmentSelect?.value || "";
+  renderUserDepartmentOptions();
   const itDepartments = state.departments.filter((department) => {
     const code = String(department.code || "").trim().toUpperCase();
     const name = String(department.name || "").trim().toUpperCase();
@@ -3353,14 +3480,13 @@ function renderPendingItemsInDashboard() {
         )
       : pendingFromApiReports;
   } else {
-    // Regular users see their own pending items
-    pendingLeaves = state.leaves.filter(l =>
-      l.employee_id === userId &&
-      ['PENDING_L1', 'PENDING_L2', 'PENDING_L3', 'PENDING_L4'].includes(l.status)
+    pendingLeaves = state.leaves.filter(
+      (leave) => leave.requested_by === userId && leave.status === "PENDING"
     );
-    pendingReports = state.reports.filter(r =>
-      r.created_by === userId &&
-      ['DRAFT', 'PENDING_L1', 'PENDING_L2', 'PENDING_L3', 'PENDING_L4', 'REVISION'].includes(r.status)
+    pendingReports = state.reports.filter(
+      (report) =>
+        report.created_by === userId &&
+        ["DRAFT", "PENDING_L2", "PENDING_L3", "PENDING_L4", "REVISION"].includes(report.status)
     );
   }
 
@@ -3371,7 +3497,7 @@ function renderPendingItemsInDashboard() {
       ? pendingLeaves.slice(0, 3).map(item => `
           <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="leave">
             <span class="pending-title">${escapeHtml(item.reason || 'Ariza')}</span>
-            <span class="pending-meta">${item.status} - ${isManager ? (item.employee_name || '-') : 'Sizning arizangiz'}</span>
+            <span class="pending-meta">${item.status} - ${isManager ? (item.requested_by_name || item.employee_name || "-") : "Sizning arizangiz"}</span>
           </button>
         `).join('')
       : '<div class="dashboard-pending-empty">Kutilayotgan ariza yo\'q</div>';
@@ -3406,14 +3532,31 @@ function renderPendingItemsInDashboard() {
     });
   }
 
-  // Update counts in the cards
   if (pendingLeavesValue) {
     pendingLeavesValue.textContent = String(pendingLeaves.length);
+  }
+  if (pendingApprovalStatusValue) {
+    pendingApprovalStatusValue.textContent = String(pendingLeaves.length + pendingReports.length);
   }
   if (pendingReportsValue) {
     pendingReportsValue.textContent = String(pendingReports.length);
   }
 
+  renderNotificationDashboardCard();
+  renderReviewShortcutPanel();
+}
+
+function renderNotificationDashboardCard() {
+  const unread = state.notifications.filter((item) => !item.is_read).length;
+  const total = state.notifications.length;
+  if (unreadNotificationsValue) unreadNotificationsValue.textContent = String(unread);
+  if (unreadNotificationsBadgeCount) unreadNotificationsBadgeCount.textContent = String(unread);
+  if (totalNotificationsCount) totalNotificationsCount.textContent = String(total);
+}
+
+function refreshHomeDashboard() {
+  renderNotificationDashboardCard();
+  renderPendingItemsInDashboard();
   renderReviewShortcutPanel();
 }
 
@@ -3633,24 +3776,29 @@ async function loadAuditLogs() {
 
 async function loadDashboard() {
   const payload = await apiRequest("/api/v1/dashboard/stats/", { headers: getHeaders(true) });
-  totalReportsValue.textContent = String(payload.reports?.total_reports || 0);
-  pendingReportsValue.textContent = String(payload.reports?.pending_reports || 0);
-  pendingLeavesValue.textContent = String(payload.leaves?.pending_leave_requests || 0);
-  draftReportsValue.textContent = String(payload.reports?.draft_reports || 0);
-  approvedReportsValue.textContent = String(payload.reports?.approved_reports || 0);
-  rejectedReportsValue.textContent = String(payload.reports?.rejected_reports || 0);
-  approvedLeavesValue.textContent = String(payload.leaves?.approved_leave_requests || 0);
+  state.dashboardStats = payload;
+  if (totalReportsValue) {
+    totalReportsValue.textContent = String(payload.reports?.total_reports || 0);
+  }
+  if (draftReportsValue) {
+    draftReportsValue.textContent = String(payload.reports?.draft_reports || 0);
+  }
+  if (approvedReportsValue) {
+    approvedReportsValue.textContent = String(payload.reports?.approved_reports || 0);
+  }
+  if (rejectedReportsValue) {
+    rejectedReportsValue.textContent = String(payload.reports?.rejected_reports || 0);
+  }
+  if (approvedLeavesValue) {
+    approvedLeavesValue.textContent = String(payload.leaves?.approved_leave_requests || 0);
+  }
   if (resolvedLeavesValue) {
     resolvedLeavesValue.textContent = String(
       (payload.leaves?.approved_leave_requests || 0) + (payload.leaves?.rejected_leave_requests || 0)
     );
   }
   renderRecentLists(payload);
-  // Render pending items for regular users (managers get this from admin dashboard)
-  const role = state.currentUser?.role || "";
-  if (!["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
-    renderPendingItemsInDashboard();
-  }
+  refreshHomeDashboard();
 }
 
 async function loadMe() {
@@ -3663,9 +3811,12 @@ async function loadMe() {
 }
 
 async function loadNotifications() {
-  const payload = await apiRequest("/api/v1/notifications/", { headers: getHeaders(false) });
+  const payload = shouldLoadFullLists()
+    ? { results: await fetchAllPaginatedResults("/api/v1/notifications/", new URLSearchParams()) }
+    : await apiRequest("/api/v1/notifications/", { headers: getHeaders(false) });
   state.notifications = payload.results || [];
   renderNotifications();
+  renderNotificationDashboardCard();
   renderReviewShortcutPanel();
 }
 
@@ -3676,6 +3827,7 @@ async function loadAdminDashboard() {
     state.adminDashboard = null;
   }
   renderAdminDashboard();
+  refreshHomeDashboard();
 }
 
 async function loadAnalyticsDashboard() {
@@ -3745,6 +3897,8 @@ async function loadAllData() {
   if (rejected.length) {
     console.warn("Some dashboard requests failed:", rejected);
   }
+
+  refreshHomeDashboard();
 }
 
 if (loginForm) {
@@ -3996,18 +4150,49 @@ twoFactorDisableForm?.addEventListener("submit", async (event) => {
 userForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(userForm);
+  const password = String(formData.get("password") || "").trim();
+  const passwordConfirm = String(formData.get("password_confirm") || "").trim();
+  const role = String(formData.get("role") || "SPECIALIST");
+
+  if (password.length < 8) {
+    setMessage(t("user_create_password_required"), "error");
+    return;
+  }
+  if (password !== passwordConfirm) {
+    setMessage(t("user_create_password_mismatch"), "error");
+    return;
+  }
+  if (role !== "DIRECTOR" && !formData.get("department_id")) {
+    setMessage(t("user_create_department_required"), "error");
+    return;
+  }
+
   const payload = {
-    username: formData.get("username"),
-    email: formData.get("email"),
-    full_name: formData.get("full_name"),
-    role: formData.get("role"),
-    job_role: formData.get("job_role"),
-    job_level: formData.get("job_level"),
-    password: formData.get("password"),
-    department_id: formData.get("department_id"),
+    username: String(formData.get("username") || "").trim(),
+    email: String(formData.get("email") || "").trim(),
+    full_name: String(formData.get("full_name") || "").trim(),
+    role,
+    password,
   };
 
-  if (formData.get("unit_id")) payload.unit_id = formData.get("unit_id");
+  const jobRole = String(formData.get("job_role") || "").trim();
+  const jobLevel = String(formData.get("job_level") || "").trim();
+  if (jobLevel && !jobRole) {
+    setMessage("Daraja berish uchun avval IT lavozimini tanlang.", "error");
+    return;
+  }
+  if (jobRole) payload.job_role = jobRole;
+  if (jobLevel) payload.job_level = jobLevel;
+  if (role !== "DIRECTOR" && formData.get("department_id")) {
+    payload.department_id = formData.get("department_id");
+  }
+  if (role === "UNIT_HEAD") {
+    if (!formData.get("unit_id")) {
+      setMessage("UNIT_HEAD uchun birlik tanlang.", "error");
+      return;
+    }
+    payload.unit_id = formData.get("unit_id");
+  }
 
   try {
     setMessage("IT xodimi yaratilmoqda...");
@@ -4019,12 +4204,17 @@ userForm?.addEventListener("submit", async (event) => {
     await Promise.all([loadUsers(), loadAuditLogs()]);
     userForm.reset();
     renderDepartmentOptions();
-    renderUnits();
+    renderUserDepartmentOptions();
+    syncUserFormByRole();
+    closeSectionModal();
     setMessage("IT xodimi yaratildi.", "success");
   } catch (error) {
     setMessage(error.message || "Xodim yaratishda xato bo'ldi.", "error");
   }
 });
+
+userForm?.querySelector('[name="role"]')?.addEventListener("change", syncUserFormByRole);
+userDepartmentSelect?.addEventListener("change", renderUserUnits);
 
 roleManagementForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -4681,7 +4871,8 @@ leaveCreateForm?.addEventListener("submit", async (event) => {
 profileAddUserButton?.addEventListener("click", (event) => {
   event.stopPropagation();
   renderDepartmentOptions();
-  renderUnits();
+  renderUserDepartmentOptions();
+  syncUserFormByRole();
   openSectionModal("userForm", "Xodim qo'shish");
   toggleProfileMenu(false);
 });

@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
         model = User
@@ -23,12 +23,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop("password")
         validated_data["password_hash"] = make_password(password)
-        return User.objects.create(**validated_data)
-
+        return super().create(validated_data)
+        
     def validate(self, attrs):
         role = attrs.get("role")
-        job_role = attrs.get("job_role")
-        job_level = attrs.get("job_level")
+        job_role = attrs.get("job_role") or None
+        job_level = attrs.get("job_level") or None
+        attrs["job_role"] = job_role
+        attrs["job_level"] = job_level
         department = attrs.get("department_id")
         unit = attrs.get("unit_id")
 
@@ -128,4 +130,5 @@ class UserFeedbackSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context["request"]
-        return UserFeedback.objects.create(author=request.user, **validated_data)
+        validated_data["author"] = request.user
+        return super().create(validated_data)
