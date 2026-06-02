@@ -1151,10 +1151,59 @@ body::before {
 
 .dashboard-badge {
   cursor: pointer;
+  font: inherit;
+  font-family: inherit;
+}
+
+button.dashboard-badge,
+button.dashboard-filter-chip {
+  appearance: none;
 }
 
 .dashboard-badge strong {
-  display: none;
+  display: inline;
+  margin-left: 4px;
+  font-weight: 700;
+}
+
+.dashboard-stat-card--approval {
+  border-color: rgba(22, 138, 100, 0.25);
+}
+
+.dashboard-stat-card--notifications {
+  border-color: rgba(122, 76, 224, 0.25);
+}
+
+.collection-hint {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.detail-list-item {
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.detail-list-item:hover {
+  border-color: rgba(79, 124, 216, 0.45);
+  transform: translateY(-1px);
+}
+
+.detail-list-item .item-type-pill {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: rgba(79, 124, 216, 0.15);
+  color: var(--accent);
+}
+
+.detail-list-row {
+  display: block;
 }
 
 .dashboard-filter-chip.active {

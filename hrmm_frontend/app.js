@@ -2151,6 +2151,7 @@ function isNotificationAlertCopy(item) {
 
 function shouldShowNotificationInMainList(item) {
   if (isNotificationAlertCopy(item)) return false;
+  if (isResultNotificationCopy(item)) return false;
 
   if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) {
     return true;
@@ -2191,13 +2192,87 @@ function canManagerReviewLeave(leave) {
 
 const REVIEWABLE_NOTIFICATION_TYPES = new Set(["FEATURE_REQUEST", "USER_NOTIFICATION"]);
 
+function isResultNotificationCopy(item) {
+  const title = String(item?.title || "").toLowerCase();
+  const message = String(item?.message || "").toLowerCase();
+  return (
+    item?.type === "INFO" ||
+    title.includes("approve qilindi") ||
+    title.includes("rad etildi") ||
+    message.includes("approve qilindi") ||
+    message.includes("rad etildi")
+  );
+}
+
+function isReviewableRequestNotification(item) {
+  if (!item || isNotificationAlertCopy(item) || isResultNotificationCopy(item)) return false;
+  if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) return false;
+  return item.status === "PENDING";
+}
+
 function canManagerReviewNotification(item) {
   if (!isDeptHeadOrDirector() || !item) return false;
-  if (isNotificationAlertCopy(item)) return false;
-  if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) return false;
-  if (item.status && item.status !== "PENDING") return false;
+  if (!isReviewableRequestNotification(item)) return false;
   if (item.submitted_by && item.submitted_by === state.currentUser?.id) return false;
   return true;
+}
+
+function getPendingFeatureRequests() {
+  return state.notifications.filter(
+    (item) => item.reference_type === "FEATURE_REQUEST" && isReviewableRequestNotification(item)
+  );
+}
+
+function getManagerPendingQueue() {
+  const pendingLeaves = state.leaves.filter((leave) => leave.status === "PENDING");
+  const pendingReports = state.reports.filter((report) =>
+    ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
+  );
+  const pendingNotifications = getPendingNotificationsForDashboard();
+  return [
+    ...pendingLeaves.map((item) => ({ ...item, _collectionType: "leave" })),
+    ...pendingReports.map((item) => ({ ...item, _collectionType: "report" })),
+    ...pendingNotifications.map((item) => ({ ...item, _collectionType: "notification" })),
+  ];
+}
+
+function getDashboardPendingNotifications() {
+  if (isDeptHeadOrDirector()) {
+    return getPendingNotificationsForDashboard();
+  }
+  return state.notifications.filter((item) => {
+    if (isNotificationAlertCopy(item)) return false;
+    const isOwn =
+      item.submitted_by === state.currentUser?.id ||
+      (!item.submitted_by && item.user_id === state.currentUser?.id);
+    return isOwn && (!item.status || item.status === "PENDING");
+  });
+}
+
+function getCollectionTypeLabel(itemType) {
+  const labels = {
+    leave: "Ariza",
+    report: "Hisobot",
+    notification: "Bildirishnoma",
+  };
+  return labels[itemType] || "Element";
+}
+
+function openEntityDetailModal(typeName, id) {
+  if (typeName === "report") {
+    const report = state.reports.find((item) => item.id === id);
+    if (report) openReportDetailModal(report);
+    return;
+  }
+  if (typeName === "leave") {
+    const leave = state.leaves.find((item) => item.id === id);
+    if (leave) openLeaveDetailModal(leave);
+    return;
+  }
+  if (typeName === "notification") {
+    const item = state.notifications.find((entry) => entry.id === id);
+    if (item) openNotificationDetailModal(item);
+  }
 }
 
 function makeReviewActionBar(itemType, itemId, options = {}) {
@@ -2454,6 +2529,10 @@ function openNotificationDetailModal(item) {
   }
 
   const reviewBar = canManagerReviewNotification(item) ? makeReviewActionBar("notification", item.id) : "";
+  const statusNote =
+    !reviewBar && ["APPROVED", "REJECTED"].includes(item.status || "")
+      ? `<div class="feed-item muted-item">Bu so'rov allaqachon ko'rib chiqilgan.</div>`
+      : "";
 
   openContentModal(
     item.title || t("collection_title_notifications"),
@@ -2462,13 +2541,13 @@ function openNotificationDetailModal(item) {
       [t("report_title"), item.title || "-"],
       [t("report_comment"), item.message || "-"],
       ["Type", item.type || "-"],
-      ["Status", item.status || (canManagerReviewNotification(item) ? "PENDING" : "-")],
+      ["Status", item.status || "-"],
       [t("full_name"), item.submitted_by_name || "-"],
       ["Read", item.is_read ? t("active") : t("inactive")],
       ["ID", item.notification_number || item.id || "-"],
       ["Sana", formatDate(item.created_at)],
       ["Reference", item.reference_type || "-"],
-    ]) + attachmentHtml + reviewBar
+    ]) + attachmentHtml + statusNote + reviewBar
   );
   bindReviewActionButtons();
 }
@@ -2518,8 +2597,9 @@ function resolveCollectionItemType(item, fallbackType) {
 }
 
 function openCollectionModal(title, items, type) {
+  const hint = `<p class="collection-hint">Tahrirlash va baholash uchun elementni bosing.</p>`;
   const html = items.length
-    ? `<div class="detail-list">
+    ? `${hint}<div class="detail-list">
         ${items
           .map((item, index) => {
             const itemType = resolveCollectionItemType(item, type);
@@ -2541,26 +2621,13 @@ function openCollectionModal(title, items, type) {
                 : itemType === "leave"
                   ? `${item.start_date || "-"} - ${item.end_date || "-"}`
                   : `${item.submitted_by_name || "-"} / ${item.status || item.type || "-"} / ${formatDate(item.created_at)}`;
-            const canReview =
-              itemType === "report"
-                ? canManagerReviewReport(item)
-                : itemType === "leave"
-                  ? canManagerReviewLeave(item)
-                  : itemType === "notification"
-                    ? canManagerReviewNotification(item)
-                    : false;
-            const reviewBtn = canReview
-              ? `<button type="button" class="primary-btn small-btn collection-review-btn" data-type="${itemType}" data-id="${item.id}">${escapeHtml(t("review_check"))}</button>`
-              : "";
             return `
-              <div class="detail-list-row">
-                <button type="button" class="detail-list-item entity-detail-open-btn" data-type="${itemType}" data-id="${item.id}">
-                  <strong>${escapeHtml(primary || "-")}</strong>
-                  <span>${escapeHtml(secondary || "-")}</span>
-                  <small>${escapeHtml(meta || "-")}</small>
-                </button>
-                ${reviewBtn}
-              </div>
+              <button type="button" class="detail-list-item entity-detail-open-btn" data-type="${itemType}" data-id="${item.id}">
+                <span class="item-type-pill">${escapeHtml(getCollectionTypeLabel(itemType))}</span>
+                <strong>${escapeHtml(primary || "-")}</strong>
+                <span>${escapeHtml(secondary || "-")}</span>
+                <small>${escapeHtml(meta || "-")}</small>
+              </button>
             `;
           })
           .join("")}
@@ -2570,40 +2637,7 @@ function openCollectionModal(title, items, type) {
 
   document.querySelectorAll(".entity-detail-open-btn").forEach((button) => {
     button?.addEventListener("click", () => {
-      const typeName = button.dataset.type;
-      const id = button.dataset.id;
-      if (typeName === "report") {
-        const report = state.reports.find((item) => item.id === id);
-        if (report) openReportDetailModal(report);
-      }
-      if (typeName === "leave") {
-        const leave = state.leaves.find((item) => item.id === id);
-        if (leave) openLeaveDetailModal(leave);
-      }
-      if (typeName === "notification") {
-        const item = state.notifications.find((entry) => entry.id === id);
-        if (item) openNotificationDetailModal(item);
-      }
-    });
-  });
-
-  document.querySelectorAll(".collection-review-btn").forEach((button) => {
-    button?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const typeName = button.dataset.type;
-      const id = button.dataset.id;
-      if (typeName === "report") {
-        const report = state.reports.find((item) => item.id === id);
-        if (report) openReportDetailModal(report);
-      }
-      if (typeName === "leave") {
-        const leave = state.leaves.find((item) => item.id === id);
-        if (leave) openLeaveDetailModal(leave);
-      }
-      if (typeName === "notification") {
-        const item = state.notifications.find((entry) => entry.id === id);
-        if (item) openNotificationDetailModal(item);
-      }
+      openEntityDetailModal(button.dataset.type, button.dataset.id);
     });
   });
 }
@@ -2659,6 +2693,12 @@ function bindDashboardDrilldowns() {
       "report"
     );
   });
+  statCards[2]?.querySelector('[data-dashboard-filter="pending-features"]')?.addEventListener("click", () => {
+    openCollectionModal("Funksiya talablari", getPendingFeatureRequests(), "notification");
+  });
+  statCards[2]?.querySelector('[data-dashboard-filter="pending-all"]')?.addEventListener("click", () => {
+    openManagerPendingApprovalsModal();
+  });
   statCards[2]?.querySelector(".dashboard-stat-head")?.addEventListener("click", () => {
     openManagerPendingApprovalsModal();
   });
@@ -2668,10 +2708,7 @@ function bindDashboardDrilldowns() {
 
   const notificationsCard = statCards[3];
   notificationsCard?.querySelector('[data-notification-filter="pending"]')?.addEventListener("click", () => {
-    const items = isDeptHeadOrDirector()
-      ? getPendingNotificationsForDashboard()
-      : state.notifications.filter((item) => shouldShowNotificationInMainList(item));
-    openCollectionModal(t("collection_title_notifications"), items, "notification");
+    openCollectionModal(t("collection_title_notifications"), getDashboardPendingNotifications(), "notification");
   });
   notificationsCard?.querySelector('[data-notification-filter="approved"]')?.addEventListener("click", () => {
     openCollectionModal(
@@ -2681,10 +2718,10 @@ function bindDashboardDrilldowns() {
     );
   });
   notificationsCard?.querySelector("strong")?.addEventListener("click", () => {
-    const items = isDeptHeadOrDirector()
-      ? getPendingNotificationsForDashboard()
-      : state.notifications.filter((item) => shouldShowNotificationInMainList(item));
-    openCollectionModal(t("collection_title_notifications"), items, "notification");
+    openCollectionModal(t("collection_title_notifications"), getDashboardPendingNotifications(), "notification");
+  });
+  notificationsCard?.querySelector(".dashboard-stat-head")?.addEventListener("click", () => {
+    openCollectionModal(t("collection_title_notifications"), getDashboardPendingNotifications(), "notification");
   });
 }
 
@@ -2709,16 +2746,7 @@ function openManagerPendingApprovalsModal() {
   if (!["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role)) {
     return;
   }
-  const pendingLeaves = state.leaves.filter((leave) => leave.status === "PENDING");
-  const pendingReports = state.reports.filter((report) =>
-    ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
-  );
-  const pendingNotifications = getPendingNotificationsForDashboard();
-  const combined = [
-    ...pendingLeaves.map((item) => ({ ...item, _collectionType: "leave" })),
-    ...pendingReports.map((item) => ({ ...item, _collectionType: "report" })),
-    ...pendingNotifications.map((item) => ({ ...item, _collectionType: "notification" })),
-  ];
+  const combined = getManagerPendingQueue();
   if (!combined.length) {
     setMessage("Kutilayotgan tasdiqlash uchun element yo'q.", "warning");
     return;
@@ -3526,9 +3554,6 @@ function renderNotifications() {
     notificationsList.innerHTML = `<div class="feed-item muted-item">${escapeHtml(
       isDeptHeadOrDirector() ? "Kutilayotgan bildirishnoma yo'q" : "Notificationlar yo'q"
     )}</div>`;
-    if (unreadNotificationsValue) {
-      unreadNotificationsValue.textContent = String(state.notifications.filter((item) => !item.is_read).length);
-    }
     renderNotificationDashboardCard();
     renderActivityHistory();
     return;
@@ -3552,13 +3577,8 @@ function renderNotifications() {
             <small>${item.type} / ${item.status || "-"} / ${item.submitted_by_name || "-"} - ${formatDate(item.created_at)}</small>
           </div>
           <div class="inline-actions">
-            ${
-              canManagerReviewNotification(item)
-                ? `<button class="primary-btn small-btn notification-review-btn" data-id="${item.id}" type="button">${escapeHtml(t("review_check"))}</button>`
-                : ""
-            }
             <button class="ghost-btn small-btn mark-read-btn" data-id="${item.id}" type="button">O'qilgan deb belgilash</button>
-            <button class="ghost-btn small-btn notification-detail-btn" data-id="${item.id}" type="button">${t("open_details")}</button>
+            <button class="primary-btn small-btn notification-detail-btn" data-id="${item.id}" type="button">${t("open_details")}</button>
           </div>
         </div>
       `;
@@ -3570,12 +3590,6 @@ function renderNotifications() {
     button?.addEventListener("click", () => markNotificationRead(button.dataset.id));
   });
   document.querySelectorAll(".notification-detail-btn").forEach((button) => {
-    button?.addEventListener("click", () => {
-      const item = state.notifications.find((entry) => entry.id === button.dataset.id);
-      if (item) openNotificationDetailModal(item);
-    });
-  });
-  document.querySelectorAll(".notification-review-btn").forEach((button) => {
     button?.addEventListener("click", () => {
       const item = state.notifications.find((entry) => entry.id === button.dataset.id);
       if (item) openNotificationDetailModal(item);
@@ -3769,11 +3783,54 @@ function renderPendingItemsInDashboard() {
   if (pendingLeavesValue) {
     pendingLeavesValue.textContent = String(pendingLeaves.length);
   }
+  const pendingNotifications = isManager ? getPendingNotificationsForDashboard() : [];
+  const managerQueue = isManager ? getManagerPendingQueue() : [];
+
   if (pendingApprovalStatusValue) {
-    pendingApprovalStatusValue.textContent = String(pendingLeaves.length + pendingReports.length);
+    pendingApprovalStatusValue.textContent = String(
+      isManager ? managerQueue.length : pendingLeaves.length + pendingReports.length
+    );
   }
   if (pendingReportsValue) {
     pendingReportsValue.textContent = String(pendingReports.length);
+  }
+
+  const pendingFeaturesValue = document.getElementById("pendingFeaturesValue");
+  if (pendingFeaturesValue) {
+    pendingFeaturesValue.textContent = String(getPendingFeatureRequests().length);
+  }
+
+  const pendingApprovalList = document.getElementById("pendingApprovalList");
+  if (pendingApprovalList) {
+    const queueItems = isManager ? managerQueue : [...pendingLeaves, ...pendingReports];
+    pendingApprovalList.innerHTML = queueItems.length
+      ? queueItems
+          .slice(0, 3)
+          .map((item) => {
+            const itemType = item._collectionType || (item.report_number ? "report" : "leave");
+            const title =
+              itemType === "report"
+                ? item.title || item.report_number
+                : itemType === "notification"
+                  ? item.title || "Bildirishnoma"
+                  : item.reason || "Ariza";
+            const meta =
+              itemType === "notification"
+                ? `${item.reference_type || "NOTIF"} / ${item.status || "PENDING"}`
+                : `${item.status || "-"} - ${item.requested_by_name || item.created_by__full_name || item.submitted_by_name || "-"}`;
+            return `
+              <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="${itemType}">
+                <span class="pending-title">${escapeHtml(title || "-")}</span>
+                <span class="pending-meta">${escapeHtml(meta)}</span>
+              </button>
+            `;
+          })
+          .join("")
+      : `<div class="dashboard-pending-empty">Kutilayotgan element yo'q</div>`;
+
+    pendingApprovalList.querySelectorAll(".dashboard-pending-item").forEach((btn) => {
+      btn?.addEventListener("click", () => openEntityDetailModal(btn.dataset.type, btn.dataset.id));
+    });
   }
 
   renderNotificationDashboardCard();
@@ -3781,13 +3838,12 @@ function renderPendingItemsInDashboard() {
 }
 
 function renderNotificationDashboardCard() {
-  const unread = state.notifications.filter((item) => !item.is_read).length;
-  const pendingReview = getPendingNotificationsForDashboard().length;
+  const unread = state.notifications.filter((item) => !item.is_read && shouldShowNotificationInMainList(item)).length;
+  const pendingItems = getDashboardPendingNotifications();
+  const pendingReview = pendingItems.length;
   const approvedReview = getApprovedReviewNotifications().length;
   if (unreadNotificationsValue) {
-    unreadNotificationsValue.textContent = String(
-      isDeptHeadOrDirector() ? pendingReview : unread
-    );
+    unreadNotificationsValue.textContent = String(pendingReview);
   }
   if (pendingNotificationsBadgeCount) {
     pendingNotificationsBadgeCount.textContent = String(pendingReview);
@@ -3800,6 +3856,29 @@ function renderNotificationDashboardCard() {
   }
   if (totalNotificationsCount) {
     totalNotificationsCount.textContent = String(state.notifications.length);
+  }
+
+  const pendingNotificationsDashboardList = document.getElementById("pendingNotificationsDashboardList");
+  if (pendingNotificationsDashboardList) {
+    pendingNotificationsDashboardList.innerHTML = pendingItems.length
+      ? pendingItems
+          .slice(0, 3)
+          .map((item) => {
+            const label =
+              item.reference_type === "FEATURE_REQUEST" ? "Funksiya talabi" : item.title || "Bildirishnoma";
+            return `
+              <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="notification">
+                <span class="pending-title">${escapeHtml(label)}</span>
+                <span class="pending-meta">${escapeHtml(item.status || "PENDING")} - ${escapeHtml(item.submitted_by_name || "-")}</span>
+              </button>
+            `;
+          })
+          .join("")
+      : `<div class="dashboard-pending-empty">Kutilayotgan bildirishnoma yo'q</div>`;
+
+    pendingNotificationsDashboardList.querySelectorAll(".dashboard-pending-item").forEach((btn) => {
+      btn?.addEventListener("click", () => openEntityDetailModal("notification", btn.dataset.id));
+    });
   }
 }
 

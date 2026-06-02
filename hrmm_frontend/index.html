@@ -545,15 +545,22 @@
               </div>
             </article>
 
-            <article class="dashboard-stat-card">
+            <article class="dashboard-stat-card dashboard-stat-card--approval">
               <div class="dashboard-stat-head">
                 <span>Tasdiqlash holati</span>
                 <span class="stat-icon green">T</span>
               </div>
               <strong id="pendingApprovalStatusValue">0</strong>
+              <div class="dashboard-pending-list" id="pendingApprovalList">
+                <div class="dashboard-pending-empty">Kutilayotgan element yo'q</div>
+              </div>
+              <div class="dashboard-chip-row">
+                <button class="dashboard-filter-chip active" type="button" data-dashboard-filter="pending-all">Barcha navbat</button>
+              </div>
               <div class="dashboard-badge-row">
-                <span class="dashboard-badge danger" data-dashboard-filter="resolved-leaves">Hal qilingan arizalar: <strong id="resolvedLeavesValue">0</strong></span>
-                <span class="dashboard-badge danger" data-dashboard-filter="approved-reports">Tasdiqlangan hisobotlar: <strong id="approvedReportsValue">0</strong></span>
+                <button class="dashboard-badge neutral" type="button" data-dashboard-filter="pending-features">Funksiya talablari: <strong id="pendingFeaturesValue">0</strong></button>
+                <button class="dashboard-badge neutral" type="button" data-dashboard-filter="resolved-leaves">Hal qilingan arizalar: <strong id="resolvedLeavesValue">0</strong></button>
+                <button class="dashboard-badge neutral" type="button" data-dashboard-filter="approved-reports">Tasdiqlangan hisobotlar: <strong id="approvedReportsValue">0</strong></button>
               </div>
             </article>
 
@@ -563,9 +570,14 @@
                 <span class="stat-icon purple">B</span>
               </div>
               <strong id="unreadNotificationsValue">0</strong>
+              <div class="dashboard-pending-list" id="pendingNotificationsDashboardList">
+                <div class="dashboard-pending-empty">Kutilayotgan bildirishnoma yo'q</div>
+              </div>
+              <div class="dashboard-chip-row">
+                <button class="dashboard-filter-chip" type="button" data-notification-filter="pending">Kutilmoqda</button>
+              </div>
               <div class="dashboard-badge-row">
-                <span class="dashboard-badge neutral" data-notification-filter="pending">Kutilmoqda: <strong id="pendingNotificationsBadgeCount">0</strong></span>
-                <span class="dashboard-badge neutral" data-notification-filter="approved">Tasdiqlangan: <strong id="approvedNotificationsCount">0</strong></span>
+                <button class="dashboard-badge neutral" type="button" data-notification-filter="approved">Tasdiqlangan: <strong id="approvedNotificationsCount">0</strong></button>
               </div>
             </article>
           </div>
