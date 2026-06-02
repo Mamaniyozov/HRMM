@@ -560,7 +560,7 @@
               <div class="dashboard-badge-row">
                 <button class="dashboard-badge neutral" type="button" data-dashboard-filter="pending-features">Funksiya talablari: <strong id="pendingFeaturesValue">0</strong></button>
                 <button class="dashboard-badge neutral" type="button" data-dashboard-filter="resolved-leaves">Hal qilingan arizalar: <strong id="resolvedLeavesValue">0</strong></button>
-                <button class="dashboard-badge neutral" type="button" data-dashboard-filter="approved-reports">Tasdiqlangan hisobotlar: <strong id="approvedReportsValue">0</strong></button>
+                <button class="dashboard-badge neutral" type="button" data-dashboard-filter="approved-reports">Tasdiqlangan hisobotlar: <strong id="homeApprovedReportsValue">0</strong></button>
               </div>
             </article>
 
@@ -927,11 +927,96 @@
             </form>
           </div>
 
-          <div class="panel">
-            <div class="panel-heading">
-              <p class="eyebrow" data-translate="section_workflow">Ish jarayoni</p>
-              <h3 data-translate="section_report_actions">Hisobot harakatlari va biriktirmalar</h3>
+          <div class="panel workflow-operations-panel workspace-full">
+            <div class="panel-heading inline">
+              <div>
+                <p class="eyebrow" data-translate="section_workflow">Ish jarayoni</p>
+                <h3>Bo'limlar bo'yicha umumiy ko'rinish</h3>
+              </div>
+              <div class="toolbar">
+                <input id="operationsDepartmentSearch" type="search" placeholder="Bo'lim qidirish..." />
+                <button id="refreshOperationsDashboard" type="button" class="ghost-btn">Yangilash</button>
+              </div>
             </div>
+
+            <div class="operations-kpi-grid">
+              <article class="operations-kpi-card operations-kpi-card--leave">
+                <span class="operations-kpi-label">Arizalar</span>
+                <strong id="opsLeavesTotal">0</strong>
+                <div class="operations-kpi-meta">
+                  <span class="status-pill status-pill--pending">Kutilmoqda: <b id="opsLeavesPending">0</b></span>
+                  <span class="status-pill status-pill--approved">Tasdiqlangan: <b id="opsLeavesApproved">0</b></span>
+                </div>
+              </article>
+              <article class="operations-kpi-card operations-kpi-card--notification">
+                <span class="operations-kpi-label">Bildirishnomalar</span>
+                <strong id="opsNotificationsTotal">0</strong>
+                <div class="operations-kpi-meta">
+                  <span class="status-pill status-pill--pending">Kutilmoqda: <b id="opsNotificationsPending">0</b></span>
+                  <span class="status-pill status-pill--approved">Tasdiqlangan: <b id="opsNotificationsApproved">0</b></span>
+                </div>
+              </article>
+              <article class="operations-kpi-card operations-kpi-card--feature">
+                <span class="operations-kpi-label">Funksiya talablari</span>
+                <strong id="opsFeaturesTotal">0</strong>
+                <div class="operations-kpi-meta">
+                  <span class="status-pill status-pill--pending">Kutilmoqda: <b id="opsFeaturesPending">0</b></span>
+                  <span class="status-pill status-pill--approved">Tasdiqlangan: <b id="opsFeaturesApproved">0</b></span>
+                </div>
+              </article>
+              <article class="operations-kpi-card operations-kpi-card--report">
+                <span class="operations-kpi-label">Hisobotlar</span>
+                <strong id="opsReportsTotal">0</strong>
+                <div class="operations-kpi-meta">
+                  <span class="status-pill status-pill--pending">Kutilmoqda: <b id="opsReportsPending">0</b></span>
+                  <span class="status-pill status-pill--approved">Tasdiqlangan: <b id="opsReportsApproved">0</b></span>
+                </div>
+              </article>
+            </div>
+
+            <div class="operations-table-wrap">
+              <table class="operations-table">
+                <thead>
+                  <tr>
+                    <th>Bo'lim</th>
+                    <th>Arizalar</th>
+                    <th>Bildirishnomalar</th>
+                    <th>Funksiya talablari</th>
+                    <th>Hisobotlar</th>
+                    <th>Jami kutilmoqda</th>
+                  </tr>
+                </thead>
+                <tbody id="operationsDepartmentsTableBody">
+                  <tr><td colspan="6" class="empty-state">Ma'lumot yuklanmoqda...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="operations-distribution-grid">
+              <article class="operations-dist-card">
+                <h4 class="operations-dist-title operations-dist-title--blue">Arizalar taqsimoti</h4>
+                <div id="operationsLeavesDistribution" class="operations-dist-list"></div>
+              </article>
+              <article class="operations-dist-card">
+                <h4 class="operations-dist-title operations-dist-title--purple">Bildirishnomalar</h4>
+                <div id="operationsNotificationsDistribution" class="operations-dist-list"></div>
+              </article>
+              <article class="operations-dist-card">
+                <h4 class="operations-dist-title operations-dist-title--orange">Funksiya talablari</h4>
+                <div id="operationsFeaturesDistribution" class="operations-dist-list"></div>
+              </article>
+              <article class="operations-dist-card">
+                <h4 class="operations-dist-title operations-dist-title--green">Hisobotlar</h4>
+                <div id="operationsReportsDistribution" class="operations-dist-list"></div>
+              </article>
+            </div>
+          </div>
+
+          <details class="panel workflow-tools-panel">
+            <summary class="workflow-tools-summary">
+              <span>Hisobot harakatlari va biriktirmalar</span>
+              <small>UUID orqali tasdiqlash, biriktirma va tarix</small>
+            </summary>
             <form id="workflowForm" class="form-grid">
               <label><span>Hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID sini qo'ying" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
               <label><span>Harakat</span><select name="action" id="workflowActionSelect" required>
@@ -1009,7 +1094,7 @@
                 <button id="deleteReportButton" type="button" class="ghost-btn">Hisobotni o'chirish</button>
               </div>
             </form>
-          </div>
+          </details>
         </section>
 
         <section id="reportsSection" class="panel app-section section-surface reports-surface">

@@ -1716,14 +1716,20 @@ function applyTranslations() {
   if (statCards?.[2]) {
     statCards[2].querySelector(".dashboard-stat-head span")?.replaceChildren(document.createTextNode(t("approval_status")));
     const badges = statCards[2].querySelectorAll(".dashboard-badge");
-    if (badges[0]) badges[0].childNodes[0].textContent = `${t("resolved_requests")}: `;
-    if (badges[1]) badges[1].childNodes[0].textContent = `${t("approved_reports")}: `;
+    if (badges[0]) badges[0].childNodes[0].textContent = "Funksiya talablari: ";
+    if (badges[1]) badges[1].childNodes[0].textContent = `${t("resolved_requests")}: `;
+    if (badges[2]) badges[2].childNodes[0].textContent = `${t("approved_reports")}: `;
+    statCards[2].querySelector('[data-dashboard-filter="pending-all"]')?.replaceChildren(
+      document.createTextNode("Barcha navbat")
+    );
   }
   if (statCards?.[3]) {
     statCards[3].querySelector(".dashboard-stat-head span")?.replaceChildren(document.createTextNode(t("notifications")));
+    statCards[3].querySelector('[data-notification-filter="pending"]')?.replaceChildren(
+      document.createTextNode(t("notifications_pending"))
+    );
     const badges = statCards[3].querySelectorAll(".dashboard-badge");
-    if (badges[0]) badges[0].childNodes[0].textContent = `${t("notifications_pending")}: `;
-    if (badges[1]) badges[1].childNodes[0].textContent = `${t("notifications_approved")}: `;
+    if (badges[0]) badges[0].childNodes[0].textContent = `${t("notifications_approved")}: `;
   }
 
   if (meButton) {
@@ -2117,18 +2123,37 @@ function isDeptHeadOrDirector() {
 }
 
 const ROLE_PENDING_REPORT_STATUS = {
+  UNIT_HEAD: "PENDING_L2",
   DEPT_HEAD: "PENDING_L3",
   DIRECTOR: "PENDING_L4",
 };
+
+function isManagerRole() {
+  const role = state.currentUser?.role || "";
+  return ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role);
+}
 
 function getReportOwnerId(report) {
   return report?.created_by ?? report?.created_by_id ?? "";
 }
 
+function isReportPendingStatus(status) {
+  return ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(status || "");
+}
+
 function canManagerReviewReport(report) {
-  if (!isDeptHeadOrDirector() || !report) return false;
-  if (getReportOwnerId(report) === state.currentUser?.id) return false;
+  if (!report || !state.currentUser?.id) return false;
+  if (getReportOwnerId(report) === state.currentUser.id) return false;
   const role = state.currentUser.role;
+  if (role === "DIRECTOR") {
+    return isReportPendingStatus(report.status);
+  }
+  if (role === "DEPT_HEAD") {
+    return ["PENDING_L3", "PENDING_L4"].includes(report.status || "");
+  }
+  if (role === "UNIT_HEAD") {
+    return report.status === "PENDING_L2";
+  }
   return report.status === ROLE_PENDING_REPORT_STATUS[role];
 }
 
@@ -2154,7 +2179,11 @@ function shouldShowNotificationInMainList(item) {
   if (isResultNotificationCopy(item)) return false;
 
   if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) {
-    return true;
+    return !item.is_read;
+  }
+
+  if (["APPROVED", "REJECTED"].includes(item.status || "")) {
+    return false;
   }
 
   const isOwn =
@@ -2224,10 +2253,10 @@ function getPendingFeatureRequests() {
 }
 
 function getManagerPendingQueue() {
-  const pendingLeaves = state.leaves.filter((leave) => leave.status === "PENDING");
-  const pendingReports = state.reports.filter((report) =>
-    ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
+  const pendingLeaves = state.leaves.filter(
+    (leave) => leave.status === "PENDING" && canManagerReviewLeave(leave)
   );
+  const pendingReports = state.reports.filter((report) => canManagerReviewReport(report));
   const pendingNotifications = getPendingNotificationsForDashboard();
   return [
     ...pendingLeaves.map((item) => ({ ...item, _collectionType: "leave" })),
@@ -2237,15 +2266,34 @@ function getManagerPendingQueue() {
 }
 
 function getDashboardPendingNotifications() {
-  if (isDeptHeadOrDirector()) {
+  if (isManagerRole()) {
     return getPendingNotificationsForDashboard();
   }
   return state.notifications.filter((item) => {
+    if (isNotificationAlertCopy(item) || isResultNotificationCopy(item)) return false;
+    if (REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) {
+      const isOwn =
+        item.submitted_by === state.currentUser?.id ||
+        (!item.submitted_by && item.user_id === state.currentUser?.id);
+      return isOwn && item.status === "PENDING";
+    }
+    return !item.is_read;
+  });
+}
+
+function getDashboardApprovedNotifications() {
+  if (isManagerRole()) {
+    return getApprovedReviewNotifications();
+  }
+  return state.notifications.filter((item) => {
     if (isNotificationAlertCopy(item)) return false;
-    const isOwn =
-      item.submitted_by === state.currentUser?.id ||
-      (!item.submitted_by && item.user_id === state.currentUser?.id);
-    return isOwn && (!item.status || item.status === "PENDING");
+    if (REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) {
+      const isOwn =
+        item.submitted_by === state.currentUser?.id ||
+        (!item.submitted_by && item.user_id === state.currentUser?.id);
+      return isOwn && ["APPROVED", "REJECTED"].includes(item.status || "");
+    }
+    return item.is_read;
   });
 }
 
@@ -2325,7 +2373,7 @@ function bindReviewActionButtons(container) {
             headers: getHeaders(),
             body: JSON.stringify({ action, comment }),
           });
-          await Promise.all([loadReports(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+          await Promise.all([loadReports(), loadAdminDashboard(), loadDashboard(), loadAuditLogs(), loadOperationsDashboard()]);
         } else if (itemType === "leave") {
           if (action === "REJECT" && !comment) {
             setMessage("Rad etish uchun izoh majburiy.", "error");
@@ -2336,7 +2384,7 @@ function bindReviewActionButtons(container) {
             headers: getHeaders(),
             body: JSON.stringify({ action, review_comment: comment }),
           });
-          await Promise.all([loadLeaves(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+          await Promise.all([loadLeaves(), loadAdminDashboard(), loadDashboard(), loadAuditLogs(), loadOperationsDashboard()]);
         } else if (itemType === "notification") {
           if (action === "REJECT" && !comment) {
             setMessage("Rad etish uchun izoh majburiy.", "error");
@@ -2352,7 +2400,7 @@ function bindReviewActionButtons(container) {
             const index = state.notifications.findIndex((entry) => entry.id === reviewed.id);
             if (index >= 0) state.notifications[index] = reviewed;
           }
-          await Promise.all([loadNotifications(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+          await Promise.all([loadNotifications(), loadAdminDashboard(), loadDashboard(), loadAuditLogs(), loadOperationsDashboard()]);
           refreshHomeDashboard();
         }
         sectionModal?.classList.add("hidden");
@@ -2386,12 +2434,22 @@ function makeReportDetailActionBar(report) {
         </div>
       </div>
     `);
-  } else if (isDeptHeadOrDirector() && getReportOwnerId(report) === state.currentUser?.id && report.status === "DRAFT") {
-    parts.push(`<div class="feed-item muted-item">${escapeHtml(t("report_submit_hint"))}</div>`);
+  } else if (getReportOwnerId(report) === state.currentUser?.id) {
+    if (report.status === "DRAFT") {
+      parts.push(`<div class="feed-item muted-item">${escapeHtml(t("report_submit_hint"))}</div>`);
+    } else if (isReportPendingStatus(report.status)) {
+      parts.push(
+        `<div class="feed-item muted-item">Hisobot tasdiqlash navbatida (${escapeHtml(report.status)}). ${escapeHtml(t("edit_report"))} faqat qoralama yoki qayta ko'rish uchun mavjud.</div>`
+      );
+    }
   }
 
   if (canManagerReviewReport(report)) {
     parts.push(makeReviewActionBar("report", report.id, { showRevision: true }));
+  } else if (isManagerRole() && isReportPendingStatus(report.status) && getReportOwnerId(report) === state.currentUser?.id) {
+    parts.push(
+      `<div class="feed-item muted-item">O'z hisobotingizni tasdiqlay olmaysiz. Keyingi tasdiqlovchi kutmoqda.</div>`
+    );
   }
 
   if (canRateReport(report)) {
@@ -2446,7 +2504,7 @@ function bindReportDetailActionButtons(report) {
             headers: getHeaders(),
             body: JSON.stringify({ action: "SUBMIT", comment: "" }),
           });
-          await Promise.all([loadReports(), loadAdminDashboard(), loadDashboard(), loadAuditLogs()]);
+          await Promise.all([loadReports(), loadAdminDashboard(), loadDashboard(), loadAuditLogs(), loadOperationsDashboard()]);
           refreshHomeDashboard();
           const updated = state.reports.find((item) => item.id === reportId);
           sectionModal?.classList.add("hidden");
@@ -2494,6 +2552,12 @@ function openReportDetailModal(report) {
 
 function openLeaveDetailModal(leave) {
   const reviewBar = canManagerReviewLeave(leave) ? makeReviewActionBar("leave", leave.id) : "";
+  const ownerNote =
+    leave.requested_by === state.currentUser?.id && leave.status === "PENDING"
+      ? `<div class="feed-item muted-item">Arizangiz tasdiqlash navbatida. Tahrirlash va baholash tasdiqlangandan keyin mavjud bo'ladi.</div>`
+      : leave.requested_by === state.currentUser?.id && ["APPROVED", "REJECTED"].includes(leave.status || "")
+        ? `<div class="feed-item muted-item">Ariza holati: ${escapeHtml(leave.status)}. Baholash uchun tasdiqlangan bo'limdan oching.</div>`
+        : "";
   openContentModal(
     leave.requested_by_name || t("collection_title_requests"),
     t("collection_title_requests"),
@@ -2507,7 +2571,7 @@ function openLeaveDetailModal(leave) {
       ["Reviewer", leave.reviewed_by_name || "-"],
       ["Sabab", leave.reason || "-"],
       ["ID", leave.leave_number || leave.id || "-"],
-    ]) + reviewBar
+    ]) + ownerNote + reviewBar
   );
   bindReviewActionButtons();
 }
@@ -2529,9 +2593,16 @@ function openNotificationDetailModal(item) {
   }
 
   const reviewBar = canManagerReviewNotification(item) ? makeReviewActionBar("notification", item.id) : "";
+  const isOwnRequest =
+    item.submitted_by === state.currentUser?.id ||
+    (!item.submitted_by && item.user_id === state.currentUser?.id);
+  const ownerNote =
+    isOwnRequest && item.status === "PENDING"
+      ? `<div class="feed-item muted-item">So'rovingiz ko'rib chiqilmoqda. Tahrirlash va baholash faqat batafsil oynada, tasdiqlangandan keyin.</div>`
+      : "";
   const statusNote =
     !reviewBar && ["APPROVED", "REJECTED"].includes(item.status || "")
-      ? `<div class="feed-item muted-item">Bu so'rov allaqachon ko'rib chiqilgan.</div>`
+      ? `<div class="feed-item muted-item">Bu so'rov allaqachon ko'rib chiqilgan (${escapeHtml(item.status)}).</div>`
       : "";
 
   openContentModal(
@@ -2547,7 +2618,7 @@ function openNotificationDetailModal(item) {
       ["ID", item.notification_number || item.id || "-"],
       ["Sana", formatDate(item.created_at)],
       ["Reference", item.reference_type || "-"],
-    ]) + attachmentHtml + statusNote + reviewBar
+    ]) + attachmentHtml + ownerNote + statusNote + reviewBar
   );
   bindReviewActionButtons();
 }
@@ -2713,7 +2784,7 @@ function bindDashboardDrilldowns() {
   notificationsCard?.querySelector('[data-notification-filter="approved"]')?.addEventListener("click", () => {
     openCollectionModal(
       t("collection_title_approved_notifications"),
-      getApprovedReviewNotifications(),
+      getDashboardApprovedNotifications(),
       "notification"
     );
   });
@@ -3714,19 +3785,14 @@ function renderPendingItemsInDashboard() {
   let pendingReports = [];
 
   if (isManager) {
-    const pending = state.pendingApprovals || [];
-    const pendingFromApiLeaves = pending.filter((item) => item.item_type === "leave" || item.leave_type);
-    const pendingFromApiReports = pending.filter(
-      (item) => !item.item_type || item.item_type === "report" || item.report_number
+    pendingLeaves = state.leaves.filter(
+      (leave) => leave.status === "PENDING" && (leave.requested_by === userId || canManagerReviewLeave(leave))
     );
-    pendingLeaves = state.leaves.length
-      ? state.leaves.filter((leave) => leave.status === "PENDING")
-      : pendingFromApiLeaves;
-    pendingReports = state.reports.length
-      ? state.reports.filter((report) =>
-          ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
-        )
-      : pendingFromApiReports;
+    pendingReports = state.reports.filter(
+      (report) =>
+        getReportOwnerId(report) === userId &&
+        ["DRAFT", "REVISION", "PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
+    );
   } else {
     pendingLeaves = state.leaves.filter(
       (leave) => leave.requested_by === userId && leave.status === "PENDING"
@@ -3799,6 +3865,12 @@ function renderPendingItemsInDashboard() {
   if (pendingFeaturesValue) {
     pendingFeaturesValue.textContent = String(getPendingFeatureRequests().length);
   }
+  const homeApprovedReportsValue = document.getElementById("homeApprovedReportsValue");
+  if (homeApprovedReportsValue) {
+    homeApprovedReportsValue.textContent = String(
+      state.reports.filter((report) => report.status === "APPROVED").length
+    );
+  }
 
   const pendingApprovalList = document.getElementById("pendingApprovalList");
   if (pendingApprovalList) {
@@ -3841,7 +3913,7 @@ function renderNotificationDashboardCard() {
   const unread = state.notifications.filter((item) => !item.is_read && shouldShowNotificationInMainList(item)).length;
   const pendingItems = getDashboardPendingNotifications();
   const pendingReview = pendingItems.length;
-  const approvedReview = getApprovedReviewNotifications().length;
+  const approvedReview = getDashboardApprovedNotifications().length;
   if (unreadNotificationsValue) {
     unreadNotificationsValue.textContent = String(pendingReview);
   }
@@ -3914,6 +3986,187 @@ function renderReviewShortcutPanel() {
   if (approvedLeavesShortcutValue) approvedLeavesShortcutValue.textContent = String(approvedLeaves);
   if (notificationsShortcutValue) notificationsShortcutValue.textContent = String(notificationsCount);
   if (pendingRequestsShortcutValue) pendingRequestsShortcutValue.textContent = String(pendingRequests);
+}
+
+function buildOperationsMetricCell(metric) {
+  const total = metric?.total || 0;
+  const pending = metric?.pending || 0;
+  const approved = metric?.approved || 0;
+  return `
+    <div class="operations-metric-cell">
+      <span class="operations-metric-total">${total}</span>
+      <span class="status-pill status-pill--pending">${pending} kut.</span>
+      <span class="status-pill status-pill--approved">${approved} tasd.</span>
+    </div>
+  `;
+}
+
+function renderOperationsDistribution(container, departments, metricKey, pendingKey = "pending") {
+  if (!container) return;
+  const rows = departments
+    .map((row) => ({
+      department_name: row.department_name,
+      count: row[metricKey]?.[pendingKey] || 0,
+    }))
+    .filter((row) => row.count > 0)
+    .sort((a, b) => b.count - a.count);
+  const total = rows.reduce((sum, row) => sum + row.count, 0);
+  if (!rows.length) {
+    container.innerHTML = `<div class="operations-dist-row muted-item">Ma'lumot yo'q</div>`;
+    return;
+  }
+  container.innerHTML = rows
+    .map((row) => {
+      const pct = total ? Math.round((row.count / total) * 100) : 0;
+      return `
+        <div class="operations-dist-row">
+          <span>${escapeHtml(row.department_name)}</span>
+          <strong>${row.count} <small>(${pct}%)</small></strong>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function getUserDepartmentId(userId) {
+  if (!userId) return null;
+  const user = state.users.find((entry) => entry.id === userId);
+  return user?.department_id || null;
+}
+
+function buildOperationsFromState() {
+  const departments = state.departments || [];
+  const departmentRows = departments.map((department) => {
+    const deptId = department.id;
+    const deptLeaves = state.leaves.filter((item) => getUserDepartmentId(item.requested_by) === deptId);
+    const deptReports = state.reports.filter((item) => item.department_id === deptId);
+    const deptNotifications = state.notifications.filter((item) => {
+      if (isNotificationAlertCopy(item)) return false;
+      if (!REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) return false;
+      const ownerDept = getUserDepartmentId(item.submitted_by || item.user_id);
+      return ownerDept === deptId;
+    });
+    const deptFeatures = deptNotifications.filter((item) => item.reference_type === "FEATURE_REQUEST");
+    const countByStatus = (items, pendingStatuses, approvedStatuses) => ({
+      total: items.length,
+      pending: items.filter((item) => pendingStatuses.includes(item.status || "")).length,
+      approved: items.filter((item) => approvedStatuses.includes(item.status || "")).length,
+    });
+    return {
+      department_id: deptId,
+      department_name: department.name,
+      department_code: department.code,
+      leaves: countByStatus(deptLeaves, ["PENDING"], ["APPROVED"]),
+      reports: countByStatus(deptReports, ["PENDING_L2", "PENDING_L3", "PENDING_L4"], ["APPROVED"]),
+      notifications: countByStatus(deptNotifications, ["PENDING"], ["APPROVED", "REJECTED"]),
+      feature_requests: countByStatus(deptFeatures, ["PENDING"], ["APPROVED", "REJECTED"]),
+    };
+  });
+
+  const sumMetrics = (key) =>
+    departmentRows.reduce(
+      (acc, row) => {
+        const metric = row[key];
+        acc.total += metric.total;
+        acc.pending += metric.pending;
+        acc.approved += metric.approved;
+        return acc;
+      },
+      { total: 0, pending: 0, approved: 0 }
+    );
+
+  return { overall: {
+    leaves: sumMetrics("leaves"),
+    reports: sumMetrics("reports"),
+    notifications: sumMetrics("notifications"),
+    feature_requests: sumMetrics("feature_requests"),
+  }, departments: departmentRows };
+}
+
+function renderOperationsDashboard() {
+  const data = state.operationsDashboard || buildOperationsFromState();
+  const searchNeedle = normalizeSearchValue(document.getElementById("operationsDepartmentSearch")?.value || "");
+  const overall = data.overall || {};
+  const departments = (data.departments || []).filter((row) => {
+    const haystack = [row.department_name, row.department_code].join(" ").toLowerCase();
+    return !searchNeedle || haystack.includes(searchNeedle);
+  });
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(value);
+  };
+
+  setText("opsLeavesTotal", overall.leaves?.total || 0);
+  setText("opsLeavesPending", overall.leaves?.pending || 0);
+  setText("opsLeavesApproved", overall.leaves?.approved || 0);
+  setText("opsNotificationsTotal", overall.notifications?.total || 0);
+  setText("opsNotificationsPending", overall.notifications?.pending || 0);
+  setText("opsNotificationsApproved", overall.notifications?.approved || 0);
+  setText("opsFeaturesTotal", overall.feature_requests?.total || 0);
+  setText("opsFeaturesPending", overall.feature_requests?.pending || 0);
+  setText("opsFeaturesApproved", overall.feature_requests?.approved || 0);
+  setText("opsReportsTotal", overall.reports?.total || 0);
+  setText("opsReportsPending", overall.reports?.pending || 0);
+  setText("opsReportsApproved", overall.reports?.approved || 0);
+
+  const tableBody = document.getElementById("operationsDepartmentsTableBody");
+  if (tableBody) {
+    tableBody.innerHTML = departments.length
+      ? departments
+          .map((row) => {
+            const pendingTotal =
+              (row.leaves?.pending || 0) +
+              (row.notifications?.pending || 0) +
+              (row.feature_requests?.pending || 0) +
+              (row.reports?.pending || 0);
+            return `
+              <tr>
+                <td><span class="dept-name">${escapeHtml(row.department_name)}</span><br><small>${escapeHtml(row.department_code || "-")}</small></td>
+                <td>${buildOperationsMetricCell(row.leaves)}</td>
+                <td>${buildOperationsMetricCell(row.notifications)}</td>
+                <td>${buildOperationsMetricCell(row.feature_requests)}</td>
+                <td>${buildOperationsMetricCell(row.reports)}</td>
+                <td><span class="status-pill status-pill--pending">${pendingTotal} kutilmoqda</span></td>
+              </tr>
+            `;
+          })
+          .join("")
+      : `<tr><td colspan="6" class="empty-state">Bo'limlar bo'yicha ma'lumot topilmadi</td></tr>`;
+  }
+
+  renderOperationsDistribution(
+    document.getElementById("operationsLeavesDistribution"),
+    departments,
+    "leaves"
+  );
+  renderOperationsDistribution(
+    document.getElementById("operationsNotificationsDistribution"),
+    departments,
+    "notifications"
+  );
+  renderOperationsDistribution(
+    document.getElementById("operationsFeaturesDistribution"),
+    departments,
+    "feature_requests"
+  );
+  renderOperationsDistribution(
+    document.getElementById("operationsReportsDistribution"),
+    departments,
+    "reports"
+  );
+}
+
+async function loadOperationsDashboard() {
+  try {
+    state.operationsDashboard = await apiRequest("/api/v1/dashboard/operations/", {
+      headers: getHeaders(false),
+    });
+  } catch (error) {
+    state.operationsDashboard = buildOperationsFromState();
+    console.warn("Operations dashboard API failed, using local state:", error);
+  }
+  renderOperationsDashboard();
 }
 
 function renderAnalyticsDashboard() {
@@ -4116,7 +4369,17 @@ async function loadDashboard() {
   if (draftReportsValue) {
     draftReportsValue.textContent = String(payload.reports?.draft_reports || 0);
   }
-  if (approvedReportsValue) {
+  const homeApprovedReports = document.querySelector(
+    "#homeSection [data-dashboard-filter='approved-reports'] strong"
+  );
+  if (homeApprovedReports) {
+    homeApprovedReports.textContent = String(
+      state.reports.filter((report) => report.status === "APPROVED").length ||
+        payload.reports?.approved_reports ||
+        0
+    );
+  }
+  if (approvedReportsValue && approvedReportsValue.closest("#dashboardSection")) {
     approvedReportsValue.textContent = String(payload.reports?.approved_reports || 0);
   }
   if (rejectedReportsValue) {
@@ -4212,6 +4475,7 @@ async function loadAllData() {
     loadNotifications(),
     loadFeedbackEntries(),
     loadAuditLogs(),
+    loadOperationsDashboard(),
   ];
 
   tasks.push(loadLeaves(), loadLeaveCalendar());
@@ -5583,6 +5847,10 @@ userSearchInput?.addEventListener("input", renderUsers);
 reportSearchInput?.addEventListener("input", renderReports);
 leaveSearchInput?.addEventListener("input", renderLeaves);
 departmentSearchInput?.addEventListener("input", renderAnalyticsDashboard);
+document.getElementById("operationsDepartmentSearch")?.addEventListener("input", renderOperationsDashboard);
+document.getElementById("refreshOperationsDashboard")?.addEventListener("click", () => {
+  loadOperationsDashboard().catch((error) => setMessage(error.message, "error"));
+});
 roleFilter?.addEventListener("change", () => loadUsers().catch((error) => setMessage(error.message, "error")));
 levelFilter?.addEventListener("change", () => loadUsers().catch((error) => setMessage(error.message, "error")));
 reportStatusFilter?.addEventListener("change", () => loadReports().catch((error) => setMessage(error.message, "error")));
