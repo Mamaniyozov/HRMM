@@ -1,0 +1,5 @@
+.env
+__pycache__/
+*.pyc
+hrmm_bot_sessions.json
+/tmp/
