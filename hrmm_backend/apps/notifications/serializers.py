@@ -6,6 +6,8 @@ from apps.notifications.models import Notification
 class NotificationSerializer(serializers.ModelSerializer):
     screenshot_url = serializers.SerializerMethodField()
     notification_number = serializers.IntegerField(read_only=True)
+    submitted_by_name = serializers.CharField(source="submitted_by.full_name", read_only=True)
+    reviewed_by_name = serializers.CharField(source="reviewed_by.full_name", read_only=True)
 
     class Meta:
         model = Notification
@@ -17,6 +19,12 @@ class NotificationSerializer(serializers.ModelSerializer):
             "type",
             "reference_type",
             "reference_id",
+            "status",
+            "review_comment",
+            "submitted_by",
+            "submitted_by_name",
+            "reviewed_by",
+            "reviewed_by_name",
             "screenshot",
             "screenshot_url",
             "is_read",
@@ -40,4 +48,20 @@ class NotificationCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context["request"]
-        return Notification.objects.create(user_id=request.user, **validated_data)
+        reference_type = validated_data.get("reference_type") or ""
+        review_status = None
+        if reference_type in Notification.REVIEWABLE_REFERENCE_TYPES:
+            review_status = "PENDING"
+        notification = Notification(
+            user_id=request.user,
+            submitted_by=request.user,
+            status=review_status,
+            **validated_data,
+        )
+        notification.save()
+        return notification
+
+
+class NotificationReviewSerializer(serializers.Serializer):
+    action = serializers.ChoiceField(choices=["APPROVE", "REJECT"])
+    review_comment = serializers.CharField(required=False, allow_blank=True, default="")

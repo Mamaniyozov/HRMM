@@ -19,6 +19,12 @@ class Notification(models.Model):
         ("INFO", "Info"),
         ("REMINDER", "Reminder"),
     ]
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("APPROVED", "Approved"),
+        ("REJECTED", "Rejected"),
+    ]
+    REVIEWABLE_REFERENCE_TYPES = frozenset({"FEATURE_REQUEST", "USER_NOTIFICATION"})
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     notification_number = models.PositiveIntegerField(unique=True, null=True, blank=True)
@@ -28,6 +34,24 @@ class Notification(models.Model):
         related_name="notifications",
         db_column="user_id",
     )
+    submitted_by = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="submitted_notifications",
+        db_column="submitted_by",
+    )
+    reviewed_by = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reviewed_notifications",
+        db_column="reviewed_by",
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, null=True, blank=True)
+    review_comment = models.TextField(blank=True, default="")
     title = models.CharField(max_length=200)
     message = models.TextField()
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)

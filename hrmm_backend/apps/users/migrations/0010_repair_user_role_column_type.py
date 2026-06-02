@@ -1,14 +1,8 @@
 from django.db import migrations
 
+from apps.users.db_migration import forwards_postgres_sql
 
-class Migration(migrations.Migration):
-    dependencies = [
-        ("users", "0009_add_director_to_status_enum"),
-    ]
-
-    operations = [
-        migrations.RunSQL(
-            sql="""
+POSTGRES_REPAIR_ROLE = """
 DO $$
 BEGIN
   IF EXISTS (
@@ -24,7 +18,17 @@ BEGIN
       USING role::text;
   END IF;
 END $$;
-""",
-            reverse_sql=migrations.RunSQL.noop,
+"""
+
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ("users", "0009_add_director_to_status_enum"),
+    ]
+
+    operations = [
+        migrations.RunPython(
+            forwards_postgres_sql(POSTGRES_REPAIR_ROLE),
+            migrations.RunPython.noop,
         ),
     ]

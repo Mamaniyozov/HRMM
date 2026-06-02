@@ -1,18 +1,8 @@
 from django.db import migrations
 
+from apps.users.db_migration import forwards_postgres_sql
 
-class Migration(migrations.Migration):
-    dependencies = [
-        ("users", "0003_user_job_level_user_job_role"),
-        ("reports", "0005_report_is_deleted"),
-        ("leave_management", "0001_initial"),
-        ("workflows", "0001_initial"),
-        ("notifications", "0001_initial"),
-    ]
-
-    operations = [
-        migrations.RunSQL(
-            sql="""
+POSTGRES_ENUM_SETUP = """
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='status_enum') THEN
@@ -22,55 +12,37 @@ BEGIN
     );
   END IF;
 END $$;
-""",
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql="""
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='leave_type_enum') THEN
     CREATE TYPE leave_type_enum AS ENUM ('ANNUAL','SICK','MATERNITY','UNPAID','OTHER');
   END IF;
 END $$;
-""",
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql="""
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='leave_status_enum') THEN
     CREATE TYPE leave_status_enum AS ENUM ('PENDING','APPROVED','REJECTED','CANCELLED');
   END IF;
 END $$;
-""",
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql="""
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='action_enum') THEN
     CREATE TYPE action_enum AS ENUM ('SUBMIT','APPROVE','REJECT','REQUEST_REVISION','ARCHIVE');
   END IF;
 END $$;
-""",
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql="""
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='notif_type_enum') THEN
     CREATE TYPE notif_type_enum AS ENUM ('APPROVAL','REJECTION','INFO','REMINDER');
   END IF;
 END $$;
-""",
-            reverse_sql=migrations.RunSQL.noop,
-        ),
-        migrations.RunSQL(
-            sql="""
+"""
+
+POSTGRES_ALTER_COLUMNS = """
 ALTER TABLE public.users_user
   ALTER COLUMN role TYPE status_enum
   USING role::text::status_enum;
@@ -102,7 +74,25 @@ ALTER TABLE public.workflows_approvalhistory
 ALTER TABLE public.notifications_notification
   ALTER COLUMN type TYPE notif_type_enum
   USING type::text::notif_type_enum;
-""",
-            reverse_sql=migrations.RunSQL.noop,
+"""
+
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ("users", "0003_user_job_level_user_job_role"),
+        ("reports", "0005_report_is_deleted"),
+        ("leave_management", "0001_initial"),
+        ("workflows", "0001_initial"),
+        ("notifications", "0001_initial"),
+    ]
+
+    operations = [
+        migrations.RunPython(
+            forwards_postgres_sql(POSTGRES_ENUM_SETUP),
+            migrations.RunPython.noop,
+        ),
+        migrations.RunPython(
+            forwards_postgres_sql(POSTGRES_ALTER_COLUMNS),
+            migrations.RunPython.noop,
         ),
     ]

@@ -1,17 +1,10 @@
 from django.db import migrations
 
+from apps.users.db_migration import forwards_postgres_sql
 
-class Migration(migrations.Migration):
-    dependencies = [
-        ("users", "0010_repair_user_role_column_type"),
-    ]
-
-    operations = [
-        migrations.RunSQL(
-            sql="""
+POSTGRES_FORCE_REPAIR = """
 DO $$
 BEGIN
-  -- 1) If status_enum exists but misses DIRECTOR, add it.
   IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'status_enum') THEN
     IF NOT EXISTS (
       SELECT 1
@@ -24,7 +17,6 @@ BEGIN
     END IF;
   END IF;
 
-  -- 2) If users_user.role is still tied to status_enum, convert it to varchar.
   IF EXISTS (
     SELECT 1
     FROM information_schema.columns
@@ -38,7 +30,17 @@ BEGIN
       USING role::text;
   END IF;
 END $$;
-""",
-            reverse_sql=migrations.RunSQL.noop,
+"""
+
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ("users", "0010_repair_user_role_column_type"),
+    ]
+
+    operations = [
+        migrations.RunPython(
+            forwards_postgres_sql(POSTGRES_FORCE_REPAIR),
+            migrations.RunPython.noop,
         ),
     ]

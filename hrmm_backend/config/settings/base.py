@@ -151,7 +151,29 @@ SIMPLE_JWT = {
 TOTP_ISSUER_NAME = os.getenv("TOTP_ISSUER_NAME", "HRMM Control Center")
 
 
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+def _env_csv_list(name, *, defaults=None):
+    raw = os.getenv(name, "")
+    values = [item.strip() for item in raw.split(",") if item.strip()]
+    if values:
+        return values
+    return list(defaults or [])
+
+
+_default_csrf_origins = [
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+_csrf_origins = [
+    origin
+    for origin in _env_csv_list("CSRF_TRUSTED_ORIGINS")
+    if origin.startswith(("http://", "https://"))
+]
+CSRF_TRUSTED_ORIGINS = _csrf_origins or _default_csrf_origins
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 CORS_ALLOW_ALL_ORIGINS = True
