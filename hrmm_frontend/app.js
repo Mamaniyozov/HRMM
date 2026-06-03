@@ -11,6 +11,7 @@ const DEFAULT_API_BASE = (() => {
   // Productionda Railway backend API URL ishlatamiz
   return API_URL;
 })();
+const DEFAULT_API_TIMEOUT_MS = 45000;
 const state = {
   apiBase: DEFAULT_API_BASE,
   language: window.localStorage.getItem("hrmm_language") || "uz",
@@ -2839,10 +2840,24 @@ function getHeaders(isJson = true) {
 
 async function apiRequest(path, options = {}) {
   let response;
+  const { timeoutMs = DEFAULT_API_TIMEOUT_MS, ...fetchOptions } = options;
+  let timeoutId = null;
+
+  if (timeoutMs > 0 && !fetchOptions.signal) {
+    const controller = new AbortController();
+    fetchOptions.signal = controller.signal;
+    timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  }
+
   try {
-    response = await fetch(`${state.apiBase}${path}`, options);
-  } catch (_networkError) {
+    response = await fetch(`${state.apiBase}${path}`, fetchOptions);
+  } catch (networkError) {
+    if (networkError?.name === "AbortError") {
+      throw new Error(`So'rov ${Math.round(timeoutMs / 1000)} soniyada javob bermadi. Internet yoki backend serverni tekshiring.`);
+    }
     throw new Error(`Failed to fetch. API serverga ulanishda xato: ${state.apiBase}`);
+  } finally {
+    if (timeoutId) window.clearTimeout(timeoutId);
   }
   const data = await response.json().catch(() => null);
 
@@ -4535,6 +4550,7 @@ if (loginForm) {
       const payload = await apiRequest("/api/v1/auth/login/", {
         method: "POST",
         headers: getHeaders(),
+        timeoutMs: 15000,
         body: JSON.stringify({
           username: formData.get("username"),
           password: formData.get("password"),
