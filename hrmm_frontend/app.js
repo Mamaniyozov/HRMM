@@ -2133,6 +2133,11 @@ function isManagerRole() {
   return ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role);
 }
 
+function isAdminOrDirector() {
+  const role = state.currentUser?.role || "";
+  return ["DIRECTOR", "ADMIN"].includes(role);
+}
+
 function getReportOwnerId(report) {
   return report?.created_by ?? report?.created_by_id ?? "";
 }
@@ -2434,7 +2439,7 @@ function makeReportDetailActionBar(report) {
         </div>
       </div>
     `);
-  } else if (getReportOwnerId(report) === state.currentUser?.id) {
+  } else if (getReportOwnerId(report) === state.currentUser?.id && !isAdminOrDirector()) {
     if (report.status === "DRAFT") {
       parts.push(`<div class="feed-item muted-item">${escapeHtml(t("report_submit_hint"))}</div>`);
     } else if (isReportPendingStatus(report.status)) {
@@ -2446,7 +2451,7 @@ function makeReportDetailActionBar(report) {
 
   if (canManagerReviewReport(report)) {
     parts.push(makeReviewActionBar("report", report.id, { showRevision: true }));
-  } else if (isManagerRole() && isReportPendingStatus(report.status) && getReportOwnerId(report) === state.currentUser?.id) {
+  } else if (isManagerRole() && !isAdminOrDirector() && isReportPendingStatus(report.status) && getReportOwnerId(report) === state.currentUser?.id) {
     parts.push(
       `<div class="feed-item muted-item">O'z hisobotingizni tasdiqlay olmaysiz. Keyingi tasdiqlovchi kutmoqda.</div>`
     );
