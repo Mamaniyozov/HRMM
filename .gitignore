@@ -1,0 +1,64 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+env/
+ENV/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Django / backend local files
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+uploads/
+
+# Node / frontend
+node_modules/
+dist/
+build/
+.vite/
+.turbo/
+.next/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vite local logs
+vite-dev.log
+vite-dev.err.log
+
+# Telegram bot local state
+hrmm_bot_sessions.json
+tmp/
+temp/
+
+# Editor and OS files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Misc logs and local artifacts
+*.log
+*.tmp
+*.bak
+*.swp
