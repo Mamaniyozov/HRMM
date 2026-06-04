@@ -2149,13 +2149,12 @@ function isReportPendingStatus(status) {
 
 function canManagerReviewReport(report) {
   if (!report || !state.currentUser?.id) return false;
-  if (getReportOwnerId(report) === state.currentUser.id) return false;
   const role = state.currentUser.role;
   if (role === "DIRECTOR") {
     return isReportPendingStatus(report.status);
   }
   if (role === "DEPT_HEAD") {
-    return ["PENDING_L3", "PENDING_L4"].includes(report.status || "");
+    return ["PENDING_L2", "PENDING_L3"].includes(report.status || "");
   }
   if (role === "UNIT_HEAD") {
     return report.status === "PENDING_L2";
@@ -3770,7 +3769,9 @@ function renderAdminDashboard() {
           loadAdminDashboard(),
           loadDashboard(),
           loadAuditLogs(),
+          loadOperationsDashboard(),
         ]);
+        refreshHomeDashboard();
         setMessage("Muvaffaqiyatli tasdiqlandi", "success");
       } catch (error) {
         setMessage(error.message || "Tasdiqlashda xato bo'ldi", "error");
@@ -3804,7 +3805,9 @@ function renderAdminDashboard() {
           loadAdminDashboard(),
           loadDashboard(),
           loadAuditLogs(),
+          loadOperationsDashboard(),
         ]);
+        refreshHomeDashboard();
         setMessage("Muvaffaqiyatli rad etildi", "success");
       } catch (error) {
         setMessage(error.message || "Rad etishda xato bo'ldi", "error");

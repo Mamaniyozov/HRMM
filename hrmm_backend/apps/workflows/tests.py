@@ -81,7 +81,7 @@ class WorkflowServiceTests(TestCase):
         with self.assertRaises(PermissionDenied):
             perform_workflow_action(self.report, self.specialist, "APPROVE", "self approve", request)
 
-    def test_director_can_self_approve_own_report(self):
+    def test_director_can_self_approve_own_report_to_final_approval(self):
         request = self.factory.post("/api/v1/reports/")
         report = Report.objects.create(
             report_number="REP-002",
@@ -95,4 +95,20 @@ class WorkflowServiceTests(TestCase):
 
         perform_workflow_action(report, self.director, "APPROVE", "director self approve", request)
         report.refresh_from_db()
-        self.assertEqual(report.status, "PENDING_L3")
+        self.assertEqual(report.status, "APPROVED")
+
+    def test_department_head_can_self_approve_own_report_to_director_step(self):
+        request = self.factory.post("/api/v1/reports/")
+        report = Report.objects.create(
+            report_number="REP-003",
+            title="Dept Head Report",
+            summary="Summary",
+            created_by=self.dept_head,
+            department_id=self.department,
+            status="PENDING_L2",
+            current_approval_level=2,
+        )
+
+        perform_workflow_action(report, self.dept_head, "APPROVE", "dept self approve", request)
+        report.refresh_from_db()
+        self.assertEqual(report.status, "PENDING_L4")

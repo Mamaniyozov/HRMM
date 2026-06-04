@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory, force_authenticate
 
@@ -17,7 +19,8 @@ from apps.users.models import User
 class DashboardStatsTests(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.department = Department.objects.create(name="Ops", code="OPS")
+        unique_code = f"OPS{uuid4().hex[:8].upper()}"
+        self.department = Department.objects.create(name="Ops", code=unique_code)
         self.director = User.objects.create(
             username="directorstats",
             email="directorstats@example.com",
@@ -70,6 +73,42 @@ class DashboardStatsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("employees", response.data)
         self.assertIn("pending_approvals", response.data)
+
+    def test_dashboard_admin_returns_only_actionable_report_approvals(self):
+        dept_head = User.objects.create(
+            username="deptheadstats",
+            email="deptheadstats@example.com",
+            password_hash="password123",
+            full_name="Dept Head Stats",
+            role="DEPT_HEAD",
+            department_id=self.department,
+        )
+        for number, status in [
+            ("REP-PENDING-2", "PENDING_L2"),
+            ("REP-PENDING-3", "PENDING_L3"),
+            ("REP-PENDING-4", "PENDING_L4"),
+        ]:
+            Report.objects.create(
+                report_number=number,
+                title=number,
+                summary="summary",
+                department_id=self.department,
+                created_by=self.employee,
+                status=status,
+            )
+
+        request = self.factory.get("/api/v1/dashboard/admin/")
+        force_authenticate(request, user=dept_head)
+
+        response = DashboardAdminView.as_view()(request)
+
+        self.assertEqual(response.status_code, 200)
+        pending_numbers = {
+            item["report_number"]
+            for item in response.data["pending_approvals"]
+            if item["item_type"] == "report"
+        }
+        self.assertEqual(pending_numbers, {"REP-PENDING-2", "REP-PENDING-3"})
 
     def test_dashboard_analytics_returns_department_comparison(self):
         request = self.factory.get("/api/v1/dashboard/analytics/")

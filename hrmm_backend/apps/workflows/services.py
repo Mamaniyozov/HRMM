@@ -123,12 +123,9 @@ def perform_workflow_action(report, actor, action, comment, request):
 
     role_config = ROLE_APPROVAL_MATRIX.get(actor.role)
     if actor.role == "DIRECTOR" and report.status in {"PENDING_L2", "PENDING_L3", "PENDING_L4"}:
-        director_step = {
-            "PENDING_L2": {"approved_status": "PENDING_L3", "next_level": 3},
-            "PENDING_L3": {"approved_status": "PENDING_L4", "next_level": 4},
-            "PENDING_L4": {"approved_status": "APPROVED", "next_level": 4},
-        }
-        role_config = director_step[report.status]
+        role_config = {"approved_status": "APPROVED", "next_level": 4}
+    elif actor.role == "DEPT_HEAD" and report.status == "PENDING_L2":
+        role_config = {"approved_status": "PENDING_L4", "next_level": 4}
     elif not role_config:
         raise PermissionDenied("Sizda tasdiqlash vakolati yo'q.")
     elif report.status != role_config["pending_status"]:

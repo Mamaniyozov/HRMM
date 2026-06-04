@@ -13,6 +13,16 @@ REVIEWABLE_NOTIFICATION_TYPES = ("FEATURE_REQUEST", "USER_NOTIFICATION")
 PENDING_REPORT_STATUSES = ("PENDING_L2", "PENDING_L3", "PENDING_L4")
 
 
+def reviewable_report_statuses_for_user(user):
+    if user.role == "DIRECTOR":
+        return PENDING_REPORT_STATUSES
+    if user.role == "DEPT_HEAD":
+        return ("PENDING_L2", "PENDING_L3")
+    if user.role == "UNIT_HEAD":
+        return ("PENDING_L2",)
+    return ()
+
+
 class DashboardStatsView(APIView):
     permission_classes = [IsAuthenticatedHRMM]
 
@@ -98,16 +108,18 @@ class DashboardAdminView(DashboardStatsView):
         )
         employees_on_leave = leaves.filter(status="APPROVED").values("requested_by__full_name", "start_date", "end_date")[:10]
         pending_reports = list(
-            reports.filter(status__in=["PENDING_L2", "PENDING_L3", "PENDING_L4"])
+            reports.filter(status__in=reviewable_report_statuses_for_user(request.user))
             .values("id", "report_number", "title", "status", "created_by__full_name")[:10]
         )
         for item in pending_reports:
             item["item_type"] = "report"
 
-        pending_leaves = list(
-            leaves.filter(status="PENDING")
-            .values("id", "leave_number", "leave_type", "reason", "status", "requested_by__full_name")[:10]
-        )
+        pending_leaves = []
+        if request.user.role in {"DEPT_HEAD", "DIRECTOR"}:
+            pending_leaves = list(
+                leaves.filter(status="PENDING")
+                .values("id", "leave_number", "leave_type", "reason", "status", "requested_by__full_name")[:10]
+            )
         for item in pending_leaves:
             item["item_type"] = "leave"
             item["title"] = item.get("reason") or item.get("leave_type")
