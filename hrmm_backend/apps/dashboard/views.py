@@ -32,7 +32,7 @@ def pending_notifications_for_user(user):
     ).filter(
         reference_type__in=Notification.REVIEWABLE_REFERENCE_TYPES,
         status="PENDING",
-    ).exclude(submitted_by_id=user.id)
+    )
 
     if user.role == "DEPT_HEAD":
         queryset = queryset.filter(submitted_by__department_id=user.department_id)

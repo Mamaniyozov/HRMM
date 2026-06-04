@@ -171,9 +171,6 @@ class NotificationReviewView(APIView):
             if submitter_department_id and submitter_department_id != request.user.department_id_id:
                 return api_success(message="Faqat o'z bo'limingiz so'rovlarini ko'ra olasiz", data=None, status_code=403)
 
-        if target.submitted_by_id == request.user.id:
-            return api_success(message="O'z so'rovingizni tasdiqlay olmaysiz", data=None, status_code=403)
-
         serializer = NotificationReviewSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         action = serializer.validated_data["action"]

@@ -2250,7 +2250,6 @@ function isReviewableRequestNotification(item) {
 function canManagerReviewNotification(item) {
   if (!isDeptHeadOrDirector() || !item) return false;
   if (!isReviewableRequestNotification(item)) return false;
-  if (item.submitted_by && item.submitted_by === state.currentUser?.id) return false;
   return true;
 }
 

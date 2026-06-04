@@ -61,3 +61,33 @@ class NotificationTests(TestCase):
         self.assertEqual(response.status_code, 201)
         created = Notification.objects.exclude(id=self.notification.id).get()
         self.assertTrue(created.screenshot.name.startswith(f"notifications/{self.user.id}/{created.id}/"))
+
+    def test_director_can_review_own_feature_request(self):
+        director = User.objects.create(
+            username="notifdirector",
+            email="notifdirector@example.com",
+            password_hash="12345678",
+            full_name="Notif Director",
+            role="DIRECTOR",
+        )
+        request = Notification.objects.create(
+            user_id=director,
+            submitted_by=director,
+            title="Dashboard export",
+            message="Excel eksport kerak",
+            type="INFO",
+            reference_type="FEATURE_REQUEST",
+            status="PENDING",
+        )
+        self.client.force_authenticate(user=director)
+
+        response = self.client.post(
+            f"/api/v1/notifications/{request.id}/review/",
+            {"action": "APPROVE", "review_comment": "Tasdiqlandi"},
+            format="json",
+        )
+
+        request.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(request.status, "APPROVED")
+        self.assertEqual(request.reviewed_by, director)

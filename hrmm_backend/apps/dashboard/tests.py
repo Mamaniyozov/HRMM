@@ -141,9 +141,13 @@ class DashboardStatsTests(TestCase):
             for item in response.data["pending_approvals"]
             if item["item_type"] == "notification"
         ]
-        self.assertEqual(len(pending_notifications), 1)
-        self.assertEqual(pending_notifications[0]["title"], "Export qo'shish")
-        self.assertEqual(pending_notifications[0]["reference_type"], "FEATURE_REQUEST")
+        self.assertEqual(
+            {item["title"] for item in pending_notifications},
+            {"Export qo'shish", "O'zimniki"},
+        )
+        self.assertTrue(
+            all(item["reference_type"] == "FEATURE_REQUEST" for item in pending_notifications)
+        )
 
     def test_dashboard_analytics_returns_department_comparison(self):
         request = self.factory.get("/api/v1/dashboard/analytics/")
