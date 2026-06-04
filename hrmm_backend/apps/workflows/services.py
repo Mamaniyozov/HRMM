@@ -24,6 +24,8 @@ ROLE_APPROVAL_MATRIX = {
     },
 }
 
+SELF_APPROVAL_ROLES = {"UNIT_HEAD", "DEPT_HEAD", "DIRECTOR"}
+
 
 def _request_meta(request):
     return {
@@ -73,7 +75,11 @@ def _next_approvers_for_report(report):
 def perform_workflow_action(report, actor, action, comment, request):
     previous_status = report.status
 
-    if action in {"APPROVE", "REJECT", "REQUEST_REVISION"} and actor.id == report.created_by_id:
+    if (
+        action in {"APPROVE", "REJECT", "REQUEST_REVISION"}
+        and actor.id == report.created_by_id
+        and actor.role not in SELF_APPROVAL_ROLES
+    ):
         raise PermissionDenied("Report egasi o'z reportini tasdiqlay olmaydi.")
 
     if action == "SUBMIT":
