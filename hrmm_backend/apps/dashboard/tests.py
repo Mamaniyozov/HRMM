@@ -110,6 +110,41 @@ class DashboardStatsTests(TestCase):
         }
         self.assertEqual(pending_numbers, {"REP-PENDING-2", "REP-PENDING-3"})
 
+    def test_dashboard_admin_includes_reviewable_feature_requests(self):
+        Notification.objects.create(
+            user_id=self.employee,
+            submitted_by=self.employee,
+            title="Export qo'shish",
+            message="Excel eksport kerak",
+            type="INFO",
+            reference_type="FEATURE_REQUEST",
+            status="PENDING",
+        )
+        Notification.objects.create(
+            user_id=self.director,
+            submitted_by=self.director,
+            title="O'zimniki",
+            message="O'z so'rovim",
+            type="INFO",
+            reference_type="FEATURE_REQUEST",
+            status="PENDING",
+        )
+
+        request = self.factory.get("/api/v1/dashboard/admin/")
+        force_authenticate(request, user=self.director)
+
+        response = DashboardAdminView.as_view()(request)
+
+        self.assertEqual(response.status_code, 200)
+        pending_notifications = [
+            item
+            for item in response.data["pending_approvals"]
+            if item["item_type"] == "notification"
+        ]
+        self.assertEqual(len(pending_notifications), 1)
+        self.assertEqual(pending_notifications[0]["title"], "Export qo'shish")
+        self.assertEqual(pending_notifications[0]["reference_type"], "FEATURE_REQUEST")
+
     def test_dashboard_analytics_returns_department_comparison(self):
         request = self.factory.get("/api/v1/dashboard/analytics/")
         force_authenticate(request, user=self.director)

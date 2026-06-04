@@ -2227,10 +2227,13 @@ function canManagerReviewLeave(leave) {
 const REVIEWABLE_NOTIFICATION_TYPES = new Set(["FEATURE_REQUEST", "USER_NOTIFICATION"]);
 
 function isResultNotificationCopy(item) {
+  if (item?.status === "PENDING" && REVIEWABLE_NOTIFICATION_TYPES.has(item.reference_type)) {
+    return false;
+  }
   const title = String(item?.title || "").toLowerCase();
   const message = String(item?.message || "").toLowerCase();
   return (
-    item?.type === "INFO" ||
+    (item?.type === "INFO" && ["APPROVED", "REJECTED"].includes(item?.status || "")) ||
     title.includes("approve qilindi") ||
     title.includes("rad etildi") ||
     message.includes("approve qilindi") ||
@@ -3756,6 +3759,12 @@ function renderAdminDashboard() {
             headers: getHeaders(),
             body: JSON.stringify({ action, review_comment: "Admin tomonidan tasdiqlandi" }),
           });
+        } else if (itemType === 'notification') {
+          await apiRequest(`/api/v1/notifications/${itemId}/review/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, review_comment: "Admin tomonidan tasdiqlandi" }),
+          });
         } else {
           await apiRequest(`/api/v1/reports/${itemId}/actions/`, {
             method: "POST",
@@ -3766,6 +3775,7 @@ function renderAdminDashboard() {
         await Promise.all([
           loadReports(),
           loadLeaves(),
+          loadNotifications(),
           loadAdminDashboard(),
           loadDashboard(),
           loadAuditLogs(),
@@ -3792,6 +3802,12 @@ function renderAdminDashboard() {
             headers: getHeaders(),
             body: JSON.stringify({ action, review_comment: "Admin tomonidan rad etildi" }),
           });
+        } else if (itemType === 'notification') {
+          await apiRequest(`/api/v1/notifications/${itemId}/review/`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ action, review_comment: "Admin tomonidan rad etildi" }),
+          });
         } else {
           await apiRequest(`/api/v1/reports/${itemId}/actions/`, {
             method: "POST",
@@ -3802,6 +3818,7 @@ function renderAdminDashboard() {
         await Promise.all([
           loadReports(),
           loadLeaves(),
+          loadNotifications(),
           loadAdminDashboard(),
           loadDashboard(),
           loadAuditLogs(),
@@ -5867,6 +5884,10 @@ quickCreateForm?.addEventListener("submit", async (event) => {
       body: payload,
     });
     await loadNotifications();
+    if (isManagerRole()) {
+      await Promise.all([loadAdminDashboard(), loadOperationsDashboard()]);
+    }
+    refreshHomeDashboard();
     closeQuickCreate();
     quickCreateForm.reset();
     setMessage(mode === "feature" ? "Yangi funksiya talabi yuborildi." : "Yangi bildirim yaratildi.", "success");

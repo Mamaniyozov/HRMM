@@ -23,6 +23,37 @@ def reviewable_report_statuses_for_user(user):
     return ()
 
 
+def pending_notifications_for_user(user):
+    if user.role not in {"DEPT_HEAD", "DIRECTOR"}:
+        return []
+
+    queryset = Notification.objects.exclude(
+        reference_type=Notification.REVIEWER_ALERT_REFERENCE_TYPE
+    ).filter(
+        reference_type__in=Notification.REVIEWABLE_REFERENCE_TYPES,
+        status="PENDING",
+    ).exclude(submitted_by_id=user.id)
+
+    if user.role == "DEPT_HEAD":
+        queryset = queryset.filter(submitted_by__department_id=user.department_id)
+
+    pending_notifications = list(
+        queryset.values(
+            "id",
+            "title",
+            "message",
+            "status",
+            "reference_type",
+            "submitted_by__full_name",
+            "created_at",
+        )[:10]
+    )
+    for item in pending_notifications:
+        item["item_type"] = "notification"
+        item["created_by__full_name"] = item.pop("submitted_by__full_name", None)
+    return pending_notifications
+
+
 class DashboardStatsView(APIView):
     permission_classes = [IsAuthenticatedHRMM]
 
@@ -125,7 +156,8 @@ class DashboardAdminView(DashboardStatsView):
             item["title"] = item.get("reason") or item.get("leave_type")
             item["created_by__full_name"] = item.pop("requested_by__full_name", None)
 
-        pending_approvals = pending_reports + pending_leaves
+        pending_notifications = pending_notifications_for_user(request.user)
+        pending_approvals = pending_reports + pending_leaves + pending_notifications
 
         return Response(
             {
