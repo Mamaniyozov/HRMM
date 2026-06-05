@@ -34,6 +34,7 @@ const state = {
   analyticsDashboard: null,
   leaveCalendar: [],
   reportHistory: [],
+  reviewHistory: [],
   lastCreatedReportId: "",
   pendingApprovals: [],
 };
@@ -2380,7 +2381,14 @@ function bindReviewActionButtons(container) {
             headers: getHeaders(),
             body: JSON.stringify({ action, comment }),
           });
-          await Promise.all([loadReports(), loadAdminDashboard(), loadDashboard(), loadAuditLogs(), loadOperationsDashboard()]);
+          await Promise.all([
+            loadReports(),
+            loadAdminDashboard(),
+            loadDashboard(),
+            loadAuditLogs(),
+            loadOperationsDashboard(),
+            loadReviewHistory(),
+          ]);
         } else if (itemType === "leave") {
           if (action === "REJECT" && !comment) {
             setMessage("Rad etish uchun izoh majburiy.", "error");
@@ -2391,7 +2399,14 @@ function bindReviewActionButtons(container) {
             headers: getHeaders(),
             body: JSON.stringify({ action, review_comment: comment }),
           });
-          await Promise.all([loadLeaves(), loadAdminDashboard(), loadDashboard(), loadAuditLogs(), loadOperationsDashboard()]);
+          await Promise.all([
+            loadLeaves(),
+            loadAdminDashboard(),
+            loadDashboard(),
+            loadAuditLogs(),
+            loadOperationsDashboard(),
+            loadReviewHistory(),
+          ]);
         } else if (itemType === "notification") {
           if (action === "REJECT" && !comment) {
             setMessage("Rad etish uchun izoh majburiy.", "error");
@@ -2407,7 +2422,14 @@ function bindReviewActionButtons(container) {
             const index = state.notifications.findIndex((entry) => entry.id === reviewed.id);
             if (index >= 0) state.notifications[index] = reviewed;
           }
-          await Promise.all([loadNotifications(), loadAdminDashboard(), loadDashboard(), loadAuditLogs(), loadOperationsDashboard()]);
+          await Promise.all([
+            loadNotifications(),
+            loadAdminDashboard(),
+            loadDashboard(),
+            loadAuditLogs(),
+            loadOperationsDashboard(),
+            loadReviewHistory(),
+          ]);
           refreshHomeDashboard();
         }
         sectionModal?.classList.add("hidden");
@@ -2511,7 +2533,14 @@ function bindReportDetailActionButtons(report) {
             headers: getHeaders(),
             body: JSON.stringify({ action: "SUBMIT", comment: "" }),
           });
-          await Promise.all([loadReports(), loadAdminDashboard(), loadDashboard(), loadAuditLogs(), loadOperationsDashboard()]);
+          await Promise.all([
+            loadReports(),
+            loadAdminDashboard(),
+            loadDashboard(),
+            loadAuditLogs(),
+            loadOperationsDashboard(),
+            loadReviewHistory(),
+          ]);
           refreshHomeDashboard();
           const updated = state.reports.find((item) => item.id === reportId);
           sectionModal?.classList.add("hidden");
@@ -3779,6 +3808,7 @@ function renderAdminDashboard() {
           loadDashboard(),
           loadAuditLogs(),
           loadOperationsDashboard(),
+          loadReviewHistory(),
         ]);
         refreshHomeDashboard();
         setMessage("Muvaffaqiyatli tasdiqlandi", "success");
@@ -3822,6 +3852,7 @@ function renderAdminDashboard() {
           loadDashboard(),
           loadAuditLogs(),
           loadOperationsDashboard(),
+          loadReviewHistory(),
         ]);
         refreshHomeDashboard();
         setMessage("Muvaffaqiyatli rad etildi", "success");
@@ -4270,20 +4301,168 @@ function renderAnalyticsDashboard() {
   });
 }
 
+function getReviewHistoryTypeLabel(itemType) {
+  const labels = {
+    report: "Hisobot",
+    leave: "Ariza",
+    notification: "Bildirishnoma",
+    feature_request: "Funksiya talabi",
+  };
+  return labels[itemType] || "So'rov";
+}
+
+function getReviewHistoryActionLabel(action) {
+  const labels = {
+    APPROVE: "Tasdiqlangan",
+    REJECT: "Rad etilgan",
+    REQUEST_REVISION: "Qayta ko'rish",
+    SUBMIT: "Yuborilgan",
+    ARCHIVE: "Arxivlangan",
+    CANCEL: "Bekor qilingan",
+  };
+  return labels[action] || action || "-";
+}
+
+function buildReviewHistoryFromState() {
+  const userId = state.currentUser?.id;
+  if (!userId) return [];
+
+  const entries = [];
+
+  state.reports.forEach((report) => {
+    (report.approval_history || []).forEach((item) => {
+      if (item.approver_id === userId) {
+        entries.push({
+          item_type: "report",
+          item_id: report.id,
+          reference: report.report_number,
+          title: report.title,
+          action: item.action,
+          previous_status: item.previous_status,
+          new_status: item.new_status,
+          comment: item.comment,
+          subject_name: report.created_by_name || "-",
+          created_at: item.created_at,
+        });
+      }
+    });
+  });
+
+  state.leaves.forEach((leave) => {
+    if (leave.reviewed_by === userId && leave.status !== "PENDING") {
+      entries.push({
+        item_type: "leave",
+        item_id: leave.id,
+        reference: leave.leave_number,
+        title: leave.reason || leave.leave_type,
+        action: leave.status === "APPROVED" ? "APPROVE" : leave.status,
+        previous_status: "PENDING",
+        new_status: leave.status,
+        comment: leave.review_comment,
+        subject_name: leave.requested_by_name || "-",
+        created_at: leave.updated_at || leave.created_at,
+      });
+    }
+  });
+
+  state.notifications.forEach((item) => {
+    if (
+      item.reviewed_by === userId &&
+      ["APPROVED", "REJECTED"].includes(item.status || "")
+    ) {
+      entries.push({
+        item_type: item.reference_type === "FEATURE_REQUEST" ? "feature_request" : "notification",
+        item_id: item.id,
+        reference: item.notification_number,
+        title: item.title,
+        action: item.status === "APPROVED" ? "APPROVE" : "REJECT",
+        previous_status: "PENDING",
+        new_status: item.status,
+        comment: item.review_comment,
+        subject_name: item.submitted_by_name || "-",
+        created_at: item.read_at || item.created_at,
+      });
+    }
+  });
+
+  return entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
+function renderReviewHistory() {
+  if (!reportHistoryList) return;
+
+  const items = state.reviewHistory.length ? state.reviewHistory : state.reportHistory;
+  const isLegacyReportOnly = !state.reviewHistory.length && state.reportHistory.length;
+
+  if (!items.length) {
+    reportHistoryList.innerHTML =
+      '<div class="feed-item muted-item">Hali tasdiqlash tarixi yo\'q. Ariza, hisobot yoki bildirishnomani tasdiqlaganingizdan keyin shu yerda ko\'rinadi.</div>';
+    return;
+  }
+
+  reportHistoryList.innerHTML = items
+    .map((item) => {
+      if (isLegacyReportOnly) {
+        return `
+          <div class="feed-item">
+            <strong>${escapeHtml(item.action)}</strong>
+            <span>${escapeHtml(item.comment || "Izoh yo'q")}</span>
+            <small>${escapeHtml(item.previous_status)} → ${escapeHtml(item.new_status)} — ${escapeHtml(item.approver_name || "-")} · ${formatDate(item.created_at)}</small>
+          </div>
+        `;
+      }
+
+      const typeLabel = getReviewHistoryTypeLabel(item.item_type);
+      const actionLabel = getReviewHistoryActionLabel(item.action);
+      const statusClass =
+        item.new_status === "APPROVED" || item.action === "APPROVE"
+          ? "status-pill--approved"
+          : item.new_status === "REJECTED" || item.action === "REJECT"
+            ? "status-pill--pending"
+            : "status-pill--pending";
+
+      return `
+        <button type="button" class="feed-item review-history-item" data-history-type="${escapeHtml(item.item_type)}" data-history-id="${escapeHtml(item.item_id)}">
+          <span class="item-type-pill">${escapeHtml(typeLabel)}</span>
+          <strong>${escapeHtml(item.reference || "")} — ${escapeHtml(item.title || "-")}</strong>
+          <span>${escapeHtml(actionLabel)} · ${escapeHtml(item.subject_name || "-")}</span>
+          <span class="status-pill ${statusClass}">${escapeHtml(item.previous_status || "")} → ${escapeHtml(item.new_status || "")}</span>
+          ${item.comment ? `<span class="review-history-comment">${escapeHtml(item.comment)}</span>` : ""}
+          <small>${formatDate(item.created_at)}</small>
+        </button>
+      `;
+    })
+    .join("");
+
+  reportHistoryList.querySelectorAll(".review-history-item").forEach((button) => {
+    button.addEventListener("click", () => {
+      const type = button.dataset.historyType;
+      const id = button.dataset.historyId;
+      openEntityDetailModal(
+        type === "feature_request" ? "notification" : type === "leave" ? "leave" : type === "report" ? "report" : "notification",
+        id
+      );
+    });
+  });
+}
+
 function renderReportHistory() {
-  reportHistoryList.innerHTML = state.reportHistory.length
-    ? state.reportHistory
-        .map(
-          (item) => `
-            <div class="feed-item">
-              <strong>${item.action}</strong>
-              <span>${item.comment || "No comment"}</span>
-              <small>${item.previous_status} -> ${item.new_status} by ${item.approver_name} at ${formatDate(item.created_at)}</small>
-            </div>
-          `
-        )
-        .join("")
-    : '<div class="feed-item muted-item">History ma\'lumotlari yoq</div>';
+  renderReviewHistory();
+}
+
+async function loadReviewHistory() {
+  try {
+    const payload = await apiRequest("/api/v1/dashboard/review-history/", {
+      headers: getHeaders(false),
+    });
+    state.reviewHistory = payload.results || [];
+  } catch (error) {
+    state.reviewHistory = buildReviewHistoryFromState();
+    if (!state.reviewHistory.length) {
+      console.warn("Review history:", error.message);
+    }
+  }
+  renderReviewHistory();
 }
 
 function renderLeaveCalendar() {
@@ -4537,6 +4716,7 @@ async function loadAllData() {
     loadFeedbackEntries(),
     loadAuditLogs(),
     loadOperationsDashboard(),
+    loadReviewHistory(),
   ];
 
   tasks.push(loadLeaves(), loadLeaveCalendar());
@@ -5617,9 +5797,16 @@ document.querySelectorAll(".bottom-section-nav .section-nav-btn").forEach((butto
         section.classList.remove("hidden");
         // Scroll to section
         section.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (targetId === "reportHistorySection") {
+          loadReviewHistory().catch((error) => setMessage(error.message, "error"));
+        }
       }
     }
   });
+});
+
+document.getElementById("refreshReviewHistory")?.addEventListener("click", () => {
+  loadReviewHistory().catch((error) => setMessage(error.message, "error"));
 });
 
 // Rating Modal functionality

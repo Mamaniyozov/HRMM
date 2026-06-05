@@ -4,6 +4,7 @@ from apps.dashboard.views import (
     DashboardAdminView,
     DashboardAnalyticsView,
     DashboardOperationsView,
+    DashboardReviewHistoryView,
     DashboardStatsView,
 )
 
@@ -13,4 +14,5 @@ urlpatterns = [
     path("admin/", DashboardAdminView.as_view(), name="dashboard_admin"),
     path("analytics/", DashboardAnalyticsView.as_view(), name="dashboard_analytics"),
     path("operations/", DashboardOperationsView.as_view(), name="dashboard_operations"),
+    path("review-history/", DashboardReviewHistoryView.as_view(), name="dashboard_review_history"),
 ]

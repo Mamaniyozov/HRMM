@@ -1835,6 +1835,7 @@ tbody tr:hover {
 
 .operations-table {
   width: 100%;
+  min-width: 860px;
   border-collapse: collapse;
   font-size: 0.88rem;
 }
@@ -1867,6 +1868,7 @@ tbody tr:hover {
 .operations-table .dept-name {
   font-weight: 700;
   color: var(--text);
+  overflow-wrap: anywhere;
 }
 
 .operations-metric-cell {
@@ -1942,6 +1944,11 @@ tbody tr:hover {
   border-bottom: 1px dashed #edf1f6;
 }
 
+.operations-dist-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .operations-dist-row strong {
   white-space: nowrap;
 }
@@ -2012,6 +2019,34 @@ tbody tr:hover {
 [data-theme="dark"] .status-pill--approved {
   background: rgba(21, 128, 61, 0.2);
   color: #86efac;
+}
+
+.review-history-list .review-history-item {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.review-history-list .review-history-item:hover {
+  border-color: rgba(79, 124, 216, 0.45);
+  transform: translateY(-1px);
+}
+
+.review-history-comment {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+[data-theme="dark"] .review-history-list .review-history-item {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .compact-form {
@@ -2285,33 +2320,40 @@ tbody tr:hover {
 
 .status-strip {
   position: fixed;
-  top: 24px;
-  right: 24px;
+  top: auto;
+  right: 20px;
+  bottom: 92px;
+  width: min(360px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
   z-index: 1200;
   pointer-events: none;
 }
 
 .session-footer {
-  margin-top: -8px;
-  margin-bottom: 12px;
+  margin-top: 10px;
+  margin-bottom: 0;
   display: flex;
   gap: 8px;
   justify-content: flex-end;
   color: var(--muted);
+  flex-wrap: wrap;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .toast-stack {
   display: grid;
-  gap: 12px;
+  gap: 8px;
   justify-items: end;
 }
 
 .message-box {
-  width: min(420px, calc(100vw - 32px));
-  min-height: 60px;
+  width: 100%;
+  min-height: 48px;
   display: flex;
   align-items: center;
-  padding: 14px 18px;
+  padding: 12px 14px;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.82);
@@ -2320,6 +2362,8 @@ tbody tr:hover {
   color: var(--muted);
   pointer-events: auto;
   opacity: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
   transform: translateY(-10px) scale(0.98);
   animation: toast-in 220ms ease forwards;
 }
@@ -2416,9 +2460,11 @@ tbody tr:hover {
 
 @media (max-width: 760px) {
   .status-strip {
-    top: 16px;
+    top: auto;
     left: 16px;
     right: 16px;
+    bottom: 86px;
+    width: auto;
   }
 
   .toast-stack {

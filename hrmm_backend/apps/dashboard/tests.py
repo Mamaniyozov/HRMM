@@ -7,11 +7,13 @@ from apps.dashboard.views import (
     DashboardAdminView,
     DashboardAnalyticsView,
     DashboardOperationsView,
+    DashboardReviewHistoryView,
     DashboardStatsView,
 )
+from apps.notifications.models import Notification
+from apps.workflows.models import ApprovalHistory
 from apps.departments.models import Department
 from apps.leave_management.models import LeaveRequest
-from apps.notifications.models import Notification
 from apps.reports.models import Report
 from apps.users.models import User
 
@@ -182,3 +184,43 @@ class DashboardStatsTests(TestCase):
         self.assertIn("reports", row)
         self.assertIn("notifications", row)
         self.assertIn("feature_requests", row)
+
+    def test_dashboard_review_history_returns_user_actions(self):
+        ApprovalHistory.objects.create(
+            report_id=Report.objects.get(report_number="REP-STAT-1"),
+            approver_id=self.director,
+            approval_level=4,
+            action="APPROVE",
+            comment="OK",
+            previous_status="PENDING_L4",
+            new_status="APPROVED",
+        )
+        leave = LeaveRequest.objects.filter(requested_by=self.employee).first()
+        leave.status = "APPROVED"
+        leave.reviewed_by = self.director
+        leave.review_comment = "Approved"
+        leave.save()
+
+        Notification.objects.create(
+            user_id=self.employee,
+            submitted_by=self.employee,
+            reviewed_by=self.director,
+            title="Feature done",
+            message="test",
+            type="INFO",
+            reference_type="FEATURE_REQUEST",
+            status="APPROVED",
+            review_comment="Good",
+        )
+
+        request = self.factory.get("/api/v1/dashboard/review-history/")
+        force_authenticate(request, user=self.director)
+
+        response = DashboardReviewHistoryView.as_view()(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertGreaterEqual(response.data["count"], 3)
+        types = {item["item_type"] for item in response.data["results"]}
+        self.assertIn("report", types)
+        self.assertIn("leave", types)
+        self.assertIn("feature_request", types)

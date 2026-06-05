@@ -1123,11 +1123,14 @@
 
 
         <section id="reportHistorySection" class="panel app-section">
-          <div class="panel-heading">
-            <p class="eyebrow" data-translate="section_report_history">Hisobot tarixi</p>
-            <h3 data-translate="section_approval_history">Tasdiqlash tarixi</h3>
+          <div class="panel-heading inline">
+            <div>
+              <p class="eyebrow" data-translate="section_report_history">Tasdiqlash tarixi</p>
+              <h3 data-translate="section_approval_history">Siz ko'rib chiqqan so'rovlar</h3>
+            </div>
+            <button id="refreshReviewHistory" type="button" class="ghost-btn">Tarixni yangilash</button>
           </div>
-          <div id="reportHistoryList" class="feed-list"></div>
+          <div id="reportHistoryList" class="feed-list review-history-list"></div>
         </section>
 
         <section id="leavesSection" class="panel app-section">

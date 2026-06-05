@@ -8,6 +8,7 @@ from apps.notifications.models import Notification
 from apps.reports.models import Report
 from apps.reports.views import IsAuthenticatedHRMM
 from apps.users.models import User
+from apps.workflows.models import ApprovalHistory
 
 REVIEWABLE_NOTIFICATION_TYPES = ("FEATURE_REQUEST", "USER_NOTIFICATION")
 PENDING_REPORT_STATUSES = ("PENDING_L2", "PENDING_L3", "PENDING_L4")
@@ -323,3 +324,95 @@ class DashboardOperationsView(DashboardStatsView):
         }
 
         return Response({"overall": overall, "departments": department_rows})
+
+
+class DashboardReviewHistoryView(APIView):
+    """Foydalanuvchi bajargan tasdiqlash / rad etish / ko'rib chiqishlar tarixi."""
+
+    permission_classes = [IsAuthenticatedHRMM]
+
+    def get(self, request):
+        user = request.user
+        entries = []
+
+        report_history = (
+            ApprovalHistory.objects.filter(approver_id=user)
+            .select_related("report_id", "report_id__created_by")
+            .order_by("-created_at")[:120]
+        )
+        for item in report_history:
+            report = item.report_id
+            entries.append(
+                {
+                    "item_type": "report",
+                    "item_id": str(report.id),
+                    "reference": report.report_number,
+                    "title": report.title,
+                    "action": item.action,
+                    "previous_status": item.previous_status,
+                    "new_status": item.new_status,
+                    "comment": item.comment or "",
+                    "subject_name": getattr(report.created_by, "full_name", None) or "-",
+                    "created_at": item.created_at.isoformat(),
+                }
+            )
+
+        reviewed_leaves = (
+            LeaveRequest.objects.filter(reviewed_by=user)
+            .exclude(status="PENDING")
+            .select_related("requested_by")
+            .order_by("-updated_at")[:120]
+        )
+        for leave in reviewed_leaves:
+            action = "APPROVE" if leave.status == "APPROVED" else leave.status
+            entries.append(
+                {
+                    "item_type": "leave",
+                    "item_id": str(leave.id),
+                    "reference": leave.leave_number or str(leave.id)[:8],
+                    "title": leave.reason or leave.leave_type,
+                    "action": action,
+                    "previous_status": "PENDING",
+                    "new_status": leave.status,
+                    "comment": leave.review_comment or "",
+                    "subject_name": getattr(leave.requested_by, "full_name", None) or "-",
+                    "created_at": leave.updated_at.isoformat(),
+                }
+            )
+
+        reviewed_notifications = (
+            Notification.objects.filter(
+                reviewed_by=user,
+                status__in=["APPROVED", "REJECTED"],
+            )
+            .exclude(reference_type=Notification.REVIEWER_ALERT_REFERENCE_TYPE)
+            .select_related("submitted_by")
+            .order_by("-read_at", "-created_at")[:120]
+        )
+        for notification in reviewed_notifications:
+            item_type = (
+                "feature_request"
+                if notification.reference_type == "FEATURE_REQUEST"
+                else "notification"
+            )
+            action = "APPROVE" if notification.status == "APPROVED" else "REJECT"
+            entries.append(
+                {
+                    "item_type": item_type,
+                    "item_id": str(notification.id),
+                    "reference": notification.notification_number or str(notification.id)[:8],
+                    "title": notification.title,
+                    "action": action,
+                    "previous_status": "PENDING",
+                    "new_status": notification.status,
+                    "comment": notification.review_comment or "",
+                    "subject_name": getattr(notification.submitted_by, "full_name", None) or "-",
+                    "created_at": (notification.read_at or notification.created_at).isoformat(),
+                }
+            )
+
+        entries.sort(key=lambda row: row["created_at"], reverse=True)
+        limit = min(int(request.query_params.get("limit", 80)), 200)
+        results = entries[:limit]
+
+        return Response({"count": len(results), "results": results})
