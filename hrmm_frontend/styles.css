@@ -2044,6 +2044,51 @@ tbody tr:hover {
   font-size: 0.88rem;
 }
 
+.archive-telegram-notice {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(79, 124, 216, 0.1);
+  border: 1px solid rgba(79, 124, 216, 0.25);
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.archive-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.archive-badge--success {
+  color: #15803d;
+  background: #ecfdf3;
+}
+
+.archive-badge--failed {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+[data-theme="dark"] .archive-badge--success {
+  background: rgba(21, 128, 61, 0.2);
+  color: #86efac;
+}
+
+[data-theme="dark"] .archive-badge--failed {
+  background: rgba(185, 28, 28, 0.2);
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .archive-telegram-notice {
+  background: rgba(79, 124, 216, 0.12);
+  border-color: rgba(79, 124, 216, 0.3);
+}
+
 [data-theme="dark"] .review-history-list .review-history-item {
   background: rgba(15, 23, 42, 0.85);
   border-color: rgba(255, 255, 255, 0.08);

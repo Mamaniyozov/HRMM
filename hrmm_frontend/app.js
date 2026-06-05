@@ -29,6 +29,7 @@ const state = {
   reports: [],
   leaves: [],
   auditLogs: [],
+  archiveLogs: [],
   notifications: [],
   adminDashboard: null,
   analyticsDashboard: null,
@@ -129,6 +130,8 @@ const messageBox = document.getElementById("messageBox");
 const usersTableBody = document.getElementById("usersTableBody");
 const reportsTableBody = document.getElementById("reportsTableBody");
 const auditTableBody = document.getElementById("auditTableBody");
+const archiveLogsTableBody = document.getElementById("archiveLogsTableBody");
+const refreshArchiveLogsButton = document.getElementById("refreshArchiveLogs");
 const recentReportsList = document.getElementById("recentReportsList");
 const recentLeavesList = document.getElementById("recentLeavesList");
 const notificationsList = document.getElementById("notificationsList");
@@ -1343,7 +1346,7 @@ function setAuthUi(isAuthenticated) {
   // Hide all sections except homeSection and auditSection on initial login
   if (isAuthenticated) {
     document.querySelectorAll(".app-section").forEach((sec) => {
-      if (sec.id === "homeSection" || sec.id === "auditSection") {
+      if (sec.id === "homeSection" || sec.id === "auditSection" || sec.id === "archiveSection") {
         sec.classList.remove("hidden");
       } else {
         sec.classList.add("hidden");
@@ -3571,6 +3574,45 @@ function renderAudit() {
   renderActivityHistory();
 }
 
+function renderArchiveLogs() {
+  if (!archiveLogsTableBody) return;
+
+  if (!state.archiveLogs.length) {
+    archiveLogsTableBody.innerHTML =
+      '<tr><td colspan="4" class="empty-state">Oxirgi 7 kunda arxiv loglari yo\'q</td></tr>';
+    return;
+  }
+
+  archiveLogsTableBody.innerHTML = state.archiveLogs
+    .map((log) => {
+      const isSuccess = log.status === "success";
+      const badgeClass = isSuccess ? "archive-badge archive-badge--success" : "archive-badge archive-badge--failed";
+      const badgeLabel = isSuccess ? "Muvaffaqiyatli" : "Xatolik";
+      return `
+        <tr>
+          <td>${formatDate(log.archived_at)}</td>
+          <td>${log.record_count ?? 0}</td>
+          <td>${log.file_size_kb ?? 0}</td>
+          <td><span class="${badgeClass}">${badgeLabel}</span></td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
+async function loadArchiveLogs() {
+  try {
+    const payload = await apiRequest("/api/archive-logs/?page_size=50", {
+      headers: getHeaders(false),
+    });
+    state.archiveLogs = payload.results || [];
+  } catch (error) {
+    state.archiveLogs = [];
+    console.warn("Archive logs:", error.message);
+  }
+  renderArchiveLogs();
+}
+
 function renderRecentLists(payload) {
   const recentReports = payload.recent_reports || [];
   const recentLeaves = payload.recent_leaves || [];
@@ -4715,6 +4757,7 @@ async function loadAllData() {
     loadNotifications(),
     loadFeedbackEntries(),
     loadAuditLogs(),
+    loadArchiveLogs(),
     loadOperationsDashboard(),
     loadReviewHistory(),
   ];
@@ -5392,7 +5435,10 @@ useLatestReportIdButton?.addEventListener("click", () => {
 departmentSelect?.addEventListener("change", renderUnits);
 refreshUsersButton?.addEventListener("click", () => loadUsers().catch((error) => setMessage(error.message, "error")));
 refreshReportsButton?.addEventListener("click", () => loadReports().catch((error) => setMessage(error.message, "error")));
-refreshAuditButton?.addEventListener("click", () => loadAuditLogs().catch((error) => setMessage(error.message, "error"))); 
+refreshAuditButton?.addEventListener("click", () => loadAuditLogs().catch((error) => setMessage(error.message, "error")));
+refreshArchiveLogsButton?.addEventListener("click", () =>
+  loadArchiveLogs().catch((error) => setMessage(error.message, "error"))
+); 
 refreshDashboardButton?.addEventListener("click", () => loadDashboard().catch((error) => setMessage(error.message, "error")));
 refreshNotificationsButton?.addEventListener("click", () => loadNotifications().catch((error) => setMessage(error.message, "error")));
 readAllNotificationsButton?.addEventListener("click", async () => {

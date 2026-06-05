@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "apps.dashboard",
     "apps.audit",
     "apps.notifications",
+    "apps.archives",
 ]
 
 MIDDLEWARE = [
@@ -151,6 +152,12 @@ SIMPLE_JWT = {
 
 TOTP_ISSUER_NAME = os.getenv("TOTP_ISSUER_NAME", "HRMM Control Center")
 
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+
+ARCHIVE_RETENTION_DAYS = int(os.getenv("ARCHIVE_RETENTION_DAYS", "7"))
+ARCHIVE_OUTPUT_DIR = BASE_DIR / "archives"
+
 
 def _env_csv_list(name, *, defaults=None):
     raw = os.getenv(name, "")
@@ -159,6 +166,15 @@ def _env_csv_list(name, *, defaults=None):
         return values
     return list(defaults or [])
 
+
+ARCHIVE_MODELS = _env_csv_list(
+    "ARCHIVE_MODELS",
+    defaults=[
+        "audit.AuditLog",
+        "notifications.Notification",
+        "workflows.ApprovalHistory",
+    ],
+)
 
 _default_csrf_origins = [
     "http://localhost:5500",

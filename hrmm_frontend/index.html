@@ -487,13 +487,13 @@
   </div>
 
   <!-- Yordam tugmasi -->
-  <button type="button" style="
+  <a id="helpCenterLink" href="https://t.me/Muhammadyusuf_5538" target="_blank" rel="noopener noreferrer" style="
     display: flex; align-items: center; gap: 10px;
     width: calc(100% - 2rem); margin: 0.75rem 1rem;
     padding: 10px 14px; border-radius: 10px;
     border: 1px solid var(--line); background: var(--bg-deep);
     cursor: pointer; text-align: left; font-family: inherit;
-    color: var(--text); transition: all 0.15s ease;
+    color: var(--text); text-decoration: none; transition: all 0.15s ease;
   " onmouseover="this.style.background='rgba(23,74,139,0.1)'; this.style.borderColor='rgba(23,74,139,0.3)'; this.style.color='var(--accent)';"
     onmouseout="this.style.background='var(--bg-deep)'; this.style.borderColor='var(--line)'; this.style.color='var(--text)'">
     <svg viewBox="0 0 24 24" width="18" height="18" style="flex-shrink:0;"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="currentColor" stroke-width="1"/></svg>
@@ -502,7 +502,7 @@
       <div style="font-size:11px; color: var(--muted); margin-top:1px;">Texnik qo'llab-quvvatlash</div>
     </div>
     <svg viewBox="0 0 24 24" width="14" height="14" style="flex-shrink:0; color: var(--muted);"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-  </button>
+  </a>
 
   <!-- Yashirin elementlar (eski kodga mos) -->
   <span id="profileRoleIcon" style="display:none;"></span>
@@ -641,6 +641,39 @@
               <thead><tr><th data-translate="audit_action">Harakat</th><th data-translate="audit_target">Maqsad</th><th data-translate="audit_description">Tavsif</th><th data-translate="audit_performer">Ijrochi</th><th data-translate="audit_time">Vaqt</th></tr></thead>
               <tbody id="auditTableBody"><tr><td colspan="5" class="empty-state" data-translate="audit_logs_not_found">Audit loglar yuklanmagan</td></tr></tbody>
             </table>
+          </div>
+        </section>
+
+        <section id="archiveSection" class="panel app-section">
+          <div class="panel-heading inline">
+            <div>
+              <p class="eyebrow">Arxiv</p>
+              <h3>Arxivlash tarixi (oxirgi 7 kun)</h3>
+            </div>
+            <button id="refreshArchiveLogs" class="ghost-btn" type="button">Yangilash</button>
+          </div>
+          <div class="table-wrap" style="max-height: 420px; overflow-y: auto;">
+            <table class="archive-logs-table">
+              <thead>
+                <tr>
+                  <th>Sana</th>
+                  <th>Yozuvlar soni</th>
+                  <th>Fayl hajmi (KB)</th>
+                  <th>Holat</th>
+                </tr>
+              </thead>
+              <tbody id="archiveLogsTableBody">
+                <tr><td colspan="4" class="empty-state">Arxiv loglari yuklanmagan</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="archive-telegram-notice">
+            Qolgan ma'lumotlarni Telegram botdan olasiz
+          </p>
+          <div class="archive-actions">
+            <a href="https://t.me/Muhammadyusuf_5538" target="_blank" rel="noopener noreferrer" class="primary-btn">
+              Yordam markaziga ulanish
+            </a>
           </div>
         </section>
 
