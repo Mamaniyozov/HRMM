@@ -5111,7 +5111,7 @@ roleManagementForm?.addEventListener("submit", async (event) => {
 
   try {
     setMessage("Rol o'zgartirilmoqda...");
-    await apiRequest(`/api/v1/users/${userId}/`, {
+    await apiRequest(`/api/v1/users/${userId}/update/`, {
       method: "PUT",
       headers: getHeaders(),
       body: JSON.stringify({ role: newRole }),
