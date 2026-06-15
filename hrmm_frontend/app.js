@@ -111,6 +111,10 @@ const roleManagementForm = document.getElementById("roleManagementForm");
 const roleManagementUserSelect = document.getElementById("roleManagementUserSelect");
 const roleManagementRoleSelect = document.getElementById("roleManagementRoleSelect");
 const roleManagementUserList = document.getElementById("roleManagementUserList");
+const roleManagementDeptLabel = document.getElementById("roleManagementDeptLabel");
+const roleManagementDeptSelect = document.getElementById("roleManagementDeptSelect");
+const roleManagementUnitLabel = document.getElementById("roleManagementUnitLabel");
+const roleManagementUnitSelect = document.getElementById("roleManagementUnitSelect");
 const refreshUsersForRoleManagement = document.getElementById("refreshUsersForRoleManagement");
 const reportForm = document.getElementById("reportForm");
 const workflowForm = document.getElementById("workflowForm");
@@ -1161,6 +1165,101 @@ Object.keys(loginTranslations).forEach((languageCode) => {
   };
 });
 
+// FIXED: Add missing translation keys for new functionality
+const newTranslations = {
+  uz: {
+    role_management: "Foydalanuvchi rollarini boshqarish",
+    role_change: "Rol o'zgartirish",
+    select_user: "Foydalanuvchi tanlang",
+    new_role: "Yangi rol",
+    department: "Bo'lim",
+    unit: "Birlik",
+    select_department: "Bo'lim tanlang",
+    select_unit: "Birlik tanlang",
+    role_change_success: "Rol muvaffaqiyatli o'zgartirildi",
+    role_change_error: "Rol o'zgartirishda xato bo'ldi",
+    department_required: "Bu rol uchun bo'lim tanlanishi shart",
+    unit_required: "Bu rol uchun birlik tanlanishi shart",
+    theme_dark: "Tun rejimi",
+    theme_light: "Kunduz rejimi",
+    theme_toggle: "Tun/kunduz rejimi",
+    generic_error: "Xatolik yuz berdi. Iltimos, qayta urinib ko'ring yoki administratorga murojaat qiling.",
+    users_list: "Foydalanuvchilar ro'yxati",
+    refresh_users: "Foydalanuvchilarni yangilash",
+    current_role: "Hozirgi rol",
+  },
+  ru: {
+    role_management: "Управление ролями пользователей",
+    role_change: "Изменение роли",
+    select_user: "Выберите пользователя",
+    new_role: "Новая роль",
+    department: "Отдел",
+    unit: "Подразделение",
+    select_department: "Выберите отдел",
+    select_unit: "Выберите подразделение",
+    role_change_success: "Роль успешно изменена",
+    role_change_error: "Ошибка при изменении роли",
+    department_required: "Для этой роли необходимо выбрать отдел",
+    unit_required: "Для этой роли необходимо выбрать подразделение",
+    theme_dark: "Ночной режим",
+    theme_light: "Дневной режим",
+    theme_toggle: "Переключение темы",
+    generic_error: "Произошла ошибка. Пожалуйста, попробуйте снова или обратитесь к администратору.",
+    users_list: "Список пользователей",
+    refresh_users: "Обновить пользователей",
+    current_role: "Текущая роль",
+  },
+  en: {
+    role_management: "User Role Management",
+    role_change: "Change Role",
+    select_user: "Select User",
+    new_role: "New Role",
+    department: "Department",
+    unit: "Unit",
+    select_department: "Select Department",
+    select_unit: "Select Unit",
+    role_change_success: "Role changed successfully",
+    role_change_error: "Error changing role",
+    department_required: "Department is required for this role",
+    unit_required: "Unit is required for this role",
+    theme_dark: "Dark Mode",
+    theme_light: "Light Mode",
+    theme_toggle: "Toggle Theme",
+    generic_error: "An error occurred. Please try again or contact the administrator.",
+    users_list: "Users List",
+    refresh_users: "Refresh Users",
+    current_role: "Current Role",
+  },
+  tr: {
+    role_management: "Kullanici Rol Yonetimi",
+    role_change: "Rol Degistir",
+    select_user: "Kullanici Secin",
+    new_role: "Yeni Rol",
+    department: "Departman",
+    unit: "Birim",
+    select_department: "Departman Secin",
+    select_unit: "Birim Secin",
+    role_change_success: "Rol basariyla degistirildi",
+    role_change_error: "Rol degistirme hatasi",
+    department_required: "Bu rol icin departman secilmelidir",
+    unit_required: "Bu rol icin birim secilmelidir",
+    theme_dark: "Karanlik Mod",
+    theme_light: "Aydinlik Mod",
+    theme_toggle: "Tema Degistir",
+    generic_error: "Bir hata olustu. Lutfen tekrar deneyin veya yoneticiye basvurun.",
+    users_list: "Kullanici Listesi",
+    refresh_users: "Kullanicilari Yenile",
+    current_role: "Mevcut Rol",
+  },
+};
+
+Object.keys(newTranslations).forEach((languageCode) => {
+  translations[languageCode] = {
+    ...(translations[languageCode] || {}),
+    ...newTranslations[languageCode],
+  };
+});
+
 const localizedRoleLabels = {
   uz: { SPECIALIST: "Mutaxassis", UNIT_HEAD: "Birlik rahbari", DEPT_HEAD: "Bo'lim rahbari", DIRECTOR: "Direktor" },
   ru: { SPECIALIST: "Специалист", UNIT_HEAD: "Руководитель группы", DEPT_HEAD: "Руководитель отдела", DIRECTOR: "Директор" },
@@ -1706,6 +1805,29 @@ function applyTranslations() {
   if (homeHeroCopy) homeHeroCopy.textContent = t("home_overview");
   if (authStateLabel) {
     authStateLabel.textContent = state.currentUser ? t("online") : t("offline");
+  }
+
+  // FIXED: Role management panel translations
+  const roleManagementPanel = document.getElementById("roleManagementForm")?.closest(".panel");
+  if (roleManagementPanel) {
+    const roleEyebrow = roleManagementPanel.querySelector(".panel-heading .eyebrow");
+    const roleHeading = roleManagementPanel.querySelector(".panel-heading h3");
+    const refreshBtn = roleManagementPanel.querySelector("#refreshUsersForRoleManagement");
+    const userLabel = roleManagementPanel.querySelector('label[for="roleManagementUserSelect"] span');
+    const roleLabel = roleManagementPanel.querySelector('label[for="roleManagementRoleSelect"] span');
+    const deptLabel = roleManagementPanel.querySelector('#roleManagementDeptLabel span');
+    const unitLabel = roleManagementPanel.querySelector('#roleManagementUnitLabel span');
+    const submitBtn = roleManagementPanel.querySelector('button[type="submit"]');
+    if (roleEyebrow) roleEyebrow.textContent = t("role_management");
+    if (roleHeading) roleHeading.textContent = t("role_change");
+    if (refreshBtn) refreshBtn.textContent = t("refresh_users");
+    if (userLabel) userLabel.textContent = t("select_user");
+    if (roleLabel) roleLabel.textContent = t("new_role");
+    if (deptLabel) deptLabel.textContent = t("department");
+    if (unitLabel) unitLabel.textContent = t("unit");
+    if (submitBtn) submitBtn.textContent = t("role_change");
+    const usersListTitle = roleManagementPanel.querySelector(".feed-card h4");
+    if (usersListTitle) usersListTitle.textContent = t("users_list");
   }
 
   const statCards = homeSection?.querySelectorAll(".dashboard-stat-card");
@@ -2914,22 +3036,56 @@ async function apiRequest(path, options = {}) {
   return data || {};
 }
 
+// FIXED: Centralized user-friendly error message mapping
+const ERROR_MESSAGES = {
+  "Bu rol uchun department majburiy": "Bu rol uchun bo'lim (department) tanlanishi shart. Iltimos, bo'limni tanlang.",
+  "UNIT_HEAD uchun unit majburiy": "UNIT_HEAD roli uchun birlik (unit) tanlanishi shart. Iltimos, birlikni tanlang.",
+  "DEPT_HEAD uchun unit kiritilmaydi": "DEPT_HEAD roli uchun birlik (unit) tanlanmasligi kerak. Iltimos, birlik maydonini bo'sh qoldiring.",
+  "DIRECTOR uchun department va unit biriktirilmaydi": "DIRECTOR roli uchun bo'lim va birlik biriktirilmaydi. Iltimos, ularni bo'sh qoldiring.",
+  "Tanlangan unit shu departmentga tegishli emas": "Tanlangan birlik tanlangan bo'limga tegishli emas. Iltimos, mos birlikni tanlang.",
+  "Kasbiy rol berilganda department majburiy": "Kasbiy rol berilganda bo'lim tanlanishi shart. Iltimos, bo'limni tanlang.",
+  "Daraja berish uchun avval job_role tanlang": "Daraja berish uchun avval kasbiy rol (job_role) tanlanishi kerak.",
+  "Baho 1 dan 5 gacha bo'lishi kerak": "Baho 1 dan 5 gacha bo'lishi kerak. Iltimos, to'g'ri baho tanlang.",
+  "User not found": "Foydalanuvchi topilmadi. Iltimos, ID ni tekshiring.",
+  "O'zingizni delete qila olmaysiz": "O'zingizni o'chira olmaysiz. Iltimos, boshqa foydalanuvchini tanlang.",
+};
+
+function getUserFriendlyError(rawText) {
+  if (!rawText) return t("generic_error");
+  const normalized = String(rawText).toLowerCase();
+  for (const [technical, friendly] of Object.entries(ERROR_MESSAGES)) {
+    if (normalized.includes(technical.toLowerCase())) return friendly;
+  }
+  // If it's a field-level error like "field: message", return just the message part in a friendly way
+  const fieldMatch = String(rawText).match(/^[^:]+:\s*(.+)$/);
+  if (fieldMatch) {
+    const msg = fieldMatch[1].trim();
+    for (const [technical, friendly] of Object.entries(ERROR_MESSAGES)) {
+      if (msg.toLowerCase().includes(technical.toLowerCase())) return friendly;
+    }
+    return msg + ". Iltimos, ma'lumotlarni tekshiring.";
+  }
+  return rawText + ". Iltimos, ma'lumotlarni tekshiring.";
+}
+
 function formatApiErrorMessage(data) {
   if (!data) return "";
   if (data.errors && typeof data.errors === "object") {
     const parts = [];
     Object.entries(data.errors).forEach(([field, value]) => {
+      let rawMessage = "";
       if (Array.isArray(value)) {
-        value.forEach((entry) => parts.push(`${field}: ${entry}`));
+        rawMessage = value.join("; ");
       } else if (value && typeof value === "object") {
-        parts.push(`${field}: ${JSON.stringify(value)}`);
+        rawMessage = JSON.stringify(value);
       } else if (value) {
-        parts.push(`${field}: ${value}`);
+        rawMessage = String(value);
       }
+      parts.push(getUserFriendlyError(rawMessage));
     });
-    if (parts.length) return parts.join("; ");
+    if (parts.length) return parts.join(" ");
   }
-  return data.message || "";
+  return getUserFriendlyError(data.message || "");
 }
 
 function formatDate(value) {
@@ -4553,11 +4709,11 @@ async function loadUsersForRoleManagement() {
     const users = payload.results || [];
     
     // Populate user select dropdown
-    roleManagementUserSelect.innerHTML = '<option value="">Foydalanuvchi tanlang...</option>';
+    roleManagementUserSelect.innerHTML = `<option value="">${t("select_user")}...</option>`;
     users.forEach(user => {
       const option = document.createElement("option");
       option.value = user.id;
-      option.textContent = `${user.full_name} (${user.username}) - ${user.role}`;
+      option.textContent = `${user.full_name} (${user.username}) - ${getRoleLabel(user.role)}`;
       roleManagementUserSelect.appendChild(option);
     });
 
@@ -4568,19 +4724,86 @@ async function loadUsersForRoleManagement() {
             (user) => `
               <div class="feed-item">
                 <div class="feed-item-content">
-                  <strong>${user.full_name}</strong>
-                  <span>@${user.username}</span>
-                  <small>Hozirgi rol: ${user.role}</small>
+                  <strong>${escapeHtml(user.full_name)}</strong>
+                  <span>@${escapeHtml(user.username)}</span>
+                  <small>${t("current_role")}: ${getRoleLabel(user.role)}</small>
                 </div>
               </div>
             `
           )
           .join("")
-      : '<div class="feed-item muted-item">Foydalanuvchilar topilmadi</div>';
+      : `<div class="feed-item muted-item">${t("no_items_found")}</div>`;
   } catch (error) {
     console.error("Foydalanuvchilarni yuklashda xato:", error);
-    setMessage("Foydalanuvchilarni yuklashda xato bo'ldi", "error");
+    setMessage(t("generic_error"), "error");
   }
+}
+
+// FIXED: Populate department/unit dropdowns for role management form
+function populateRoleManagementDepartments() {
+  if (!roleManagementDeptSelect) return;
+  roleManagementDeptSelect.innerHTML = `<option value="">${t("select_department")}...</option>`;
+  if (!state.departments.length) {
+    roleManagementDeptSelect.innerHTML = `<option value="">${t("no_departments")}</option>`;
+    return;
+  }
+  state.departments.forEach((dept) => {
+    const option = document.createElement("option");
+    option.value = dept.id;
+    option.textContent = `${dept.name} (${dept.code})`;
+    roleManagementDeptSelect.appendChild(option);
+  });
+}
+
+function populateRoleManagementUnits() {
+  if (!roleManagementUnitSelect) return;
+  roleManagementUnitSelect.innerHTML = `<option value="">${t("select_unit")}...</option>`;
+  const selectedDeptId = roleManagementDeptSelect?.value;
+  if (!selectedDeptId) {
+    const allUnits = state.units || [];
+    allUnits.forEach((unit) => {
+      const option = document.createElement("option");
+      option.value = unit.id;
+      option.textContent = `${unit.name} (${unit.code || "N/A"})`;
+      roleManagementUnitSelect.appendChild(option);
+    });
+    return;
+  }
+  const filteredUnits = (state.units || []).filter((unit) => {
+    const unitDeptId = typeof unit.department_id === "object" ? unit.department_id?.id : unit.department_id;
+    return String(unitDeptId) === String(selectedDeptId);
+  });
+  if (!filteredUnits.length) {
+    roleManagementUnitSelect.innerHTML = `<option value="">${t("select_unit")}</option>`;
+    return;
+  }
+  filteredUnits.forEach((unit) => {
+    const option = document.createElement("option");
+    option.value = unit.id;
+    option.textContent = `${unit.name} (${unit.code || "N/A"})`;
+    roleManagementUnitSelect.appendChild(option);
+  });
+}
+
+// FIXED: Show/hide department/unit selectors based on selected role
+function syncRoleManagementForm() {
+  const selectedRole = roleManagementRoleSelect?.value || "";
+  const needsDepartment = ["UNIT_HEAD", "DEPT_HEAD"].includes(selectedRole);
+  const needsUnit = selectedRole === "UNIT_HEAD";
+
+  roleManagementDeptLabel?.classList.toggle("hidden", !needsDepartment);
+  roleManagementUnitLabel?.classList.toggle("hidden", !needsUnit);
+
+  if (needsDepartment && roleManagementDeptSelect?.options.length <= 1) {
+    populateRoleManagementDepartments();
+  }
+  if (needsUnit && roleManagementUnitSelect?.options.length <= 1) {
+    populateRoleManagementUnits();
+  }
+
+  // Make fields required when visible
+  if (roleManagementDeptSelect) roleManagementDeptSelect.required = needsDepartment;
+  if (roleManagementUnitSelect) roleManagementUnitSelect.required = needsUnit;
 }
 
 async function fetchAllPaginatedResults(path, params = new URLSearchParams()) {
@@ -5105,8 +5328,36 @@ roleManagementForm?.addEventListener("submit", async (event) => {
   const newRole = formData.get("role");
 
   if (!userId || !newRole) {
-    setMessage("Foydalanuvchi va yangi rolni tanlang", "error");
+    setMessage(t("select_user") + " va " + t("new_role").toLowerCase() + "ni tanlang", "error");
     return;
+  }
+
+  // FIXED: Build payload with role-conditional unit/department fields
+  const payload = { role: newRole };
+  if (newRole === "UNIT_HEAD") {
+    const deptId = formData.get("department_id");
+    const unitId = formData.get("unit_id");
+    if (!deptId) {
+      setMessage(t("department_required"), "error");
+      return;
+    }
+    if (!unitId) {
+      setMessage(t("unit_required"), "error");
+      return;
+    }
+    payload.department_id = deptId;
+    payload.unit_id = unitId;
+  } else if (newRole === "DEPT_HEAD") {
+    const deptId = formData.get("department_id");
+    if (!deptId) {
+      setMessage(t("department_required"), "error");
+      return;
+    }
+    payload.department_id = deptId;
+    payload.unit_id = null; // Explicitly clear unit
+  } else if (newRole === "DIRECTOR") {
+    payload.department_id = null;
+    payload.unit_id = null;
   }
 
   try {
@@ -5114,20 +5365,25 @@ roleManagementForm?.addEventListener("submit", async (event) => {
     await apiRequest(`/api/v1/users/${userId}/update/`, {
       method: "PUT",
       headers: getHeaders(),
-      body: JSON.stringify({ role: newRole }),
+      body: JSON.stringify(payload),
     });
     await Promise.all([loadUsersForRoleManagement(), loadAuditLogs()]);
     roleManagementForm.reset();
-    setMessage("Rol muvaffaqiyatli o'zgartirildi", "success");
+    syncRoleManagementForm(); // Reset visibility after form reset
+    setMessage(t("role_change_success"), "success");
   } catch (error) {
     console.error("Rol o'zgartirish xatosi:", error);
-    setMessage(error.message || "Rol o'zgartirishda xato bo'ldi", "error");
+    setMessage(error.message || t("role_change_error"), "error");
   }
 });
 
+// FIXED: Sync form visibility on role change and department change
+roleManagementRoleSelect?.addEventListener("change", syncRoleManagementForm);
+roleManagementDeptSelect?.addEventListener("change", populateRoleManagementUnits);
+
 refreshUsersForRoleManagement?.addEventListener("click", async () => {
   await loadUsersForRoleManagement();
-  setMessage("Foydalanuvchilar yangilandi", "success");
+  setMessage(t("refresh"), "success");
 });
 
 reportForm?.addEventListener("submit", async (event) => {
@@ -5769,6 +6025,23 @@ languageOptions.forEach((button) => {
     toggleLanguageMenu(false);
     toggleLoginLanguageMenu(false);
     applyTranslations();
+    // FIXED: Re-render dynamic content so translations apply to lists/tables
+    renderUsers();
+    renderReports();
+    renderNotifications();
+    renderAuditLogs();
+    renderArchiveLogs();
+    renderDashboard();
+    renderFeedbackList();
+    renderRecentReports();
+    renderRecentLeaves();
+    renderOperationsDashboard();
+    renderAdminDashboard();
+    renderUsersForRoleManagement();
+    renderActivityHistory();
+    renderReviewHistory();
+    renderLeaveCalendar();
+    loadUsersForRoleManagement().catch(() => {});
     
     // Update user language preference on backend
     try {
@@ -6183,9 +6456,15 @@ function initTheme() {
   const preferredTheme = getPreferredTheme();
   applyTheme(preferredTheme);
   updateThemeIcons(preferredTheme, themeToggleButton, themeIconSun, themeIconMoon);
+  // FIXED: Also update login page theme icons on init
+  updateThemeIcons(preferredTheme, loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
 
   if (themeToggleButton) {
     themeToggleButton?.addEventListener("click", () => toggleTheme(themeToggleButton, themeIconSun, themeIconMoon));
+  }
+  // FIXED: Add login page theme toggle listener
+  if (loginThemeToggleButton) {
+    loginThemeToggleButton?.addEventListener("click", () => toggleTheme(loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon));
   }
 }
 

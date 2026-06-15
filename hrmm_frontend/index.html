@@ -849,6 +849,18 @@
                   <option value="DIRECTOR">DIRECTOR (Direktor)</option>
                 </select>
               </label>
+              <!-- FIXED: Added department selector for role change -->
+              <label id="roleManagementDeptLabel" class="hidden"><span>Bo'lim (Department)</span>
+                <select name="department_id" id="roleManagementDeptSelect">
+                  <option value="">Bo'lim tanlang...</option>
+                </select>
+              </label>
+              <!-- FIXED: Added unit selector for role change -->
+              <label id="roleManagementUnitLabel" class="hidden"><span>Birlik (Unit)</span>
+                <select name="unit_id" id="roleManagementUnitSelect">
+                  <option value="">Birlik tanlang...</option>
+                </select>
+              </label>
               <button type="submit" class="primary-btn">Rolni o'zgartirish</button>
             </form>
             <div class="feed-card" style="margin-top: 20px;">

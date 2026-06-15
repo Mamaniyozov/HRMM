@@ -34,6 +34,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
         department = attrs.get("department_id")
         unit = attrs.get("unit_id")
 
+        # FIXED: Role-based auto-clearing of unit/department for create
+        if role == "DEPT_HEAD":
+            attrs["unit_id"] = None
+            unit = None
+        elif role == "DIRECTOR":
+            attrs["department_id"] = None
+            attrs["unit_id"] = None
+            department = None
+            unit = None
+
         if role in {"UNIT_HEAD", "DEPT_HEAD"} and not department:
             raise serializers.ValidationError({"department_id": "Bu rol uchun department majburiy."})
         if role == "UNIT_HEAD" and not unit:
@@ -94,6 +104,19 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         job_role = attrs.get("job_role", self.instance.job_role)
         job_level = attrs.get("job_level", self.instance.job_level)
         department = attrs.get("department_id", self.instance.department_id)
+
+        # FIXED: Role-based auto-clearing of unit/department to prevent stale data errors
+        if role == "DEPT_HEAD":
+            attrs["unit_id"] = None
+        elif role == "DIRECTOR":
+            attrs["department_id"] = None
+            attrs["unit_id"] = None
+        elif role == "UNIT_HEAD":
+            # Preserve existing unit if not explicitly provided in request
+            if "unit_id" not in attrs and self.instance.unit_id:
+                attrs["unit_id"] = self.instance.unit_id
+
+        # Now get the potentially updated unit value
         unit = attrs.get("unit_id", self.instance.unit_id)
 
         if role in {"UNIT_HEAD", "DEPT_HEAD"} and not department:
