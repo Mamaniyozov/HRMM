@@ -1,7 +1,5 @@
 from django.db import migrations
 
-from apps.users.db_migration import forwards_postgres_sql
-
 
 class Migration(migrations.Migration):
 
@@ -10,8 +8,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(
-            forwards_postgres_sql("ALTER TYPE status_enum ADD VALUE IF NOT EXISTS 'DIRECTOR';"),
-            migrations.RunPython.noop,
-        ),
+        migrations.RunPython(migrations.RunPython.noop, migrations.RunPython.noop),
     ]
