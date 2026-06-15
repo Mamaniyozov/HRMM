@@ -4,6 +4,9 @@ from apps.users.db_migration import forwards_postgres_sql
 
 POSTGRES_FIX_ROLE = """
 ALTER TABLE users_user ALTER COLUMN role TYPE varchar(20) USING role::text;
+ALTER TABLE reports_report ALTER COLUMN status TYPE varchar(20) USING status::text;
+ALTER TABLE workflows_approvalhistory ALTER COLUMN previous_status TYPE varchar(20) USING previous_status::text;
+ALTER TABLE workflows_approvalhistory ALTER COLUMN new_status TYPE varchar(20) USING new_status::text;
 DROP TYPE IF EXISTS status_enum;
 """
 
