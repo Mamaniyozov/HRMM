@@ -1208,6 +1208,92 @@ const newTranslations = {
     your_leave: "Sizning arizangiz",
     your_report: "Sizning hisobotingiz",
     rating_hint: "Bahoni tanlang",
+    msg_password_updated: "Parol muvaffaqiyatli yangilandi.",
+    msg_password_update_error: "Parolni yangilashda xatolik.",
+    msg_2fa_enabled: "2FA muvaffaqiyatli yoqildi.",
+    msg_2fa_verify_error: "2FA tekshiruvida xatolik.",
+    msg_2fa_disabled: "2FA o'chirildi.",
+    msg_2fa_disable_error: "2FA o'chirishda xatolik.",
+    msg_comment_required_reject_revision: "Rad etish yoki qayta ko'rish uchun izoh majburiy.",
+    msg_comment_required_reject: "Rad etish uchun izoh majburiy.",
+    msg_comment_required_revision: "Qayta ko'rib chiqishni so'rash uchun izoh majburiy.",
+    msg_reviewed_success: "Muvaffaqiyatli ko'rib chiqildi.",
+    msg_review_error: "Ko'rib chiqishda xatolik.",
+    msg_fill_title_summary: "Sarlavha va izohni to'ldiring.",
+    msg_report_updated: "Hisobot yangilandi.",
+    msg_report_submitted: "Hisobot yuborildi va tasdiqlash navbatiga tushdi.",
+    msg_report_id_applied_forms: "Hisobot ID workflow/biriktirma/tarix formalariga qo'yildi.",
+    msg_leave_id_applied: "Ariza ID ko'rib chiqish formasiga qo'yildi.",
+    msg_approved_success: "Muvaffaqiyatli tasdiqlandi.",
+    msg_approve_error: "Tasdiqlashda xatolik.",
+    msg_rejected_success: "Muvaffaqiyatli rad etildi.",
+    msg_reject_error: "Rad etishda xatolik.",
+    msg_logging_in: "Tizimga kirilmoqda...",
+    msg_session_not_found: "Tasdiqlash sessiyasi topilmadi. Loginni qayta boshlang.",
+    msg_back_to_login: "Login bosqichiga qaytdingiz.",
+    msg_password_updating: "Parol yangilanmoqda...",
+    msg_2fa_generating: "2FA uchun QR va maxfiy kalit yaratilmoqda...",
+    msg_qr_ready: "QR tayyor. Google Authenticator ilovasida skan qiling va 6 xonali kodni tasdiqlang.",
+    msg_2fa_setup_error: "2FA sozlamasini yaratishda xatolik.",
+    msg_2fa_activating: "2FA faollashtirilmoqda...",
+    msg_2fa_enable_error: "2FA ni yoqishda xatolik.",
+    msg_2fa_disabling: "2FA o'chirilmoqda...",
+    msg_select_it_role_first: "Daraja berish uchun avval IT lavozimini tanlang.",
+    msg_select_unit_for_unithead: "UNIT_HEAD uchun birlik tanlang.",
+    msg_creating_it_user: "IT xodimi yaratilmoqda...",
+    msg_it_user_created: "IT xodimi yaratildi.",
+    msg_user_create_error: "Xodim yaratishda xatolik.",
+    msg_role_changing: "Rol o'zgartirilmoqda...",
+    msg_creating_report: "Hisobot yaratilmoqda...",
+    msg_report_create_error: "Hisobot yaratishda xatolik.",
+    msg_report_id_invalid: "Hisobot ID noto'g'ri. Bu maydonga hisobot UUID kiriting.",
+    msg_loading_report: "Hisobot ma'lumotlari yuklanmoqda...",
+    msg_report_not_found: "Hisobot topilmadi yoki sizda unga kirish huquqi yo'q.",
+    msg_workflow_running: "Amal bajarilmoqda...",
+    msg_workflow_success: "Amal muvaffaqiyatli bajarildi.",
+    msg_workflow_error: "Amalni bajarishda xatolik.",
+    msg_leave_id_invalid: "Ariza ID noto'g'ri. Bu maydonga ariza UUID kiriting.",
+    msg_reviewing_leave: "Ariza ko'rib chiqilmoqda...",
+    msg_leave_reviewed: "Ariza muvaffaqiyatli ko'rib chiqildi.",
+    msg_leave_review_error: "Arizani ko'rib chiqishda xatolik.",
+    msg_attachment_report_id_required: "Biriktirma uchun Hisobot ID UUID bo'lishi kerak.",
+    msg_attachment_only_draft: "Biriktirma faqat DRAFT yoki REVISION holatidagi hisobotga yuklanadi.",
+    msg_uploading_attachment: "Biriktirma yuklanmoqda...",
+    msg_attachment_uploaded: "Biriktirma yuklandi.",
+    msg_attachment_upload_error: "Biriktirmani yuklashda xatolik.",
+    msg_attachment_downloaded: "Biriktirma yuklab olindi.",
+    msg_attachment_deleted: "Biriktirma o'chirildi.",
+    msg_attachment_delete_error: "Biriktirmani o'chirishda xatolik.",
+    msg_history_report_id_required: "Tarix uchun Hisobot ID UUID kiriting.",
+    msg_report_history_loaded: "Hisobot tarixi yuklandi.",
+    msg_report_history_error: "Hisobot tarixini olishda xatolik.",
+    msg_delete_report_id_required: "O'chirish uchun Hisobot ID UUID kiriting.",
+    msg_report_deleted: "Hisobot o'chirildi.",
+    msg_report_delete_error: "Hisobotni o'chirishda xatolik.",
+    msg_create_report_first_copy: "Avval hisobot yarating, keyin UUID nusxalanadi.",
+    msg_uuid_copied: "UUID nusxalandi.",
+    msg_uuid_copy_failed: "UUID nusxalab bo'lmadi, qo'lda nusxalang.",
+    msg_create_report_first_apply: "Avval hisobot yarating, keyin UUID formlarga qo'yiladi.",
+    msg_uuid_applied_forms: "UUID workflow/biriktirma/tarix formalariga qo'yildi.",
+    msg_all_notifications_read: "Barcha bildirishnomalar o'qilgan deb belgilandi.",
+    msg_notifications_update_error: "Bildirishnomalarni yangilashda xatolik.",
+    msg_password_changed: "Parol muvaffaqiyatli o'zgartirildi.",
+    msg_password_change_error: "Parolni o'zgartirishda xatolik.",
+    msg_all_sections_refreshed: "Barcha bo'limlar yangilandi.",
+    msg_logout_success: "Tizimdan chiqildi.",
+    msg_logout_error: "Tizimdan chiqishda xatolik.",
+    msg_server_connection_active: "Serverga ulanish faol.",
+    msg_fill_required_fields: "Iltimos, barcha majburiy maydonlarni to'ldiring.",
+    msg_creating_leave: "Ta'til arizasi yaratilmoqda...",
+    msg_leave_submitted: "Ta'til arizasi yuborildi.",
+    msg_leave_create_error: "Ta'til arizasi yaratishda xatolik.",
+    msg_add_user: "Xodim qo'shish",
+    err_attachment_id_format: "Biriktirma ID yoki Hisobot ID UUID formatida bo'lishi kerak.",
+    err_no_attachment_in_report: "Bu hisobotda biriktirma topilmadi.",
+    err_attachment_not_found: "Biriktirma topilmadi. Biriktirma ID yoki hisobotga tegishli biriktirmani tekshiring.",
+    err_api_connection: "Ulanishda xatolik. API serverga ulanib bo'lmadi",
+    err_timeout_prefix: "So'rov",
+    err_timeout_suffix: "soniyada javob bermadi. Internet yoki backend serverni tekshiring.",
   },
   ru: {
     role_management: "Управление ролями пользователей",
@@ -1250,6 +1336,92 @@ const newTranslations = {
     your_leave: "Ваша заявка",
     your_report: "Ваш отчёт",
     rating_hint: "Выберите оценку",
+    msg_password_updated: "Пароль успешно обновлён.",
+    msg_password_update_error: "Ошибка при обновлении пароля.",
+    msg_2fa_enabled: "2FA успешно включена.",
+    msg_2fa_verify_error: "Ошибка проверки 2FA.",
+    msg_2fa_disabled: "2FA отключена.",
+    msg_2fa_disable_error: "Ошибка отключения 2FA.",
+    msg_comment_required_reject_revision: "Для отклонения или возврата на доработку комментарий обязателен.",
+    msg_comment_required_reject: "Для отклонения комментарий обязателен.",
+    msg_comment_required_revision: "Для запроса доработки комментарий обязателен.",
+    msg_reviewed_success: "Успешно рассмотрено.",
+    msg_review_error: "Ошибка при рассмотрении.",
+    msg_fill_title_summary: "Заполните заголовок и комментарий.",
+    msg_report_updated: "Отчёт обновлён.",
+    msg_report_submitted: "Отчёт отправлен и поставлен в очередь на утверждение.",
+    msg_report_id_applied_forms: "ID отчёта подставлен в формы workflow/вложение/история.",
+    msg_leave_id_applied: "ID заявки подставлен в форму рассмотрения.",
+    msg_approved_success: "Успешно утверждено.",
+    msg_approve_error: "Ошибка при утверждении.",
+    msg_rejected_success: "Успешно отклонено.",
+    msg_reject_error: "Ошибка при отклонении.",
+    msg_logging_in: "Выполняется вход...",
+    msg_session_not_found: "Сессия подтверждения не найдена. Начните вход заново.",
+    msg_back_to_login: "Вы вернулись к шагу входа.",
+    msg_password_updating: "Пароль обновляется...",
+    msg_2fa_generating: "Генерируется QR и секретный ключ для 2FA...",
+    msg_qr_ready: "QR готов. Отсканируйте в Google Authenticator и подтвердите 6-значный код.",
+    msg_2fa_setup_error: "Ошибка при создании настройки 2FA.",
+    msg_2fa_activating: "2FA активируется...",
+    msg_2fa_enable_error: "Ошибка при включении 2FA.",
+    msg_2fa_disabling: "2FA отключается...",
+    msg_select_it_role_first: "Чтобы назначить уровень, сначала выберите ИТ-должность.",
+    msg_select_unit_for_unithead: "Выберите подразделение для UNIT_HEAD.",
+    msg_creating_it_user: "Создаётся ИТ-сотрудник...",
+    msg_it_user_created: "ИТ-сотрудник создан.",
+    msg_user_create_error: "Ошибка при создании сотрудника.",
+    msg_role_changing: "Роль изменяется...",
+    msg_creating_report: "Отчёт создаётся...",
+    msg_report_create_error: "Ошибка при создании отчёта.",
+    msg_report_id_invalid: "Неверный ID отчёта. Введите UUID отчёта в это поле.",
+    msg_loading_report: "Загружаются данные отчёта...",
+    msg_report_not_found: "Отчёт не найден или у вас нет доступа к нему.",
+    msg_workflow_running: "Действие выполняется...",
+    msg_workflow_success: "Действие успешно выполнено.",
+    msg_workflow_error: "Ошибка при выполнении действия.",
+    msg_leave_id_invalid: "Неверный ID заявки. Введите UUID заявки в это поле.",
+    msg_reviewing_leave: "Заявка рассматривается...",
+    msg_leave_reviewed: "Заявка успешно рассмотрена.",
+    msg_leave_review_error: "Ошибка при рассмотрении заявки.",
+    msg_attachment_report_id_required: "Для вложения ID отчёта должен быть в формате UUID.",
+    msg_attachment_only_draft: "Вложение загружается только к отчёту в статусе DRAFT или REVISION.",
+    msg_uploading_attachment: "Вложение загружается...",
+    msg_attachment_uploaded: "Вложение загружено.",
+    msg_attachment_upload_error: "Ошибка при загрузке вложения.",
+    msg_attachment_downloaded: "Вложение скачано.",
+    msg_attachment_deleted: "Вложение удалено.",
+    msg_attachment_delete_error: "Ошибка при удалении вложения.",
+    msg_history_report_id_required: "Для истории введите UUID отчёта.",
+    msg_report_history_loaded: "История отчёта загружена.",
+    msg_report_history_error: "Ошибка при получении истории отчёта.",
+    msg_delete_report_id_required: "Для удаления введите UUID отчёта.",
+    msg_report_deleted: "Отчёт удалён.",
+    msg_report_delete_error: "Ошибка при удалении отчёта.",
+    msg_create_report_first_copy: "Сначала создайте отчёт, затем UUID будет скопирован.",
+    msg_uuid_copied: "UUID скопирован.",
+    msg_uuid_copy_failed: "Не удалось скопировать UUID, скопируйте вручную.",
+    msg_create_report_first_apply: "Сначала создайте отчёт, затем UUID будет подставлен в формы.",
+    msg_uuid_applied_forms: "UUID подставлен в формы workflow/вложение/история.",
+    msg_all_notifications_read: "Все уведомления отмечены как прочитанные.",
+    msg_notifications_update_error: "Ошибка при обновлении уведомлений.",
+    msg_password_changed: "Пароль успешно изменён.",
+    msg_password_change_error: "Ошибка при изменении пароля.",
+    msg_all_sections_refreshed: "Все разделы обновлены.",
+    msg_logout_success: "Выход выполнен.",
+    msg_logout_error: "Ошибка при выходе.",
+    msg_server_connection_active: "Соединение с сервером активно.",
+    msg_fill_required_fields: "Пожалуйста, заполните все обязательные поля.",
+    msg_creating_leave: "Заявка на отпуск создаётся...",
+    msg_leave_submitted: "Заявка на отпуск отправлена.",
+    msg_leave_create_error: "Ошибка при создании заявки на отпуск.",
+    msg_add_user: "Добавить сотрудника",
+    err_attachment_id_format: "ID вложения или отчёта должен быть в формате UUID.",
+    err_no_attachment_in_report: "В этом отчёте вложение не найдено.",
+    err_attachment_not_found: "Вложение не найдено. Проверьте ID вложения или вложение, относящееся к отчёту.",
+    err_api_connection: "Ошибка соединения. Не удалось подключиться к API-серверу",
+    err_timeout_prefix: "Запрос не ответил за",
+    err_timeout_suffix: "секунд. Проверьте интернет или backend-сервер.",
   },
   en: {
     role_management: "User Role Management",
@@ -1292,6 +1464,92 @@ const newTranslations = {
     your_leave: "Your request",
     your_report: "Your report",
     rating_hint: "Select a rating",
+    msg_password_updated: "Password updated successfully.",
+    msg_password_update_error: "Error updating password.",
+    msg_2fa_enabled: "2FA enabled successfully.",
+    msg_2fa_verify_error: "2FA verification error.",
+    msg_2fa_disabled: "2FA disabled.",
+    msg_2fa_disable_error: "Error disabling 2FA.",
+    msg_comment_required_reject_revision: "A comment is required to reject or request revision.",
+    msg_comment_required_reject: "A comment is required to reject.",
+    msg_comment_required_revision: "A comment is required to request revision.",
+    msg_reviewed_success: "Reviewed successfully.",
+    msg_review_error: "Error during review.",
+    msg_fill_title_summary: "Fill in the title and comment.",
+    msg_report_updated: "Report updated.",
+    msg_report_submitted: "Report submitted and added to the approval queue.",
+    msg_report_id_applied_forms: "Report ID applied to workflow/attachment/history forms.",
+    msg_leave_id_applied: "Leave ID applied to the review form.",
+    msg_approved_success: "Approved successfully.",
+    msg_approve_error: "Error during approval.",
+    msg_rejected_success: "Rejected successfully.",
+    msg_reject_error: "Error during rejection.",
+    msg_logging_in: "Signing in...",
+    msg_session_not_found: "Verification session not found. Please start login again.",
+    msg_back_to_login: "You returned to the login step.",
+    msg_password_updating: "Updating password...",
+    msg_2fa_generating: "Generating QR and secret key for 2FA...",
+    msg_qr_ready: "QR ready. Scan it in Google Authenticator and confirm the 6-digit code.",
+    msg_2fa_setup_error: "Error creating 2FA setup.",
+    msg_2fa_activating: "Activating 2FA...",
+    msg_2fa_enable_error: "Error enabling 2FA.",
+    msg_2fa_disabling: "Disabling 2FA...",
+    msg_select_it_role_first: "To assign a level, first select an IT position.",
+    msg_select_unit_for_unithead: "Select a unit for UNIT_HEAD.",
+    msg_creating_it_user: "Creating IT employee...",
+    msg_it_user_created: "IT employee created.",
+    msg_user_create_error: "Error creating employee.",
+    msg_role_changing: "Changing role...",
+    msg_creating_report: "Creating report...",
+    msg_report_create_error: "Error creating report.",
+    msg_report_id_invalid: "Invalid report ID. Enter the report UUID in this field.",
+    msg_loading_report: "Loading report data...",
+    msg_report_not_found: "Report not found or you don't have access to it.",
+    msg_workflow_running: "Performing action...",
+    msg_workflow_success: "Action completed successfully.",
+    msg_workflow_error: "Error performing action.",
+    msg_leave_id_invalid: "Invalid leave ID. Enter the leave UUID in this field.",
+    msg_reviewing_leave: "Reviewing leave...",
+    msg_leave_reviewed: "Leave reviewed successfully.",
+    msg_leave_review_error: "Error reviewing leave.",
+    msg_attachment_report_id_required: "The Report ID for the attachment must be a UUID.",
+    msg_attachment_only_draft: "Attachments can only be uploaded to a report in DRAFT or REVISION status.",
+    msg_uploading_attachment: "Uploading attachment...",
+    msg_attachment_uploaded: "Attachment uploaded.",
+    msg_attachment_upload_error: "Error uploading attachment.",
+    msg_attachment_downloaded: "Attachment downloaded.",
+    msg_attachment_deleted: "Attachment deleted.",
+    msg_attachment_delete_error: "Error deleting attachment.",
+    msg_history_report_id_required: "Enter the report UUID for history.",
+    msg_report_history_loaded: "Report history loaded.",
+    msg_report_history_error: "Error getting report history.",
+    msg_delete_report_id_required: "Enter the report UUID to delete.",
+    msg_report_deleted: "Report deleted.",
+    msg_report_delete_error: "Error deleting report.",
+    msg_create_report_first_copy: "Create a report first, then the UUID will be copied.",
+    msg_uuid_copied: "UUID copied.",
+    msg_uuid_copy_failed: "Could not copy UUID, copy it manually.",
+    msg_create_report_first_apply: "Create a report first, then the UUID will be applied to the forms.",
+    msg_uuid_applied_forms: "UUID applied to workflow/attachment/history forms.",
+    msg_all_notifications_read: "All notifications marked as read.",
+    msg_notifications_update_error: "Error updating notifications.",
+    msg_password_changed: "Password changed successfully.",
+    msg_password_change_error: "Error changing password.",
+    msg_all_sections_refreshed: "All sections refreshed.",
+    msg_logout_success: "Logged out.",
+    msg_logout_error: "Error during logout.",
+    msg_server_connection_active: "Server connection active.",
+    msg_fill_required_fields: "Please fill in all required fields.",
+    msg_creating_leave: "Creating leave request...",
+    msg_leave_submitted: "Leave request submitted.",
+    msg_leave_create_error: "Error creating leave request.",
+    msg_add_user: "Add employee",
+    err_attachment_id_format: "Attachment ID or Report ID must be in UUID format.",
+    err_no_attachment_in_report: "No attachment found in this report.",
+    err_attachment_not_found: "Attachment not found. Check the attachment ID or the attachment belonging to the report.",
+    err_api_connection: "Connection error. Could not connect to the API server",
+    err_timeout_prefix: "The request did not respond within",
+    err_timeout_suffix: "seconds. Check your internet or the backend server.",
   },
   tr: {
     role_management: "Kullanici Rol Yonetimi",
@@ -1334,6 +1592,92 @@ const newTranslations = {
     your_leave: "Talebiniz",
     your_report: "Raporunuz",
     rating_hint: "Puan seçin",
+    msg_password_updated: "Parola başarıyla güncellendi.",
+    msg_password_update_error: "Parola güncellenirken hata oluştu.",
+    msg_2fa_enabled: "2FA başarıyla etkinleştirildi.",
+    msg_2fa_verify_error: "2FA doğrulama hatası.",
+    msg_2fa_disabled: "2FA devre dışı bırakıldı.",
+    msg_2fa_disable_error: "2FA devre dışı bırakılırken hata oluştu.",
+    msg_comment_required_reject_revision: "Reddetmek veya revizyon istemek için yorum zorunludur.",
+    msg_comment_required_reject: "Reddetmek için yorum zorunludur.",
+    msg_comment_required_revision: "Revizyon istemek için yorum zorunludur.",
+    msg_reviewed_success: "Başarıyla incelendi.",
+    msg_review_error: "İnceleme sırasında hata oluştu.",
+    msg_fill_title_summary: "Başlık ve yorumu doldurun.",
+    msg_report_updated: "Rapor güncellendi.",
+    msg_report_submitted: "Rapor gönderildi ve onay kuyruğuna eklendi.",
+    msg_report_id_applied_forms: "Rapor ID workflow/ek/geçmiş formlarına yerleştirildi.",
+    msg_leave_id_applied: "Talep ID inceleme formuna yerleştirildi.",
+    msg_approved_success: "Başarıyla onaylandı.",
+    msg_approve_error: "Onaylama sırasında hata oluştu.",
+    msg_rejected_success: "Başarıyla reddedildi.",
+    msg_reject_error: "Reddetme sırasında hata oluştu.",
+    msg_logging_in: "Giriş yapılıyor...",
+    msg_session_not_found: "Doğrulama oturumu bulunamadı. Lütfen girişi yeniden başlatın.",
+    msg_back_to_login: "Giriş adımına döndünüz.",
+    msg_password_updating: "Parola güncelleniyor...",
+    msg_2fa_generating: "2FA için QR ve gizli anahtar oluşturuluyor...",
+    msg_qr_ready: "QR hazır. Google Authenticator'da tarayın ve 6 haneli kodu onaylayın.",
+    msg_2fa_setup_error: "2FA kurulumu oluşturulurken hata oluştu.",
+    msg_2fa_activating: "2FA etkinleştiriliyor...",
+    msg_2fa_enable_error: "2FA etkinleştirilirken hata oluştu.",
+    msg_2fa_disabling: "2FA devre dışı bırakılıyor...",
+    msg_select_it_role_first: "Seviye atamak için önce bir BT pozisyonu seçin.",
+    msg_select_unit_for_unithead: "UNIT_HEAD için bir birim seçin.",
+    msg_creating_it_user: "BT çalışanı oluşturuluyor...",
+    msg_it_user_created: "BT çalışanı oluşturuldu.",
+    msg_user_create_error: "Çalışan oluşturulurken hata oluştu.",
+    msg_role_changing: "Rol değiştiriliyor...",
+    msg_creating_report: "Rapor oluşturuluyor...",
+    msg_report_create_error: "Rapor oluşturulurken hata oluştu.",
+    msg_report_id_invalid: "Geçersiz rapor ID. Bu alana rapor UUID girin.",
+    msg_loading_report: "Rapor verileri yükleniyor...",
+    msg_report_not_found: "Rapor bulunamadı veya erişim yetkiniz yok.",
+    msg_workflow_running: "İşlem yürütülüyor...",
+    msg_workflow_success: "İşlem başarıyla tamamlandı.",
+    msg_workflow_error: "İşlem yürütülürken hata oluştu.",
+    msg_leave_id_invalid: "Geçersiz talep ID. Bu alana talep UUID girin.",
+    msg_reviewing_leave: "Talep inceleniyor...",
+    msg_leave_reviewed: "Talep başarıyla incelendi.",
+    msg_leave_review_error: "Talep incelenirken hata oluştu.",
+    msg_attachment_report_id_required: "Ek için Rapor ID UUID formatında olmalıdır.",
+    msg_attachment_only_draft: "Ek yalnızca DRAFT veya REVISION durumundaki rapora yüklenir.",
+    msg_uploading_attachment: "Ek yükleniyor...",
+    msg_attachment_uploaded: "Ek yüklendi.",
+    msg_attachment_upload_error: "Ek yüklenirken hata oluştu.",
+    msg_attachment_downloaded: "Ek indirildi.",
+    msg_attachment_deleted: "Ek silindi.",
+    msg_attachment_delete_error: "Ek silinirken hata oluştu.",
+    msg_history_report_id_required: "Geçmiş için rapor UUID girin.",
+    msg_report_history_loaded: "Rapor geçmişi yüklendi.",
+    msg_report_history_error: "Rapor geçmişi alınırken hata oluştu.",
+    msg_delete_report_id_required: "Silmek için rapor UUID girin.",
+    msg_report_deleted: "Rapor silindi.",
+    msg_report_delete_error: "Rapor silinirken hata oluştu.",
+    msg_create_report_first_copy: "Önce rapor oluşturun, ardından UUID kopyalanır.",
+    msg_uuid_copied: "UUID kopyalandı.",
+    msg_uuid_copy_failed: "UUID kopyalanamadı, manuel olarak kopyalayın.",
+    msg_create_report_first_apply: "Önce rapor oluşturun, ardından UUID formlara yerleştirilir.",
+    msg_uuid_applied_forms: "UUID workflow/ek/geçmiş formlarına yerleştirildi.",
+    msg_all_notifications_read: "Tüm bildirimler okundu olarak işaretlendi.",
+    msg_notifications_update_error: "Bildirimler güncellenirken hata oluştu.",
+    msg_password_changed: "Parola başarıyla değiştirildi.",
+    msg_password_change_error: "Parola değiştirilirken hata oluştu.",
+    msg_all_sections_refreshed: "Tüm bölümler yenilendi.",
+    msg_logout_success: "Çıkış yapıldı.",
+    msg_logout_error: "Çıkış sırasında hata oluştu.",
+    msg_server_connection_active: "Sunucu bağlantısı aktif.",
+    msg_fill_required_fields: "Lütfen tüm zorunlu alanları doldurun.",
+    msg_creating_leave: "İzin talebi oluşturuluyor...",
+    msg_leave_submitted: "İzin talebi gönderildi.",
+    msg_leave_create_error: "İzin talebi oluşturulurken hata oluştu.",
+    msg_add_user: "Çalışan ekle",
+    err_attachment_id_format: "Ek ID veya Rapor ID UUID formatında olmalıdır.",
+    err_no_attachment_in_report: "Bu raporda ek bulunamadı.",
+    err_attachment_not_found: "Ek bulunamadı. Ek ID veya rapora ait eki kontrol edin.",
+    err_api_connection: "Bağlantı hatası. API sunucusuna bağlanılamadı",
+    err_timeout_prefix: "İstek şu süre içinde yanıt vermedi:",
+    err_timeout_suffix: "saniye. İnternet veya backend sunucusunu kontrol edin.",
   },
 };
 
@@ -2224,9 +2568,9 @@ function bindSecurityModalEvents() {
         }),
       });
       modalPasswordForm.reset();
-      setMessage("Parol muvaffaqiyatli yangilandi.", "success");
+      setMessage(t("msg_password_updated"), "success");
     } catch (error) {
-      setMessage(error.message || "Parolni yangilashda xato.", "error");
+      setMessage(error.message || t("msg_password_update_error"), "error");
     }
   });
 
@@ -2264,10 +2608,10 @@ function bindSecurityModalEvents() {
         }),
       });
       state.currentUser.two_factor_enabled = true;
-      setMessage("2FA muvaffaqiyatli yoqildi.", "success");
+      setMessage(t("msg_2fa_enabled"), "success");
       openSecuritySettingsModal();
     } catch (error) {
-      setMessage(error.message || "2FA tekshiruvida xato.", "error");
+      setMessage(error.message || t("msg_2fa_verify_error"), "error");
     }
   });
 
@@ -2284,10 +2628,10 @@ function bindSecurityModalEvents() {
         }),
       });
       state.currentUser.two_factor_enabled = false;
-      setMessage("2FA o'chirildi.", "success");
+      setMessage(t("msg_2fa_disabled"), "success");
       openSecuritySettingsModal();
     } catch (error) {
-      setMessage(error.message || "2FA o'chirishda xato.", "error");
+      setMessage(error.message || t("msg_2fa_disable_error"), "error");
     }
   });
 }
@@ -2582,7 +2926,7 @@ function bindReviewActionButtons(container) {
       try {
         if (itemType === "report") {
           if ((action === "REJECT" || action === "REQUEST_REVISION") && !comment) {
-            setMessage("Rad etish yoki qayta ko'rish uchun izoh majburiy.", "error");
+            setMessage(t("msg_comment_required_reject_revision"), "error");
             return;
           }
           await apiRequest(`/api/v1/reports/${itemId}/actions/`, {
@@ -2600,7 +2944,7 @@ function bindReviewActionButtons(container) {
           ]);
         } else if (itemType === "leave") {
           if (action === "REJECT" && !comment) {
-            setMessage("Rad etish uchun izoh majburiy.", "error");
+            setMessage(t("msg_comment_required_reject"), "error");
             return;
           }
           await apiRequest(`/api/v1/leaves/${itemId}/review/`, {
@@ -2618,7 +2962,7 @@ function bindReviewActionButtons(container) {
           ]);
         } else if (itemType === "notification") {
           if (action === "REJECT" && !comment) {
-            setMessage("Rad etish uchun izoh majburiy.", "error");
+            setMessage(t("msg_comment_required_reject"), "error");
             return;
           }
           const reviewPayload = await apiRequest(`/api/v1/notifications/${itemId}/review/`, {
@@ -2643,9 +2987,9 @@ function bindReviewActionButtons(container) {
         }
         sectionModal?.classList.add("hidden");
         sectionModal?.setAttribute("aria-hidden", "true");
-        setMessage("Muvaffaqiyatli ko'rib chiqildi.", "success");
+        setMessage(t("msg_reviewed_success"), "success");
       } catch (error) {
-        setMessage(error.message || "Ko'rib chiqishda xato bo'ldi.", "error");
+        setMessage(error.message || t("msg_review_error"), "error");
       }
     });
   });
@@ -2721,7 +3065,7 @@ function bindReportDetailActionButtons(report) {
           const title = root.querySelector("#inlineReportTitle")?.value?.trim() || "";
           const summary = root.querySelector("#inlineReportSummary")?.value?.trim() || "";
           if (!title || !summary) {
-            setMessage("Sarlavha va izohni to'ldiring.", "error");
+            setMessage(t("msg_fill_title_summary"), "error");
             return;
           }
           await apiRequest(`/api/v1/reports/${reportId}/`, {
@@ -2732,7 +3076,7 @@ function bindReportDetailActionButtons(report) {
           await loadReports();
           const updated = state.reports.find((item) => item.id === reportId);
           if (updated) openReportDetailModal(updated);
-          setMessage("Hisobot yangilandi.", "success");
+          setMessage(t("msg_report_updated"), "success");
           return;
         }
 
@@ -2754,7 +3098,7 @@ function bindReportDetailActionButtons(report) {
           const updated = state.reports.find((item) => item.id === reportId);
           sectionModal?.classList.add("hidden");
           sectionModal?.setAttribute("aria-hidden", "true");
-          setMessage("Hisobot yuborildi va tasdiqlash navbatiga tushdi.", "success");
+          setMessage(t("msg_report_submitted"), "success");
           if (updated) {
             setTimeout(() => openReportDetailModal(updated), 300);
           }
@@ -3092,9 +3436,9 @@ async function apiRequest(path, options = {}) {
     response = await fetch(`${state.apiBase}${path}`, fetchOptions);
   } catch (networkError) {
     if (networkError?.name === "AbortError") {
-      throw new Error(`So'rov ${Math.round(timeoutMs / 1000)} soniyada javob bermadi. Internet yoki backend serverni tekshiring.`);
+      throw new Error(`${t("err_timeout_prefix")} ${Math.round(timeoutMs / 1000)} ${t("err_timeout_suffix")}`);
     }
-    throw new Error(`Failed to fetch. API serverga ulanishda xato: ${state.apiBase}`);
+    throw new Error(`${t("err_api_connection")}: ${state.apiBase}`);
   } finally {
     if (timeoutId) window.clearTimeout(timeoutId);
   }
@@ -3481,7 +3825,7 @@ function openVerificationStep(payload) {
 async function resolveAttachmentIdFromInput(rawValue) {
   const inputValue = String(rawValue || "").trim();
   if (!isUuid(inputValue)) {
-    throw new Error("Attachment ID yoki Report ID UUID formatida bo'lishi kerak.");
+    throw new Error(t("err_attachment_id_format"));
   }
 
   // If user pasted report UUID, auto-pick latest attachment from that report.
@@ -3491,7 +3835,7 @@ async function resolveAttachmentIdFromInput(rawValue) {
     });
     const attachments = payload.data || [];
     if (!attachments.length) {
-      throw new Error("Bu reportda attachment topilmadi.");
+      throw new Error(t("err_no_attachment_in_report"));
     }
     const latestAttachment = attachments
       .slice()
@@ -3715,7 +4059,7 @@ function renderReports() {
   document.querySelectorAll(".use-report-id-btn").forEach((button) => {
     button?.addEventListener("click", () => {
       applyReportIdToAllTools(button.dataset.id);
-      setMessage("Report ID workflow/attachment/history formalariga qo'yildi.", "success");
+      setMessage(t("msg_report_id_applied_forms"), "success");
     });
   });
   document.querySelectorAll(".report-detail-btn").forEach((button) => {
@@ -3776,7 +4120,7 @@ function renderLeaves() {
   document.querySelectorAll(".use-leave-id-btn").forEach((button) => {
     button?.addEventListener("click", () => {
       applyLeaveIdToReviewTool(button.dataset.id);
-      setMessage("Leave ID review formasiga qo'yildi.", "success");
+      setMessage(t("msg_leave_id_applied"), "success");
     });
   });
   document.querySelectorAll(".leave-detail-btn").forEach((button) => {
@@ -4093,9 +4437,9 @@ function renderAdminDashboard() {
           loadReviewHistory(),
         ]);
         refreshHomeDashboard();
-        setMessage("Muvaffaqiyatli tasdiqlandi", "success");
+        setMessage(t("msg_approved_success"), "success");
       } catch (error) {
-        setMessage(error.message || "Tasdiqlashda xato bo'ldi", "error");
+        setMessage(error.message || t("msg_approve_error"), "error");
       }
     });
   });
@@ -4137,9 +4481,9 @@ function renderAdminDashboard() {
           loadReviewHistory(),
         ]);
         refreshHomeDashboard();
-        setMessage("Muvaffaqiyatli rad etildi", "success");
+        setMessage(t("msg_rejected_success"), "success");
       } catch (error) {
-        setMessage(error.message || "Rad etishda xato bo'ldi", "error");
+        setMessage(error.message || t("msg_reject_error"), "error");
       }
     });
   });
@@ -5095,7 +5439,7 @@ if (loginForm) {
     const formData = new FormData(loginForm);
 
     try {
-      setMessage("Login bajarilmoqda...");
+      setMessage(t("msg_logging_in"));
       const payload = await apiRequest("/api/v1/auth/login/", {
         method: "POST",
         headers: getHeaders(),
@@ -5149,7 +5493,7 @@ if (otpForm) {
   otpForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!state.pendingChallengeToken && !state.pendingEmailChallengeId) {
-      setMessage("Tasdiqlash sessiyasi topilmadi. Loginni qayta boshlang.", "error");
+      setMessage(t("msg_session_not_found"), "error");
       resetPendingLogin();
       return;
     }
@@ -5183,7 +5527,7 @@ if (otpForm) {
 if (backToLoginButton) {
   backToLoginButton.addEventListener("click", () => {
     resetPendingLogin();
-    setMessage("Login bosqichiga qaytdingiz.", "success");
+    setMessage(t("msg_back_to_login"), "success");
   });
 }
 
@@ -5260,7 +5604,7 @@ passwordForm?.addEventListener("submit", async (event) => {
   const formData = new FormData(passwordForm);
 
   try {
-    setMessage("Parol yangilanmoqda...");
+    setMessage(t("msg_password_updating"));
     await apiRequest("/api/v1/auth/password/", {
       method: "PUT",
       headers: getHeaders(),
@@ -5270,15 +5614,15 @@ passwordForm?.addEventListener("submit", async (event) => {
       }),
     });
     passwordForm.reset();
-    setMessage("Parol muvaffaqiyatli yangilandi.", "success");
+    setMessage(t("msg_password_updated"), "success");
   } catch (error) {
-    setMessage(error.message || "Parol yangilashda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_password_update_error"), "error");
   }
 });
 
 setupTwoFactorButton?.addEventListener("click", async () => {
   try {
-    setMessage("2FA uchun QR va maxfiy kalit yaratilmoqda...");
+    setMessage(t("msg_2fa_generating"));
     const payload = await apiRequest("/api/v1/auth/two-factor/setup/", {
       method: "POST",
       headers: getHeaders(),
@@ -5286,16 +5630,16 @@ setupTwoFactorButton?.addEventListener("click", async () => {
     });
     state.twoFactorSetup = payload.data;
     renderTwoFactorSetup();
-    setMessage("QR tayyor. Google Authenticator ilovasida skan qiling va 6 xonali kodni tasdiqlang.", "success");
+    setMessage(t("msg_qr_ready"), "success");
   } catch (error) {
-    setMessage(error.message || "2FA setup yaratishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_2fa_setup_error"), "error");
   }
 });
 
 twoFactorVerifyForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    setMessage("2FA faollashtirilmoqda...");
+    setMessage(t("msg_2fa_activating"));
     await apiRequest("/api/v1/auth/two-factor/verify/", {
       method: "POST",
       headers: getHeaders(),
@@ -5307,16 +5651,16 @@ twoFactorVerifyForm?.addEventListener("submit", async (event) => {
     state.twoFactorSetup = null;
     renderTwoFactorSetup();
     await loadMe();
-    setMessage("2FA muvaffaqiyatli yoqildi.", "success");
+    setMessage(t("msg_2fa_enabled"), "success");
   } catch (error) {
-    setMessage(error.message || "2FA ni yoqishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_2fa_enable_error"), "error");
   }
 });
 
 twoFactorDisableForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    setMessage("2FA o'chirilmoqda...");
+    setMessage(t("msg_2fa_disabling"));
     const formData = new FormData(twoFactorDisableForm);
     await apiRequest("/api/v1/auth/two-factor/disable/", {
       method: "POST",
@@ -5330,9 +5674,9 @@ twoFactorDisableForm?.addEventListener("submit", async (event) => {
     state.twoFactorSetup = null;
     renderTwoFactorSetup();
     await loadMe();
-    setMessage("2FA o'chirildi.", "success");
+    setMessage(t("msg_2fa_disabled"), "success");
   } catch (error) {
-    setMessage(error.message || "2FA ni o'chirishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_2fa_disable_error"), "error");
   }
 });
 
@@ -5367,7 +5711,7 @@ userForm?.addEventListener("submit", async (event) => {
   const jobRole = String(formData.get("job_role") || "").trim();
   const jobLevel = String(formData.get("job_level") || "").trim();
   if (jobLevel && !jobRole) {
-    setMessage("Daraja berish uchun avval IT lavozimini tanlang.", "error");
+    setMessage(t("msg_select_it_role_first"), "error");
     return;
   }
   if (jobRole) payload.job_role = jobRole;
@@ -5377,14 +5721,14 @@ userForm?.addEventListener("submit", async (event) => {
   }
   if (role === "UNIT_HEAD") {
     if (!formData.get("unit_id")) {
-      setMessage("UNIT_HEAD uchun birlik tanlang.", "error");
+      setMessage(t("msg_select_unit_for_unithead"), "error");
       return;
     }
     payload.unit_id = formData.get("unit_id");
   }
 
   try {
-    setMessage("IT xodimi yaratilmoqda...");
+    setMessage(t("msg_creating_it_user"));
     await apiRequest("/api/v1/users/create/", {
       method: "POST",
       headers: getHeaders(),
@@ -5396,9 +5740,9 @@ userForm?.addEventListener("submit", async (event) => {
     renderUserDepartmentOptions();
     syncUserFormByRole();
     closeSectionModal();
-    setMessage("IT xodimi yaratildi.", "success");
+    setMessage(t("msg_it_user_created"), "success");
   } catch (error) {
-    setMessage(error.message || "Xodim yaratishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_user_create_error"), "error");
   }
 });
 
@@ -5445,7 +5789,7 @@ roleManagementForm?.addEventListener("submit", async (event) => {
   }
 
   try {
-    setMessage("Rol o'zgartirilmoqda...");
+    setMessage(t("msg_role_changing"));
     await apiRequest(`/api/v1/users/${userId}/update/`, {
       method: "PUT",
       headers: getHeaders(),
@@ -5482,7 +5826,7 @@ reportForm?.addEventListener("submit", async (event) => {
   if (formData.get("department_id")) payload.department_id = formData.get("department_id");
 
   try {
-    setMessage("Report yaratilmoqda...");
+    setMessage(t("msg_creating_report"));
     const createdReport = await apiRequest("/api/v1/reports/", {
       method: "POST",
       headers: getHeaders(),
@@ -5507,7 +5851,7 @@ reportForm?.addEventListener("submit", async (event) => {
     await Promise.all([loadReports(), loadDashboard(), loadAuditLogs()]);
     reportForm.reset();
   } catch (error) {
-    setMessage(error.message || "Report yaratishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_report_create_error"), "error");
   }
 });
 
@@ -5519,16 +5863,16 @@ workflowForm?.addEventListener("submit", async (event) => {
   const comment = String(formData.get("comment") || "").trim();
 
   if (!isUuid(reportId)) {
-    setMessage("Hisobot ID noto'g'ri. Bu maydonga hisobot UUID kiriting.", "error");
+    setMessage(t("msg_report_id_invalid"), "error");
     return;
   }
 
   try {
-    setMessage("Hisobot ma'lumotlari yuklanmoqda...");
+    setMessage(t("msg_loading_report"));
     const report = await getReportDetail(reportId);
 
     if (!report) {
-      setMessage("Hisobot topilmadi yoki sizda unga kirish huquqi yo'q.", "error");
+      setMessage(t("msg_report_not_found"), "error");
       return;
     }
 
@@ -5544,11 +5888,11 @@ workflowForm?.addEventListener("submit", async (event) => {
     }
 
     if (action === "REQUEST_REVISION" && !comment) {
-      setMessage("Qayta ko'rib chiqishni so'rash uchun izoh majburiy.", "error");
+      setMessage(t("msg_comment_required_revision"), "error");
       return;
     }
 
-    setMessage("Workflow action bajarilmoqda...");
+    setMessage(t("msg_workflow_running"));
     await apiRequest(`/api/v1/reports/${reportId}/actions/`, {
       method: "POST",
       headers: getHeaders(),
@@ -5559,7 +5903,7 @@ workflowForm?.addEventListener("submit", async (event) => {
     });
     workflowForm.reset();
     await Promise.all([loadReports(), loadDashboard(), loadAuditLogs()]);
-    setMessage("Workflow action muvaffaqiyatli bajarildi.", "success");
+    setMessage(t("msg_workflow_success"), "success");
 
     // Show rating modal if action was APPROVE and report is now APPROVED
     if (action === "APPROVE") {
@@ -5575,7 +5919,7 @@ workflowForm?.addEventListener("submit", async (event) => {
       }
     }
   } catch (error) {
-    setMessage(error.message || "Workflow action xatoligi.", "error");
+    setMessage(error.message || t("msg_workflow_error"), "error");
   }
 });
 
@@ -5587,12 +5931,12 @@ leaveReviewForm?.addEventListener("submit", async (event) => {
   const reviewComment = String(formData.get("review_comment") || "").trim();
 
   if (!isUuid(leaveId)) {
-    setMessage("Ariza ID noto'g'ri. Bu maydonga ariza UUID kiriting.", "error");
+    setMessage(t("msg_leave_id_invalid"), "error");
     return;
   }
 
   try {
-    setMessage("Arizani ko'rib chiqilmoqda...");
+    setMessage(t("msg_reviewing_leave"));
     const payload = await apiRequest(`/api/v1/leaves/${leaveId}/review/`, {
       method: "POST",
       headers: getHeaders(),
@@ -5603,10 +5947,10 @@ leaveReviewForm?.addEventListener("submit", async (event) => {
     });
     leaveReviewForm.reset();
     await Promise.all([loadLeaves(), loadDashboard(), loadAuditLogs()]);
-    setMessage("Ariza muvaffaqiyatli ko'rib chiqildi.", "success");
+    setMessage(t("msg_leave_reviewed"), "success");
   } catch (error) {
     console.error("Leave review xatosi:", error);
-    setMessage(error.message || "Arizani ko'rib chiqishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_leave_review_error"), "error");
   }
 });
 
@@ -5628,21 +5972,21 @@ attachmentForm?.addEventListener("submit", async (event) => {
   const formData = new FormData(attachmentForm);
   const reportId = String(formData.get("report_id") || "").trim();
   if (!isUuid(reportId)) {
-    setMessage("Attachment uchun Report ID UUID bo'lishi kerak.", "error");
+    setMessage(t("msg_attachment_report_id_required"), "error");
     return;
   }
 
   try {
     const report = await getReportDetail(reportId);
     if (!report) {
-      setMessage("Report topilmadi yoki sizda unga kirish huquqi yo'q.", "error");
+      setMessage(t("msg_report_not_found"), "error");
       return;
     }
     if (!["DRAFT", "REVISION"].includes(report.status)) {
-      setMessage("Attachment faqat DRAFT yoki REVISION holatidagi reportga yuklanadi.", "error");
+      setMessage(t("msg_attachment_only_draft"), "error");
       return;
     }
-    setMessage("Attachment yuklanmoqda...");
+    setMessage(t("msg_uploading_attachment"));
     await apiRequest(`/api/v1/reports/${reportId}/attachments/`, {
       method: "POST",
       headers: getHeaders(false),
@@ -5650,9 +5994,9 @@ attachmentForm?.addEventListener("submit", async (event) => {
     });
     await Promise.all([loadReports(), loadAuditLogs()]);
     attachmentForm.reset();
-    setMessage("Attachment yuklandi.", "success");
+    setMessage(t("msg_attachment_uploaded"), "success");
   } catch (error) {
-    setMessage(error.message || "Attachment yuklashda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_attachment_upload_error"), "error");
   }
 });
 
@@ -5670,7 +6014,7 @@ downloadAttachmentButton?.addEventListener("click", async () => {
       headers: getHeaders(false),
     });
     if (!response.ok) {
-      throw new Error("Attachment topilmadi. Attachment ID yoki reportga tegishli attachmentni tekshiring.");
+      throw new Error(t("err_attachment_not_found"));
     }
 
     const blob = await response.blob();
@@ -5683,9 +6027,9 @@ downloadAttachmentButton?.addEventListener("click", async () => {
     link.download = filename;
     link.click();
     window.URL.revokeObjectURL(url);
-    setMessage("Attachment yuklab olindi.", "success");
+    setMessage(t("msg_attachment_downloaded"), "success");
   } catch (error) {
-    setMessage(error.message || "Attachment yuklashda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_attachment_upload_error"), "error");
   }
 });
 
@@ -5704,9 +6048,9 @@ deleteAttachmentButton?.addEventListener("click", async () => {
       headers: getHeaders(false),
     });
     await Promise.all([loadReports(), loadAuditLogs()]);
-    setMessage("Attachment o'chirildi.", "success");
+    setMessage(t("msg_attachment_deleted"), "success");
   } catch (error) {
-    setMessage(error.message || "Attachmentni o'chirishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_attachment_delete_error"), "error");
   }
 });
 
@@ -5714,15 +6058,15 @@ loadHistoryButton?.addEventListener("click", async () => {
   const formData = new FormData(reportToolsForm);
   const reportId = String(formData.get("report_id") || "").trim();
   if (!isUuid(reportId)) {
-    setMessage("History uchun Report ID UUID kiriting.", "error");
+    setMessage(t("msg_history_report_id_required"), "error");
     return;
   }
 
   try {
     await loadReportHistory(reportId);
-    setMessage("Report history yuklandi.", "success");
+    setMessage(t("msg_report_history_loaded"), "success");
   } catch (error) {
-    setMessage(error.message || "Report history olishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_report_history_error"), "error");
   }
 });
 
@@ -5730,7 +6074,7 @@ deleteReportButton?.addEventListener("click", async () => {
   const formData = new FormData(reportToolsForm);
   const reportId = String(formData.get("report_id") || "").trim();
   if (!isUuid(reportId)) {
-    setMessage("Delete uchun Report ID UUID kiriting.", "error");
+    setMessage(t("msg_delete_report_id_required"), "error");
     return;
   }
 
@@ -5742,34 +6086,34 @@ deleteReportButton?.addEventListener("click", async () => {
     await Promise.all([loadReports(), loadDashboard(), loadAuditLogs()]);
     state.reportHistory = [];
     renderReportHistory();
-    setMessage("Report o'chirildi.", "success");
+    setMessage(t("msg_report_deleted"), "success");
   } catch (error) {
-    setMessage(error.message || "Reportni o'chirishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_report_delete_error"), "error");
   }
 });
 
 copyLatestReportIdButton?.addEventListener("click", async () => {
   const reportId = state.lastCreatedReportId;
   if (!isUuid(reportId)) {
-    setMessage("Avval report yarating, keyin UUID nusxalanadi.", "error");
+    setMessage(t("msg_create_report_first_copy"), "error");
     return;
   }
   try {
     await navigator.clipboard.writeText(reportId);
-    setMessage("UUID copy qilindi.", "success");
+    setMessage(t("msg_uuid_copied"), "success");
   } catch (error) {
-    setMessage("UUID copy qilib bo'lmadi, qo'lda nusxalang.", "error");
+    setMessage(t("msg_uuid_copy_failed"), "error");
   }
 });
 
 useLatestReportIdButton?.addEventListener("click", () => {
   const reportId = state.lastCreatedReportId;
   if (!isUuid(reportId)) {
-    setMessage("Avval report yarating, keyin UUID formlarga qo'yiladi.", "error");
+    setMessage(t("msg_create_report_first_apply"), "error");
     return;
   }
   applyReportIdToAllTools(reportId);
-  setMessage("UUID workflow/attachment/history formalariga qo'yildi.", "success");
+  setMessage(t("msg_uuid_applied_forms"), "success");
 });
 
 departmentSelect?.addEventListener("change", renderUnits);
@@ -5788,9 +6132,9 @@ readAllNotificationsButton?.addEventListener("click", async () => {
       headers: getHeaders(false),
     });
     await loadNotifications();
-    setMessage("Barcha notificationlar o'qilgan deb belgilandi.", "success");
+    setMessage(t("msg_all_notifications_read"), "success");
   } catch (error) {
-    setMessage(error.message || "Notificationlarni yangilashda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_notifications_update_error"), "error");
   }
 });
 refreshAdminDashboardButton?.addEventListener("click", () => loadAdminDashboard().catch((error) => setMessage(error.message, "error")));
@@ -5829,10 +6173,10 @@ meButton?.addEventListener("click", () => {
             headers: getHeaders(false),
             body: JSON.stringify(Object.fromEntries(formData)),
           });
-          setMessage("Parol muvaffaqiyatli o'zgartirildi.", "success");
+          setMessage(t("msg_password_changed"), "success");
           sectionModal.classList.add("hidden");
         } catch (error) {
-          setMessage(error.message || "Parolni o'zgartirishda xato bo'ldi.", "error");
+          setMessage(error.message || t("msg_password_change_error"), "error");
         }
       });
     }, 0);
@@ -5852,7 +6196,7 @@ apiBaseIcon?.addEventListener("click", () => {
 });
 refreshAllButton?.addEventListener("click", () => {
   loadAllData()
-    .then(() => setMessage("Barcha bo'limlar yangilandi.", "success"))
+    .then(() => setMessage(t("msg_all_sections_refreshed"), "success"))
     .catch((error) => setMessage(error.message, "error"));
 });
 logoutButton?.addEventListener("click", async () => {
@@ -5876,9 +6220,9 @@ logoutButton?.addEventListener("click", async () => {
     renderProfile();
     toggleProfileMenu(false);
     closeSectionModal();
-    setMessage("Logout bajarildi.", "success");
+    setMessage(t("msg_logout_success"), "success");
   } catch (error) {
-    setMessage(error.message || "Logoutda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_logout_error"), "error");
   }
 });
 
@@ -5967,7 +6311,7 @@ profileMenuIcon?.addEventListener("click", () => {
 profileSignalIcon?.addEventListener("click", () => {
   toggleProfileMenu(false);
   // Show connection status toast
-  setMessage("Serverga ulanish faol", "success");
+  setMessage(t("msg_server_connection_active"), "success");
 });
 
 // Auxiliary drawer event listeners
@@ -6060,12 +6404,12 @@ leaveCreateForm?.addEventListener("submit", async (event) => {
   const endDate = String(formData.get("end_date") || "").trim();
 
   if (!leaveType || !reason || !startDate || !endDate) {
-    setMessage("Iltimos, barcha majburiy maydonlarni to'ldiring.", "error");
+    setMessage(t("msg_fill_required_fields"), "error");
     return;
   }
 
   try {
-    setMessage("Ta'til arizasi yaratilmoqda...");
+    setMessage(t("msg_creating_leave"));
     const payload = new FormData();
     payload.append("leave_type", leaveType);
     payload.append("reason", reason);
@@ -6086,10 +6430,10 @@ leaveCreateForm?.addEventListener("submit", async (event) => {
     await Promise.all([loadLeaves(), loadDashboard(), loadAuditLogs()]);
     leaveCreateForm.reset();
     closeSectionModal();
-    setMessage("Ta'til arizasi yuborildi.", "success");
+    setMessage(t("msg_leave_submitted"), "success");
   } catch (error) {
     console.error("Leave create xatosi:", error);
-    setMessage(error.message || "Ta'til arizasi yaratishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_leave_create_error"), "error");
   }
 });
 
@@ -6098,7 +6442,7 @@ profileAddUserButton?.addEventListener("click", (event) => {
   renderDepartmentOptions();
   renderUserDepartmentOptions();
   syncUserFormByRole();
-  openSectionModal("userForm", "Xodim qo'shish");
+  openSectionModal("userForm", t("msg_add_user"));
   toggleProfileMenu(false);
 });
 
