@@ -1187,6 +1187,27 @@ const newTranslations = {
     users_list: "Foydalanuvchilar ro'yxati",
     refresh_users: "Foydalanuvchilarni yangilash",
     current_role: "Hozirgi rol",
+    feature_requests: "Funksiya talablari",
+    all_queue: "Barcha navbat",
+    no_pending_approval_items: "Kutilayotgan tasdiqlash uchun element yo'q.",
+    no_pending_notifications: "Kutilayotgan bildirishnoma yo'q",
+    no_notifications: "Bildirishnomalar yo'q",
+    no_pending_leaves: "Kutilayotgan ariza yo'q",
+    no_pending_reports: "Kutilayotgan hisobot yo'q",
+    no_pending_items: "Kutilayotgan element yo'q",
+    feature_request_label: "Funksiya talabi",
+    label_report: "Hisobot",
+    label_leave: "Ariza",
+    label_notification: "Bildirishnoma",
+    label_feature_request: "Funksiya talabi",
+    label_request: "So'rov",
+    approved_label: "Tasdiqlangan",
+    rejected_label: "Rad etilgan",
+    approver_label: "Tasdiqlovchi",
+    unknown: "Noma'lum",
+    your_leave: "Sizning arizangiz",
+    your_report: "Sizning hisobotingiz",
+    rating_hint: "Bahoni tanlang",
   },
   ru: {
     role_management: "Управление ролями пользователей",
@@ -1208,6 +1229,27 @@ const newTranslations = {
     users_list: "Список пользователей",
     refresh_users: "Обновить пользователей",
     current_role: "Текущая роль",
+    feature_requests: "Запросы функций",
+    all_queue: "Все в очереди",
+    no_pending_approval_items: "Нет элементов, ожидающих утверждения.",
+    no_pending_notifications: "Нет ожидающих уведомлений",
+    no_notifications: "Нет уведомлений",
+    no_pending_leaves: "Нет ожидающих заявок",
+    no_pending_reports: "Нет ожидающих отчётов",
+    no_pending_items: "Нет ожидающих элементов",
+    feature_request_label: "Запрос функции",
+    label_report: "Отчёт",
+    label_leave: "Заявка",
+    label_notification: "Уведомление",
+    label_feature_request: "Запрос функции",
+    label_request: "Запрос",
+    approved_label: "Утверждено",
+    rejected_label: "Отклонено",
+    approver_label: "Утверждающий",
+    unknown: "Неизвестно",
+    your_leave: "Ваша заявка",
+    your_report: "Ваш отчёт",
+    rating_hint: "Выберите оценку",
   },
   en: {
     role_management: "User Role Management",
@@ -1229,6 +1271,27 @@ const newTranslations = {
     users_list: "Users List",
     refresh_users: "Refresh Users",
     current_role: "Current Role",
+    feature_requests: "Feature Requests",
+    all_queue: "All Queue",
+    no_pending_approval_items: "No pending items for approval.",
+    no_pending_notifications: "No pending notifications",
+    no_notifications: "No notifications",
+    no_pending_leaves: "No pending leaves",
+    no_pending_reports: "No pending reports",
+    no_pending_items: "No pending items",
+    feature_request_label: "Feature Request",
+    label_report: "Report",
+    label_leave: "Request",
+    label_notification: "Notification",
+    label_feature_request: "Feature Request",
+    label_request: "Request",
+    approved_label: "Approved",
+    rejected_label: "Rejected",
+    approver_label: "Approver",
+    unknown: "Unknown",
+    your_leave: "Your request",
+    your_report: "Your report",
+    rating_hint: "Select a rating",
   },
   tr: {
     role_management: "Kullanici Rol Yonetimi",
@@ -1250,6 +1313,27 @@ const newTranslations = {
     users_list: "Kullanici Listesi",
     refresh_users: "Kullanicilari Yenile",
     current_role: "Mevcut Rol",
+    feature_requests: "Özellik Talepleri",
+    all_queue: "Tüm Kuyruk",
+    no_pending_approval_items: "Onay bekleyen öğe yok.",
+    no_pending_notifications: "Bekleyen bildirim yok",
+    no_notifications: "Bildirim yok",
+    no_pending_leaves: "Bekleyen talep yok",
+    no_pending_reports: "Bekleyen rapor yok",
+    no_pending_items: "Bekleyen öğe yok",
+    feature_request_label: "Özellik Talebi",
+    label_report: "Rapor",
+    label_leave: "Talep",
+    label_notification: "Bildirim",
+    label_feature_request: "Özellik Talebi",
+    label_request: "Talep",
+    approved_label: "Onaylandı",
+    rejected_label: "Reddedildi",
+    approver_label: "Onaylayan",
+    unknown: "Bilinmiyor",
+    your_leave: "Talebiniz",
+    your_report: "Raporunuz",
+    rating_hint: "Puan seçin",
   },
 };
 
@@ -1843,11 +1927,11 @@ function applyTranslations() {
   if (statCards?.[2]) {
     statCards[2].querySelector(".dashboard-stat-head span")?.replaceChildren(document.createTextNode(t("approval_status")));
     const badges = statCards[2].querySelectorAll(".dashboard-badge");
-    if (badges[0]) badges[0].childNodes[0].textContent = "Funksiya talablari: ";
+    if (badges[0]) badges[0].childNodes[0].textContent = `${t("feature_requests")}: `;
     if (badges[1]) badges[1].childNodes[0].textContent = `${t("resolved_requests")}: `;
     if (badges[2]) badges[2].childNodes[0].textContent = `${t("approved_reports")}: `;
     statCards[2].querySelector('[data-dashboard-filter="pending-all"]')?.replaceChildren(
-      document.createTextNode("Barcha navbat")
+      document.createTextNode(t("all_queue"))
     );
   }
   if (statCards?.[3]) {
@@ -2980,7 +3064,7 @@ function openManagerPendingApprovalsModal() {
   }
   const combined = getManagerPendingQueue();
   if (!combined.length) {
-    setMessage("Kutilayotgan tasdiqlash uchun element yo'q.", "warning");
+    setMessage(t("no_pending_approval_items"), "warning");
     return;
   }
   openCollectionModal(t("approval_status"), combined, "mixed");
@@ -3893,7 +3977,7 @@ function renderNotifications() {
 
   if (!filteredNotifications.length) {
     notificationsList.innerHTML = `<div class="feed-item muted-item">${escapeHtml(
-      isDeptHeadOrDirector() ? "Kutilayotgan bildirishnoma yo'q" : "Notificationlar yo'q"
+      isDeptHeadOrDirector() ? t("no_pending_notifications") : t("no_notifications")
     )}</div>`;
     renderNotificationDashboardCard();
     renderActivityHistory();
@@ -4100,11 +4184,11 @@ function renderPendingItemsInDashboard() {
     pendingLeavesList.innerHTML = pendingLeaves.length
       ? pendingLeaves.slice(0, 3).map(item => `
           <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="leave">
-            <span class="pending-title">${escapeHtml(item.reason || 'Ariza')}</span>
-            <span class="pending-meta">${item.status} - ${isManager ? (item.requested_by_name || item.employee_name || "-") : "Sizning arizangiz"}</span>
+            <span class="pending-title">${escapeHtml(item.reason || t("label_leave"))}</span>
+            <span class="pending-meta">${item.status} - ${isManager ? (item.requested_by_name || item.employee_name || "-") : t("your_leave")}</span>
           </button>
         `).join('')
-      : '<div class="dashboard-pending-empty">Kutilayotgan ariza yo\'q</div>';
+      : `<div class="dashboard-pending-empty">${t("no_pending_leaves")}</div>`;
 
     // Add click handlers
     pendingLeavesList.querySelectorAll('.dashboard-pending-item').forEach(btn => {
@@ -4121,11 +4205,11 @@ function renderPendingItemsInDashboard() {
     pendingReportsList.innerHTML = pendingReports.length
       ? pendingReports.slice(0, 3).map(item => `
           <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="report">
-            <span class="pending-title">${escapeHtml(item.title || item.report_number || 'Hisobot')}</span>
-            <span class="pending-meta">${item.status} - ${isManager ? (item.created_by__full_name || '-') : 'Sizning hisobotingiz'}</span>
+            <span class="pending-title">${escapeHtml(item.title || item.report_number || t("label_report"))}</span>
+            <span class="pending-meta">${item.status} - ${isManager ? (item.created_by__full_name || '-') : t("your_report")}</span>
           </button>
         `).join('')
-      : '<div class="dashboard-pending-empty">Kutilayotgan hisobot yo\'q</div>';
+      : `<div class="dashboard-pending-empty">${t("no_pending_reports")}</div>`;
 
     // Add click handlers
     pendingReportsList.querySelectorAll('.dashboard-pending-item').forEach(btn => {
@@ -4174,8 +4258,8 @@ function renderPendingItemsInDashboard() {
               itemType === "report"
                 ? item.title || item.report_number
                 : itemType === "notification"
-                  ? item.title || "Bildirishnoma"
-                  : item.reason || "Ariza";
+                  ? item.title || t("label_notification")
+                  : item.reason || t("label_leave");
             const meta =
               itemType === "notification"
                 ? `${item.reference_type || "NOTIF"} / ${item.status || "PENDING"}`
@@ -4188,7 +4272,7 @@ function renderPendingItemsInDashboard() {
             `;
           })
           .join("")
-      : `<div class="dashboard-pending-empty">Kutilayotgan element yo'q</div>`;
+      : `<div class="dashboard-pending-empty">${t("no_pending_items")}</div>`;
 
     pendingApprovalList.querySelectorAll(".dashboard-pending-item").forEach((btn) => {
       btn?.addEventListener("click", () => openEntityDetailModal(btn.dataset.type, btn.dataset.id));
@@ -4227,7 +4311,7 @@ function renderNotificationDashboardCard() {
           .slice(0, 3)
           .map((item) => {
             const label =
-              item.reference_type === "FEATURE_REQUEST" ? "Funksiya talabi" : item.title || "Bildirishnoma";
+              item.reference_type === "FEATURE_REQUEST" ? t("feature_request_label") : item.title || t("label_notification");
             return `
               <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="notification">
                 <span class="pending-title">${escapeHtml(label)}</span>
@@ -4236,7 +4320,7 @@ function renderNotificationDashboardCard() {
             `;
           })
           .join("")
-      : `<div class="dashboard-pending-empty">Kutilayotgan bildirishnoma yo'q</div>`;
+      : `<div class="dashboard-pending-empty">${t("no_pending_notifications")}</div>`;
 
     pendingNotificationsDashboardList.querySelectorAll(".dashboard-pending-item").forEach((btn) => {
       btn?.addEventListener("click", () => openEntityDetailModal("notification", btn.dataset.id));
@@ -4501,18 +4585,18 @@ function renderAnalyticsDashboard() {
 
 function getReviewHistoryTypeLabel(itemType) {
   const labels = {
-    report: "Hisobot",
-    leave: "Ariza",
-    notification: "Bildirishnoma",
-    feature_request: "Funksiya talabi",
+    report: t("label_report"),
+    leave: t("label_leave"),
+    notification: t("label_notification"),
+    feature_request: t("label_feature_request"),
   };
-  return labels[itemType] || "So'rov";
+  return labels[itemType] || t("label_request");
 }
 
 function getReviewHistoryActionLabel(action) {
   const labels = {
-    APPROVE: "Tasdiqlangan",
-    REJECT: "Rad etilgan",
+    APPROVE: t("approved_label"),
+    REJECT: t("rejected_label"),
     REQUEST_REVISION: "Qayta ko'rish",
     SUBMIT: "Yuborilgan",
     ARCHIVE: "Arxivlangan",
@@ -6148,12 +6232,12 @@ function openRatingModal(item, itemType, approverInfo) {
   document.getElementById("ratingApproverId").value = approverInfo?.id || "";
 
   const itemName = itemType === "leave" ? item.reason : (item.title || item.report_number);
-  document.getElementById("ratingItemInfo").textContent = `${itemType === "leave" ? "Ariza" : "Hisobot"}: ${itemName}`;
-  document.getElementById("ratingApproverInfo").textContent = `Tasdiqlovchi: ${approverInfo?.name || "Noma'lum"}`;
+  document.getElementById("ratingItemInfo").textContent = `${itemType === "leave" ? t("label_leave") : t("label_report")}: ${itemName}`;
+  document.getElementById("ratingApproverInfo").textContent = `${t("approver_label")}: ${approverInfo?.name || t("unknown")}`;
 
   ratingValue.value = "0";
   setRatingStars(0);
-  ratingHint.textContent = "Bahoni tanlang";
+  ratingHint.textContent = t("rating_hint");
   submitRatingBtn.disabled = true;
   ratingForm.reset();
 
