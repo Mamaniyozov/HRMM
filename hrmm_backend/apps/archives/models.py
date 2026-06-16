@@ -7,8 +7,8 @@ class ArchiveLog(models.Model):
     STATUS_SUCCESS = "success"
     STATUS_FAILED = "failed"
     STATUS_CHOICES = [
-        (STATUS_SUCCESS, "Success"),
-        (STATUS_FAILED, "Failed"),
+        (STATUS_SUCCESS, "Muvaffaqiyatli"),
+        (STATUS_FAILED, "Muvaffaqiyatsiz"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

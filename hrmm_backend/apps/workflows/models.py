@@ -5,22 +5,22 @@ from django.db import models
 
 class ApprovalHistory(models.Model):
     ACTION_CHOICES = [
-        ("SUBMIT", "Submit"),
-        ("APPROVE", "Approve"),
-        ("REJECT", "Reject"),
-        ("REQUEST_REVISION", "Request Revision"),
-        ("ARCHIVE", "Archive"),
+        ("SUBMIT", "Yuborish"),
+        ("APPROVE", "Tasdiqlash"),
+        ("REJECT", "Rad etish"),
+        ("REQUEST_REVISION", "Qayta ko'rib chiqishni so'rash"),
+        ("ARCHIVE", "Arxivlash"),
     ]
 
     STATUS_CHOICES = [
-        ("DRAFT", "Draft"),
-        ("PENDING_L2", "Pending Level 2"),
-        ("PENDING_L3", "Pending Level 3"),
-        ("PENDING_L4", "Pending Level 4"),
-        ("APPROVED", "Approved"),
-        ("REJECTED", "Rejected"),
-        ("REVISION", "Revision"),
-        ("ARCHIVED", "Archived"),
+        ("DRAFT", "Qoralama"),
+        ("PENDING_L2", "2-daraja tasdiqlash kutilmoqda"),
+        ("PENDING_L3", "3-daraja tasdiqlash kutilmoqda"),
+        ("PENDING_L4", "4-daraja tasdiqlash kutilmoqda"),
+        ("APPROVED", "Tasdiqlangan"),
+        ("REJECTED", "Rad etilgan"),
+        ("REVISION", "Qayta ko'rib chiqish"),
+        ("ARCHIVED", "Arxivlangan"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

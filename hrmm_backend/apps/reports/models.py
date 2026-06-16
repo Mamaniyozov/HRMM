@@ -9,14 +9,14 @@ def report_attachment_upload_to(instance, filename):
 
 class Report(models.Model):
     STATUS_CHOICES = [
-        ("DRAFT", "Draft"),
-        ("PENDING_L2", "Pending Level 2"),
-        ("PENDING_L3", "Pending Level 3"),
-        ("PENDING_L4", "Pending Level 4"),
-        ("APPROVED", "Approved"),
-        ("REJECTED", "Rejected"),
-        ("REVISION", "Revision"),
-        ("ARCHIVED", "Archived"),
+        ("DRAFT", "Qoralama"),
+        ("PENDING_L2", "2-daraja tasdiqlash kutilmoqda"),
+        ("PENDING_L3", "3-daraja tasdiqlash kutilmoqda"),
+        ("PENDING_L4", "4-daraja tasdiqlash kutilmoqda"),
+        ("APPROVED", "Tasdiqlangan"),
+        ("REJECTED", "Rad etilgan"),
+        ("REVISION", "Qayta ko'rib chiqish"),
+        ("ARCHIVED", "Arxivlangan"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -9,18 +9,18 @@ def leave_screenshot_upload_to(instance, filename):
 
 class LeaveRequest(models.Model):
     LEAVE_TYPE_CHOICES = [
-        ("ANNUAL", "Annual"),
-        ("SICK", "Sick"),
-        ("UNPAID", "Unpaid"),
-        ("MATERNITY", "Maternity"),
-        ("OTHER", "Other"),
+        ("ANNUAL", "Yillik ta'til"),
+        ("SICK", "Kasallik ta'tili"),
+        ("UNPAID", "To'lovsiz ta'til"),
+        ("MATERNITY", "Tug'ruq ta'tili"),
+        ("OTHER", "Boshqa"),
     ]
 
     STATUS_CHOICES = [
-        ("PENDING", "Pending"),
-        ("APPROVED", "Approved"),
-        ("REJECTED", "Rejected"),
-        ("CANCELLED", "Cancelled"),
+        ("PENDING", "Kutilmoqda"),
+        ("APPROVED", "Tasdiqlangan"),
+        ("REJECTED", "Rad etilgan"),
+        ("CANCELLED", "Bekor qilingan"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

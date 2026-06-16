@@ -14,15 +14,15 @@ def notification_attachment_upload_to(instance, filename):
 
 class Notification(models.Model):
     TYPE_CHOICES = [
-        ("APPROVAL", "Approval"),
-        ("REJECTION", "Rejection"),
-        ("INFO", "Info"),
-        ("REMINDER", "Reminder"),
+        ("APPROVAL", "Tasdiqlash"),
+        ("REJECTION", "Rad etish"),
+        ("INFO", "Ma'lumot"),
+        ("REMINDER", "Eslatma"),
     ]
     STATUS_CHOICES = [
-        ("PENDING", "Pending"),
-        ("APPROVED", "Approved"),
-        ("REJECTED", "Rejected"),
+        ("PENDING", "Kutilmoqda"),
+        ("APPROVED", "Tasdiqlangan"),
+        ("REJECTED", "Rad etilgan"),
     ]
     REVIEWABLE_REFERENCE_TYPES = frozenset({"FEATURE_REQUEST", "USER_NOTIFICATION"})
     REVIEWER_ALERT_REFERENCE_TYPE = "REVIEWER_ALERT"

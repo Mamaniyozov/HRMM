@@ -5,30 +5,30 @@ from django.contrib.auth.hashers import make_password
 
 class User(models.Model):
     ROLE_CHOICES = [
-        ("SPECIALIST", "Specialist"),
-        ("UNIT_HEAD", "Unit Head"),
-        ("DEPT_HEAD", "Department Head"),
-        ("DIRECTOR", "Director"),
+        ("SPECIALIST", "Mutaxassis"),
+        ("UNIT_HEAD", "Bo'linma rahbari"),
+        ("DEPT_HEAD", "Bo'lim boshlig'i"),
+        ("DIRECTOR", "Direktor"),
     ]
     JOB_ROLE_CHOICES = [
-        ("DEVOPS", "DevOps"),
-        ("IT_ENGINEER", "IT Engineer"),
-        ("ANDROID_DEV", "Android Developer"),
-        ("BACKEND_DEV", "Backend Developer"),
-        ("FRONTEND_DEV", "Frontend Developer"),
-        ("MANAGER", "Manager"),
-        ("DIRECTOR", "Director"),
+        ("DEVOPS", "DevOps muhandisi"),
+        ("IT_ENGINEER", "IT muhandisi"),
+        ("ANDROID_DEV", "Android dasturchi"),
+        ("BACKEND_DEV", "Backend dasturchi"),
+        ("FRONTEND_DEV", "Frontend dasturchi"),
+        ("MANAGER", "Menejer"),
+        ("DIRECTOR", "Direktor"),
     ]
     JOB_LEVEL_CHOICES = [
-        ("JUNIOR", "Junior"),
-        ("MIDDLE", "Middle"),
-        ("SENIOR", "Senior"),
+        ("JUNIOR", "Boshlang'ich (Junior)"),
+        ("MIDDLE", "O'rta (Middle)"),
+        ("SENIOR", "Yuqori (Senior)"),
     ]
     LANGUAGE_CHOICES = [
-        ("uz", "Uzbek"),
-        ("ru", "Russian"),
-        ("en", "English"),
-        ("tr", "Turkish"),
+        ("uz", "O'zbekcha"),
+        ("ru", "Ruscha"),
+        ("en", "Inglizcha"),
+        ("tr", "Turkcha"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

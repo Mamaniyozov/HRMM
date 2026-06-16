@@ -590,19 +590,19 @@
         <section id="reviewShortcutSection" class="panel app-section hidden">
           <div class="panel-heading inline">
             <div>
-              <p class="eyebrow">Tezkor ko'rinish</p>
-              <h3>Tasdiqlovchilar uchun kichik oynacha</h3>
+              <p class="eyebrow" data-translate="quick_view">Tezkor ko'rinish</p>
+              <h3 data-translate="review_shortcut_subtitle">Tasdiqlovchilar uchun kichik oynacha</h3>
             </div>
           </div>
           <div class="dashboard-card-grid">
             <article class="dashboard-stat-card">
               <div class="dashboard-stat-head">
-                <span>Tasdiqlangan arizalar</span>
+                <span data-translate="approved_leaves">Tasdiqlangan arizalar</span>
                 <span class="stat-icon green">A</span>
               </div>
               <strong id="approvedLeavesShortcutValue">0</strong>
               <div class="dashboard-badge-row">
-                <span class="dashboard-badge neutral">Tasdiqlangan arizalar</span>
+                <span class="dashboard-badge neutral" data-translate="approved_leaves">Tasdiqlangan arizalar</span>
               </div>
             </article>
             <article class="dashboard-stat-card">
@@ -612,17 +612,17 @@
               </div>
               <strong id="notificationsShortcutValue">0</strong>
               <div class="dashboard-badge-row">
-                <span class="dashboard-badge neutral">Yangi xabarlar</span>
+                <span class="dashboard-badge neutral" data-translate="new_messages">Yangi xabarlar</span>
               </div>
             </article>
             <article class="dashboard-stat-card">
               <div class="dashboard-stat-head">
-                <span>Kutilayotgan talablar</span>
+                <span data-translate="pending_requests_label">Kutilayotgan talablar</span>
                 <span class="stat-icon orange">T</span>
               </div>
               <strong id="pendingRequestsShortcutValue">0</strong>
               <div class="dashboard-badge-row">
-                <span class="dashboard-badge neutral">Kutilayotgan tasdiqlar</span>
+                <span class="dashboard-badge neutral" data-translate="pending_approvals">Kutilayotgan tasdiqlar</span>
               </div>
             </article>
           </div>
@@ -647,31 +647,31 @@
         <section id="archiveSection" class="panel app-section">
           <div class="panel-heading inline">
             <div>
-              <p class="eyebrow">Arxiv</p>
-              <h3>Arxivlash tarixi (oxirgi 7 kun)</h3>
+              <p class="eyebrow" data-translate="archive">Arxiv</p>
+              <h3 data-translate="archive_history">Arxivlash tarixi (oxirgi 7 kun)</h3>
             </div>
-            <button id="refreshArchiveLogs" class="ghost-btn" type="button">Yangilash</button>
+            <button id="refreshArchiveLogs" class="ghost-btn" type="button" data-translate="refresh">Yangilash</button>
           </div>
           <div class="table-wrap" style="max-height: 420px; overflow-y: auto;">
             <table class="archive-logs-table">
               <thead>
                 <tr>
-                  <th>Sana</th>
-                  <th>Yozuvlar soni</th>
-                  <th>Fayl hajmi (KB)</th>
-                  <th>Holat</th>
+                  <th data-translate="col_date">Sana</th>
+                  <th data-translate="records_count">Yozuvlar soni</th>
+                  <th data-translate="file_size_kb">Fayl hajmi (KB)</th>
+                  <th data-translate="status">Holat</th>
                 </tr>
               </thead>
               <tbody id="archiveLogsTableBody">
-                <tr><td colspan="4" class="empty-state">Arxiv loglari yuklanmagan</td></tr>
+                <tr><td colspan="4" class="empty-state" data-translate="archive_logs_not_loaded">Arxiv loglari yuklanmagan</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="archive-telegram-notice">
+          <p class="archive-telegram-notice" data-translate="archive_telegram_notice">
             Qolgan ma'lumotlarni Telegram botdan olasiz
           </p>
           <div class="archive-actions">
-            <a href="https://t.me/Muhammadyusuf_5538" target="_blank" rel="noopener noreferrer" class="primary-btn">
+            <a href="https://t.me/Muhammadyusuf_5538" target="_blank" rel="noopener noreferrer" class="primary-btn" data-translate="connect_help_center">
               Yordam markaziga ulanish
             </a>
           </div>
@@ -872,18 +872,18 @@
 
         <section id="usersSection" class="panel app-section">
           <div class="panel-heading inline">
-            <div><p class="eyebrow">Xodimlar ro'yxati</p><h3>IT xodimlar ko'rinishi</h3></div>
+            <div><p class="eyebrow" data-translate="employees_list">Xodimlar ro'yxati</p><h3 data-translate="it_employees_view">IT xodimlar ko'rinishi</h3></div>
             <div class="toolbar">
-              <input id="userSearchInput" type="text" placeholder="Xodim qidirish..." />
-              <select id="roleFilter"><option value="">Barcha lavozimlar</option><option value="DEVOPS">DevOps</option><option value="IT_ENGINEER">IT muhandis</option><option value="ANDROID_DEV">Android dasturchi</option><option value="BACKEND_DEV">Backend dasturchi</option><option value="FRONTEND_DEV">Frontend dasturchi</option><option value="MANAGER">Menejer</option><option value="DIRECTOR">Direktor</option></select>
-              <select id="levelFilter"><option value="">Barcha darajalar</option><option value="JUNIOR">Junior</option><option value="MIDDLE">Middle</option><option value="SENIOR">Senior</option></select>
-              <button id="refreshUsers" class="ghost-btn" type="button">Xodimlarni yangilash</button>
+              <input id="userSearchInput" type="text" placeholder="Xodim qidirish..." data-translate-placeholder="search_employee" />
+              <select id="roleFilter"><option value="" data-translate="all_positions">Barcha lavozimlar</option><option value="DEVOPS">DevOps</option><option value="IT_ENGINEER">IT muhandis</option><option value="ANDROID_DEV">Android dasturchi</option><option value="BACKEND_DEV">Backend dasturchi</option><option value="FRONTEND_DEV">Frontend dasturchi</option><option value="MANAGER">Menejer</option><option value="DIRECTOR">Direktor</option></select>
+              <select id="levelFilter"><option value="" data-translate="all_levels">Barcha darajalar</option><option value="JUNIOR">Junior</option><option value="MIDDLE">Middle</option><option value="SENIOR">Senior</option></select>
+              <button id="refreshUsers" class="ghost-btn" type="button" data-translate="refresh_employees">Xodimlarni yangilash</button>
             </div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Xodim</th><th>Boshqaruv roli</th><th>IT lavozimi</th><th>Daraja</th><th>Bo'lim</th><th>Holat</th></tr></thead>
-              <tbody id="usersTableBody"><tr><td colspan="6" class="empty-state">Ma'lumot yuklanmagan</td></tr></tbody>
+              <thead><tr><th data-translate="col_employee">Xodim</th><th data-translate="management_role">Boshqaruv roli</th><th data-translate="col_it_position">IT lavozimi</th><th data-translate="col_level">Daraja</th><th data-translate="department">Bo'lim</th><th data-translate="status">Holat</th></tr></thead>
+              <tbody id="usersTableBody"><tr><td colspan="6" class="empty-state" data-translate="data_not_loaded">Ma'lumot yuklanmagan</td></tr></tbody>
             </table>
           </div>
         </section>

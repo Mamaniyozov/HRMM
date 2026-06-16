@@ -674,6 +674,20 @@ const translations = {
     role_generic: "Роль",
     department_unassigned: "Отдел не назначен",
     unit_unassigned: "Подразделение не назначено",
+    sidebar_leaves: "Заявки",
+    sidebar_employees: "Сотрудники",
+    notifications_unread: "Непрочитанные",
+    notifications_pending: "Ожидают",
+    notifications_approved: "Одобрено",
+    notifications_total: "Всего уведомлений",
+    submit_report: "Отправить",
+    edit_report: "Редактировать",
+    save_changes: "Сохранить",
+    collection_title_approved_notifications: "Одобренные уведомления",
+    report_submit_hint: "Сначала отправьте отчёт, чтобы руководители могли его утвердить.",
+    user_create_password_mismatch: "Пароли не совпадают",
+    user_create_password_required: "Пароль должен содержать не менее 8 символов",
+    user_create_department_required: "Выберите отдел",
     gateway_internal: "Шлюз: внутренний шлюз",
     active: "Активен",
     inactive: "Неактивен",
@@ -846,6 +860,13 @@ const translations = {
     role_generic: "Role",
     department_unassigned: "Department not assigned",
     unit_unassigned: "Unit not assigned",
+    sidebar_leaves: "Requests",
+    sidebar_employees: "Employees",
+    notifications_unread: "Unread",
+    notifications_total: "Total notifications",
+    user_create_password_mismatch: "Passwords do not match",
+    user_create_password_required: "Password must be at least 8 characters",
+    user_create_department_required: "Select a department",
     gateway_internal: "Gateway: Internal gateway",
     active: "Active",
     inactive: "Inactive",
@@ -1011,6 +1032,20 @@ const translations = {
     role_generic: "Rol",
     department_unassigned: "Departman atanmadi",
     unit_unassigned: "Birim atanmadi",
+    sidebar_leaves: "Talepler",
+    sidebar_employees: "Çalışanlar",
+    notifications_unread: "Okunmamış",
+    notifications_pending: "Bekliyor",
+    notifications_approved: "Onaylandı",
+    notifications_total: "Toplam bildirim",
+    submit_report: "Gönder",
+    edit_report: "Düzenle",
+    save_changes: "Kaydet",
+    collection_title_approved_notifications: "Onaylanan bildirimler",
+    report_submit_hint: "Yöneticilerin onaylayabilmesi için önce raporu gönderin.",
+    user_create_password_mismatch: "Parolalar eşleşmiyor",
+    user_create_password_required: "Parola en az 8 karakter olmalıdır",
+    user_create_department_required: "Departman seçin",
     gateway_internal: "Gecit: ic gecit",
     active: "Aktif",
     inactive: "Pasif",
@@ -1208,6 +1243,30 @@ const newTranslations = {
     your_leave: "Sizning arizangiz",
     your_report: "Sizning hisobotingiz",
     rating_hint: "Bahoni tanlang",
+    quick_view: "Tezkor ko'rinish",
+    review_shortcut_subtitle: "Tasdiqlovchilar uchun kichik oynacha",
+    approved_leaves: "Tasdiqlangan arizalar",
+    new_messages: "Yangi xabarlar",
+    pending_requests_label: "Kutilayotgan talablar",
+    pending_approvals: "Kutilayotgan tasdiqlar",
+    archive: "Arxiv",
+    archive_history: "Arxivlash tarixi (oxirgi 7 kun)",
+    col_date: "Sana",
+    records_count: "Yozuvlar soni",
+    file_size_kb: "Fayl hajmi (KB)",
+    archive_logs_not_loaded: "Arxiv loglari yuklanmagan",
+    archive_telegram_notice: "Qolgan ma'lumotlarni Telegram botdan olasiz",
+    connect_help_center: "Yordam markaziga ulanish",
+    employees_list: "Xodimlar ro'yxati",
+    it_employees_view: "IT xodimlar ko'rinishi",
+    search_employee: "Xodim qidirish...",
+    all_positions: "Barcha lavozimlar",
+    all_levels: "Barcha darajalar",
+    refresh_employees: "Xodimlarni yangilash",
+    col_employee: "Xodim",
+    col_it_position: "IT lavozimi",
+    col_level: "Daraja",
+    data_not_loaded: "Ma'lumot yuklanmagan",
     msg_password_updated: "Parol muvaffaqiyatli yangilandi.",
     msg_password_update_error: "Parolni yangilashda xatolik.",
     msg_2fa_enabled: "2FA muvaffaqiyatli yoqildi.",
@@ -1294,6 +1353,41 @@ const newTranslations = {
     err_api_connection: "Ulanishda xatolik. API serverga ulanib bo'lmadi",
     err_timeout_prefix: "So'rov",
     err_timeout_suffix: "soniyada javob bermadi. Internet yoki backend serverni tekshiring.",
+    msg_departments_not_found: "Kafedra ro'yxati topilmadi. Avval backendda bo'limlar yaratilganini tekshiring.",
+    msg_connected_departments: "Frontend backend bilan ulandi. Departmentlar yuklandi: {count} ta.",
+    msg_action_not_allowed: "\"{action}\" harakati {status} holatidagi hisobot uchun mumkin emas. Ruxsat etilgan harakatlar: {actions}",
+    msg_attachment_used_from_report: "Report ID bo'yicha topilgan attachment ishlatilmoqda: {id}",
+    msg_attachment_deleting_from_report: "Report ID bo'yicha topilgan attachment o'chirilmoqda: {id}",
+    msg_select_rating: "Iltimos, bahoni tanlang",
+    msg_rating_archived: "Baholash saqlandi va arxivga o'tkazildi",
+    msg_select_rating_first: "Avval baho tanlang.",
+    msg_write_comment: "Kommentariya yozing.",
+    msg_feedback_saved: "Baholash va kommentariya backendga saqlandi.",
+    msg_feedback_error: "Feedback yuborishda xato bo'ldi.",
+    msg_registering: "Ro'yxatdan o'tish...",
+    msg_registered: "Ro'yxatdan o'tdingiz! Endi kiring.",
+    msg_enter_details: "Ma'lumotlarni kiriting.",
+    msg_passwords_mismatch: "Parollar mos kelmadi.",
+    security_settings: "Xavfsizlik sozlamalari",
+    msg_login_error: "Login xatoligi yuz berdi.",
+    msg_register_error: "Ro'yxatdan o'tishda xato.",
+    msg_rating_save_error: "Baholash saqlashda xato",
+    msg_2fa_code_sent_email: "Parol tasdiqlandi. 6 xonali kod {email} manziliga yuborildi.",
+    msg_2fa_setup_scan: "Parol tasdiqlandi. Birinchi kirish uchun QR kodni scan qiling va 6 xonali kodni kiriting.",
+    msg_2fa_enter_code: "Parol tasdiqlandi. Endi 6 xonali authenticator kodni kiriting.",
+    download: "Yuklab olish",
+    collection_edit_hint: "Tahrirlash va baholash uchun elementni bosing.",
+    use_report_id: "Hisobot ID dan foydalanish",
+    use_leave_id: "Ariza ID dan foydalanish",
+    no_archive_logs_7days: "Oxirgi 7 kunda arxiv loglari yo'q",
+    mark_as_read: "O'qilgan deb belgilash",
+    no_department_data: "Bo'limlar bo'yicha ma'lumot topilmadi",
+    archive_ok: "Muvaffaqiyatli",
+    archive_fail: "Xatolik",
+    pending_suffix: "kutilmoqda",
+    no_unit: "Birlik yo'q",
+    attachment: "Biriktirma",
+    has_attachment: "Biriktirma bor",
   },
   ru: {
     role_management: "Управление ролями пользователей",
@@ -1336,6 +1430,30 @@ const newTranslations = {
     your_leave: "Ваша заявка",
     your_report: "Ваш отчёт",
     rating_hint: "Выберите оценку",
+    quick_view: "Быстрый просмотр",
+    review_shortcut_subtitle: "Небольшое окно для согласующих",
+    approved_leaves: "Одобренные заявки",
+    new_messages: "Новые сообщения",
+    pending_requests_label: "Ожидающие заявки",
+    pending_approvals: "Ожидающие согласования",
+    archive: "Архив",
+    archive_history: "История архивации (последние 7 дней)",
+    col_date: "Дата",
+    records_count: "Кол-во записей",
+    file_size_kb: "Размер файла (КБ)",
+    archive_logs_not_loaded: "Журналы архива не загружены",
+    archive_telegram_notice: "Остальные данные вы получите через Telegram-бот",
+    connect_help_center: "Подключиться к центру помощи",
+    employees_list: "Список сотрудников",
+    it_employees_view: "Просмотр ИТ-сотрудников",
+    search_employee: "Поиск сотрудника...",
+    all_positions: "Все должности",
+    all_levels: "Все уровни",
+    refresh_employees: "Обновить сотрудников",
+    col_employee: "Сотрудник",
+    col_it_position: "ИТ-должность",
+    col_level: "Уровень",
+    data_not_loaded: "Данные не загружены",
     msg_password_updated: "Пароль успешно обновлён.",
     msg_password_update_error: "Ошибка при обновлении пароля.",
     msg_2fa_enabled: "2FA успешно включена.",
@@ -1422,6 +1540,41 @@ const newTranslations = {
     err_api_connection: "Ошибка соединения. Не удалось подключиться к API-серверу",
     err_timeout_prefix: "Запрос не ответил за",
     err_timeout_suffix: "секунд. Проверьте интернет или backend-сервер.",
+    msg_departments_not_found: "Список кафедр не найден. Сначала проверьте, созданы ли отделы в backend.",
+    msg_connected_departments: "Frontend подключён к backend. Загружено отделов: {count}.",
+    msg_action_not_allowed: "Действие \"{action}\" недоступно для отчёта в статусе {status}. Разрешённые действия: {actions}",
+    msg_attachment_used_from_report: "Используется вложение, найденное по Report ID: {id}",
+    msg_attachment_deleting_from_report: "Удаляется вложение, найденное по Report ID: {id}",
+    msg_select_rating: "Пожалуйста, выберите оценку",
+    msg_rating_archived: "Оценка сохранена и перемещена в архив",
+    msg_select_rating_first: "Сначала выберите оценку.",
+    msg_write_comment: "Напишите комментарий.",
+    msg_feedback_saved: "Оценка и комментарий сохранены в backend.",
+    msg_feedback_error: "Ошибка при отправке отзыва.",
+    msg_registering: "Регистрация...",
+    msg_registered: "Вы зарегистрированы! Теперь войдите.",
+    msg_enter_details: "Введите данные.",
+    msg_passwords_mismatch: "Пароли не совпали.",
+    security_settings: "Настройки безопасности",
+    msg_login_error: "Произошла ошибка входа.",
+    msg_register_error: "Ошибка при регистрации.",
+    msg_rating_save_error: "Ошибка при сохранении оценки",
+    msg_2fa_code_sent_email: "Пароль подтверждён. 6-значный код отправлен на {email}.",
+    msg_2fa_setup_scan: "Пароль подтверждён. Для первого входа отсканируйте QR-код и введите 6-значный код.",
+    msg_2fa_enter_code: "Пароль подтверждён. Теперь введите 6-значный код authenticator.",
+    download: "Скачать",
+    collection_edit_hint: "Нажмите на элемент, чтобы редактировать и оценить.",
+    use_report_id: "Использовать ID отчёта",
+    use_leave_id: "Использовать ID заявки",
+    no_archive_logs_7days: "За последние 7 дней нет журналов архива",
+    mark_as_read: "Отметить как прочитанное",
+    no_department_data: "Данные по отделам не найдены",
+    archive_ok: "Успешно",
+    archive_fail: "Ошибка",
+    pending_suffix: "в ожидании",
+    no_unit: "Нет подразделения",
+    attachment: "Вложение",
+    has_attachment: "Есть вложение",
   },
   en: {
     role_management: "User Role Management",
@@ -1464,6 +1617,30 @@ const newTranslations = {
     your_leave: "Your request",
     your_report: "Your report",
     rating_hint: "Select a rating",
+    quick_view: "Quick view",
+    review_shortcut_subtitle: "A small window for approvers",
+    approved_leaves: "Approved requests",
+    new_messages: "New messages",
+    pending_requests_label: "Pending requests",
+    pending_approvals: "Pending approvals",
+    archive: "Archive",
+    archive_history: "Archive history (last 7 days)",
+    col_date: "Date",
+    records_count: "Record count",
+    file_size_kb: "File size (KB)",
+    archive_logs_not_loaded: "Archive logs not loaded",
+    archive_telegram_notice: "You can get the remaining data from the Telegram bot",
+    connect_help_center: "Connect to help center",
+    employees_list: "Employees list",
+    it_employees_view: "IT employees view",
+    search_employee: "Search employee...",
+    all_positions: "All positions",
+    all_levels: "All levels",
+    refresh_employees: "Refresh employees",
+    col_employee: "Employee",
+    col_it_position: "IT position",
+    col_level: "Level",
+    data_not_loaded: "Data not loaded",
     msg_password_updated: "Password updated successfully.",
     msg_password_update_error: "Error updating password.",
     msg_2fa_enabled: "2FA enabled successfully.",
@@ -1550,6 +1727,41 @@ const newTranslations = {
     err_api_connection: "Connection error. Could not connect to the API server",
     err_timeout_prefix: "The request did not respond within",
     err_timeout_suffix: "seconds. Check your internet or the backend server.",
+    msg_departments_not_found: "Department list not found. First check that departments are created in the backend.",
+    msg_connected_departments: "Frontend connected to backend. Departments loaded: {count}.",
+    msg_action_not_allowed: "Action \"{action}\" is not allowed for a report in status {status}. Allowed actions: {actions}",
+    msg_attachment_used_from_report: "Using attachment found by Report ID: {id}",
+    msg_attachment_deleting_from_report: "Deleting attachment found by Report ID: {id}",
+    msg_select_rating: "Please select a rating",
+    msg_rating_archived: "Rating saved and moved to archive",
+    msg_select_rating_first: "Select a rating first.",
+    msg_write_comment: "Write a comment.",
+    msg_feedback_saved: "Rating and comment saved to the backend.",
+    msg_feedback_error: "Error sending feedback.",
+    msg_registering: "Registering...",
+    msg_registered: "You're registered! Now sign in.",
+    msg_enter_details: "Enter your details.",
+    msg_passwords_mismatch: "Passwords did not match.",
+    security_settings: "Security settings",
+    msg_login_error: "A login error occurred.",
+    msg_register_error: "Error during registration.",
+    msg_rating_save_error: "Error saving the rating",
+    msg_2fa_code_sent_email: "Password confirmed. A 6-digit code was sent to {email}.",
+    msg_2fa_setup_scan: "Password confirmed. For first sign-in, scan the QR code and enter the 6-digit code.",
+    msg_2fa_enter_code: "Password confirmed. Now enter the 6-digit authenticator code.",
+    download: "Download",
+    collection_edit_hint: "Click an item to edit and rate it.",
+    use_report_id: "Use report ID",
+    use_leave_id: "Use leave ID",
+    no_archive_logs_7days: "No archive logs in the last 7 days",
+    mark_as_read: "Mark as read",
+    no_department_data: "No data found for departments",
+    archive_ok: "Success",
+    archive_fail: "Error",
+    pending_suffix: "pending",
+    no_unit: "No unit",
+    attachment: "Attachment",
+    has_attachment: "Has attachment",
   },
   tr: {
     role_management: "Kullanici Rol Yonetimi",
@@ -1592,6 +1804,30 @@ const newTranslations = {
     your_leave: "Talebiniz",
     your_report: "Raporunuz",
     rating_hint: "Puan seçin",
+    quick_view: "Hızlı görünüm",
+    review_shortcut_subtitle: "Onaylayanlar için küçük pencere",
+    approved_leaves: "Onaylanan talepler",
+    new_messages: "Yeni mesajlar",
+    pending_requests_label: "Bekleyen talepler",
+    pending_approvals: "Bekleyen onaylar",
+    archive: "Arşiv",
+    archive_history: "Arşivleme geçmişi (son 7 gün)",
+    col_date: "Tarih",
+    records_count: "Kayıt sayısı",
+    file_size_kb: "Dosya boyutu (KB)",
+    archive_logs_not_loaded: "Arşiv kayıtları yüklenmedi",
+    archive_telegram_notice: "Kalan verileri Telegram botundan alabilirsiniz",
+    connect_help_center: "Yardım merkezine bağlan",
+    employees_list: "Çalışan listesi",
+    it_employees_view: "BT çalışanları görünümü",
+    search_employee: "Çalışan ara...",
+    all_positions: "Tüm pozisyonlar",
+    all_levels: "Tüm seviyeler",
+    refresh_employees: "Çalışanları yenile",
+    col_employee: "Çalışan",
+    col_it_position: "BT pozisyonu",
+    col_level: "Seviye",
+    data_not_loaded: "Veri yüklenmedi",
     msg_password_updated: "Parola başarıyla güncellendi.",
     msg_password_update_error: "Parola güncellenirken hata oluştu.",
     msg_2fa_enabled: "2FA başarıyla etkinleştirildi.",
@@ -1678,6 +1914,41 @@ const newTranslations = {
     err_api_connection: "Bağlantı hatası. API sunucusuna bağlanılamadı",
     err_timeout_prefix: "İstek şu süre içinde yanıt vermedi:",
     err_timeout_suffix: "saniye. İnternet veya backend sunucusunu kontrol edin.",
+    msg_departments_not_found: "Bölüm listesi bulunamadı. Önce backend'de bölümlerin oluşturulduğunu kontrol edin.",
+    msg_connected_departments: "Frontend backend'e bağlandı. Yüklenen bölümler: {count}.",
+    msg_action_not_allowed: "\"{action}\" işlemi {status} durumundaki rapor için mümkün değil. İzin verilen işlemler: {actions}",
+    msg_attachment_used_from_report: "Report ID ile bulunan ek kullanılıyor: {id}",
+    msg_attachment_deleting_from_report: "Report ID ile bulunan ek siliniyor: {id}",
+    msg_select_rating: "Lütfen bir puan seçin",
+    msg_rating_archived: "Değerlendirme kaydedildi ve arşive taşındı",
+    msg_select_rating_first: "Önce bir puan seçin.",
+    msg_write_comment: "Bir yorum yazın.",
+    msg_feedback_saved: "Değerlendirme ve yorum backend'e kaydedildi.",
+    msg_feedback_error: "Geri bildirim gönderilirken hata oluştu.",
+    msg_registering: "Kaydolunuyor...",
+    msg_registered: "Kaydoldunuz! Şimdi giriş yapın.",
+    msg_enter_details: "Bilgilerinizi girin.",
+    msg_passwords_mismatch: "Parolalar eşleşmedi.",
+    security_settings: "Güvenlik ayarları",
+    msg_login_error: "Giriş hatası oluştu.",
+    msg_register_error: "Kayıt sırasında hata oluştu.",
+    msg_rating_save_error: "Değerlendirme kaydedilirken hata oluştu",
+    msg_2fa_code_sent_email: "Parola onaylandı. 6 haneli kod {email} adresine gönderildi.",
+    msg_2fa_setup_scan: "Parola onaylandı. İlk giriş için QR kodunu tarayın ve 6 haneli kodu girin.",
+    msg_2fa_enter_code: "Parola onaylandı. Şimdi 6 haneli authenticator kodunu girin.",
+    download: "İndir",
+    collection_edit_hint: "Düzenlemek ve değerlendirmek için bir öğeye tıklayın.",
+    use_report_id: "Rapor ID kullan",
+    use_leave_id: "Talep ID kullan",
+    no_archive_logs_7days: "Son 7 günde arşiv kaydı yok",
+    mark_as_read: "Okundu olarak işaretle",
+    no_department_data: "Departmanlar için veri bulunamadı",
+    archive_ok: "Başarılı",
+    archive_fail: "Hata",
+    pending_suffix: "bekliyor",
+    no_unit: "Birim yok",
+    attachment: "Ek",
+    has_attachment: "Ek var",
   },
 };
 
@@ -2353,6 +2624,14 @@ function applyTranslations() {
       el.textContent = t(key);
     }
   });
+
+  // Translate placeholders for elements with data-translate-placeholder attribute
+  document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-translate-placeholder');
+    if (key && "placeholder" in el) {
+      el.placeholder = t(key);
+    }
+  });
 }
 
 function applyRoleBasedUi() {
@@ -2449,13 +2728,13 @@ function openUserProfileModal(profile) {
         </article>
       </div>
       <div class="profile-actions" style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
-        <button type="button" class="ghost-btn" id="openSecuritySettingsBtn" title="Xavfsizlik sozlamalari">
+        <button type="button" class="ghost-btn" id="openSecuritySettingsBtn" title="${t("security_settings")}">
           <span style="display: flex; align-items: center; gap: 8px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            Xavfsizlik sozlamalari
+            ${t("security_settings")}
           </span>
         </button>
       </div>
@@ -2479,32 +2758,32 @@ function openSecuritySettingsModal() {
 
   const twoFactorEnabled = state.currentUser?.two_factor_enabled || false;
   const twoFactorStatusText = twoFactorEnabled ? t("active") : t("inactive");
-  const twoFactorButtonText = twoFactorEnabled ? "2FA ni o'chirish" : "QR yaratish";
+  const twoFactorButtonText = twoFactorEnabled ? t("disable_2fa") : t("create_qr");
 
   sectionModalContent.innerHTML = `
     <section class="security-settings-card">
       <div class="panel-heading">
         <div>
-          <p class="eyebrow">Xavfsizlik</p>
-          <h3>Xavfsizlik sozlamalari</h3>
+          <p class="eyebrow">${t("section_security")}</p>
+          <h3>${t("security_settings")}</h3>
         </div>
       </div>
 
       <div class="security-section">
-        <h4>Parolni o'zgartirish</h4>
+        <h4>${t("change_password")}</h4>
         <form id="modalPasswordForm" class="form-grid">
-          <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
-          <label><span>Yangi parol</span><input name="new_password" type="password" required /></label>
-          <button type="submit" class="ghost-btn">Parolni yangilash</button>
+          <label><span>${t("current_password")}</span><input name="current_password" type="password" required /></label>
+          <label><span>${t("new_password")}</span><input name="new_password" type="password" required /></label>
+          <button type="submit" class="ghost-btn">${t("update_password")}</button>
         </form>
       </div>
 
       <div class="security-divider"></div>
 
       <div class="security-section">
-        <h4>Google Authenticator (2FA)</h4>
+        <h4>${t("google_authenticator")} (2FA)</h4>
         <div class="two-factor-status-row">
-          <span>Holat</span>
+          <span>${t("status")}</span>
           <strong class="pill role">${twoFactorStatusText}</strong>
         </div>
         <div class="inline-actions auth-actions" style="margin-top: 12px;">
@@ -2513,33 +2792,33 @@ function openSecuritySettingsModal() {
         <div id="modalTwoFactorSetupPanel" class="two-factor-setup hidden">
           <img id="modalTwoFactorQrImage" class="two-factor-qr" alt="2FA QR code" />
           <div class="mono-list">
-            <span>Manual key: <strong id="modalTwoFactorSecretLabel">-</strong></span>
+            <span>${t("manual_key")}: <strong id="modalTwoFactorSecretLabel">-</strong></span>
           </div>
           <p class="session-footnote">
-            QR ishlamasa, yuqoridagi kalitni Google Authenticator ichida qo'lda kiriting.
+            ${t("qr_manual_hint")}
           </p>
           <form id="modalTwoFactorVerifyForm" class="form-grid compact-form">
             <label>
-              <span>6 xonali kod</span>
+              <span>${t("six_digit_code")}</span>
               <input name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required />
             </label>
-            <button type="submit" class="ghost-btn">2FA ni yoqish</button>
+            <button type="submit" class="ghost-btn">${t("enable_2fa")}</button>
           </form>
         </div>
         <form id="modalTwoFactorDisableForm" class="form-grid compact-form ${twoFactorEnabled ? "" : "hidden"}">
-          <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
+          <label><span>${t("current_password")}</span><input name="current_password" type="password" required /></label>
           <label>
-            <span>Authenticator kodi</span>
+            <span>${t("authenticator_code")}</span>
             <input name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required />
           </label>
-          <button type="submit" class="ghost-btn">2FA ni o'chirish</button>
+          <button type="submit" class="ghost-btn">${t("disable_2fa")}</button>
         </form>
       </div>
     </section>
   `;
 
   if (sectionModalTitle) {
-    sectionModalTitle.textContent = "Xavfsizlik sozlamalari";
+    sectionModalTitle.textContent = t("security_settings");
   }
   sectionModal.classList.remove("hidden");
   sectionModal.setAttribute("aria-hidden", "false");
@@ -3175,7 +3454,7 @@ function openNotificationDetailModal(item) {
       <div class="attachment-preview">
         <img src="${attachmentUrl}" alt="Attachment" style="max-width:100%;max-height:200px;margin-top:10px;border-radius:4px;" />
         <div class="inline-actions">
-          <button class="ghost-btn small-btn" onclick="window.open('${attachmentUrl}', '_blank')">Yuklab olish</button>
+          <button class="ghost-btn small-btn" onclick="window.open('${attachmentUrl}', '_blank')">${t("download")}</button>
         </div>
       </div>
     `;
@@ -3257,7 +3536,7 @@ function resolveCollectionItemType(item, fallbackType) {
 }
 
 function openCollectionModal(title, items, type) {
-  const hint = `<p class="collection-hint">Tahrirlash va baholash uchun elementni bosing.</p>`;
+  const hint = `<p class="collection-hint">${t("collection_edit_hint")}</p>`;
   const html = items.length
     ? `${hint}<div class="detail-list">
         ${items
@@ -3695,7 +3974,7 @@ function finalizeAuthenticatedSession(payload) {
   state.accessToken = payload.data.access;
   state.refreshToken = payload.data.refresh;
   state.currentUser = payload.data.user;
-  if (authStateLabel) authStateLabel.textContent = "Online";
+  if (authStateLabel) authStateLabel.textContent = t("online");
   authStateDot?.classList.remove("offline");
   authStateDot?.classList.add("online");
   if (currentUserLabel) {
@@ -3747,8 +4026,8 @@ function showWelcomeToast(userName) {
     <div class="welcome-toast-content">
       <span class="welcome-toast-icon">👋</span>
       <div class="welcome-toast-text">
-        <strong>Assalomu alaykum, ${escapeHtml(userName)}!</strong>
-        <span>Bildirishnomalar, hisobotlar va arizalar bo'yicha umumiy holat shu yerda jamlanadi.</span>
+        <strong>${escapeHtml(t("home_greeting"))}, ${escapeHtml(userName)}!</strong>
+        <span>${escapeHtml(t("home_overview"))}</span>
       </div>
     </div>
   `;
@@ -3922,10 +4201,7 @@ function renderDepartmentOptions() {
     }
     reportDepartmentSelect.innerHTML = `<option value="">${t("no_departments")}</option>`;
     if (state.accessToken || state.currentUser) {
-      setMessage(
-        "Kafedra ro'yxati topilmadi. Avval backendda bo'limlar yaratilganini tekshiring.",
-        "warning"
-      );
+      setMessage(t("msg_departments_not_found"), "warning");
     }
     return;
   }
@@ -3958,7 +4234,7 @@ function renderDepartmentOptions() {
 
 function renderUnits() {
   if (!unitSelect || !departmentSelect) return;
-  unitSelect.innerHTML = '<option value="">No unit</option>';
+  unitSelect.innerHTML = `<option value="">${t("no_unit")}</option>`;
   const selectedDepartmentId = departmentSelect.value;
 
   state.units
@@ -4042,7 +4318,7 @@ function renderReports() {
               <strong>${report.report_number}</strong>
               <span>${report.title}</span>
               <small>ID: ${report.id}</small>
-              <button class="ghost-btn small-btn use-report-id-btn" data-id="${report.id}" type="button">Use report ID</button>
+              <button class="ghost-btn small-btn use-report-id-btn" data-id="${report.id}" type="button">${t("use_report_id")}</button>
               <button class="ghost-btn small-btn report-detail-btn" data-id="${report.id}" type="button">${t("open_details")}</button>
             </div>
           </td>
@@ -4103,7 +4379,7 @@ function renderLeaves() {
             <div class="employee-cell">
               <strong>${leave.requested_by_name || "-"}</strong>
               <small>ID: #${leave.leave_number || leave.id?.slice(0, 8)}</small>
-              <button class="ghost-btn small-btn use-leave-id-btn" data-id="${leave.id}" type="button">Use leave ID</button>
+              <button class="ghost-btn small-btn use-leave-id-btn" data-id="${leave.id}" type="button">${t("use_leave_id")}</button>
               <button class="ghost-btn small-btn leave-detail-btn" data-id="${leave.id}" type="button">${t("open_details")}</button>
             </div>
           </td>
@@ -4163,7 +4439,7 @@ function renderArchiveLogs() {
 
   if (!state.archiveLogs.length) {
     archiveLogsTableBody.innerHTML =
-      '<tr><td colspan="4" class="empty-state">Oxirgi 7 kunda arxiv loglari yo\'q</td></tr>';
+      `<tr><td colspan="4" class="empty-state">${t("no_archive_logs_7days")}</td></tr>`;
     return;
   }
 
@@ -4171,7 +4447,7 @@ function renderArchiveLogs() {
     .map((log) => {
       const isSuccess = log.status === "success";
       const badgeClass = isSuccess ? "archive-badge archive-badge--success" : "archive-badge archive-badge--failed";
-      const badgeLabel = isSuccess ? "Muvaffaqiyatli" : "Xatolik";
+      const badgeLabel = isSuccess ? t("archive_ok") : t("archive_fail");
       return `
         <tr>
           <td>${formatDate(log.archived_at)}</td>
@@ -4332,9 +4608,9 @@ function renderNotifications() {
     .map(
       (item) => {
         const hasAttachment = item.attachment_url || item.screenshot_url || item.file_url;
-        const attachmentIcon = hasAttachment ? `<span class="attachment-indicator" title="Biriktirma bor">📎</span>` : "";
+        const attachmentIcon = hasAttachment ? `<span class="attachment-indicator" title="${t("has_attachment")}">📎</span>` : "";
         const thumbnail = hasAttachment && isImageUrl(item.attachment_url || item.screenshot_url || item.file_url)
-          ? `<img src="${item.attachment_url || item.screenshot_url || item.file_url}" class="notification-thumbnail" alt="Biriktirma" loading="lazy" />`
+          ? `<img src="${item.attachment_url || item.screenshot_url || item.file_url}" class="notification-thumbnail" alt="${t("attachment")}" loading="lazy" />`
           : "";
         return `
         <div class="feed-item ${item.is_read ? "" : "unread-item"} ${hasAttachment ? "has-attachment" : ""}">
@@ -4346,7 +4622,7 @@ function renderNotifications() {
             <small>${item.type} / ${item.status || "-"} / ${item.submitted_by_name || "-"} - ${formatDate(item.created_at)}</small>
           </div>
           <div class="inline-actions">
-            <button class="ghost-btn small-btn mark-read-btn" data-id="${item.id}" type="button">O'qilgan deb belgilash</button>
+            <button class="ghost-btn small-btn mark-read-btn" data-id="${item.id}" type="button">${t("mark_as_read")}</button>
             <button class="primary-btn small-btn notification-detail-btn" data-id="${item.id}" type="button">${t("open_details")}</button>
           </div>
         </div>
@@ -4845,12 +5121,12 @@ function renderOperationsDashboard() {
                 <td>${buildOperationsMetricCell(row.notifications)}</td>
                 <td>${buildOperationsMetricCell(row.feature_requests)}</td>
                 <td>${buildOperationsMetricCell(row.reports)}</td>
-                <td><span class="status-pill status-pill--pending">${pendingTotal} kutilmoqda</span></td>
+                <td><span class="status-pill status-pill--pending">${pendingTotal} ${t("pending_suffix")}</span></td>
               </tr>
             `;
           })
           .join("")
-      : `<tr><td colspan="6" class="empty-state">Bo'limlar bo'yicha ma'lumot topilmadi</td></tr>`;
+      : `<tr><td colspan="6" class="empty-state">${t("no_department_data")}</td></tr>`;
   }
 
   renderOperationsDistribution(
@@ -5456,10 +5732,10 @@ if (loginForm) {
         openVerificationStep(payload);
           setMessage(
             payload.data?.verification_method === "email"
-              ? `Parol tasdiqlandi. 6 xonali kod ${payload.data.masked_email || "email"} manziliga yuborildi.`
+              ? t("msg_2fa_code_sent_email").replace("{email}", payload.data.masked_email || "email")
               : payload.data?.verification_method === "authenticator_setup"
-              ? "Parol tasdiqlandi. Birinchi kirish uchun QR kodni scan qiling va 6 xonali kodni kiriting."
-              : "Parol tasdiqlandi. Endi 6 xonali authenticator kodni kiriting.",
+              ? t("msg_2fa_setup_scan")
+              : t("msg_2fa_enter_code"),
             "success"
           );
         return;
@@ -5468,12 +5744,12 @@ if (loginForm) {
       finalizeAuthenticatedSession(payload);
       const departmentCount = await loadDepartments();
       await loadAllData();
-      setMessage(`Frontend backend bilan ulandi. Departmentlar yuklandi: ${departmentCount} ta.`, "success");
+      setMessage(t("msg_connected_departments").replace("{count}", departmentCount), "success");
     } catch (error) {
       state.accessToken = "";
       state.refreshToken = "";
       state.currentUser = null;
-      if (authStateLabel) authStateLabel.textContent = "Offline";
+      if (authStateLabel) authStateLabel.textContent = t("offline");
       authStateDot?.classList.remove("online");
       authStateDot?.classList.add("offline");
       if (currentUserLabel) currentUserLabel.textContent = "-";
@@ -5482,7 +5758,7 @@ if (loginForm) {
       resetPendingLogin();
       setAuthUi(false);
       renderProfile();
-      setMessage(error.message || "Login xatoligi yuz berdi.", "error");
+      setMessage(error.message || t("msg_login_error"), "error");
     }
   });
 } else {
@@ -5556,19 +5832,19 @@ registerForm?.addEventListener("submit", async (event) => {
   const passwordConfirm = registerPasswordConfirmInput?.value;
 
   if (!fullName || !username || !email || !password || !passwordConfirm) {
-    registerStatusBox.textContent = "Barcha maydonlarni to'ldiring.";
+    registerStatusBox.textContent = t("msg_fill_required_fields");
     registerStatusBox.className = "login-status-box error";
     return;
   }
 
   if (password !== passwordConfirm) {
-    registerStatusBox.textContent = "Parollar mos kelmadi.";
+    registerStatusBox.textContent = t("msg_passwords_mismatch");
     registerStatusBox.className = "login-status-box error";
     return;
   }
 
   try {
-    registerStatusBox.textContent = "Ro'yxatdan o'tish...";
+    registerStatusBox.textContent = t("msg_registering");
     registerStatusBox.className = "login-status-box";
 
     await apiRequest("/api/v1/auth/register/", {
@@ -5582,7 +5858,7 @@ registerForm?.addEventListener("submit", async (event) => {
       }),
     });
 
-    registerStatusBox.textContent = "Ro'yxatdan o'tdingiz! Endi kiring.";
+    registerStatusBox.textContent = t("msg_registered");
     registerStatusBox.className = "login-status-box success";
 
     // Clear form and switch back to login
@@ -5590,11 +5866,11 @@ registerForm?.addEventListener("submit", async (event) => {
       registerForm.reset();
       registerStep?.classList.add("hidden");
       loginCredentialsStep?.classList.remove("hidden");
-      registerStatusBox.textContent = "Ma'lumotlarni kiriting.";
+      registerStatusBox.textContent = t("msg_enter_details");
       registerStatusBox.className = "login-status-box";
     }, 2000);
   } catch (error) {
-    registerStatusBox.textContent = error.message || "Ro'yxatdan o'tishda xato.";
+    registerStatusBox.textContent = error.message || t("msg_register_error");
     registerStatusBox.className = "login-status-box error";
   }
 });
@@ -5878,12 +6154,12 @@ workflowForm?.addEventListener("submit", async (event) => {
 
     const validActions = getValidActionsForStatus(report.status);
     if (!validActions.includes(action)) {
-      setMessage(`"${action}" harakati ${report.status} holatidagi hisobot uchun mumkin emas. Ruxsat etilgan harakatlar: ${validActions.join(", ")}`, "error");
+      setMessage(t("msg_action_not_allowed").replace("{action}", action).replace("{status}", report.status).replace("{actions}", validActions.join(", ")), "error");
       return;
     }
 
     if (action === "REJECT" && !comment) {
-      setMessage("Rad etish uchun izoh majburiy.", "error");
+      setMessage(t("msg_comment_required_reject"), "error");
       return;
     }
 
@@ -6008,7 +6284,7 @@ downloadAttachmentButton?.addEventListener("click", async () => {
   try {
     const resolved = await resolveAttachmentIdFromInput(inputId);
     if (resolved.fromReport) {
-      setMessage(`Report ID bo'yicha topilgan attachment ishlatilmoqda: ${resolved.attachmentId}`, "success");
+      setMessage(t("msg_attachment_used_from_report").replace("{id}", resolved.attachmentId), "success");
     }
     const response = await fetch(`${state.apiBase}/api/v1/reports/attachments/${resolved.attachmentId}/download/`, {
       headers: getHeaders(false),
@@ -6041,7 +6317,7 @@ deleteAttachmentButton?.addEventListener("click", async () => {
   try {
     const resolved = await resolveAttachmentIdFromInput(inputId);
     if (resolved.fromReport) {
-      setMessage(`Report ID bo'yicha topilgan attachment o'chirilmoqda: ${resolved.attachmentId}`, "success");
+      setMessage(t("msg_attachment_deleting_from_report").replace("{id}", resolved.attachmentId), "success");
     }
     await apiRequest(`/api/v1/reports/attachments/${resolved.attachmentId}/`, {
       method: "DELETE",
@@ -6149,14 +6425,14 @@ meButton?.addEventListener("click", () => {
       <section class="security-settings-card">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">Xavfsizlik</p>
-            <h3>Parolni o'zgartirish</h3>
+            <p class="eyebrow">${t("section_security")}</p>
+            <h3>${t("change_password")}</h3>
           </div>
         </div>
         <form id="modalPasswordForm" class="form-grid">
-          <label><span>Joriy parol</span><input name="current_password" type="password" required /></label>
-          <label><span>Yangi parol</span><input name="new_password" type="password" required /></label>
-          <button type="submit" class="ghost-btn">Parolni yangilash</button>
+          <label><span>${t("current_password")}</span><input name="current_password" type="password" required /></label>
+          <label><span>${t("new_password")}</span><input name="new_password" type="password" required /></label>
+          <button type="submit" class="ghost-btn">${t("update_password")}</button>
         </form>
       </section>
     `;
@@ -6210,7 +6486,7 @@ logoutButton?.addEventListener("click", async () => {
     state.refreshToken = "";
     state.currentUser = null;
     state.twoFactorSetup = null;
-    if (authStateLabel) authStateLabel.textContent = "Offline";
+    if (authStateLabel) authStateLabel.textContent = t("offline");
     authStateDot?.classList.remove("online");
     authStateDot?.classList.add("offline");
     if (currentUserLabel) currentUserLabel.textContent = "-";
@@ -6227,7 +6503,7 @@ logoutButton?.addEventListener("click", async () => {
 });
 
 if (apiBaseIcon) {
-  apiBaseIcon.title = "Gateway: Internal gateway";
+  apiBaseIcon.title = t("gateway_internal");
   apiBaseIcon.setAttribute("aria-label", apiBaseIcon.title);
 }
 authStateDot?.classList.add("offline");
@@ -6623,7 +6899,7 @@ skipRatingBtn?.addEventListener("click", closeRatingModal);
 ratingForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!ratingValue.value || ratingValue.value === "0") {
-    setMessage("Iltimos, bahoni tanlang", "error");
+    setMessage(t("msg_select_rating"), "error");
     return;
   }
 
@@ -6650,7 +6926,7 @@ ratingForm?.addEventListener("submit", async (event) => {
     // Auto-archive the item
     await archiveItem(itemId, itemType);
 
-    setMessage("Baholash saqlandi va arxivga o'tkazildi", "success");
+    setMessage(t("msg_rating_archived"), "success");
     closeRatingModal();
 
     // Refresh lists
@@ -6660,7 +6936,7 @@ ratingForm?.addEventListener("submit", async (event) => {
       loadAuditLogs(),
     ]);
   } catch (error) {
-    setMessage(error.message || "Baholash saqlashda xato", "error");
+    setMessage(error.message || t("msg_rating_save_error"), "error");
   }
 });
 
@@ -6769,11 +7045,11 @@ feedbackForm?.addEventListener("submit", async (event) => {
   const rating = Number(feedbackRatingValue?.value || 0);
   const comment = String(feedbackCommentInput?.value || "").trim();
   if (!rating) {
-    setMessage("Avval baho tanlang.", "error");
+    setMessage(t("msg_select_rating_first"), "error");
     return;
   }
   if (!comment) {
-    setMessage("Kommentariya yozing.", "error");
+    setMessage(t("msg_write_comment"), "error");
     return;
   }
   try {
@@ -6785,9 +7061,9 @@ feedbackForm?.addEventListener("submit", async (event) => {
     await loadFeedbackEntries();
     feedbackForm.reset();
     setFeedbackRating(0);
-    setMessage("Baholash va kommentariya backendga saqlandi.", "success");
+    setMessage(t("msg_feedback_saved"), "success");
   } catch (error) {
-    setMessage(error.message || "Feedback yuborishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_feedback_error"), "error");
   }
 });
 quickCreateForm?.addEventListener("submit", async (event) => {
@@ -6797,7 +7073,7 @@ quickCreateForm?.addEventListener("submit", async (event) => {
   const title = String(quickCreateTitleInput?.value || "").trim();
   const message = String(quickCreateMessageInput?.value || "").trim();
   if (!title || !message) {
-    setMessage("Sarlavha va izohni to'ldiring.", "error");
+    setMessage(t("msg_fill_title_summary"), "error");
     return;
   }
   try {

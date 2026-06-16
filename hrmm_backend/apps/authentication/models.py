@@ -17,7 +17,7 @@ class RevokedToken(models.Model):
 
 class EmailOTPChallenge(models.Model):
     PURPOSE_CHOICES = [
-        ("LOGIN", "Login"),
+        ("LOGIN", "Kirish"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

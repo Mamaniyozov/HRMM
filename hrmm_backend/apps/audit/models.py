@@ -4,10 +4,10 @@ from django.db import models
 
 class User(models.Model):
     ROLE_CHOICES = [
-        ("SPECIALIST", "Specialist"),
-        ("UNIT_HEAD", "Unit Head"),
-        ("DEPT_HEAD", "Department Head"),
-        ("DIRECTOR", "Director"),
+        ("SPECIALIST", "Mutaxassis"),
+        ("UNIT_HEAD", "Bo'linma rahbari"),
+        ("DEPT_HEAD", "Bo'lim boshlig'i"),
+        ("DIRECTOR", "Direktor"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
