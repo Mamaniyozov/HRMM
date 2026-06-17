@@ -15,6 +15,9 @@ const DEFAULT_API_TIMEOUT_MS = 45000;
 const state = {
   apiBase: DEFAULT_API_BASE,
   language: window.localStorage.getItem("hrmm_language") || "uz",
+  themeId: window.localStorage.getItem("hrmm_theme_id") || window.localStorage.getItem("hrmm_theme") || "classic-dark",
+  themeMode: window.localStorage.getItem("hrmm_theme_mode") || "single",
+  increaseContrast: window.localStorage.getItem("hrmm_increase_contrast") === "true",
   accessToken: "",
   refreshToken: "",
   currentUser: null,
@@ -180,6 +183,9 @@ const userSearchInput = document.getElementById("userSearchInput");
 const departmentSearchInput = document.getElementById("departmentSearchInput");
 const refreshAllButton = document.getElementById("refreshAllButton");
 const navLinks = document.querySelectorAll(".nav-link");
+const themeModeSelect = document.getElementById("themeModeSelect");
+const themeCardGrid = document.getElementById("themeCardGrid");
+const increaseContrastToggle = document.getElementById("increaseContrastToggle");
 
 const roleFilter = document.getElementById("roleFilter");
 const levelFilter = document.getElementById("levelFilter");
@@ -3433,6 +3439,7 @@ function applyTranslations() {
       el.alt = t(key);
     }
   });
+
 }
 
 function applyRoleBasedUi() {
@@ -3441,6 +3448,7 @@ function applyRoleBasedUi() {
     homeSection: true,
     notificationsSection: true,
     reportsSection: true,
+    appearanceSection: true,
     institutionsSection: ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role),
   };
 
@@ -8011,25 +8019,256 @@ applyTranslations();
 bindDashboardDrilldowns();
 updateFeedbackAvailability();
 
-// Theme toggle functionality
-function getPreferredTheme() {
-  const savedTheme = window.localStorage.getItem("hrmm_theme");
-  if (savedTheme === "light" || savedTheme === "dark") {
-    return savedTheme;
-  }
+const THEME_OPTIONS = Array.isArray(window.HRMM_THEME_OPTIONS) ? window.HRMM_THEME_OPTIONS : [];
+const THEME_BY_ID = new Map(THEME_OPTIONS.map((theme) => [theme.id, theme]));
+const DEFAULT_THEME_ID = THEME_BY_ID.has("classic-dark") ? "classic-dark" : THEME_OPTIONS[0]?.id || "classic-light";
+let themeMediaQuery = null;
 
-  // Default to light mode
-  return "light";
+function normalizeThemeId(themeId) {
+  if (themeId === "dark") return "classic-dark";
+  if (themeId === "light") return "classic-light";
+  return THEME_BY_ID.has(themeId) ? themeId : DEFAULT_THEME_ID;
 }
 
-function applyTheme(theme) {
-  // Single source of truth: data-theme attribute on html element
-  document.documentElement.setAttribute("data-theme", theme);
-  // Also set on body for any legacy selectors
-  document.body.setAttribute("data-theme", theme);
-  // Toggle dark class for any legacy selectors that use it
-  document.documentElement.classList.toggle("dark", theme === "dark");
-  document.body.classList.toggle("dark", theme === "dark");
+function getSystemThemeId() {
+  return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ? "classic-dark" : "classic-light";
+}
+
+function getActiveThemeId() {
+  if (state.themeMode === "system") {
+    return getSystemThemeId();
+  }
+  return normalizeThemeId(state.themeId);
+}
+
+function toCssVariableName(tokenName) {
+  return `--${tokenName.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`;
+}
+
+function hexToRgb(hex) {
+  const normalized = hex.replace("#", "");
+  if (![3, 6].includes(normalized.length)) return null;
+  const value = normalized.length === 3
+    ? normalized.split("").map((part) => `${part}${part}`).join("")
+    : normalized;
+  const intValue = Number.parseInt(value, 16);
+  return {
+    r: (intValue >> 16) & 255,
+    g: (intValue >> 8) & 255,
+    b: intValue & 255,
+  };
+}
+
+function colorWithAlpha(color, alpha) {
+  const rgb = hexToRgb(color);
+  return rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})` : color;
+}
+
+function getThemeTokens(theme) {
+  return {
+    ...theme.tokens,
+    ...(state.increaseContrast ? theme.contrastTokens || {} : {}),
+  };
+}
+
+function setRootThemeVariables(tokens) {
+  const root = document.documentElement;
+  const aliases = {
+    background: ["bg"],
+    backgroundDeep: ["bg-deep"],
+    backgroundElevated: ["bg-elevated"],
+    surface: ["panel", "panel-strong"],
+    surfaceElevated: [],
+    border: ["line", "border-subtle"],
+    borderStrong: ["border-strong"],
+    textPrimary: ["text"],
+    textSecondary: [],
+    textMuted: ["muted"],
+    radiusSm: ["radius-sm"],
+    radiusMd: ["radius-md"],
+    radiusLg: ["radius-lg"],
+    radiusXl: ["radius-xl"],
+    iconBtnSize: ["icon-btn-size"],
+  };
+
+  Object.entries(tokens).forEach(([tokenName, value]) => {
+    root.style.setProperty(toCssVariableName(tokenName), value);
+    (aliases[tokenName] || []).forEach((alias) => root.style.setProperty(`--${alias}`, value));
+  });
+
+  root.style.setProperty("--accent-bg", colorWithAlpha(tokens.accent, 0.14));
+  root.style.setProperty("--accent-soft", tokens.accentSoft || colorWithAlpha(tokens.accent, 0.2));
+  root.style.setProperty("--success-bg", colorWithAlpha(tokens.success, 0.16));
+  root.style.setProperty("--success-soft", colorWithAlpha(tokens.success, 0.1));
+  root.style.setProperty("--warning-bg", colorWithAlpha(tokens.warning, 0.18));
+  root.style.setProperty("--warning-soft", colorWithAlpha(tokens.warning, 0.11));
+  root.style.setProperty("--danger-bg", colorWithAlpha(tokens.danger, 0.16));
+  root.style.setProperty("--danger-soft", colorWithAlpha(tokens.danger, 0.1));
+  root.style.setProperty("--overlay", tokens.mode === "light" ? "rgba(15, 23, 42, 0.42)" : "rgba(0, 0, 0, 0.68)");
+  root.style.setProperty("--shadow-sm", "0 1px 2px rgba(15, 23, 42, 0.08)");
+  root.style.setProperty("--shadow", "0 8px 24px rgba(15, 23, 42, 0.12)");
+  root.style.setProperty("--shadow-md", "0 12px 32px rgba(15, 23, 42, 0.16)");
+  root.style.setProperty("--shadow-lg", "0 18px 48px rgba(15, 23, 42, 0.2)");
+  root.style.setProperty("--modal-shadow", "0 24px 70px rgba(15, 23, 42, 0.28)");
+  root.style.setProperty("--primary", tokens.accent);
+  root.style.setProperty("--purple", tokens.accent);
+  root.style.setProperty("--coral", tokens.danger);
+}
+
+function applyTheme(themeId = getActiveThemeId()) {
+  const normalizedId = normalizeThemeId(themeId);
+  const theme = THEME_BY_ID.get(normalizedId) || THEME_BY_ID.get(DEFAULT_THEME_ID);
+  if (!theme) return;
+
+  const tokens = getThemeTokens(theme);
+  tokens.mode = theme.mode;
+  setRootThemeVariables(tokens);
+
+  document.documentElement.setAttribute("data-theme", theme.id);
+  document.documentElement.setAttribute("data-theme-mode", theme.mode);
+  document.documentElement.classList.toggle("theme-contrast", state.increaseContrast);
+  document.documentElement.classList.toggle("dark", theme.mode === "dark");
+  document.body?.setAttribute("data-theme", theme.id);
+  document.body?.setAttribute("data-theme-mode", theme.mode);
+  document.body?.classList.toggle("theme-contrast", state.increaseContrast);
+  document.body?.classList.toggle("dark", theme.mode === "dark");
+
+  updateThemeButtons(theme);
+  renderThemeCards();
+  forceThemeRepaint();
+}
+
+function forceThemeRepaint() {
+  document.documentElement.style.setProperty("--theme-repaint", String(Date.now()));
+  [renderDashboard, renderRecentReports, renderRecentLeaves, renderNotifications, renderReports, renderLeaves, renderUsers]
+    .forEach((renderFn) => {
+      try {
+        if (typeof renderFn === "function") renderFn();
+      } catch (error) {
+        console.warn("Theme repaint skipped for one renderer:", error);
+      }
+    });
+}
+
+function renderThemePreview(theme) {
+  const tokens = getThemeTokens(theme);
+  return `
+    <svg class="theme-preview-svg" viewBox="0 0 320 160" role="img" aria-label="${escapeHtml(theme.name)} preview">
+      <rect width="320" height="160" rx="14" fill="${tokens.background}"/>
+      <rect x="16" y="16" width="288" height="28" rx="8" fill="${tokens.surfaceElevated}"/>
+      <circle cx="34" cy="30" r="5" fill="${tokens.danger}"/>
+      <circle cx="50" cy="30" r="5" fill="${tokens.warning}"/>
+      <circle cx="66" cy="30" r="5" fill="${tokens.success}"/>
+      <rect x="16" y="58" width="58" height="86" rx="10" fill="${tokens.surface}" stroke="${tokens.border}"/>
+      <rect x="88" y="58" width="216" height="86" rx="10" fill="${tokens.surface}" stroke="${tokens.border}"/>
+      <rect x="101" y="73" width="74" height="8" rx="4" fill="${tokens.textPrimary}"/>
+      <rect x="101" y="91" width="162" height="7" rx="3.5" fill="${tokens.textMuted}"/>
+      <rect x="101" y="109" width="124" height="7" rx="3.5" fill="${tokens.textMuted}"/>
+      <rect x="16" y="58" width="6" height="86" rx="3" fill="${tokens.accent}"/>
+      <rect x="32" y="75" width="26" height="8" rx="4" fill="${tokens.accent}"/>
+      <rect x="32" y="96" width="30" height="6" rx="3" fill="${tokens.textMuted}"/>
+      <rect x="32" y="114" width="22" height="6" rx="3" fill="${tokens.textMuted}"/>
+      <circle cx="276" cy="113" r="14" fill="${tokens.accent}"/>
+    </svg>
+  `;
+}
+
+function renderThemeCards() {
+  if (!themeCardGrid || !THEME_OPTIONS.length) return;
+  const activeThemeId = getActiveThemeId();
+  themeCardGrid.innerHTML = THEME_OPTIONS.map((theme) => {
+    const selected = theme.id === activeThemeId;
+    return `
+      <button type="button" class="theme-card${selected ? " selected" : ""}" data-theme-card="${theme.id}" role="radio" aria-checked="${selected}">
+        <span class="theme-card-preview">
+          ${renderThemePreview(theme)}
+          ${theme.badge ? `<span class="theme-card-badge">${escapeHtml(theme.badge)}</span>` : ""}
+        </span>
+        <span class="theme-card-body">
+          <span class="theme-radio" aria-hidden="true"></span>
+          <span class="theme-card-text">
+            <strong>${escapeHtml(theme.name)}</strong>
+            <span>${escapeHtml(theme.description)}</span>
+          </span>
+        </span>
+      </button>
+    `;
+  }).join("");
+}
+
+function persistAppearanceSettings() {
+  window.localStorage.setItem("hrmm_theme_id", normalizeThemeId(state.themeId));
+  window.localStorage.setItem("hrmm_theme_mode", state.themeMode);
+  window.localStorage.setItem("hrmm_increase_contrast", String(state.increaseContrast));
+  window.localStorage.removeItem("hrmm_theme");
+}
+
+function updateThemeButtons(theme) {
+  const title = `Appearance settings: ${theme.name}`;
+  [document.getElementById("themeToggleButton"), loginThemeToggleButton].forEach((button) => {
+    button?.classList.toggle("is-dark", theme.mode === "dark");
+    button?.setAttribute("aria-label", title);
+    button?.setAttribute("title", title);
+  });
+}
+
+function bindSystemThemeSync() {
+  if (!window.matchMedia) return;
+  themeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const syncHandler = () => {
+    if (state.themeMode === "system") {
+      applyTheme(getSystemThemeId());
+    }
+  };
+  themeMediaQuery.addEventListener?.("change", syncHandler);
+  themeMediaQuery.addListener?.(syncHandler);
+}
+
+function initAppearanceSettings() {
+  state.themeId = normalizeThemeId(state.themeId);
+  state.themeMode = state.themeMode === "system" ? "system" : "single";
+  if (themeModeSelect) themeModeSelect.value = state.themeMode;
+  if (increaseContrastToggle) increaseContrastToggle.checked = state.increaseContrast;
+
+  renderThemeCards();
+  applyTheme(getActiveThemeId());
+  bindSystemThemeSync();
+
+  themeModeSelect?.addEventListener("change", () => {
+    state.themeMode = themeModeSelect.value === "system" ? "system" : "single";
+    persistAppearanceSettings();
+    applyTheme(getActiveThemeId());
+  });
+
+  increaseContrastToggle?.addEventListener("change", () => {
+    state.increaseContrast = Boolean(increaseContrastToggle.checked);
+    persistAppearanceSettings();
+    applyTheme(getActiveThemeId());
+  });
+
+  themeCardGrid?.addEventListener("click", (event) => {
+    const card = event.target.closest("[data-theme-card]");
+    if (!card) return;
+    state.themeId = normalizeThemeId(card.dataset.themeCard);
+    state.themeMode = "single";
+    if (themeModeSelect) themeModeSelect.value = state.themeMode;
+    persistAppearanceSettings();
+    applyTheme(state.themeId);
+  });
+
+  [document.getElementById("themeToggleButton"), loginThemeToggleButton].forEach((button) => {
+    button?.addEventListener("click", () => {
+      if (appView && !appView.classList.contains("hidden")) {
+        openSectionModal("appearanceSection", "Appearance settings");
+      } else {
+        const currentIndex = Math.max(0, THEME_OPTIONS.findIndex((theme) => theme.id === getActiveThemeId()));
+        state.themeId = THEME_OPTIONS[(currentIndex + 1) % THEME_OPTIONS.length]?.id || DEFAULT_THEME_ID;
+        state.themeMode = "single";
+        persistAppearanceSettings();
+        applyTheme(state.themeId);
+      }
+    });
+  });
 }
 
 function toggleTopbarMobileMenu(forceOpen) {
@@ -8041,62 +8280,13 @@ function toggleTopbarMobileMenu(forceOpen) {
 }
 
 function initTheme() {
-  const themeToggleButton = document.getElementById("themeToggleButton");
-  const themeIconSun = document.getElementById("themeIconSun");
-  const themeIconMoon = document.getElementById("themeIconMoon");
-
-  const preferredTheme = getPreferredTheme();
-  applyTheme(preferredTheme);
-  updateThemeIcons(preferredTheme, themeToggleButton, themeIconSun, themeIconMoon);
-  // FIXED: Also update login page theme icons on init
-  updateThemeIcons(preferredTheme, loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
-
-  if (themeToggleButton) {
-    themeToggleButton.addEventListener("click", () => toggleTheme());
-  }
-  if (loginThemeToggleButton) {
-    loginThemeToggleButton.addEventListener("click", () => toggleTheme());
-  }
+  initAppearanceSettings();
 }
 
 topbarMobileToggle?.addEventListener("click", (event) => {
   event.stopPropagation();
   toggleTopbarMobileMenu();
 });
-
-function updateThemeIcons(theme, themeToggleButton, themeIconSun, themeIconMoon) {
-  const isDark = theme === "dark";
-  if (isDark) {
-    themeIconSun?.classList.add("hidden");
-    themeIconMoon?.classList.remove("hidden");
-  } else {
-    themeIconSun?.classList.remove("hidden");
-    themeIconMoon?.classList.add("hidden");
-  }
-
-  themeToggleButton?.classList.toggle("is-dark", isDark);
-  themeToggleButton?.setAttribute(
-    "aria-label",
-    isDark ? t("switch_to_light") : t("switch_to_dark")
-  );
-  themeToggleButton?.setAttribute(
-    "title",
-    isDark ? t("switch_to_light") : t("switch_to_dark")
-  );
-}
-
-function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-  const newTheme = currentTheme === "dark" ? "light" : "dark";
-  applyTheme(newTheme);
-  window.localStorage.setItem("hrmm_theme", newTheme);
-  const themeToggleButton = document.getElementById("themeToggleButton");
-  const themeIconSun = document.getElementById("themeIconSun");
-  const themeIconMoon = document.getElementById("themeIconMoon");
-  updateThemeIcons(newTheme, themeToggleButton, themeIconSun, themeIconMoon);
-  updateThemeIcons(newTheme, loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
-  setMessage(newTheme === "dark" ? t("dark_mode_enabled") : t("light_mode_enabled"), "info");
-}
 
 if (document.readyState === "loading") {
   document?.addEventListener("DOMContentLoaded", initTheme);
@@ -8114,6 +8304,7 @@ function applyRoleBasedUi() {
     leavesSection: role !== "DIRECTOR",
     usersSection: ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role),
     institutionsSection: ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role),
+    appearanceSection: true,
   };
 
   navLinks.forEach((button) => {
