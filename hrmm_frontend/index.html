@@ -44,8 +44,8 @@
           <div class="login-card-topbar">
             <span id="loginCardBadge" class="login-card-badge">Kirish</span>
             <div class="login-language-shell">
-              <button id="loginThemeToggleButton" type="button" class="login-theme-btn" aria-label="Tun/kunduz rejimi" title="Tun/kunduz rejimi">
-                <span class="sr-only">Mavzu</span>
+              <button id="loginThemeToggleButton" type="button" class="login-theme-btn" aria-label="Tun/kunduz rejimi" title="Tun/kunduz rejimi" data-translate="theme_toggle" data-translate-title="theme_toggle">
+                <span class="sr-only" data-translate="theme">Mavzu</span>
                 <strong>
                   <span id="loginThemeIconSun">☀️</span>
                   <span id="loginThemeIconMoon" class="hidden">🌙</span>
@@ -140,7 +140,7 @@
               Authenticator ilovasidagi 6 xonali kodni kiriting.
             </p>
             <div id="loginQrSetupPanel" class="two-factor-setup hidden">
-              <img id="loginQrImage" class="two-factor-qr" alt="Login QR code" />
+              <img id="loginQrImage" class="two-factor-qr" alt="Login QR code" data-translate-alt="login_qr_alt" />
               <div class="mono-list">
                 <span><span id="loginManualKeyLabel">Manual key</span>: <strong id="loginSecretLabel">-</strong></span>
               </div>
@@ -179,8 +179,8 @@
         <div class="brand-block">
           <div class="brand-mark">HR</div>
           <div>
-            <p class="eyebrow">Enterprise panel</p>
-            <h1>HRMM Control Center</h1>
+            <p class="eyebrow" data-translate="enterprise_panel">Enterprise panel</p>
+            <h1 data-translate="app_title">HRMM Control Center</h1>
           </div>
         </div>
 
@@ -193,7 +193,7 @@
                 <path d="M9.5 20v-6h5v6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
               </svg>
             </span>
-            <span class="nav-link-label">Uy</span>
+            <span class="nav-link-label" data-translate="sidebar_home">Uy</span>
           </button>
           <button class="nav-link" type="button" data-target="notificationsSection">
             <span class="nav-link-icon" aria-hidden="true">
@@ -202,7 +202,7 @@
                 <path d="M10 18a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
               </svg>
             </span>
-            <span class="nav-link-label">Bildirishnomalar</span>
+            <span class="nav-link-label" data-translate="sidebar_notifications">Bildirishnomalar</span>
           </button>
           <button class="nav-link" type="button" data-target="reportsSection">
             <span class="nav-link-icon" aria-hidden="true">
@@ -212,7 +212,7 @@
                 <path d="M9 12h6M9 16h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
               </svg>
             </span>
-            <span class="nav-link-label">Hujjatlar</span>
+            <span class="nav-link-label" data-translate="sidebar_documents">Hujjatlar</span>
           </button>
           <button class="nav-link" type="button" data-target="institutionsSection">
             <span class="nav-link-icon" aria-hidden="true">
@@ -230,27 +230,27 @@
         <section class="topbar-panel">
           <div class="topbar-searches">
             <label class="search-shell">
-              <span><svg viewBox="0 0 24 24" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:6px;opacity:0.6;"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Global qidiruv</span>
+              <span data-translate="search_global_label"><svg viewBox="0 0 24 24" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:6px;opacity:0.6;"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Global qidiruv</span>
               <div class="search-input-wrap">
                 <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                <input id="globalSearchInput" type="text" placeholder="Bildirishnoma, report, xodim..." />
+                <input id="globalSearchInput" type="text" placeholder="Bildirishnoma, report, xodim..." data-translate-placeholder="search_global_placeholder" />
               </div>
             </label>
             <label class="search-shell">
-              <span><svg viewBox="0 0 24 24" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:6px;opacity:0.6;"><path d="M4 7V4h3M4 17v3h3M20 7V4h-3M20 17v3h-3M9 9h6v6H9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Holat bo'yicha tezkor filter</span>
+              <span data-translate="search_status_label"><svg viewBox="0 0 24 24" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:6px;opacity:0.6;"><path d="M4 7V4h3M4 17v3h3M20 7V4h-3M20 17v3h-3M9 9h6v6H9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Holat bo'yicha tezkor filter</span>
               <div class="search-input-wrap">
                 <svg viewBox="0 0 24 24" width="16" height="16"><path d="M4 7V4h3M4 17v3h3M20 7V4h-3M20 17v3h-3M9 9h6v6H9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <input id="globalStatusInput" type="text" placeholder="pending, approved, active..." />
+                <input id="globalStatusInput" type="text" placeholder="pending, approved, active..." data-translate-placeholder="search_status_placeholder" />
               </div>
             </label>
           </div>
           <div class="topbar-actions">
-            <button id="openAuxMenuButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Qo'shimcha modullar" aria-label="Qo'shimcha modullar">
+            <button id="openAuxMenuButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Qo'shimcha modullar" aria-label="Qo'shimcha modullar" data-translate="auxiliary_modules" data-translate-title="auxiliary_modules">
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </button>
-            <button id="themeToggleButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Tun/kunduz rejimi" aria-label="Tun/kunduz rejimi">
+            <button id="themeToggleButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Tun/kunduz rejimi" aria-label="Tun/kunduz rejimi" data-translate="theme_toggle" data-translate-title="theme_toggle">
               <svg id="themeIconSun" viewBox="0 0 24 24" width="20" height="20">
                 <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
                 <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
@@ -259,7 +259,7 @@
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
               </svg>
             </button>
-            <button id="refreshAllButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Yangilash" aria-label="Yangilash">
+            <button id="refreshAllButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Yangilash" aria-label="Yangilash" data-translate="refresh" data-translate-title="refresh">
               <svg viewBox="0 0 24 24" width="20" height="20"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="create-menu-shell">
@@ -276,13 +276,13 @@
                 <span class="create-menu-caret">⌄</span>
               </button>
               <div id="createMenuDropdown" class="create-menu-dropdown hidden" role="menu">
-                <button id="createReportItem" type="button" class="create-menu-item" data-create-action="report">Yangi report</button>
-                <button id="createNotificationItem" type="button" class="create-menu-item" data-create-action="notification">Yangi bildirim</button>
-                <button id="createLeaveItem" type="button" class="create-menu-item" data-create-action="leave">Yangi ariza</button>
-                <button id="createFeatureItem" type="button" class="create-menu-item" data-create-action="feature">Yangi funksiya talabi</button>
+                <button id="createReportItem" type="button" class="create-menu-item" data-create-action="report" data-translate="create_report_menu">Yangi hisobot</button>
+                <button id="createNotificationItem" type="button" class="create-menu-item" data-create-action="notification" data-translate="create_notification_menu">Yangi bildirim</button>
+                <button id="createLeaveItem" type="button" class="create-menu-item" data-create-action="leave" data-translate="create_leave_menu">Yangi ariza</button>
+                <button id="createFeatureItem" type="button" class="create-menu-item" data-create-action="feature" data-translate="create_feature_menu">Yangi funksiya talabi</button>
               </div>
             </div>
-            <button id="topbarNotificationsButton" type="button" class="ghost-btn icon-action-btn topbar-bell-btn" aria-label="Bildirishnomalar">
+            <button id="topbarNotificationsButton" type="button" class="ghost-btn icon-action-btn topbar-bell-btn" aria-label="Bildirishnomalar" data-translate="sidebar_notifications">
               <span class="icon-action-symbol" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="presentation">
                   <path d="M12 4a4 4 0 0 0-4 4v1.4c0 .8-.24 1.58-.68 2.24L6 14h12l-1.32-2.36A4.5 4.5 0 0 1 16 9.4V8a4 4 0 0 0-4-4Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
@@ -398,7 +398,7 @@
     " onmouseover="this.style.background='rgba(23,74,139,0.1)'; this.style.borderColor='rgba(23,74,139,0.3)'; this.style.color='var(--accent)';"
       onmouseout="this.style.background='var(--bg-deep)'; this.style.borderColor='var(--line)'; this.style.color='var(--text)'">
       <svg viewBox="0 0 24 24" width="15" height="15"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      Yangilash
+      <span data-translate="refresh">Yangilash</span>
     </button>
     <button id="logoutButton" type="button" style="
       flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -409,7 +409,7 @@
     " onmouseover="this.style.background='rgba(176,42,55,0.1)'; this.style.borderColor='rgba(176,42,55,0.3)'; this.style.color='var(--danger)';"
       onmouseout="this.style.background='var(--bg-deep)'; this.style.borderColor='var(--line)'; this.style.color='var(--text)'">
       <svg viewBox="0 0 24 24" width="15" height="15"><path d="M10 17v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 12H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m8 8-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      Chiqish
+      <span data-translate="logout">Chiqish</span>
     </button>
   </div>
 
@@ -426,11 +426,11 @@
       border: none; background: transparent; cursor: pointer;
       color: var(--muted); font-size: 19px;
       transition: all 0.15s; font-family: inherit;
-    " title="Profil ma'lumotlari"
+    " title="Profil ma'lumotlari" data-translate-title="profile_info"
       onmouseover="this.style.background='var(--bg-deep)'; this.style.color='var(--text)'"
       onmouseout="if(!this.classList.contains('active')) { this.style.background='transparent'; this.style.color='var(--muted)'; }">
       <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M8 9h3M8 13h8M8 17h5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
-      <span style="font-size:10px; margin-top:3px; color: var(--muted);">Ma'lumot</span>
+      <span style="font-size:10px; margin-top:3px; color: var(--muted);" data-translate="profile_info_short">Ma'lumot</span>
     </button>
     <!-- Taqvim -->
     <button id="profileCalendarIcon" type="button" style="
@@ -439,11 +439,11 @@
       border: none; background: transparent; cursor: pointer;
       color: var(--muted); font-size: 19px;
       transition: all 0.15s; font-family: inherit;
-    " title="Taqvim"
+    " title="Taqvim" data-translate-title="calendar"
       onmouseover="this.style.background='var(--bg-deep)'; this.style.color='var(--text)'"
       onmouseout="this.style.background='transparent'; this.style.color='var(--muted)'">
       <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M16 2v4M8 2v4M3 10h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
-      <span style="font-size:10px; margin-top:3px; color: var(--muted);">Taqvim</span>
+      <span style="font-size:10px; margin-top:3px; color: var(--muted);" data-translate="calendar">Taqvim</span>
     </button>
     <!-- Menyu -->
     <button id="profileMenuIcon" type="button" style="
@@ -452,11 +452,11 @@
       border: none; background: transparent; cursor: pointer;
       color: var(--muted); font-size: 19px;
       transition: all 0.15s; font-family: inherit;
-    " title="Menyu"
+    " title="Menyu" data-translate-title="menu_label"
       onmouseover="this.style.background='var(--bg-deep)'; this.style.color='var(--text)'"
       onmouseout="this.style.background='transparent'; this.style.color='var(--muted)'">
       <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
-      <span style="font-size:10px; margin-top:3px; color: var(--muted);">Menyu</span>
+      <span style="font-size:10px; margin-top:3px; color: var(--muted);" data-translate="menu_label">Menyu</span>
     </button>
     <!-- Ulanish -->
     <button id="profileSignalIcon" type="button" style="
@@ -465,11 +465,11 @@
       border: none; background: transparent; cursor: pointer;
       color: var(--muted); font-size: 19px;
       transition: all 0.15s; font-family: inherit;
-    " title="Ulanishni tekshirish"
+    " title="Ulanishni tekshirish" data-translate-title="check_connection"
       onmouseover="this.style.background='var(--bg-deep)'; this.style.color='var(--text)'"
       onmouseout="this.style.background='transparent'; this.style.color='var(--muted)'">
       <svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
-      <span style="font-size:10px; margin-top:3px; color: var(--muted);">Ulanish</span>
+      <span style="font-size:10px; margin-top:3px; color: var(--muted);" data-translate="connection_label">Ulanish</span>
     </button>
     <!-- User qo'sh -->
     <button id="profileAddUserButton" type="button" style="
@@ -478,11 +478,11 @@
       border: none; background: transparent; cursor: pointer;
       color: var(--muted); font-size: 19px;
       transition: all 0.15s; font-family: inherit;
-    " title="Xodim qo'shish"
+    " title="Xodim qo'shish" data-translate-title="msg_add_user"
       onmouseover="this.style.background='var(--bg-deep)'; this.style.color='var(--text)'"
       onmouseout="this.style.background='transparent'; this.style.color='var(--muted)'">
       <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M5 20c0-4.42 3.58-8 8-8s8 3.58 8 8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M17 13v6M14 16h6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
-      <span style="font-size:10px; margin-top:3px; color: var(--muted);">Qo'shish</span>
+      <span style="font-size:10px; margin-top:3px; color: var(--muted);" data-translate="add_user_short">Qo'shish</span>
     </button>
   </div>
 
@@ -498,8 +498,8 @@
     onmouseout="this.style.background='var(--bg-deep)'; this.style.borderColor='var(--line)'; this.style.color='var(--text)'">
     <svg viewBox="0 0 24 24" width="18" height="18" style="flex-shrink:0;"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="currentColor" stroke-width="1"/></svg>
     <div style="flex:1;">
-      <div style="font-size:13px; font-weight:600;">Yordam markaziga ulanish</div>
-      <div style="font-size:11px; color: var(--muted); margin-top:1px;">Texnik qo'llab-quvvatlash</div>
+      <div style="font-size:13px; font-weight:600;" data-translate="connect_help_center">Yordam markaziga ulanish</div>
+      <div style="font-size:11px; color: var(--muted); margin-top:1px;" data-translate="help_center_subtitle">Texnik qo'llab-quvvatlash</div>
     </div>
     <svg viewBox="0 0 24 24" width="14" height="14" style="flex-shrink:0; color: var(--muted);"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
   </a>
@@ -521,44 +521,44 @@
           <div class="dashboard-card-grid">
             <article class="dashboard-stat-card">
               <div class="dashboard-stat-head">
-                <span>Yangi arizalar</span>
+                <span data-translate="new_requests">Yangi arizalar</span>
                 <span class="stat-icon blue">A</span>
               </div>
               <strong id="pendingLeavesValue">0</strong>
               <div class="dashboard-pending-list" id="pendingLeavesList">
-                <div class="dashboard-pending-empty">Kutilayotgan ariza yo'q</div>
+                <div class="dashboard-pending-empty" data-translate="no_pending_leaves">Kutilayotgan ariza yo'q</div>
               </div>
               <div class="dashboard-chip-row">
-                <button class="dashboard-filter-chip active" type="button" data-activity-filter="requests">Hozir yaratilgan ariza</button>
+                <button class="dashboard-filter-chip active" type="button" data-activity-filter="requests" data-translate="current_request">Hozir yaratilgan ariza</button>
               </div>
             </article>
 
             <article class="dashboard-stat-card">
               <div class="dashboard-stat-head">
-                <span>Mening hisobotlarim</span>
+                <span data-translate="my_reports">Mening hisobotlarim</span>
                 <span class="stat-icon red">H</span>
               </div>
               <strong id="totalReportsValue">0</strong>
               <div class="dashboard-pending-list" id="pendingReportsDashboardList">
-                <div class="dashboard-pending-empty">Kutilayotgan hisobot yo'q</div>
+                <div class="dashboard-pending-empty" data-translate="no_pending_reports">Kutilayotgan hisobot yo'q</div>
               </div>
               <div class="dashboard-chip-row">
-                <button class="dashboard-filter-chip" type="button" data-activity-filter="reports">Hisobotlar</button>
-                <button class="dashboard-filter-chip" type="button" data-activity-filter="all">Hammasi</button>
+                <button class="dashboard-filter-chip" type="button" data-activity-filter="reports" data-translate="reports_short">Hisobotlar</button>
+                <button class="dashboard-filter-chip" type="button" data-activity-filter="all" data-translate="all">Hammasi</button>
               </div>
             </article>
 
             <article class="dashboard-stat-card dashboard-stat-card--approval">
               <div class="dashboard-stat-head">
-                <span>Tasdiqlash holati</span>
+                <span data-translate="approval_status">Tasdiqlash holati</span>
                 <span class="stat-icon green">T</span>
               </div>
               <strong id="pendingApprovalStatusValue">0</strong>
               <div class="dashboard-pending-list" id="pendingApprovalList">
-                <div class="dashboard-pending-empty">Kutilayotgan element yo'q</div>
+                <div class="dashboard-pending-empty" data-translate="no_pending_items">Kutilayotgan element yo'q</div>
               </div>
               <div class="dashboard-chip-row">
-                <button class="dashboard-filter-chip active" type="button" data-dashboard-filter="pending-all">Barcha navbat</button>
+                <button class="dashboard-filter-chip active" type="button" data-dashboard-filter="pending-all" data-translate="all_queue">Barcha navbat</button>
               </div>
               <div class="dashboard-badge-row">
                 <button class="dashboard-badge neutral" type="button" data-dashboard-filter="pending-features">Funksiya talablari: <strong id="pendingFeaturesValue">0</strong></button>
@@ -569,15 +569,15 @@
 
             <article class="dashboard-stat-card dashboard-stat-card--notifications">
               <div class="dashboard-stat-head">
-                <span>Bildirishnomalar</span>
+                <span data-translate="notifications">Bildirishnomalar</span>
                 <span class="stat-icon purple">B</span>
               </div>
               <strong id="unreadNotificationsValue">0</strong>
               <div class="dashboard-pending-list" id="pendingNotificationsDashboardList">
-                <div class="dashboard-pending-empty">Kutilayotgan bildirishnoma yo'q</div>
+                <div class="dashboard-pending-empty" data-translate="no_pending_notifications">Kutilayotgan bildirishnoma yo'q</div>
               </div>
               <div class="dashboard-chip-row">
-                <button class="dashboard-filter-chip" type="button" data-notification-filter="pending">Kutilmoqda</button>
+                <button class="dashboard-filter-chip" type="button" data-notification-filter="pending" data-translate="notifications_pending">Kutilmoqda</button>
               </div>
               <div class="dashboard-badge-row">
                 <button class="dashboard-badge neutral" type="button" data-notification-filter="approved">Tasdiqlangan: <strong id="approvedNotificationsCount">0</strong></button>
@@ -745,18 +745,18 @@
           <div id="notificationsSection" class="panel app-section hidden">
             <div class="panel-heading inline">
               <div>
-                <p class="eyebrow">Bildirishnomalar</p>
-                <h3>Kiruvchi xabarlar</h3>
+                <p class="eyebrow" data-translate="sidebar_notifications">Bildirishnomalar</p>
+                <h3 data-translate="incoming_messages">Kiruvchi xabarlar</h3>
               </div>
               <div class="toolbar">
-                <input id="notificationSearchInput" type="text" placeholder="Bildirishnoma qidirish..." />
+                <input id="notificationSearchInput" type="text" placeholder="Bildirishnoma qidirish..." data-translate-placeholder="search_notification" />
                 <select id="notificationReadFilter">
-                  <option value="">Barchasi</option>
-                  <option value="unread">O'qilmagan</option>
-                  <option value="read">O'qilgan</option>
+                  <option value="" data-translate="all">Barchasi</option>
+                  <option value="unread" data-translate="unread">O'qilmagan</option>
+                  <option value="read" data-translate="read">O'qilgan</option>
                 </select>
-                <button id="refreshNotifications" class="ghost-btn" type="button">Xabarlarni yangilash</button>
-                <button id="readAllNotifications" class="ghost-btn" type="button">Hammasini o'qilgan deb belgilash</button>
+                <button id="refreshNotifications" class="ghost-btn" type="button" data-translate="refresh_messages">Xabarlarni yangilash</button>
+                <button id="readAllNotifications" class="ghost-btn" type="button" data-translate="mark_all_read">Hammasini o'qilgan deb belgilash</button>
               </div>
             </div>
             <div id="notificationsList" class="feed-list"></div>
@@ -769,17 +769,17 @@
               <p class="eyebrow" data-translate="section_dashboard">Asosiy panel</p>
               <h3 data-translate="section_summary">Umumiy xulosa</h3>
             </div>
-            <button id="refreshDashboard" class="ghost-btn" type="button" data-translate="refresh">Panelni yangilash</button>
+            <button id="refreshDashboard" class="ghost-btn" type="button" data-translate="refresh_dashboard">Panelni yangilash</button>
           </div>
           <div class="summary-grid">
-            <div class="summary-card"><span>Qoralama hisobotlar</span><strong id="draftReportsValue">0</strong></div>
-            <div class="summary-card"><span>Tasdiqlangan hisobotlar</span><strong id="approvedReportsValue">0</strong></div>
-            <div class="summary-card"><span>Rad etilgan hisobotlar</span><strong id="rejectedReportsValue">0</strong></div>
-            <div class="summary-card"><span>Tasdiqlangan arizalar</span><strong id="approvedLeavesValue">0</strong></div>
+            <div class="summary-card"><span data-translate="draft_reports">Qoralama hisobotlar</span><strong id="draftReportsValue">0</strong></div>
+            <div class="summary-card"><span data-translate="approved_reports">Tasdiqlangan hisobotlar</span><strong id="approvedReportsValue">0</strong></div>
+            <div class="summary-card"><span data-translate="rejected_reports">Rad etilgan hisobotlar</span><strong id="rejectedReportsValue">0</strong></div>
+            <div class="summary-card"><span data-translate="approved_leaves">Tasdiqlangan arizalar</span><strong id="approvedLeavesValue">0</strong></div>
           </div>
           <div class="dual-feed">
-            <div class="feed-card"><h4>So'nggi hisobotlar</h4><div id="recentReportsList" class="feed-list"></div></div>
-            <div class="feed-card"><h4>So'nggi arizalar</h4><div id="recentLeavesList" class="feed-list"></div></div>
+            <div class="feed-card"><h4 data-translate="recent_reports">So'nggi hisobotlar</h4><div id="recentReportsList" class="feed-list"></div></div>
+            <div class="feed-card"><h4 data-translate="recent_leaves">So'nggi arizalar</h4><div id="recentLeavesList" class="feed-list"></div></div>
           </div>
         </section>
 
@@ -790,15 +790,15 @@
                 <p class="eyebrow" data-translate="section_institutions">Muassasalar</p>
                 <h3 data-translate="section_operations">Boshqaruv operatsiyalari</h3>
               </div>
-              <button id="refreshAdminDashboard" class="ghost-btn" type="button">Admin panelni yangilash</button>
+              <button id="refreshAdminDashboard" class="ghost-btn" type="button" data-translate="refresh_admin_panel">Admin panelni yangilash</button>
             </div>
             <div class="summary-grid compact-grid">
-              <div class="summary-card"><span>Jami xodimlar</span><strong id="adminEmployeesValue">0</strong></div>
-              <div class="summary-card"><span>Ta'tilda</span><strong id="adminOnLeaveValue">0</strong></div>
-              <div class="summary-card"><span>Faol hisobotlar</span><strong id="adminActiveReportsValue">0</strong></div>
+              <div class="summary-card"><span data-translate="total_employees">Jami xodimlar</span><strong id="adminEmployeesValue">0</strong></div>
+              <div class="summary-card"><span data-translate="on_leave">Ta'tilda</span><strong id="adminOnLeaveValue">0</strong></div>
+              <div class="summary-card"><span data-translate="active_reports">Faol hisobotlar</span><strong id="adminActiveReportsValue">0</strong></div>
             </div>
             <div class="feed-card">
-              <h4>Kutilayotgan tasdiqlar</h4>
+              <h4 data-translate="pending_approvals">Kutilayotgan tasdiqlar</h4>
               <div id="adminPendingList" class="feed-list"></div>
             </div>
           </div>
@@ -810,17 +810,17 @@
                 <h3 data-translate="section_dept_compare">Bo'limlar taqqoslash</h3>
               </div>
               <div class="toolbar">
-                <input id="departmentSearchInput" type="text" placeholder="Muassasa qidirish..." />
-                <button id="refreshAnalyticsDashboard" class="ghost-btn" type="button">Analitikani yangilash</button>
+                <input id="departmentSearchInput" type="text" placeholder="Muassasa qidirish..." data-translate-placeholder="search_institution" />
+                <button id="refreshAnalyticsDashboard" class="ghost-btn" type="button" data-translate="refresh_analytics">Analitikani yangilash</button>
               </div>
             </div>
             <div class="summary-grid compact-grid">
-              <div class="summary-card"><span>Jami hisobotlar</span><strong id="analyticsTotalReportsValue">0</strong></div>
-              <div class="summary-card"><span>Tasdiqlangan</span><strong id="analyticsApprovedReportsValue">0</strong></div>
-              <div class="summary-card"><span>Arxivlangan</span><strong id="analyticsArchivedReportsValue">0</strong></div>
+              <div class="summary-card"><span data-translate="total_reports">Jami hisobotlar</span><strong id="analyticsTotalReportsValue">0</strong></div>
+              <div class="summary-card"><span data-translate="approved">Tasdiqlangan</span><strong id="analyticsApprovedReportsValue">0</strong></div>
+              <div class="summary-card"><span data-translate="archived">Arxivlangan</span><strong id="analyticsArchivedReportsValue">0</strong></div>
             </div>
             <div class="feed-card">
-              <h4>Bo'limlar taqqoslash</h4>
+              <h4 data-translate="section_dept_compare">Bo'limlar taqqoslash</h4>
               <div id="analyticsDepartmentsList" class="feed-list"></div>
             </div>
           </div>
@@ -828,20 +828,20 @@
           <div class="panel">
             <div class="panel-heading inline">
               <div>
-                <p class="eyebrow">Foydalanuvchi rollarini boshqarish</p>
-                <h3>Rol o'zgartirish</h3>
+                <p class="eyebrow" data-translate="role_management">Foydalanuvchi rollarini boshqarish</p>
+                <h3 data-translate="role_change">Rol o'zgartirish</h3>
               </div>
               <div class="toolbar">
-                <button id="refreshUsersForRoleManagement" class="ghost-btn" type="button">Foydalanuvchilarni yangilash</button>
+                <button id="refreshUsersForRoleManagement" class="ghost-btn" type="button" data-translate="refresh_users">Foydalanuvchilarni yangilash</button>
               </div>
             </div>
             <form id="roleManagementForm" class="form-grid">
-              <label><span>Foydalanuvchi tanlang</span>
+              <label><span data-translate="select_user">Foydalanuvchi tanlang</span>
                 <select name="user_id" id="roleManagementUserSelect" required>
-                  <option value="">Foydalanuvchi tanlang...</option>
+                  <option value="" data-translate="select_user">Foydalanuvchi tanlang...</option>
                 </select>
               </label>
-              <label><span>Yangi rol</span>
+              <label><span data-translate="new_role">Yangi rol</span>
                 <select name="role" id="roleManagementRoleSelect" required>
                   <option value="SPECIALIST">SPECIALIST (Mutaxassis)</option>
                   <option value="UNIT_HEAD">UNIT_HEAD (Bo'lim boshlig'i)</option>
@@ -850,21 +850,21 @@
                 </select>
               </label>
               <!-- FIXED: Added department selector for role change -->
-              <label id="roleManagementDeptLabel" class="hidden"><span>Bo'lim (Department)</span>
+              <label id="roleManagementDeptLabel" class="hidden"><span data-translate="department">Bo'lim (Department)</span>
                 <select name="department_id" id="roleManagementDeptSelect">
-                  <option value="">Bo'lim tanlang...</option>
+                  <option value="" data-translate="select_department">Bo'lim tanlang...</option>
                 </select>
               </label>
               <!-- FIXED: Added unit selector for role change -->
-              <label id="roleManagementUnitLabel" class="hidden"><span>Birlik (Unit)</span>
+              <label id="roleManagementUnitLabel" class="hidden"><span data-translate="unit">Birlik (Unit)</span>
                 <select name="unit_id" id="roleManagementUnitSelect">
-                  <option value="">Birlik tanlang...</option>
+                  <option value="" data-translate="select_unit">Birlik tanlang...</option>
                 </select>
               </label>
-              <button type="submit" class="primary-btn">Rolni o'zgartirish</button>
+              <button type="submit" class="primary-btn" data-translate="role_change">Rolni o'zgartirish</button>
             </form>
             <div class="feed-card" style="margin-top: 20px;">
-              <h4>Foydalanuvchilar ro'yxati</h4>
+              <h4 data-translate="users_list">Foydalanuvchilar ro'yxati</h4>
               <div id="roleManagementUserList" class="feed-list"></div>
             </div>
           </div>
@@ -890,22 +890,22 @@
 
         <section id="reportsCreateSection" class="workspace-grid reports-grid app-section">
             <div id="reportCreatePanel" class="panel hidden">
-              <div class="panel-heading"><p class="eyebrow">Hisobotlar</p><h3>Hisobot yaratish</h3></div>
+              <div class="panel-heading"><p class="eyebrow" data-translate="reports_eyebrow">Hisobotlar</p><h3 data-translate="create_report_title">Hisobot yaratish</h3></div>
               <form id="reportForm" class="form-grid">
-                <label><span>Sarlavha</span><input name="title" type="text" placeholder="Choraklik operatsion xulosa" required /></label>
-                <label><span>Izoh</span><textarea name="summary" rows="4" placeholder="Report haqida qisqa izoh (commit/comment)" required></textarea></label>
-                <label><span>Mazmun</span><textarea name="content" rows="6" placeholder="Batafsil report mazmuni"></textarea></label>
-                <label><span>Biriktirma (rasm, skrinshot yoki fayl)</span><input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" /></label>
+                <label><span data-translate="report_title">Sarlavha</span><input name="title" type="text" placeholder="Choraklik operatsion xulosa" data-translate-placeholder="report_title_placeholder" required /></label>
+                <label><span data-translate="report_comment">Izoh</span><textarea name="summary" rows="4" placeholder="Report haqida qisqa izoh (commit/comment)" data-translate-placeholder="report_comment_placeholder" required></textarea></label>
+                <label><span data-translate="report_content">Mazmun</span><textarea name="content" rows="6" placeholder="Batafsil report mazmuni" data-translate-placeholder="report_content_placeholder"></textarea></label>
+                <label><span data-translate="report_image">Biriktirma (rasm, skrinshot yoki fayl)</span><input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" /></label>
                 <label>
-                  <span>Bo'lim</span>
+                  <span data-translate="report_department">Bo'lim</span>
                   <select name="department_id" id="reportDepartmentSelect">
-                  <option value="">Login qiling (departmentlar yuklanadi)</option>
+                  <option value="" data-translate="report_department_default">Login qiling (departmentlar yuklanadi)</option>
                 </select>
               </label>
               <label>
-                <span>Boshqaruv roli</span>
+                <span data-translate="management_role">Boshqaruv roli</span>
                 <select name="role" id="roleFilterSelect">
-                  <option value="">Tanlang</option>
+                  <option value="" data-translate="select">Tanlang</option>
                   <option value="SPECIALIST">Specialist</option>
                   <option value="UNIT_HEAD">Unit Head</option>
                   <option value="DEPT_HEAD">Department Head</option>
@@ -913,41 +913,41 @@
                 </select>
               </label>
               <label>
-                <span>Birlik</span>
+                <span data-translate="unit">Birlik</span>
                 <select name="unit_id" id="unitSelect">
-                  <option value="">Login qiling (birliklar yuklanadi)</option>
+                  <option value="" data-translate="login_to_load_units">Login qiling (birliklar yuklanadi)</option>
                 </select>
               </label>
               <label>
-                <span>Bo'lim</span>
+                <span data-translate="department">Bo'lim</span>
                 <select name="department_id" id="departmentSelect">
-                  <option value="">Login qiling (departmentlar yuklanadi)</option>
+                  <option value="" data-translate="login_to_load_departments">Login qiling (departmentlar yuklanadi)</option>
                 </select>
               </label>
-              <button type="submit" class="primary-btn">Hisobot yaratish</button>
+              <button type="submit" class="primary-btn" data-translate="create_report_button">Hisobot yaratish</button>
             </form>
             <div class="report-id-helper">
               <div class="report-id-meta">
-                <span>Yangi hisobot UUID</span>
-                <strong id="latestReportIdLabel">Hali yaratilmagan</strong>
+                <span data-translate="latest_report_id">Yangi hisobot UUID</span>
+                <strong id="latestReportIdLabel" data-translate="not_created_yet">Hali yaratilmagan</strong>
               </div>
               <div class="inline-actions">
-                <button id="copyLatestReportIdButton" type="button" class="ghost-btn">UUID nusxalash</button>
-                <button id="useLatestReportIdButton" type="button" class="ghost-btn">ID ni pastdagi formlarga qo'yish</button>
+                <button id="copyLatestReportIdButton" type="button" class="ghost-btn" data-translate="copy_uuid">UUID nusxalash</button>
+                <button id="useLatestReportIdButton" type="button" class="ghost-btn" data-translate="apply_uuid_to_forms">ID ni pastdagi formlarga qo'yish</button>
               </div>
             </div>
           </div>
 
           <div id="leaveCreatePanel" class="panel hidden">
             <div class="panel-heading">
-              <p class="eyebrow">Ta'til</p>
-              <h3>Yangi ta'til arizasi</h3>
+              <p class="eyebrow" data-translate="section_leave">Ta'til</p>
+              <h3 data-translate="create_leave_title">Yangi ta'til arizasi</h3>
             </div>
             <form id="leaveCreateForm" class="form-grid">
               <label>
-                <span>Ta'til turi</span>
+                <span data-translate="leave_type">Ta'til turi</span>
                 <select name="leave_type" required>
-                  <option value="">Tanlang</option>
+                  <option value="" data-translate="select">Tanlang</option>
                   <option value="ANNUAL">Annual</option>
                   <option value="SICK">Sick</option>
                   <option value="UNPAID">Unpaid</option>
@@ -956,22 +956,22 @@
                 </select>
               </label>
               <label>
-                <span>Boshlanish sanasi</span>
+                <span data-translate="start_date">Boshlanish sanasi</span>
                 <input name="start_date" type="date" required />
               </label>
               <label>
-                <span>Tugash sanasi</span>
+                <span data-translate="end_date">Tugash sanasi</span>
                 <input name="end_date" type="date" required />
               </label>
               <label>
-                <span>Sabab</span>
-                <textarea name="reason" rows="5" placeholder="Ta'til sababi" required></textarea>
+                <span data-translate="reason">Sabab</span>
+                <textarea name="reason" rows="5" placeholder="Ta'til sababi" data-translate-placeholder="leave_reason_placeholder" required></textarea>
               </label>
               <label>
-                <span>Biriktirma (rasm yoki fayl)</span>
+                <span data-translate="attachment">Biriktirma (rasm yoki fayl)</span>
                 <input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" />
               </label>
-              <button type="submit" class="primary-btn">Ariza yuborish</button>
+              <button type="submit" class="primary-btn" data-translate="submit_leave">Ariza yuborish</button>
             </form>
           </div>
 
@@ -979,45 +979,45 @@
             <div class="panel-heading inline">
               <div>
                 <p class="eyebrow" data-translate="section_workflow">Ish jarayoni</p>
-                <h3>Bo'limlar bo'yicha umumiy ko'rinish</h3>
+                <h3 data-translate="workflow_overview">Bo'limlar bo'yicha umumiy ko'rinish</h3>
               </div>
               <div class="toolbar">
-                <input id="operationsDepartmentSearch" type="search" placeholder="Bo'lim qidirish..." />
-                <button id="refreshOperationsDashboard" type="button" class="ghost-btn">Yangilash</button>
+                <input id="operationsDepartmentSearch" type="search" placeholder="Bo'lim qidirish..." data-translate-placeholder="search_department" />
+                <button id="refreshOperationsDashboard" type="button" class="ghost-btn" data-translate="refresh">Yangilash</button>
               </div>
             </div>
 
             <div class="operations-kpi-grid">
               <article class="operations-kpi-card operations-kpi-card--leave">
-                <span class="operations-kpi-label">Arizalar</span>
+                <span class="operations-kpi-label" data-translate="sidebar_leaves">Arizalar</span>
                 <strong id="opsLeavesTotal">0</strong>
                 <div class="operations-kpi-meta">
-                  <span class="status-pill status-pill--pending">Kutilmoqda: <b id="opsLeavesPending">0</b></span>
-                  <span class="status-pill status-pill--approved">Tasdiqlangan: <b id="opsLeavesApproved">0</b></span>
+                  <span class="status-pill status-pill--pending" data-translate="pending">Kutilmoqda: <b id="opsLeavesPending">0</b></span>
+                  <span class="status-pill status-pill--approved" data-translate="approved">Tasdiqlangan: <b id="opsLeavesApproved">0</b></span>
                 </div>
               </article>
               <article class="operations-kpi-card operations-kpi-card--notification">
-                <span class="operations-kpi-label">Bildirishnomalar</span>
+                <span class="operations-kpi-label" data-translate="sidebar_notifications">Bildirishnomalar</span>
                 <strong id="opsNotificationsTotal">0</strong>
                 <div class="operations-kpi-meta">
-                  <span class="status-pill status-pill--pending">Kutilmoqda: <b id="opsNotificationsPending">0</b></span>
-                  <span class="status-pill status-pill--approved">Tasdiqlangan: <b id="opsNotificationsApproved">0</b></span>
+                  <span class="status-pill status-pill--pending" data-translate="pending">Kutilmoqda: <b id="opsNotificationsPending">0</b></span>
+                  <span class="status-pill status-pill--approved" data-translate="approved">Tasdiqlangan: <b id="opsNotificationsApproved">0</b></span>
                 </div>
               </article>
               <article class="operations-kpi-card operations-kpi-card--feature">
-                <span class="operations-kpi-label">Funksiya talablari</span>
+                <span class="operations-kpi-label" data-translate="feature_requests">Funksiya talablari</span>
                 <strong id="opsFeaturesTotal">0</strong>
                 <div class="operations-kpi-meta">
-                  <span class="status-pill status-pill--pending">Kutilmoqda: <b id="opsFeaturesPending">0</b></span>
-                  <span class="status-pill status-pill--approved">Tasdiqlangan: <b id="opsFeaturesApproved">0</b></span>
+                  <span class="status-pill status-pill--pending" data-translate="pending">Kutilmoqda: <b id="opsFeaturesPending">0</b></span>
+                  <span class="status-pill status-pill--approved" data-translate="approved">Tasdiqlangan: <b id="opsFeaturesApproved">0</b></span>
                 </div>
               </article>
               <article class="operations-kpi-card operations-kpi-card--report">
-                <span class="operations-kpi-label">Hisobotlar</span>
+                <span class="operations-kpi-label" data-translate="reports_short">Hisobotlar</span>
                 <strong id="opsReportsTotal">0</strong>
                 <div class="operations-kpi-meta">
-                  <span class="status-pill status-pill--pending">Kutilmoqda: <b id="opsReportsPending">0</b></span>
-                  <span class="status-pill status-pill--approved">Tasdiqlangan: <b id="opsReportsApproved">0</b></span>
+                  <span class="status-pill status-pill--pending" data-translate="pending">Kutilmoqda: <b id="opsReportsPending">0</b></span>
+                  <span class="status-pill status-pill--approved" data-translate="approved">Tasdiqlangan: <b id="opsReportsApproved">0</b></span>
                 </div>
               </article>
             </div>
@@ -1026,35 +1026,35 @@
               <table class="operations-table">
                 <thead>
                   <tr>
-                    <th>Bo'lim</th>
-                    <th>Arizalar</th>
-                    <th>Bildirishnomalar</th>
-                    <th>Funksiya talablari</th>
-                    <th>Hisobotlar</th>
-                    <th>Jami kutilmoqda</th>
+                    <th data-translate="department">Bo'lim</th>
+                    <th data-translate="sidebar_leaves">Arizalar</th>
+                    <th data-translate="sidebar_notifications">Bildirishnomalar</th>
+                    <th data-translate="feature_requests">Funksiya talablari</th>
+                    <th data-translate="reports_short">Hisobotlar</th>
+                    <th data-translate="total_pending">Jami kutilmoqda</th>
                   </tr>
                 </thead>
                 <tbody id="operationsDepartmentsTableBody">
-                  <tr><td colspan="6" class="empty-state">Ma'lumot yuklanmoqda...</td></tr>
+                  <tr><td colspan="6" class="empty-state" data-translate="loading_data">Ma'lumot yuklanmoqda...</td></tr>
                 </tbody>
               </table>
             </div>
 
             <div class="operations-distribution-grid">
               <article class="operations-dist-card">
-                <h4 class="operations-dist-title operations-dist-title--blue">Arizalar taqsimoti</h4>
+                <h4 class="operations-dist-title operations-dist-title--blue" data-translate="leave_distribution">Arizalar taqsimoti</h4>
                 <div id="operationsLeavesDistribution" class="operations-dist-list"></div>
               </article>
               <article class="operations-dist-card">
-                <h4 class="operations-dist-title operations-dist-title--purple">Bildirishnomalar</h4>
+                <h4 class="operations-dist-title operations-dist-title--purple" data-translate="sidebar_notifications">Bildirishnomalar</h4>
                 <div id="operationsNotificationsDistribution" class="operations-dist-list"></div>
               </article>
               <article class="operations-dist-card">
-                <h4 class="operations-dist-title operations-dist-title--orange">Funksiya talablari</h4>
+                <h4 class="operations-dist-title operations-dist-title--orange" data-translate="feature_requests">Funksiya talablari</h4>
                 <div id="operationsFeaturesDistribution" class="operations-dist-list"></div>
               </article>
               <article class="operations-dist-card">
-                <h4 class="operations-dist-title operations-dist-title--green">Hisobotlar</h4>
+                <h4 class="operations-dist-title operations-dist-title--green" data-translate="reports_short">Hisobotlar</h4>
                 <div id="operationsReportsDistribution" class="operations-dist-list"></div>
               </article>
             </div>
@@ -1062,51 +1062,51 @@
 
           <details class="panel workflow-tools-panel">
             <summary class="workflow-tools-summary">
-              <span>Hisobot harakatlari va biriktirmalar</span>
-              <small>UUID orqali tasdiqlash, biriktirma va tarix</small>
+              <span data-translate="section_report_actions">Hisobot harakatlari va biriktirmalar</span>
+              <small data-translate="workflow_tools_subtitle">UUID orqali tasdiqlash, biriktirma va tarix</small>
             </summary>
             <form id="workflowForm" class="form-grid">
-              <label><span>Hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID sini qo'ying" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
-              <label><span>Harakat</span><select name="action" id="workflowActionSelect" required>
-                <option value="SUBMIT">Yuborish (faqat DRAFT/REVISION)</option>
-                <option value="APPROVE">Tasdiqlash (faqat PENDING)</option>
-                <option value="REJECT">Rad etish (faqat PENDING, izoh majburiy)</option>
-                <option value="REQUEST_REVISION">Qayta ko'rib chiqishni so'rash (faqat PENDING, izoh majburiy)</option>
-                <option value="ARCHIVE">Arxivlash (faqat APPROVED/REJECTED)</option>
+              <label><span data-translate="report_id_label">Hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID sini qo'ying" data-translate-placeholder="report_uuid_placeholder" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
+              <label><span data-translate="action">Harakat</span><select name="action" id="workflowActionSelect" required>
+                <option value="SUBMIT" data-translate="action_submit">Yuborish (faqat DRAFT/REVISION)</option>
+                <option value="APPROVE" data-translate="action_approve">Tasdiqlash (faqat PENDING)</option>
+                <option value="REJECT" data-translate="action_reject">Rad etish (faqat PENDING, izoh majburiy)</option>
+                <option value="REQUEST_REVISION" data-translate="action_request_revision">Qayta ko'rib chiqishni so'rash (faqat PENDING, izoh majburiy)</option>
+                <option value="ARCHIVE" data-translate="action_archive">Arxivlash (faqat APPROVED/REJECTED)</option>
               </select></label>
-              <label><span>Izoh <small id="commentHint" style="color: var(--muted); font-weight: normal;"></small></span><textarea name="comment" id="workflowComment" rows="4" placeholder="Tasdiqlash yoki rad etish izohi"></textarea></label>
-              <button type="submit" class="primary-btn">Ish jarayoni harakatini ishga tushurish</button>
+              <label><span data-translate="comment_label">Izoh <small id="commentHint" style="color: var(--muted); font-weight: normal;"></small></span><textarea name="comment" id="workflowComment" rows="4" placeholder="Tasdiqlash yoki rad etish izohi" data-translate-placeholder="workflow_comment_placeholder"></textarea></label>
+              <button type="submit" class="primary-btn" data-translate="run_workflow_action">Ish jarayoni harakatini ishga tushurish</button>
             </form>
             <form id="leaveReviewForm" class="form-grid hidden">
-              <label><span>Ariza ID</span><input name="leave_id" type="text" placeholder="Ariza UUID sini qo'ying" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
-              <label><span>Harakat</span><select name="action" id="leaveActionSelect" required>
-                <option value="APPROVE">Tasdiqlash</option>
-                <option value="REJECT">Rad etish</option>
-                <option value="CANCEL">Bekor qilish</option>
+              <label><span data-translate="leave_id_label">Ariza ID</span><input name="leave_id" type="text" placeholder="Ariza UUID sini qo'ying" data-translate-placeholder="leave_uuid_placeholder" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
+              <label><span data-translate="action">Harakat</span><select name="action" id="leaveActionSelect" required>
+                <option value="APPROVE" data-translate="approve">Tasdiqlash</option>
+                <option value="REJECT" data-translate="reject">Rad etish</option>
+                <option value="CANCEL" data-translate="cancel">Bekor qilish</option>
               </select></label>
-              <label><span>Izoh</span><textarea name="review_comment" id="leaveReviewComment" rows="4" placeholder="Tasdiqlash yoki rad etish izohi"></textarea></label>
-              <button type="submit" class="primary-btn">Arizani ko'rib chiqish</button>
+              <label><span data-translate="comment_label">Izoh</span><textarea name="review_comment" id="leaveReviewComment" rows="4" placeholder="Tasdiqlash yoki rad etish izohi" data-translate-placeholder="review_comment_placeholder"></textarea></label>
+              <button type="submit" class="primary-btn" data-translate="review_leave">Arizani ko'rib chiqish</button>
             </form>
             <form id="userForm" class="form-grid hidden">
-              <label><span>To'liq ism</span><input name="full_name" type="text" placeholder="Ism familiya" required /></label>
-              <label><span>Username</span><input name="username" type="text" placeholder="Username" required /></label>
-              <label><span>Email</span><input name="email" type="email" placeholder="Email" required /></label>
-              <label><span>Parol</span><input name="password" type="password" placeholder="Kamida 8 belgi" minlength="8" required autocomplete="new-password" /></label>
-              <label><span>Parolni tasdiqlash</span><input name="password_confirm" type="password" placeholder="Parolni qayta kiriting" minlength="8" required autocomplete="new-password" /></label>
-              <label><span>Bo'lim</span><select name="department_id" id="userDepartmentSelect">
-                <option value="">Bo'limni tanlang</option>
+              <label><span data-translate="full_name">To'liq ism</span><input name="full_name" type="text" placeholder="Ism familiya" data-translate-placeholder="full_name_placeholder" required /></label>
+              <label><span data-translate="username">Username</span><input name="username" type="text" placeholder="Username" data-translate-placeholder="username_placeholder" required /></label>
+              <label><span data-translate="email">Email</span><input name="email" type="email" placeholder="Email" data-translate-placeholder="email_placeholder" required /></label>
+              <label><span data-translate="password">Parol</span><input name="password" type="password" placeholder="Kamida 8 belgi" data-translate-placeholder="password_placeholder" minlength="8" required autocomplete="new-password" /></label>
+              <label><span data-translate="password_confirm">Parolni tasdiqlash</span><input name="password_confirm" type="password" placeholder="Parolni qayta kiriting" data-translate-placeholder="password_confirm_placeholder" minlength="8" required autocomplete="new-password" /></label>
+              <label><span data-translate="department">Bo'lim</span><select name="department_id" id="userDepartmentSelect">
+                <option value="" data-translate="select_department">Bo'limni tanlang</option>
               </select></label>
-              <label><span>Birlik</span><select name="unit_id" id="userUnitSelect">
-                <option value="">Birlik (ixtiyoriy)</option>
+              <label><span data-translate="unit">Birlik</span><select name="unit_id" id="userUnitSelect">
+                <option value="" data-translate="unit_optional">Birlik (ixtiyoriy)</option>
               </select></label>
-              <label><span>Boshqaruv roli</span><select name="role" required>
+              <label><span data-translate="management_role">Boshqaruv roli</span><select name="role" required>
                 <option value="SPECIALIST">Specialist</option>
                 <option value="UNIT_HEAD">Unit Head</option>
                 <option value="DEPT_HEAD">Department Head</option>
                 <option value="DIRECTOR">Director</option>
               </select></label>
-              <label><span>IT lavozimi</span><select name="job_role">
-                <option value="">Tanlanmagan</option>
+              <label><span data-translate="it_position">IT lavozimi</span><select name="job_role">
+                <option value="" data-translate="not_selected">Tanlanmagan</option>
                 <option value="DEVOPS">DevOps</option>
                 <option value="IT_ENGINEER">IT Engineer</option>
                 <option value="ANDROID_DEV">Android Developer</option>
@@ -1115,31 +1115,31 @@
                 <option value="MANAGER">Manager</option>
                 <option value="DIRECTOR">Director</option>
               </select></label>
-              <label><span>Daraja</span><select name="job_level">
-                <option value="">Tanlanmagan</option>
+              <label><span data-translate="level">Daraja</span><select name="job_level">
+                <option value="" data-translate="not_selected">Tanlanmagan</option>
                 <option value="JUNIOR">Junior</option>
                 <option value="MIDDLE">Middle</option>
                 <option value="SENIOR">Senior</option>
               </select></label>
-              <button type="submit" class="primary-btn">Saqlash</button>
+              <button type="submit" class="primary-btn" data-translate="save">Saqlash</button>
             </form>
             <form id="attachmentForm" class="form-grid compact-form">
-              <label><span>Biriktiriladigan hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
-              <label><span>Fayl</span><input name="file" type="file" required /></label>
-              <button type="submit" class="ghost-btn">Biriktirma yuklash</button>
+              <label><span data-translate="attachment_report_id">Biriktiriladigan hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID" data-translate-placeholder="report_uuid_placeholder" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
+              <label><span data-translate="file">Fayl</span><input name="file" type="file" required /></label>
+              <button type="submit" class="ghost-btn" data-translate="upload_attachment">Biriktirma yuklash</button>
             </form>
             <form id="attachmentToolsForm" class="form-grid compact-form">
-              <label><span>Biriktirma ID</span><input name="attachment_id" type="text" placeholder="Biriktirma UUID" required /></label>
+              <label><span data-translate="attachment_id">Biriktirma ID</span><input name="attachment_id" type="text" placeholder="Biriktirma UUID" data-translate-placeholder="attachment_uuid_placeholder" required /></label>
               <div class="inline-actions">
-                <button id="downloadAttachmentButton" type="button" class="ghost-btn">Biriktirmani yuklash</button>
-                <button id="deleteAttachmentButton" type="button" class="ghost-btn">Biriktirmani o'chirish</button>
+                <button id="downloadAttachmentButton" type="button" class="ghost-btn" data-translate="download_attachment">Biriktirmani yuklash</button>
+                <button id="deleteAttachmentButton" type="button" class="ghost-btn" data-translate="delete_attachment">Biriktirmani o'chirish</button>
               </div>
             </form>
             <form id="reportToolsForm" class="form-grid compact-form">
-              <label><span>Tarix/o'chirish uchun hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
+              <label><span data-translate="report_id_history">Tarix/o'chirish uchun hisobot ID</span><input name="report_id" type="text" placeholder="Hisobot UUID" data-translate-placeholder="report_uuid_placeholder" pattern="[0-9a-fA-F-]{36}" title="Masalan: 550e8400-e29b-41d4-a716-446655440000" required /></label>
               <div class="inline-actions">
-                <button id="loadHistoryButton" type="button" class="ghost-btn">Tarixni yuklash</button>
-                <button id="deleteReportButton" type="button" class="ghost-btn">Hisobotni o'chirish</button>
+                <button id="loadHistoryButton" type="button" class="ghost-btn" data-translate="load_history">Tarixni yuklash</button>
+                <button id="deleteReportButton" type="button" class="ghost-btn" data-translate="delete_report">Hisobotni o'chirish</button>
               </div>
             </form>
           </details>
@@ -1152,15 +1152,15 @@
               <h3 data-translate="section_reports_list">Hisobotlar ro'yxati</h3>
             </div>
             <div class="toolbar">
-              <input id="reportSearchInput" type="text" placeholder="Hisobot qidirish..." />
-              <select id="reportStatusFilter"><option value="">Barcha holatlar</option><option value="DRAFT">Qoralama</option><option value="PENDING_L2">L2 kutilmoqda</option><option value="PENDING_L3">L3 kutilmoqda</option><option value="PENDING_L4">L4 kutilmoqda</option><option value="APPROVED">Tasdiqlangan</option><option value="REJECTED">Rad etilgan</option><option value="REVISION">Qayta ko'rib chiqish</option><option value="ARCHIVED">Arxivlangan</option></select>
-              <button id="refreshReports" class="ghost-btn" type="button">Hisobotlarni yangilash</button>
+              <input id="reportSearchInput" type="text" placeholder="Hisobot qidirish..." data-translate-placeholder="search_report" />
+              <select id="reportStatusFilter"><option value="" data-translate="all_statuses">Barcha holatlar</option><option value="DRAFT" data-translate="draft">Qoralama</option><option value="PENDING_L2" data-translate="pending_l2">L2 kutilmoqda</option><option value="PENDING_L3" data-translate="pending_l3">L3 kutilmoqda</option><option value="PENDING_L4" data-translate="pending_l4">L4 kutilmoqda</option><option value="APPROVED" data-translate="approved">Tasdiqlangan</option><option value="REJECTED" data-translate="rejected">Rad etilgan</option><option value="REVISION" data-translate="revision">Qayta ko'rib chiqish</option><option value="ARCHIVED" data-translate="archived">Arxivlangan</option></select>
+              <button id="refreshReports" class="ghost-btn" type="button" data-translate="refresh_reports">Hisobotlarni yangilash</button>
             </div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Hisobot</th><th>Holat</th><th>Daraja</th><th>Bo'lim</th><th>Egasi</th><th>Yaratilgan</th></tr></thead>
-              <tbody id="reportsTableBody"><tr><td colspan="6" class="empty-state">Hisobotlar yuklanmagan</td></tr></tbody>
+              <thead><tr><th data-translate="report">Hisobot</th><th data-translate="status">Holat</th><th data-translate="level">Daraja</th><th data-translate="department">Bo'lim</th><th data-translate="owner">Egasi</th><th data-translate="created">Yaratilgan</th></tr></thead>
+              <tbody id="reportsTableBody"><tr><td colspan="6" class="empty-state" data-translate="reports_not_loaded">Hisobotlar yuklanmagan</td></tr></tbody>
             </table>
           </div>
         </section>
@@ -1173,7 +1173,7 @@
               <p class="eyebrow" data-translate="section_report_history">Tasdiqlash tarixi</p>
               <h3 data-translate="section_approval_history">Siz ko'rib chiqqan so'rovlar</h3>
             </div>
-            <button id="refreshReviewHistory" type="button" class="ghost-btn">Tarixni yangilash</button>
+            <button id="refreshReviewHistory" type="button" class="ghost-btn" data-translate="refresh_history">Tarixni yangilash</button>
           </div>
           <div id="reportHistoryList" class="feed-list review-history-list"></div>
         </section>
@@ -1185,32 +1185,32 @@
               <h3 data-translate="section_leaves_list">Ta'til arizalari ro'yxati</h3>
             </div>
             <div class="toolbar">
-              <input id="leaveSearchInput" type="text" placeholder="Ariza qidirush..." />
+              <input id="leaveSearchInput" type="text" placeholder="Ariza qidirush..." data-translate-placeholder="search_leave" />
               <select id="leaveStatusFilter">
-                <option value="">Barcha holatlar</option>
-                <option value="PENDING">Kutilmoqda</option>
-                <option value="APPROVED">Tasdiqlangan</option>
-                <option value="REJECTED">Rad etilgan</option>
+                <option value="" data-translate="all_statuses">Barcha holatlar</option>
+                <option value="PENDING" data-translate="pending">Kutilmoqda</option>
+                <option value="APPROVED" data-translate="approved">Tasdiqlangan</option>
+                <option value="REJECTED" data-translate="rejected">Rad etilgan</option>
               </select>
-              <button id="refreshLeaves" class="ghost-btn" type="button">Arizalarni yangilash</button>
+              <button id="refreshLeaves" class="ghost-btn" type="button" data-translate="refresh_leaves">Arizalarni yangilash</button>
             </div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Xodim</th><th>Sana</th><th>Kunlar soni</th><th>Holat</th><th>Izoh</th></tr></thead>
-              <tbody id="leavesTableBody"><tr><td colspan="5" class="empty-state">Arizalar yuklanmagan</td></tr></tbody>
+              <thead><tr><th data-translate="col_employee">Xodim</th><th data-translate="col_date">Sana</th><th data-translate="col_days">Kunlar soni</th><th data-translate="status">Holat</th><th data-translate="col_comment">Izoh</th></tr></thead>
+              <tbody id="leavesTableBody"><tr><td colspan="5" class="empty-state" data-translate="leaves_not_loaded">Arizalar yuklanmagan</td></tr></tbody>
             </table>
           </div>
         </section>
 
         <section id="feedbackSection" class="panel app-section hidden">
           <div class="panel-heading">
-            <p class="eyebrow">Baholash</p>
-            <h3>Fikr va kommentariya</h3>
+            <p class="eyebrow" data-translate="feedback_eyebrow">Baholash</p>
+            <h3 data-translate="feedback_heading">Fikr va kommentariya</h3>
           </div>
           <form id="feedbackForm" class="form-grid">
             <label>
-              <span>Baholash</span>
+              <span data-translate="rating">Baholash</span>
               <div id="feedbackStars" class="rating-stars">
                 <button type="button" data-rating="1">★</button>
                 <button type="button" data-rating="2">★</button>
@@ -1221,10 +1221,10 @@
               <input id="feedbackRatingValue" name="rating" type="hidden" value="0" />
             </label>
             <label>
-              <span>Fikr</span>
-              <textarea id="feedbackCommentInput" name="comment" rows="4" placeholder="Fikringizni yozing..."></textarea>
+              <span data-translate="feedback_comment">Fikr</span>
+              <textarea id="feedbackCommentInput" name="comment" rows="4" placeholder="Fikringizni yozing..." data-translate-placeholder="feedback_comment_placeholder"></textarea>
             </label>
-            <button type="submit" class="primary-btn">Yuborish</button>
+            <button type="submit" class="primary-btn" data-translate="submit">Yuborish</button>
           </form>
           <div id="feedbackList" class="feed-list"></div>
         </section>
@@ -1232,36 +1232,36 @@
         <!-- Side Drawer for Auxiliary Modules -->
         <aside id="auxiliaryDrawer" class="auxiliary-drawer hidden">
           <div class="auxiliary-drawer-header">
-            <h3>Qo'shimcha modullar</h3>
-            <button id="closeAuxiliaryDrawer" class="ghost-btn icon-btn" type="button" aria-label="Yopish">
+            <h3 data-translate="auxiliary_modules">Qo'shimcha modullar</h3>
+            <button id="closeAuxiliaryDrawer" class="ghost-btn icon-btn" type="button" aria-label="Yopish" data-translate="close">
               <svg viewBox="0 0 24 24" width="20" height="20" role="presentation">
                 <path d="M18 6L6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </button>
           </div>
           <div class="auxiliary-drawer-tabs">
-            <button class="aux-tab active" data-aux-tab="calendar">Ta'til taqvimi</button>
-            <button class="aux-tab" data-aux-tab="activity">Faoliyat</button>
+            <button class="aux-tab active" data-aux-tab="calendar" data-translate="leave_calendar">Ta'til taqvimi</button>
+            <button class="aux-tab" data-aux-tab="activity" data-translate="activity">Faoliyat</button>
           </div>
           <div class="auxiliary-drawer-content">
             <div id="auxCalendarPanel" class="aux-panel">
               <div class="panel-heading inline" style="margin-bottom: 12px;">
-                <div><p class="eyebrow">Ta'til taqvimi</p><h4>Tasdiqlangan ta'tillar jadvali</h4></div>
-                <button id="refreshLeaveCalendar" class="ghost-btn" type="button">Yangilash</button>
+                <div><p class="eyebrow" data-translate="leave_calendar">Ta'til taqvimi</p><h4 data-translate="approved_leaves_table">Tasdiqlangan ta'tillar jadvali</h4></div>
+                <button id="refreshLeaveCalendar" class="ghost-btn" type="button" data-translate="refresh">Yangilash</button>
               </div>
               <div id="leaveCalendarList" class="feed-list" style="max-height: 400px; overflow-y: auto;"></div>
             </div>
             <div id="auxActivityPanel" class="aux-panel hidden">
               <div class="panel-heading inline" style="margin-bottom: 12px;">
-                <div><p class="eyebrow">Faoliyat</p><h4>So'nggi harakatlar</h4></div>
+                <div><p class="eyebrow" data-translate="activity">Faoliyat</p><h4 data-translate="recent_actions">So'nggi harakatlar</h4></div>
                 <div class="dashboard-chip-row">
-                  <button class="dashboard-filter-chip active" type="button" data-activity-filter="all">Hammasi</button>
-                  <button class="dashboard-filter-chip" type="button" data-activity-filter="requests">Arizalar</button>
-                  <button class="dashboard-filter-chip" type="button" data-activity-filter="reports">Hisobotlar</button>
+                  <button class="dashboard-filter-chip active" type="button" data-activity-filter="all" data-translate="all">Hammasi</button>
+                  <button class="dashboard-filter-chip" type="button" data-activity-filter="requests" data-translate="requests">Arizalar</button>
+                  <button class="dashboard-filter-chip" type="button" data-activity-filter="reports" data-translate="reports_short">Hisobotlar</button>
                 </div>
               </div>
               <div id="activityHistoryList" class="feed-list" style="max-height: 400px; overflow-y: auto;">
-                <div class="feed-item muted-item">Faoliyat tarixi yuklanmagan</div>
+                <div class="feed-item muted-item" data-translate="activity_not_loaded">Faoliyat tarixi yuklanmagan</div>
               </div>
             </div>
           </div>

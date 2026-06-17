@@ -1215,9 +1215,14 @@ const newTranslations = {
     role_change_error: "Rol o'zgartirishda xato bo'ldi",
     department_required: "Bu rol uchun bo'lim tanlanishi shart",
     unit_required: "Bu rol uchun birlik tanlanishi shart",
+    theme: "Mavzu",
     theme_dark: "Tun rejimi",
     theme_light: "Kunduz rejimi",
     theme_toggle: "Tun/kunduz rejimi",
+    switch_to_light: "Kunduz rejimiga o'tish",
+    switch_to_dark: "Tun rejimiga o'tish",
+    dark_mode_enabled: "Tun rejimi yoqildi",
+    light_mode_enabled: "Kunduz rejimi yoqildi",
     generic_error: "Xatolik yuz berdi. Iltimos, qayta urinib ko'ring yoki administratorga murojaat qiling.",
     users_list: "Foydalanuvchilar ro'yxati",
     refresh_users: "Foydalanuvchilarni yangilash",
@@ -1358,6 +1363,7 @@ const newTranslations = {
     msg_action_not_allowed: "\"{action}\" harakati {status} holatidagi hisobot uchun mumkin emas. Ruxsat etilgan harakatlar: {actions}",
     msg_attachment_used_from_report: "Report ID bo'yicha topilgan attachment ishlatilmoqda: {id}",
     msg_attachment_deleting_from_report: "Report ID bo'yicha topilgan attachment o'chirilmoqda: {id}",
+    msg_select_user_and_role: "Foydalanuvchi va rol tanlang",
     msg_select_rating: "Iltimos, bahoni tanlang",
     msg_rating_archived: "Baholash saqlandi va arxivga o'tkazildi",
     msg_select_rating_first: "Avval baho tanlang.",
@@ -1388,6 +1394,208 @@ const newTranslations = {
     no_unit: "Birlik yo'q",
     attachment: "Biriktirma",
     has_attachment: "Biriktirma bor",
+    incoming_messages: "Kiruvchi xabarlar",
+    search_notification: "Bildirishnoma qidirish...",
+    refresh_messages: "Xabarlarni yangilash",
+    mark_all_read: "Hammasini o'qilgan deb belgilash",
+    refresh_dashboard: "Panelni yangilash",
+    draft_reports: "Qoralama hisobotlar",
+    rejected_reports: "Rad etilgan hisobotlar",
+    recent_reports: "So'nggi hisobotlar",
+    recent_leaves: "So'nggi arizalar",
+    refresh_admin_panel: "Admin panelni yangilash",
+    total_employees: "Jami xodimlar",
+    on_leave: "Ta'tilda",
+    active_reports: "Faol hisobotlar",
+    search_institution: "Muassasa qidirish...",
+    refresh_analytics: "Analitikani yangilash",
+    total_reports: "Jami hisobotlar",
+    login_to_load_units: "Login qiling (birliklar yuklanadi)",
+    login_to_load_departments: "Login qiling (departmentlar yuklanadi)",
+    select: "Tanlang",
+    create_leave_title: "Yangi ta'til arizasi",
+    leave_type: "Ta'til turi",
+    start_date: "Boshlanish sanasi",
+    end_date: "Tugash sanasi",
+    reason: "Sabab",
+    leave_reason_placeholder: "Ta'til sababi",
+    submit_leave: "Ariza yuborish",
+    workflow_overview: "Bo'limlar bo'yicha umumiy ko'rinish",
+    search_department: "Bo'lim qidirish...",
+    total_pending: "Jami kutilmoqda",
+    loading_data: "Ma'lumot yuklanmoqda...",
+    leave_distribution: "Arizalar taqsimoti",
+    workflow_tools_subtitle: "UUID orqali tasdiqlash, biriktirma va tarix",
+    report_id_label: "Hisobot ID",
+    report_uuid_placeholder: "Hisobot UUID sini qo'ying",
+    action_submit: "Yuborish (faqat DRAFT/REVISION)",
+    action_approve: "Tasdiqlash (faqat PENDING)",
+    action_reject: "Rad etish (faqat PENDING, izoh majburiy)",
+    action_request_revision: "Qayta ko'rib chiqishni so'rash (faqat PENDING, izoh majburiy)",
+    action_archive: "Arxivlash (faqat APPROVED/REJECTED)",
+    comment_label: "Izoh",
+    workflow_comment_placeholder: "Tasdiqlash yoki rad etish izohi",
+    run_workflow_action: "Ish jarayoni harakatini ishga tushurish",
+    leave_id_label: "Ariza ID",
+    leave_uuid_placeholder: "Ariza UUID sini qo'ying",
+    review_comment_placeholder: "Tasdiqlash yoki rad etish izohi",
+    review_leave: "Arizani ko'rib chiqish",
+    full_name_placeholder: "Ism familiya",
+    username_placeholder: "Username",
+    email_placeholder: "Email",
+    password_placeholder: "Kamida 8 belgi",
+    password_confirm_placeholder: "Parolni qayta kiriting",
+    unit_optional: "Birlik (ixtiyoriy)",
+    upload_attachment: "Biriktirma yuklash",
+    attachment_report_id: "Biriktiriladigan hisobot ID",
+    download_attachment: "Biriktirmani yuklash",
+    delete_attachment: "Biriktirmani o'chirish",
+    attachment_id: "Biriktirma ID",
+    attachment_uuid_placeholder: "Biriktirma UUID",
+    report_id_history: "Tarix/o'chirish uchun hisobot ID",
+    load_history: "Tarixni yuklash",
+    delete_report: "Hisobotni o'chirish",
+    search_report: "Hisobot qidirish...",
+    all_statuses: "Barcha holatlar",
+    refresh_reports: "Hisobotlarni yangilash",
+    reports_not_loaded: "Hisobotlar yuklanmagan",
+    refresh_history: "Tarixni yangilash",
+    search_leave: "Ariza qidirush...",
+    refresh_leaves: "Arizalarni yangilash",
+    leaves_not_loaded: "Arizalar yuklanmagan",
+    feedback_eyebrow: "Baholash",
+    feedback_heading: "Fikr va kommentariya",
+    rating: "Baholash",
+    feedback_comment: "Fikr",
+    feedback_comment_placeholder: "Fikringizni yozing...",
+    submit: "Yuborish",
+    auxiliary_modules: "Qo'shimcha modullar",
+    leave_calendar: "Ta'til taqvimi",
+    approved_leaves_table: "Tasdiqlangan ta'tillar jadvali",
+    recent_actions: "So'nggi harakatlar",
+    activity_not_loaded: "Faoliyat tarixi yuklanmagan",
+    col_days: "Kunlar soni",
+    col_comment: "Izoh",
+    owner: "Egasi",
+    created: "Yaratilgan",
+    pending_l2: "L2 kutilmoqda",
+    pending_l3: "L3 kutilmoqda",
+    pending_l4: "L4 kutilmoqda",
+    user: "Foydalanuvchi",
+    audit_report_created: "hisobot yaratdi",
+    audit_report_updated: "hisobotni yangiladi",
+    audit_leave_created: "talab yaratdi",
+    audit_leave_approved: "talabni tasdiqladi",
+    audit_notification_created: "bildirishnoma yaratdi",
+    audit_action_performed: "amal bajardi",
+    system: "Tizim",
+    audit: "Audit",
+    created_by_suffix: "tomonidan yaratildi",
+    leave_created_suffix: "arizani yaratdi",
+    status_no_data: "Holat yo'q",
+    no_activity_history: "Hali faoliyat tarixi mavjud emas.",
+    no_employees_found: "Xodimlar topilmadi",
+    no_reports_found: "Hisobotlar topilmadi",
+    no_leaves_found: "Arizalar topilmadi",
+    no_recent_reports: "So'nggi hisobotlar yo'q",
+    no_recent_leaves: "So'nggi arizalar yo'q",
+    no_pending_approvals: "Kutilayotgan tasdiqlar yo'q",
+    admin_approved_comment: "Admin tomonidan tasdiqlandi",
+    total_reports_short: "Jami",
+    approved_reports_short: "Tasdiqlangan",
+    pending_reports_short: "Kutilmoqda",
+    rejected_reports_short: "Rad etilgan",
+    no_analytics_data: "Analitik ma'lumot yo'q",
+    pending_short: "kut.",
+    approved_short: "tasd.",
+    no_data: "Ma'lumot yo'q",
+    regenerate_qr: "QR ni qayta yaratish",
+    no_comments_yet: "Hozircha kommentariya yo'q.",
+    no_review_history: "Hali tasdiqlash tarixi yo'q. Ariza, hisobot yoki bildirishnomani tasdiqlaganingizdan keyin shu yerda ko'rinadi.",
+    no_comment: "Izoh yo'q",
+    days: "kun",
+    no_approved_leaves_calendar: "Tasdiqlangan ta'til taqvimi bo'sh",
+    date_label: "Sana",
+    days_label: "Kun",
+    reviewer: "Ko'rib chiquvchi",
+    type_label: "Turi",
+    read_label: "O'qilgan",
+    reference_label: "Ma'lumotnoma",
+    leave_pending_note: "Arizangiz tasdiqlash navbatida. Tahrirlash va baholash tasdiqlangandan keyin mavjud bo'ladi.",
+    leave_status_note: "Ariza holati: {status}. Baholash uchun tasdiqlangan bo'limdan oching.",
+    notification_pending_note: "So'rovingiz ko'rib chiqilmoqda. Tahrirlash va baholash faqat batafsil oynada, tasdiqlangandan keyin.",
+    notification_reviewed_note: "Bu so'rov allaqachon ko'rib chiqilgan ({status}).",
+    report_pending_note: "Hisobot tasdiqlash navbatida ({status}). Tahrirlash faqat qoralama yoki qayta ko'rish uchun mavjud.",
+    cannot_self_approve_report: "O'z hisobotingizni tasdiqlay olmaysiz. Keyingi tasdiqlovchi kutmoqda.",
+    action_request_revision_label: "Qayta ko'rish",
+    action_submitted: "Yuborilgan",
+    action_archived: "Arxivlangan",
+    action_cancelled: "Bekor qilingan",
+    unknown: "Noma'lum",
+    creation_warning_notification_title: "Bildirishnoma berishda e'tiborga olish kerak bo'lgan jihatlar",
+    creation_warning_notification_item1_title: "Bemor va xodimlar haqidagi ma'lumotlar yozib olinmasligi kerak.",
+    creation_warning_notification_item1_text: "Bildirishnomalarni barcha foydalanuvchilar o'qiy oladi. Shuning uchun maxfiy yoki shaxsiy ma'lumotlarni kiritmang.",
+    creation_warning_notification_item2_title: "Foydalanuvchi nomi va parol kiritilmasligi kerak.",
+    creation_warning_notification_item2_text: "Matnga login, parol, kalit yoki boshqa maxfiy kirish ma'lumotlarini yozmang.",
+    creation_warning_notification_item3_title: "Bildirishnoma bitta aniq maqsadga qaratilgan bo'lishi kerak.",
+    creation_warning_notification_item3_text: "Har bir bildirishnoma bir vazifa yoki bir ogohlantirishga xizmat qilsin. Juda aralash matn yozmang.",
+    creation_warning_notification_item4_title: "Matn ixcham va tushunarli bo'lishi kerak.",
+    creation_warning_notification_item4_text: "Qisqa, aniq va hammaga bir xil tushuniladigan uslubdan foydalaning.",
+    creation_warning_leave_title: "Ariza yuborishda e'tiborga olish kerak bo'lgan jihatlar",
+    creation_warning_leave_item1_title: "Sana va muddatlar to'g'ri tanlangan bo'lishi kerak.",
+    creation_warning_leave_item1_text: "Boshlanish va tugash sanasi xato bo'lmasin, ariza mazmuni aynan shu davrga mos bo'lsin.",
+    creation_warning_leave_item2_title: "Sabab rasmiy va tushunarli yozilishi kerak.",
+    creation_warning_leave_item2_text: "Keraksiz hissiy iboralar o'rniga qisqa va rasmiy izoh kiriting.",
+    creation_warning_leave_item3_title: "Maxfiy ma'lumot kiritilmasligi kerak.",
+    creation_warning_leave_item3_text: "Pasport, parol, shaxsiy tibbiy tafsilotlar yoki boshqa nozik ma'lumotlarni yozmang.",
+    creation_warning_leave_item4_title: "Takroriy ariza yuborilmasligi kerak.",
+    creation_warning_leave_item4_text: "Shu davr uchun oldin ariza yuborilgan bo'lsa, yangisini emas, mavjudini tekshiring.",
+    creation_warning_report_title: "Hujjat yaratishda e'tiborga olish kerak bo'lgan jihatlar",
+    creation_warning_report_item1_title: "Sarlavha mazmunga mos va rasmiy bo'lishi kerak.",
+    creation_warning_report_item1_text: "Hujjat nomi qisqa, aniq va keyinchalik qidiruvda topiladigan ko'rinishda yozilsin.",
+    creation_warning_report_item2_title: "Mazmun tekshirilgan va izchil bo'lishi kerak.",
+    creation_warning_report_item2_text: "Hujjat ichida noto'g'ri raqamlar, chala fikrlar yoki tasdiqlanmagan ma'lumot qolmasin.",
+    creation_warning_report_item3_title: "Maxfiy yoki ortiqcha shaxsiy ma'lumot kiritilmasligi kerak.",
+    creation_warning_report_item3_text: "Faqat ish jarayoniga tegishli ma'lumotlarni yozing, oshkor qilinmasligi kerak bo'lgan ma'lumotlarni kiritmang.",
+    creation_warning_report_item4_title: "Bir xil hujjatni takror yaratmaslik kerak.",
+    creation_warning_report_item4_text: "Shu mavzuda avval hujjat bo'lsa, yangisini ochishdan oldin mavjudini tekshirib chiqing.",
+    label_element: "Element",
+    status_pending: "Kutilmoqda",
+    status_approved: "Tasdiqlangan",
+    status_rejected: "Rad etilgan",
+    status_draft: "Qoralama",
+    status_revision: "Qayta ko'rish",
+    status_pending_l2: "L2 kutmoqda",
+    status_pending_l3: "L3 kutmoqda",
+    status_pending_l4: "L4 kutmoqda",
+    status_archived: "Arxivlangan",
+    status_cancelled: "Bekor qilingan",
+    profile_info_short: "Ma'lumot",
+    calendar: "Taqvim",
+    menu_label: "Menyu",
+    connection_label: "Ulanish",
+    check_connection: "Ulanishni tekshirish",
+    add_user_short: "Qo'shish",
+    help_center_subtitle: "Texnik qo'llab-quvvatlash",
+    enterprise_panel: "Enterprise panel",
+    login_status_ready: "Login uchun tayyor.",
+    register_status_enter_details: "Ma'lumotlarni kiriting.",
+    otp_delivery_hint: "Authenticator ilovasidagi 6 xonali kodni kiriting.",
+    login_qr_alt: "Login QR kodi",
+    please_check_info: "Iltimos, ma'lumotlarni tekshiring.",
+    err_api_not_found: "API topilmadi. Backend server {base} da ishga tushganini tekshiring.",
+    err_request_failed: "So'rov bajarilmadi ({status}).",
+    err_role_dept_required: "Bu rol uchun bo'lim (department) tanlanishi shart. Iltimos, bo'limni tanlang.",
+    err_unit_head_unit_required: "UNIT_HEAD roli uchun birlik (unit) tanlanishi shart. Iltimos, birlikni tanlang.",
+    err_dept_head_no_unit: "DEPT_HEAD roli uchun birlik (unit) tanlanmasligi kerak. Iltimos, birlik maydonini bo'sh qoldiring.",
+    err_director_no_dept_unit: "DIRECTOR roli uchun bo'lim va birlik biriktirilmaydi. Iltimos, ularni bo'sh qoldiring.",
+    err_unit_not_in_dept: "Tanlangan birlik tanlangan bo'limga tegishli emas. Iltimos, mos birlikni tanlang.",
+    err_job_role_dept_required: "Kasbiy rol berilganda bo'lim tanlanishi shart. Iltimos, bo'limni tanlang.",
+    err_level_requires_job_role: "Daraja berish uchun avval kasbiy rol (job_role) tanlanishi kerak.",
+    err_rating_range: "Baho 1 dan 5 gacha bo'lishi kerak. Iltimos, to'g'ri baho tanlang.",
+    err_user_not_found: "Foydalanuvchi topilmadi. Iltimos, ID ni tekshiring.",
+    err_cannot_delete_self: "O'zingizni o'chira olmaysiz. Iltimos, boshqa foydalanuvchini tanlang.",
+    otp_status_enter_code: "Authenticator kodini kiriting.",
   },
   ru: {
     role_management: "Управление ролями пользователей",
@@ -1402,9 +1610,14 @@ const newTranslations = {
     role_change_error: "Ошибка при изменении роли",
     department_required: "Для этой роли необходимо выбрать отдел",
     unit_required: "Для этой роли необходимо выбрать подразделение",
+    theme: "Тема",
     theme_dark: "Ночной режим",
     theme_light: "Дневной режим",
     theme_toggle: "Переключение темы",
+    switch_to_light: "Перейти в дневной режим",
+    switch_to_dark: "Перейти в ночной режим",
+    dark_mode_enabled: "Ночной режим включён",
+    light_mode_enabled: "Дневной режим включён",
     generic_error: "Произошла ошибка. Пожалуйста, попробуйте снова или обратитесь к администратору.",
     users_list: "Список пользователей",
     refresh_users: "Обновить пользователей",
@@ -1545,6 +1758,7 @@ const newTranslations = {
     msg_action_not_allowed: "Действие \"{action}\" недоступно для отчёта в статусе {status}. Разрешённые действия: {actions}",
     msg_attachment_used_from_report: "Используется вложение, найденное по Report ID: {id}",
     msg_attachment_deleting_from_report: "Удаляется вложение, найденное по Report ID: {id}",
+    msg_select_user_and_role: "Выберите пользователя и роль",
     msg_select_rating: "Пожалуйста, выберите оценку",
     msg_rating_archived: "Оценка сохранена и перемещена в архив",
     msg_select_rating_first: "Сначала выберите оценку.",
@@ -1575,6 +1789,208 @@ const newTranslations = {
     no_unit: "Нет подразделения",
     attachment: "Вложение",
     has_attachment: "Есть вложение",
+    incoming_messages: "Входящие сообщения",
+    search_notification: "Поиск уведомлений...",
+    refresh_messages: "Обновить сообщения",
+    mark_all_read: "Отметить все как прочитанные",
+    refresh_dashboard: "Обновить панель",
+    draft_reports: "Черновики отчётов",
+    rejected_reports: "Отклонённые отчёты",
+    recent_reports: "Последние отчёты",
+    recent_leaves: "Последние заявки",
+    refresh_admin_panel: "Обновить панель администратора",
+    total_employees: "Всего сотрудников",
+    on_leave: "В отпуске",
+    active_reports: "Активные отчёты",
+    search_institution: "Поиск учреждения...",
+    refresh_analytics: "Обновить аналитику",
+    total_reports: "Всего отчётов",
+    login_to_load_units: "Войдите (подразделения загружаются)",
+    login_to_load_departments: "Войдите (отделы загружаются)",
+    select: "Выберите",
+    create_leave_title: "Новая заявка на отпуск",
+    leave_type: "Тип отпуска",
+    start_date: "Дата начала",
+    end_date: "Дата окончания",
+    reason: "Причина",
+    leave_reason_placeholder: "Причина отпуска",
+    submit_leave: "Отправить заявку",
+    workflow_overview: "Общий обзор по отделам",
+    search_department: "Поиск отдела...",
+    total_pending: "Всего в ожидании",
+    loading_data: "Данные загружаются...",
+    leave_distribution: "Распределение заявок",
+    workflow_tools_subtitle: "Подтверждение по UUID, вложение и история",
+    report_id_label: "ID отчёта",
+    report_uuid_placeholder: "Введите UUID отчёта",
+    action_submit: "Отправить (только DRAFT/REVISION)",
+    action_approve: "Утвердить (только PENDING)",
+    action_reject: "Отклонить (только PENDING, комментарий обязателен)",
+    action_request_revision: "Запросить пересмотр (только PENDING, комментарий обязателен)",
+    action_archive: "Архивировать (только APPROVED/REJECTED)",
+    comment_label: "Комментарий",
+    workflow_comment_placeholder: "Комментарий к утверждению или отклонению",
+    run_workflow_action: "Выполнить действие рабочего процесса",
+    leave_id_label: "ID заявки",
+    leave_uuid_placeholder: "Введите UUID заявки",
+    review_comment_placeholder: "Комментарий к утверждению или отклонению",
+    review_leave: "Рассмотреть заявку",
+    full_name_placeholder: "Имя и фамилия",
+    username_placeholder: "Имя пользователя",
+    email_placeholder: "Email",
+    password_placeholder: "Минимум 8 символов",
+    password_confirm_placeholder: "Повторите пароль",
+    unit_optional: "Подразделение (необязательно)",
+    upload_attachment: "Загрузить вложение",
+    attachment_report_id: "ID отчёта для вложения",
+    download_attachment: "Скачать вложение",
+    delete_attachment: "Удалить вложение",
+    attachment_id: "ID вложения",
+    attachment_uuid_placeholder: "UUID вложения",
+    report_id_history: "ID отчёта для истории/удаления",
+    load_history: "Загрузить историю",
+    delete_report: "Удалить отчёт",
+    search_report: "Поиск отчёта...",
+    all_statuses: "Все статусы",
+    refresh_reports: "Обновить отчёты",
+    reports_not_loaded: "Отчёты не загружены",
+    refresh_history: "Обновить историю",
+    search_leave: "Поиск заявки...",
+    refresh_leaves: "Обновить заявки",
+    leaves_not_loaded: "Заявки не загружены",
+    feedback_eyebrow: "Оценка",
+    feedback_heading: "Отзыв и комментарий",
+    rating: "Оценка",
+    feedback_comment: "Отзыв",
+    feedback_comment_placeholder: "Напишите ваш отзыв...",
+    submit: "Отправить",
+    auxiliary_modules: "Дополнительные модули",
+    leave_calendar: "Календарь отпусков",
+    approved_leaves_table: "Таблица утверждённых отпусков",
+    recent_actions: "Последние действия",
+    activity_not_loaded: "История активности не загружена",
+    col_days: "Количество дней",
+    col_comment: "Комментарий",
+    owner: "Владелец",
+    created: "Создано",
+    pending_l2: "Ожидание L2",
+    pending_l3: "Ожидание L3",
+    pending_l4: "Ожидание L4",
+    user: "Пользователь",
+    audit_report_created: "создал отчет",
+    audit_report_updated: "обновил отчет",
+    audit_leave_created: "создал заявку",
+    audit_leave_approved: "утвердил заявку",
+    audit_notification_created: "создал уведомление",
+    audit_action_performed: "выполнил действие",
+    system: "Система",
+    audit: "Аудит",
+    created_by_suffix: "создал(а)",
+    leave_created_suffix: "создал(а) заявку",
+    status_no_data: "Нет данных",
+    no_activity_history: "История активности пока отсутствует.",
+    no_employees_found: "Сотрудники не найдены",
+    no_reports_found: "Отчеты не найдены",
+    no_leaves_found: "Заявки не найдены",
+    no_recent_reports: "Нет последних отчетов",
+    no_recent_leaves: "Нет последних заявок",
+    no_pending_approvals: "Нет ожидающих утверждений",
+    admin_approved_comment: "Утверждено администратором",
+    total_reports_short: "Всего",
+    approved_reports_short: "Утверждено",
+    pending_reports_short: "В ожидании",
+    rejected_reports_short: "Отклонено",
+    no_analytics_data: "Аналитические данные отсутствуют",
+    pending_short: "ожид.",
+    approved_short: "утв.",
+    no_data: "Нет данных",
+    regenerate_qr: "Пересоздать QR",
+    no_comments_yet: "Пока нет комментариев.",
+    no_review_history: "История утверждений пока отсутствует. Она появится после подтверждения заявки, отчета или уведомления.",
+    no_comment: "Нет комментария",
+    days: "дн.",
+    no_approved_leaves_calendar: "Календарь утвержденных отпусков пуст",
+    date_label: "Дата",
+    days_label: "Дн.",
+    reviewer: "Проверяющий",
+    type_label: "Тип",
+    read_label: "Прочитано",
+    reference_label: "Ссылка",
+    leave_pending_note: "Ваша заявка ожидает утверждения. Редактирование и оценка будут доступны после утверждения.",
+    leave_status_note: "Статус заявки: {status}. Откройте утвержденный раздел для оценки.",
+    notification_pending_note: "Ваш запрос рассматривается. Редактирование и оценка доступны только в детальном окне после утверждения.",
+    notification_reviewed_note: "Этот запрос уже рассмотрен ({status}).",
+    report_pending_note: "Отчет ожидает утверждения ({status}). Редактирование доступно только для черновиков или пересмотра.",
+    cannot_self_approve_report: "Вы не можете утвердить свой собственный отчет. Ожидается следующий утверждающий.",
+    action_request_revision_label: "Запросить пересмотр",
+    action_submitted: "Отправлено",
+    action_archived: "В архиве",
+    action_cancelled: "Отменено",
+    unknown: "Неизвестно",
+    creation_warning_notification_title: "Важные моменты при отправке уведомления",
+    creation_warning_notification_item1_title: "Нельзя записывать данные о пациентах и сотрудниках.",
+    creation_warning_notification_item1_text: "Все пользователи могут читать уведомления. Поэтому не вводите конфиденциальную или личную информацию.",
+    creation_warning_notification_item2_title: "Нельзя вводить имя пользователя и пароль.",
+    creation_warning_notification_item2_text: "Не пишите в текст логин, пароль, ключ или другие конфиденциальные данные для входа.",
+    creation_warning_notification_item3_title: "Уведомление должно быть направлено на одну конкретную цель.",
+    creation_warning_notification_item3_text: "Каждое уведомление должно служить одной задаче или одному предупреждению. Не пишите слишком смешанный текст.",
+    creation_warning_notification_item4_title: "Текст должен быть кратким и понятным.",
+    creation_warning_notification_item4_text: "Используйте краткий, четкий и одинаково понятный для всех стиль.",
+    creation_warning_leave_title: "Важные моменты при подаче заявки",
+    creation_warning_leave_item1_title: "Даты и сроки должны быть выбраны правильно.",
+    creation_warning_leave_item1_text: "Дата начала и окончания не должны быть ошибочными, содержание заявки должно соответствовать этому периоду.",
+    creation_warning_leave_item2_title: "Причина должна быть официальной и понятной.",
+    creation_warning_leave_item2_text: "Вместо лишних эмоциональных фраз введите краткое и официальное пояснение.",
+    creation_warning_leave_item3_title: "Нельзя вводить конфиденциальную информацию.",
+    creation_warning_leave_item3_text: "Не указывайте паспортные данные, пароли, личную медицинскую информацию или другие деликатные сведения.",
+    creation_warning_leave_item4_title: "Не следует отправлять повторную заявку.",
+    creation_warning_leave_item4_text: "Если заявка на этот период уже отправлена, не создавайте новую, а проверьте существующую.",
+    creation_warning_report_title: "Важные моменты при создании документа",
+    creation_warning_report_item1_title: "Заголовок должен соответствовать содержанию и быть официальным.",
+    creation_warning_report_item1_text: "Название документа должно быть кратким, точным и легко находимым при поиске.",
+    creation_warning_report_item2_title: "Содержание должно быть проверено и последовательным.",
+    creation_warning_report_item2_text: "В документе не должно быть неверных цифр, незавершенных мыслей или неподтвержденной информации.",
+    creation_warning_report_item3_title: "Нельзя вводить конфиденциальную или избыточную личную информацию.",
+    creation_warning_report_item3_text: "Указывайте только информацию, относящуюся к рабочему процессу, не вводите данные, которые не должны быть раскрыты.",
+    creation_warning_report_item4_title: "Не следует повторно создавать одинаковый документ.",
+    creation_warning_report_item4_text: "Если по этой теме уже есть документ, перед созданием нового проверьте существующий.",
+    label_element: "Элемент",
+    status_pending: "В ожидании",
+    status_approved: "Утверждено",
+    status_rejected: "Отклонено",
+    status_draft: "Черновик",
+    status_revision: "На пересмотре",
+    status_pending_l2: "Ожидание L2",
+    status_pending_l3: "Ожидание L3",
+    status_pending_l4: "Ожидание L4",
+    status_archived: "В архиве",
+    status_cancelled: "Отменено",
+    profile_info_short: "Информация",
+    calendar: "Календарь",
+    menu_label: "Меню",
+    connection_label: "Подключение",
+    check_connection: "Проверить подключение",
+    add_user_short: "Добавить",
+    help_center_subtitle: "Техническая поддержка",
+    enterprise_panel: "Корпоративная панель",
+    login_status_ready: "Готов к входу.",
+    register_status_enter_details: "Введите данные.",
+    otp_delivery_hint: "Введите 6-значный код из приложения Authenticator.",
+    login_qr_alt: "QR код для входа",
+    please_check_info: "Пожалуйста, проверьте данные.",
+    err_api_not_found: "API не найден. Проверьте, запущен ли backend сервер {base}.",
+    err_request_failed: "Запрос не выполнен ({status}).",
+    err_role_dept_required: "Для этой роли необходимо выбрать отдел (department).",
+    err_unit_head_unit_required: "Для роли UNIT_HEAD необходимо выбрать подразделение (unit).",
+    err_dept_head_no_unit: "Для роли DEPT_HEAD подразделение (unit) выбирать не нужно. Оставьте поле пустым.",
+    err_director_no_dept_unit: "Для роли DIRECTOR отдел и подразделение не назначаются. Оставьте поля пустыми.",
+    err_unit_not_in_dept: "Выбранное подразделение не относится к выбранному отделу. Выберите подходящее подразделение.",
+    err_job_role_dept_required: "При назначении профессиональной роли необходимо выбрать отдел.",
+    err_level_requires_job_role: "Для назначения уровня сначала необходимо выбрать профессиональную роль (job_role).",
+    err_rating_range: "Рейтинг должен быть от 1 до 5. Пожалуйста, выберите правильный рейтинг.",
+    err_user_not_found: "Пользователь не найден. Пожалуйста, проверьте ID.",
+    err_cannot_delete_self: "Вы не можете удалить себя. Пожалуйста, выберите другого пользователя.",
+    otp_status_enter_code: "Введите код Authenticator.",
   },
   en: {
     role_management: "User Role Management",
@@ -1589,9 +2005,14 @@ const newTranslations = {
     role_change_error: "Error changing role",
     department_required: "Department is required for this role",
     unit_required: "Unit is required for this role",
+    theme: "Theme",
     theme_dark: "Dark Mode",
     theme_light: "Light Mode",
     theme_toggle: "Toggle Theme",
+    switch_to_light: "Switch to light mode",
+    switch_to_dark: "Switch to dark mode",
+    dark_mode_enabled: "Dark mode enabled",
+    light_mode_enabled: "Light mode enabled",
     generic_error: "An error occurred. Please try again or contact the administrator.",
     users_list: "Users List",
     refresh_users: "Refresh Users",
@@ -1732,6 +2153,7 @@ const newTranslations = {
     msg_action_not_allowed: "Action \"{action}\" is not allowed for a report in status {status}. Allowed actions: {actions}",
     msg_attachment_used_from_report: "Using attachment found by Report ID: {id}",
     msg_attachment_deleting_from_report: "Deleting attachment found by Report ID: {id}",
+    msg_select_user_and_role: "Please select a user and role",
     msg_select_rating: "Please select a rating",
     msg_rating_archived: "Rating saved and moved to archive",
     msg_select_rating_first: "Select a rating first.",
@@ -1762,6 +2184,208 @@ const newTranslations = {
     no_unit: "No unit",
     attachment: "Attachment",
     has_attachment: "Has attachment",
+    incoming_messages: "Incoming messages",
+    search_notification: "Search notification...",
+    refresh_messages: "Refresh messages",
+    mark_all_read: "Mark all as read",
+    refresh_dashboard: "Refresh dashboard",
+    draft_reports: "Draft reports",
+    rejected_reports: "Rejected reports",
+    recent_reports: "Recent reports",
+    recent_leaves: "Recent requests",
+    refresh_admin_panel: "Refresh admin panel",
+    total_employees: "Total employees",
+    on_leave: "On leave",
+    active_reports: "Active reports",
+    search_institution: "Search institution...",
+    refresh_analytics: "Refresh analytics",
+    total_reports: "Total reports",
+    login_to_load_units: "Login (units loading)",
+    login_to_load_departments: "Login (departments loading)",
+    select: "Select",
+    create_leave_title: "New leave request",
+    leave_type: "Leave type",
+    start_date: "Start date",
+    end_date: "End date",
+    reason: "Reason",
+    leave_reason_placeholder: "Leave reason",
+    submit_leave: "Submit request",
+    workflow_overview: "Overview by department",
+    search_department: "Search department...",
+    total_pending: "Total pending",
+    loading_data: "Loading data...",
+    leave_distribution: "Leave distribution",
+    workflow_tools_subtitle: "Confirm by UUID, attachment and history",
+    report_id_label: "Report ID",
+    report_uuid_placeholder: "Enter report UUID",
+    action_submit: "Submit (DRAFT/REVISION only)",
+    action_approve: "Approve (PENDING only)",
+    action_reject: "Reject (PENDING only, comment required)",
+    action_request_revision: "Request revision (PENDING only, comment required)",
+    action_archive: "Archive (APPROVED/REJECTED only)",
+    comment_label: "Comment",
+    workflow_comment_placeholder: "Approval or rejection comment",
+    run_workflow_action: "Run workflow action",
+    leave_id_label: "Leave ID",
+    leave_uuid_placeholder: "Enter leave UUID",
+    review_comment_placeholder: "Approval or rejection comment",
+    review_leave: "Review leave",
+    full_name_placeholder: "Full name",
+    username_placeholder: "Username",
+    email_placeholder: "Email",
+    password_placeholder: "At least 8 characters",
+    password_confirm_placeholder: "Re-enter password",
+    unit_optional: "Unit (optional)",
+    upload_attachment: "Upload attachment",
+    attachment_report_id: "Report ID for attachment",
+    download_attachment: "Download attachment",
+    delete_attachment: "Delete attachment",
+    attachment_id: "Attachment ID",
+    attachment_uuid_placeholder: "Attachment UUID",
+    report_id_history: "Report ID for history/deletion",
+    load_history: "Load history",
+    delete_report: "Delete report",
+    search_report: "Search report...",
+    all_statuses: "All statuses",
+    refresh_reports: "Refresh reports",
+    reports_not_loaded: "Reports not loaded",
+    refresh_history: "Refresh history",
+    search_leave: "Search request...",
+    refresh_leaves: "Refresh requests",
+    leaves_not_loaded: "Requests not loaded",
+    feedback_eyebrow: "Rating",
+    feedback_heading: "Feedback and comment",
+    rating: "Rating",
+    feedback_comment: "Feedback",
+    feedback_comment_placeholder: "Write your feedback...",
+    submit: "Submit",
+    auxiliary_modules: "Additional modules",
+    leave_calendar: "Leave calendar",
+    approved_leaves_table: "Approved leaves table",
+    recent_actions: "Recent actions",
+    activity_not_loaded: "Activity history not loaded",
+    col_days: "Days count",
+    col_comment: "Comment",
+    owner: "Owner",
+    created: "Created",
+    pending_l2: "L2 pending",
+    pending_l3: "L3 pending",
+    pending_l4: "L4 pending",
+    user: "User",
+    audit_report_created: "created a report",
+    audit_report_updated: "updated a report",
+    audit_leave_created: "created a request",
+    audit_leave_approved: "approved a request",
+    audit_notification_created: "created a notification",
+    audit_action_performed: "performed an action",
+    system: "System",
+    audit: "Audit",
+    created_by_suffix: "created by",
+    leave_created_suffix: "created a request",
+    status_no_data: "No status",
+    no_activity_history: "No activity history yet.",
+    no_employees_found: "No employees found",
+    no_reports_found: "No reports found",
+    no_leaves_found: "No requests found",
+    no_recent_reports: "No recent reports",
+    no_recent_leaves: "No recent requests",
+    no_pending_approvals: "No pending approvals",
+    admin_approved_comment: "Approved by admin",
+    total_reports_short: "Total",
+    approved_reports_short: "Approved",
+    pending_reports_short: "Pending",
+    rejected_reports_short: "Rejected",
+    no_analytics_data: "No analytics data",
+    pending_short: "pend.",
+    approved_short: "appr.",
+    no_data: "No data",
+    regenerate_qr: "Regenerate QR",
+    no_comments_yet: "No comments yet.",
+    no_review_history: "No review history yet. It will appear after you approve a request, report, or notification.",
+    no_comment: "No comment",
+    days: "days",
+    no_approved_leaves_calendar: "Approved leave calendar is empty",
+    date_label: "Date",
+    days_label: "Days",
+    reviewer: "Reviewer",
+    type_label: "Type",
+    read_label: "Read",
+    reference_label: "Reference",
+    leave_pending_note: "Your leave request is pending approval. Editing and rating will be available after approval.",
+    leave_status_note: "Leave status: {status}. Open the approved section to rate.",
+    notification_pending_note: "Your request is being reviewed. Editing and rating are only available in the detailed view after approval.",
+    notification_reviewed_note: "This request has already been reviewed ({status}).",
+    report_pending_note: "Report is pending approval ({status}). Editing is only available for drafts or revisions.",
+    cannot_self_approve_report: "You cannot approve your own report. Waiting for next approver.",
+    action_request_revision_label: "Request revision",
+    action_submitted: "Submitted",
+    action_archived: "Archived",
+    action_cancelled: "Cancelled",
+    unknown: "Unknown",
+    creation_warning_notification_title: "Important points when sending a notification",
+    creation_warning_notification_item1_title: "Patient and employee information must not be recorded.",
+    creation_warning_notification_item1_text: "All users can read notifications. Therefore, do not enter confidential or personal information.",
+    creation_warning_notification_item2_title: "Usernames and passwords must not be entered.",
+    creation_warning_notification_item2_text: "Do not write login, password, key, or other confidential access information in the text.",
+    creation_warning_notification_item3_title: "The notification must be aimed at one specific purpose.",
+    creation_warning_notification_item3_text: "Each notification should serve one task or one warning. Do not write overly mixed text.",
+    creation_warning_notification_item4_title: "The text must be concise and understandable.",
+    creation_warning_notification_item4_text: "Use a short, clear, and equally understandable style for everyone.",
+    creation_warning_leave_title: "Important points when submitting a leave request",
+    creation_warning_leave_item1_title: "Dates and deadlines must be selected correctly.",
+    creation_warning_leave_item1_text: "Start and end dates must not be wrong, the request content must match this period.",
+    creation_warning_leave_item2_title: "The reason must be official and clear.",
+    creation_warning_leave_item2_text: "Instead of unnecessary emotional phrases, enter a short and official explanation.",
+    creation_warning_leave_item3_title: "Confidential information must not be entered.",
+    creation_warning_leave_item3_text: "Do not write passport details, passwords, personal medical details or other sensitive information.",
+    creation_warning_leave_item4_title: "Duplicate requests should not be sent.",
+    creation_warning_leave_item4_text: "If a request has already been sent for this period, do not create a new one, check the existing one.",
+    creation_warning_report_title: "Important points when creating a document",
+    creation_warning_report_item1_title: "The title must match the content and be official.",
+    creation_warning_report_item1_text: "The document name should be short, precise and easily found in search.",
+    creation_warning_report_item2_title: "Content must be checked and consistent.",
+    creation_warning_report_item2_text: "The document should not contain incorrect numbers, incomplete thoughts or unverified information.",
+    creation_warning_report_item3_title: "Confidential or excessive personal information must not be entered.",
+    creation_warning_report_item3_text: "Write only information related to the work process, do not enter information that should not be disclosed.",
+    creation_warning_report_item4_title: "The same document should not be created repeatedly.",
+    creation_warning_report_item4_text: "If there is already a document on this topic, check the existing one before opening a new one.",
+    label_element: "Element",
+    status_pending: "Pending",
+    status_approved: "Approved",
+    status_rejected: "Rejected",
+    status_draft: "Draft",
+    status_revision: "Revision",
+    status_pending_l2: "Pending L2",
+    status_pending_l3: "Pending L3",
+    status_pending_l4: "Pending L4",
+    status_archived: "Archived",
+    status_cancelled: "Cancelled",
+    profile_info_short: "Info",
+    calendar: "Calendar",
+    menu_label: "Menu",
+    connection_label: "Connection",
+    check_connection: "Check connection",
+    add_user_short: "Add",
+    help_center_subtitle: "Technical support",
+    enterprise_panel: "Enterprise panel",
+    login_status_ready: "Ready to login.",
+    register_status_enter_details: "Enter your details.",
+    otp_delivery_hint: "Enter the 6-digit code from the Authenticator app.",
+    login_qr_alt: "Login QR code",
+    please_check_info: "Please check the information.",
+    err_api_not_found: "API not found. Please check if the backend server is running at {base}.",
+    err_request_failed: "Request failed ({status}).",
+    err_role_dept_required: "Department is required for this role. Please select a department.",
+    err_unit_head_unit_required: "Unit is required for UNIT_HEAD role. Please select a unit.",
+    err_dept_head_no_unit: "Unit should not be selected for DEPT_HEAD role. Please leave the unit field empty.",
+    err_director_no_dept_unit: "Department and unit are not assigned for DIRECTOR role. Please leave them empty.",
+    err_unit_not_in_dept: "The selected unit does not belong to the selected department. Please select a matching unit.",
+    err_job_role_dept_required: "Department is required when assigning a job role. Please select a department.",
+    err_level_requires_job_role: "To assign a level, first select a job role.",
+    err_rating_range: "Rating must be between 1 and 5. Please select a correct rating.",
+    err_user_not_found: "User not found. Please check the ID.",
+    err_cannot_delete_self: "You cannot delete yourself. Please select another user.",
+    otp_status_enter_code: "Enter the Authenticator code.",
   },
   tr: {
     role_management: "Kullanici Rol Yonetimi",
@@ -1776,9 +2400,14 @@ const newTranslations = {
     role_change_error: "Rol degistirme hatasi",
     department_required: "Bu rol icin departman secilmelidir",
     unit_required: "Bu rol icin birim secilmelidir",
+    theme: "Tema",
     theme_dark: "Karanlik Mod",
     theme_light: "Aydinlik Mod",
     theme_toggle: "Tema Degistir",
+    switch_to_light: "Aydinlik moduna gec",
+    switch_to_dark: "Karanlik moduna gec",
+    dark_mode_enabled: "Karanlik mod etkinlestirildi",
+    light_mode_enabled: "Aydinlik mod etkinlestirildi",
     generic_error: "Bir hata olustu. Lutfen tekrar deneyin veya yoneticiye basvurun.",
     users_list: "Kullanici Listesi",
     refresh_users: "Kullanicilari Yenile",
@@ -1919,6 +2548,7 @@ const newTranslations = {
     msg_action_not_allowed: "\"{action}\" işlemi {status} durumundaki rapor için mümkün değil. İzin verilen işlemler: {actions}",
     msg_attachment_used_from_report: "Report ID ile bulunan ek kullanılıyor: {id}",
     msg_attachment_deleting_from_report: "Report ID ile bulunan ek siliniyor: {id}",
+    msg_select_user_and_role: "Lütfen bir kullanici ve rol seçin",
     msg_select_rating: "Lütfen bir puan seçin",
     msg_rating_archived: "Değerlendirme kaydedildi ve arşive taşındı",
     msg_select_rating_first: "Önce bir puan seçin.",
@@ -1949,6 +2579,208 @@ const newTranslations = {
     no_unit: "Birim yok",
     attachment: "Ek",
     has_attachment: "Ek var",
+    incoming_messages: "Gelen mesajlar",
+    search_notification: "Bildirim ara...",
+    refresh_messages: "Mesajları yenile",
+    mark_all_read: "Tümünü okundu olarak işaretle",
+    refresh_dashboard: "Paneli yenile",
+    draft_reports: "Taslak raporlar",
+    rejected_reports: "Reddedilen raporlar",
+    recent_reports: "Son raporlar",
+    recent_leaves: "Son talepler",
+    refresh_admin_panel: "Yönetici panelini yenile",
+    total_employees: "Toplam çalışan",
+    on_leave: "İzinde",
+    active_reports: "Aktif raporlar",
+    search_institution: "Kurum ara...",
+    refresh_analytics: "Analitiği yenile",
+    total_reports: "Toplam rapor",
+    login_to_load_units: "Giriş yapın (birimler yükleniyor)",
+    login_to_load_departments: "Giriş yapın (departmanlar yükleniyor)",
+    select: "Seçin",
+    create_leave_title: "Yeni izin talebi",
+    leave_type: "İzin türü",
+    start_date: "Başlangıç tarihi",
+    end_date: "Bitiş tarihi",
+    reason: "Neden",
+    leave_reason_placeholder: "İzin nedeni",
+    submit_leave: "Talep gönder",
+    workflow_overview: "Departmana göre genel görünüm",
+    search_department: "Departman ara...",
+    total_pending: "Toplam beklemede",
+    loading_data: "Veriler yükleniyor...",
+    leave_distribution: "İzin dağılımı",
+    workflow_tools_subtitle: "UUID ile onaylama, ek ve geçmiş",
+    report_id_label: "Rapor ID",
+    report_uuid_placeholder: "Rapor UUID girin",
+    action_submit: "Gönder (sadece DRAFT/REVISION)",
+    action_approve: "Onayla (sadece PENDING)",
+    action_reject: "Reddet (sadece PENDING, yorum zorunlu)",
+    action_request_revision: "Revizyon iste (sadece PENDING, yorum zorunlu)",
+    action_archive: "Arşivle (sadece APPROVED/REJECTED)",
+    comment_label: "Yorum",
+    workflow_comment_placeholder: "Onay veya ret yorumu",
+    run_workflow_action: "İş akışı eylemini çalıştır",
+    leave_id_label: "İzin ID",
+    leave_uuid_placeholder: "İzin UUID girin",
+    review_comment_placeholder: "Onay veya ret yorumu",
+    review_leave: "İzini incele",
+    full_name_placeholder: "Ad soyad",
+    username_placeholder: "Kullanıcı adı",
+    email_placeholder: "Email",
+    password_placeholder: "En az 8 karakter",
+    password_confirm_placeholder: "Parolayı tekrar girin",
+    unit_optional: "Birim (isteğe bağlı)",
+    upload_attachment: "Ekleme yükle",
+    attachment_report_id: "Ek için rapor ID",
+    download_attachment: "Ekleme indir",
+    delete_attachment: "Ekleme sil",
+    attachment_id: "Ek ID",
+    attachment_uuid_placeholder: "Ek UUID",
+    report_id_history: "Geçmiş/silme için rapor ID",
+    load_history: "Geçmişi yükle",
+    delete_report: "Raporu sil",
+    search_report: "Rapor ara...",
+    all_statuses: "Tüm durumlar",
+    refresh_reports: "Raporları yenile",
+    reports_not_loaded: "Raporlar yüklenmedi",
+    refresh_history: "Geçmişi yenile",
+    search_leave: "Talep ara...",
+    refresh_leaves: "Talepleri yenile",
+    leaves_not_loaded: "Talepler yüklenmedi",
+    feedback_eyebrow: "Değerlendirme",
+    feedback_heading: "Geri bildirim ve yorum",
+    rating: "Değerlendirme",
+    feedback_comment: "Geri bildirim",
+    feedback_comment_placeholder: "Geri bildiriminizi yazın...",
+    submit: "Gönder",
+    auxiliary_modules: "Ek modüller",
+    leave_calendar: "İzin takvimi",
+    approved_leaves_table: "Onaylanan izinler tablosu",
+    recent_actions: "Son eylemler",
+    activity_not_loaded: "Etkinlik geçmişi yüklenmedi",
+    col_days: "Gün sayısı",
+    col_comment: "Yorum",
+    owner: "Sahip",
+    created: "Oluşturuldu",
+    pending_l2: "L2 bekliyor",
+    pending_l3: "L3 bekliyor",
+    pending_l4: "L4 bekliyor",
+    user: "Kullanici",
+    audit_report_created: "rapor oluşturdu",
+    audit_report_updated: "raporu güncelledi",
+    audit_leave_created: "talep oluşturdu",
+    audit_leave_approved: "talebi onayladı",
+    audit_notification_created: "bildirim oluşturdu",
+    audit_action_performed: "eylem gerçekleştirdi",
+    system: "Sistem",
+    audit: "Denetim",
+    created_by_suffix: "tarafından oluşturuldu",
+    leave_created_suffix: "talep oluşturdu",
+    status_no_data: "Durum yok",
+    no_activity_history: "Henüz etkinlik geçmişi yok.",
+    no_employees_found: "Çalışan bulunamadı",
+    no_reports_found: "Rapor bulunamadı",
+    no_leaves_found: "Talep bulunamadı",
+    no_recent_reports: "Son rapor yok",
+    no_recent_leaves: "Son talep yok",
+    no_pending_approvals: "Bekleyen onay yok",
+    admin_approved_comment: "Yönetici tarafından onaylandı",
+    total_reports_short: "Toplam",
+    approved_reports_short: "Onaylanan",
+    pending_reports_short: "Beklemede",
+    rejected_reports_short: "Reddedilen",
+    no_analytics_data: "Analitik veri yok",
+    pending_short: "bekl.",
+    approved_short: "onay.",
+    no_data: "Veri yok",
+    regenerate_qr: "QR yeniden oluştur",
+    no_comments_yet: "Henüz yorum yok.",
+    no_review_history: "Henüz onay geçmişi yok. Talep, rapor veya bildirimi onayladıktan sonra burada görünecek.",
+    no_comment: "Yorum yok",
+    days: "gün",
+    no_approved_leaves_calendar: "Onaylanan izin takvimi boş",
+    date_label: "Tarih",
+    days_label: "Gün",
+    reviewer: "İnceleyen",
+    type_label: "Tür",
+    read_label: "Okundu",
+    reference_label: "Referans",
+    leave_pending_note: "İzin talebiniz onay bekliyor. Düzenleme ve değerlendirme onaylandıktan sonra kullanılabilir.",
+    leave_status_note: "İzin durumu: {status}. Değerlendirmek için onaylanmış bölümden açın.",
+    notification_pending_note: "Talebiniz inceleniyor. Düzenleme ve değerlendirme sadece onaylandıktan sonra detaylı görünümde mevcut.",
+    notification_reviewed_note: "Bu talep zaten incelendi ({status}).",
+    report_pending_note: "Rapor onay bekliyor ({status}). Düzenleme sadece taslak veya revizyon için mevcut.",
+    cannot_self_approve_report: "Kendi raporunuzu onaylayamazsınız. Sonraki onaylayıcı bekleniyor.",
+    action_request_revision_label: "Revizyon iste",
+    action_submitted: "Gönderildi",
+    action_archived: "Arşivlendi",
+    action_cancelled: "İptal edildi",
+    unknown: "Bilinmiyor",
+    creation_warning_notification_title: "Bildirim gönderirken dikkat edilmesi gereken noktalar",
+    creation_warning_notification_item1_title: "Hasta ve çalışan bilgileri yazılmamalıdır.",
+    creation_warning_notification_item1_text: "Tüm kullanıcılar bildirimleri okuyabilir. Bu nedenle gizli veya kişisel bilgileri girmeyin.",
+    creation_warning_notification_item2_title: "Kullanıcı adı ve şifre girilmemelidir.",
+    creation_warning_notification_item2_text: "Metne giriş, şifre, anahtar veya diğer gizli erişim bilgilerini yazmayın.",
+    creation_warning_notification_item3_title: "Bildirim tek belirli bir amaca yönelik olmalıdır.",
+    creation_warning_notification_item3_text: "Her bildirim bir göreve veya bir uyarıya hizmet etmelidir. Çok karışık metin yazmayın.",
+    creation_warning_notification_item4_title: "Metin kısa ve anlaşılır olmalıdır.",
+    creation_warning_notification_item4_text: "Kısa, net ve herkes için aynı şekilde anlaşılır bir üslup kullanın.",
+    creation_warning_leave_title: "İzin talebi gönderirken dikkat edilmesi gereken noktalar",
+    creation_warning_leave_item1_title: "Tarih ve süreler doğru seçilmelidir.",
+    creation_warning_leave_item1_text: "Başlangıç ve bitiş tarihi yanlış olmamalı, talep içeriği tam olarak bu döneme uygun olmalıdır.",
+    creation_warning_leave_item2_title: "Neden resmi ve anlaşılır yazılmalıdır.",
+    creation_warning_leave_item2_text: "Gereksiz duygusal ifadeler yerine kısa ve resmi bir açıklama girin.",
+    creation_warning_leave_item3_title: "Gizli bilgi girilmemelidir.",
+    creation_warning_leave_item3_text: "Pasaport, şifre, kişisel tıbbi ayrıntılar veya diğer hassas bilgileri yazmayın.",
+    creation_warning_leave_item4_title: "Tekrarlayan talep gönderilmemelidir.",
+    creation_warning_leave_item4_text: "Bu dönem için daha önce talep gönderildiyse, yenisini değil, mevcut olanı kontrol edin.",
+    creation_warning_report_title: "Belge oluştururken dikkat edilmesi gereken noktalar",
+    creation_warning_report_item1_title: "Başlık içeriğe uygun ve resmi olmalıdır.",
+    creation_warning_report_item1_text: "Belge adı kısa, kesin ve daha sonra aramada bulunabilir şekilde yazılmalıdır.",
+    creation_warning_report_item2_title: "İçerik kontrol edilmiş ve tutarlı olmalıdır.",
+    creation_warning_report_item2_text: "Belgede yanlış rakamlar, eksik düşünceler veya doğrulanmamış bilgi kalmasın.",
+    creation_warning_report_item3_title: "Gizli veya aşırı kişisel bilgi girilmemelidir.",
+    creation_warning_report_item3_text: "Sadece iş sürecine ilişkin bilgileri yazın, açıklanmaması gereken bilgileri girmeyin.",
+    creation_warning_report_item4_title: "Aynı belge tekrar oluşturulmamalıdır.",
+    creation_warning_report_item4_text: "Bu konuda daha önce belge varsa, yenisini açmadan önce mevcut olanı kontrol edin.",
+    label_element: "Öğe",
+    status_pending: "Beklemede",
+    status_approved: "Onaylanan",
+    status_rejected: "Reddedilen",
+    status_draft: "Taslak",
+    status_revision: "Revizyon",
+    status_pending_l2: "Bekleyen L2",
+    status_pending_l3: "Bekleyen L3",
+    status_pending_l4: "Bekleyen L4",
+    status_archived: "Arşivlendi",
+    status_cancelled: "İptal edildi",
+    profile_info_short: "Bilgi",
+    calendar: "Takvim",
+    menu_label: "Menü",
+    connection_label: "Bağlantı",
+    check_connection: "Bağlantıyı kontrol et",
+    add_user_short: "Ekle",
+    help_center_subtitle: "Teknik destek",
+    enterprise_panel: "Kurumsal panel",
+    login_status_ready: "Giriş için hazır.",
+    register_status_enter_details: "Bilgilerinizi girin.",
+    otp_delivery_hint: "Authenticator uygulamasındaki 6 haneli kodu girin.",
+    login_qr_alt: "Giriş QR kodu",
+    please_check_info: "Lütfen bilgileri kontrol edin.",
+    err_api_not_found: "API bulunamadi. Lütfen backend sunucusunun {base} adresinde calistigini kontrol edin.",
+    err_request_failed: "İstek basarisiz oldu ({status}).",
+    err_role_dept_required: "Bu rol için departman seçilmelidir. Lütfen bir departman seçin.",
+    err_unit_head_unit_required: "UNIT_HEAD rolü için birim seçilmelidir. Lütfen bir birim seçin.",
+    err_dept_head_no_unit: "DEPT_HEAD rolü için birim seçilmemelidir. Lütfen birim alanini bos birakin.",
+    err_director_no_dept_unit: "DIRECTOR rolü için departman ve birim atanmaz. Lütfen bos birakin.",
+    err_unit_not_in_dept: "Seçilen birim seçilen departmana ait degil. Lütfen uyumlu bir birim seçin.",
+    err_job_role_dept_required: "Mesleki rol atanirken departman seçilmelidir. Lütfen bir departman seçin.",
+    err_level_requires_job_role: "Seviye atamak için önce mesleki rol seçilmelidir.",
+    err_rating_range: "Degerlendirme 1 ile 5 arasinda olmalidir. Lütfen dogru degerlendirme seçin.",
+    err_user_not_found: "Kullanici bulunamadi. Lütfen ID'yi kontrol edin.",
+    err_cannot_delete_self: "Kendinizi silemezsiniz. Lütfen baska bir kullanici seçin.",
+    otp_status_enter_code: "Authenticator kodunu girin.",
   },
 };
 
@@ -2246,73 +3078,16 @@ function closeQuickCreate() {
 }
 
 function getCreationWarningConfig(type) {
-  const base = {
-    notification: {
-      title: "Bildirishnoma berishda e'tiborga olish kerak bo'lgan jihatlar",
-      items: [
-        {
-          title: "Bemor va xodimlar haqidagi ma'lumotlar yozib olinmasligi kerak.",
-          text: "Bildirishnomalarni barcha foydalanuvchilar o'qiy oladi. Shuning uchun maxfiy yoki shaxsiy ma'lumotlarni kiritmang.",
-        },
-        {
-          title: "Foydalanuvchi nomi va parol kiritilmasligi kerak.",
-          text: "Matnga login, parol, kalit yoki boshqa maxfiy kirish ma'lumotlarini yozmang.",
-        },
-        {
-          title: "Bildirishnoma bitta aniq maqsadga qaratilgan bo'lishi kerak.",
-          text: "Har bir bildirishnoma bir vazifa yoki bir ogohlantirishga xizmat qilsin. Juda aralash matn yozmang.",
-        },
-        {
-          title: "Matn ixcham va tushunarli bo'lishi kerak.",
-          text: "Qisqa, aniq va hammaga bir xil tushuniladigan uslubdan foydalaning.",
-        },
-      ],
-    },
-    leave: {
-      title: "Ariza yuborishda e'tiborga olish kerak bo'lgan jihatlar",
-      items: [
-        {
-          title: "Sana va muddatlar to'g'ri tanlangan bo'lishi kerak.",
-          text: "Boshlanish va tugash sanasi xato bo'lmasin, ariza mazmuni aynan shu davrga mos bo'lsin.",
-        },
-        {
-          title: "Sabab rasmiy va tushunarli yozilishi kerak.",
-          text: "Keraksiz hissiy iboralar o'rniga qisqa va rasmiy izoh kiriting.",
-        },
-        {
-          title: "Maxfiy ma'lumot kiritilmasligi kerak.",
-          text: "Pasport, parol, shaxsiy tibbiy tafsilotlar yoki boshqa nozik ma'lumotlarni yozmang.",
-        },
-        {
-          title: "Takroriy ariza yuborilmasligi kerak.",
-          text: "Shu davr uchun oldin ariza yuborilgan bo'lsa, yangisini emas, mavjudini tekshiring.",
-        },
-      ],
-    },
-    report: {
-      title: "Hujjat yaratishda e'tiborga olish kerak bo'lgan jihatlar",
-      items: [
-        {
-          title: "Sarlavha mazmunga mos va rasmiy bo'lishi kerak.",
-          text: "Hujjat nomi qisqa, aniq va keyinchalik qidiruvda topiladigan ko'rinishda yozilsin.",
-        },
-        {
-          title: "Mazmun tekshirilgan va izchil bo'lishi kerak.",
-          text: "Hujjat ichida noto'g'ri raqamlar, chala fikrlar yoki tasdiqlanmagan ma'lumot qolmasin.",
-        },
-        {
-          title: "Maxfiy yoki ortiqcha shaxsiy ma'lumot kiritilmasligi kerak.",
-          text: "Faqat ish jarayoniga tegishli ma'lumotlarni yozing, oshkor qilinmasligi kerak bo'lgan ma'lumotlarni kiritmang.",
-        },
-        {
-          title: "Bir xil hujjatni takror yaratmaslik kerak.",
-          text: "Shu mavzuda avval hujjat bo'lsa, yangisini ochishdan oldin mavjudini tekshirib chiqing.",
-        },
-      ],
-    },
+  const prefix = type === "notification" ? "creation_warning_notification" : type === "leave" ? "creation_warning_leave" : "creation_warning_report";
+  return {
+    title: t(`${prefix}_title`),
+    items: [
+      { title: t(`${prefix}_item1_title`), text: t(`${prefix}_item1_text`) },
+      { title: t(`${prefix}_item2_title`), text: t(`${prefix}_item2_text`) },
+      { title: t(`${prefix}_item3_title`), text: t(`${prefix}_item3_text`) },
+      { title: t(`${prefix}_item4_title`), text: t(`${prefix}_item4_text`) },
+    ],
   };
-
-  return base[type] || base.report;
 }
 
 function resolveCreationWarning(decision) {
@@ -2425,6 +3200,7 @@ function applyTranslations() {
   if (otpCodeLabel) otpCodeLabel.textContent = t("login_code_label");
   if (otpSubmitButton) otpSubmitButton.textContent = t("login_code_submit");
   if (backToLoginButton) backToLoginButton.textContent = t("login_back");
+  if (registerStatusBox) registerStatusBox.textContent = t("register_status_enter_details");
 
   const showingOtpStep = !loginTwoFactorStep?.classList.contains("hidden");
   if (showingOtpStep) {
@@ -2632,6 +3408,22 @@ function applyTranslations() {
       el.placeholder = t(key);
     }
   });
+
+  // Translate titles for elements with data-translate-title attribute
+  document.querySelectorAll('[data-translate-title]').forEach(el => {
+    const key = el.getAttribute('data-translate-title');
+    if (key) {
+      el.title = t(key);
+    }
+  });
+
+  // Translate alt text for elements with data-translate-alt attribute
+  document.querySelectorAll('[data-translate-alt]').forEach(el => {
+    const key = el.getAttribute('data-translate-alt');
+    if (key && "alt" in el) {
+      el.alt = t(key);
+    }
+  });
 }
 
 function applyRoleBasedUi() {
@@ -2790,7 +3582,7 @@ function openSecuritySettingsModal() {
           <button id="modalSetupTwoFactorButton" type="button" class="primary-btn">${twoFactorButtonText}</button>
         </div>
         <div id="modalTwoFactorSetupPanel" class="two-factor-setup hidden">
-          <img id="modalTwoFactorQrImage" class="two-factor-qr" alt="2FA QR code" />
+          <img id="modalTwoFactorQrImage" class="two-factor-qr" alt="${escapeHtml(t("login_qr_alt"))}" />
           <div class="mono-list">
             <span>${t("manual_key")}: <strong id="modalTwoFactorSecretLabel">-</strong></span>
           </div>
@@ -3139,11 +3931,29 @@ function getDashboardApprovedNotifications() {
 
 function getCollectionTypeLabel(itemType) {
   const labels = {
-    leave: "Ariza",
-    report: "Hisobot",
-    notification: "Bildirishnoma",
+    leave: t("label_leave"),
+    report: t("label_report"),
+    notification: t("label_notification"),
   };
-  return labels[itemType] || "Element";
+  return labels[itemType] || t("label_element");
+}
+
+function translateStatus(status) {
+  if (!status) return "-";
+  const keyMap = {
+    PENDING: "status_pending",
+    APPROVED: "status_approved",
+    REJECTED: "status_rejected",
+    DRAFT: "status_draft",
+    REVISION: "status_revision",
+    PENDING_L2: "status_pending_l2",
+    PENDING_L3: "status_pending_l3",
+    PENDING_L4: "status_pending_l4",
+    ARCHIVED: "status_archived",
+    CANCELLED: "status_cancelled",
+  };
+  const key = keyMap[String(status).toUpperCase()];
+  return key ? t(key) : status;
 }
 
 function openEntityDetailModal(typeName, id) {
@@ -3300,7 +4110,7 @@ function makeReportDetailActionBar(report) {
       parts.push(`<div class="feed-item muted-item">${escapeHtml(t("report_submit_hint"))}</div>`);
     } else if (isReportPendingStatus(report.status)) {
       parts.push(
-        `<div class="feed-item muted-item">Hisobot tasdiqlash navbatida (${escapeHtml(report.status)}). ${escapeHtml(t("edit_report"))} faqat qoralama yoki qayta ko'rish uchun mavjud.</div>`
+        `<div class="feed-item muted-item">${t("report_pending_note").replace("{status}", escapeHtml(translateStatus(report.status)))}</div>`
       );
     }
   }
@@ -3309,7 +4119,7 @@ function makeReportDetailActionBar(report) {
     parts.push(makeReviewActionBar("report", report.id, { showRevision: true }));
   } else if (isManagerRole() && !isAdminOrDirector() && isReportPendingStatus(report.status) && getReportOwnerId(report) === state.currentUser?.id) {
     parts.push(
-      `<div class="feed-item muted-item">O'z hisobotingizni tasdiqlay olmaysiz. Keyingi tasdiqlovchi kutmoqda.</div>`
+      `<div class="feed-item muted-item">${t("cannot_self_approve_report")}</div>`
     );
   }
 
@@ -3408,10 +4218,10 @@ function openReportDetailModal(report) {
       [t("report_content"), report.content || "-"],
       [t("report_department"), report.department_name || "-"],
       [t("management_role"), report.created_by_name || "-"],
-      ["Status", report.status || "-"],
-      ["Level", report.current_approval_level ? `L${report.current_approval_level}` : "-"],
+      [t("status"), report.status || "-"],
+      [t("level"), report.current_approval_level ? `L${report.current_approval_level}` : "-"],
       ["ID", report.id || "-"],
-      ["Sana", formatDate(report.created_at)],
+      [t("date_label"), formatDate(report.created_at)],
     ]) + actionBar
   );
   bindReviewActionButtons();
@@ -3422,22 +4232,22 @@ function openLeaveDetailModal(leave) {
   const reviewBar = canManagerReviewLeave(leave) ? makeReviewActionBar("leave", leave.id) : "";
   const ownerNote =
     leave.requested_by === state.currentUser?.id && leave.status === "PENDING"
-      ? `<div class="feed-item muted-item">Arizangiz tasdiqlash navbatida. Tahrirlash va baholash tasdiqlangandan keyin mavjud bo'ladi.</div>`
+      ? `<div class="feed-item muted-item">${t("leave_pending_note")}</div>`
       : leave.requested_by === state.currentUser?.id && ["APPROVED", "REJECTED"].includes(leave.status || "")
-        ? `<div class="feed-item muted-item">Ariza holati: ${escapeHtml(leave.status)}. Baholash uchun tasdiqlangan bo'limdan oching.</div>`
+        ? `<div class="feed-item muted-item">${t("leave_status_note").replace("{status}", escapeHtml(translateStatus(leave.status)))}</div>`
         : "";
   openContentModal(
     leave.requested_by_name || t("collection_title_requests"),
     t("collection_title_requests"),
     makeDetailItems([
       [t("full_name"), leave.requested_by_name || "-"],
-      ["Leave type", leave.leave_type || "-"],
-      ["Status", leave.status || "-"],
-      ["Boshlanish", leave.start_date || "-"],
-      ["Tugash", leave.end_date || "-"],
-      ["Kun", leave.total_days ?? "-"],
-      ["Reviewer", leave.reviewed_by_name || "-"],
-      ["Sabab", leave.reason || "-"],
+      [t("leave_type"), leave.leave_type || "-"],
+      [t("status"), leave.status || "-"],
+      [t("start_date"), leave.start_date || "-"],
+      [t("end_date"), leave.end_date || "-"],
+      [t("days_label"), leave.total_days ?? "-"],
+      [t("reviewer"), leave.reviewed_by_name || "-"],
+      [t("reason"), leave.reason || "-"],
       ["ID", leave.leave_number || leave.id || "-"],
     ]) + ownerNote + reviewBar
   );
@@ -3452,7 +4262,7 @@ function openNotificationDetailModal(item) {
   if (hasAttachment) {
     attachmentHtml = `
       <div class="attachment-preview">
-        <img src="${attachmentUrl}" alt="Attachment" style="max-width:100%;max-height:200px;margin-top:10px;border-radius:4px;" />
+        <img src="${attachmentUrl}" alt="${t("attachment")}" style="max-width:100%;max-height:200px;margin-top:10px;border-radius:4px;" />
         <div class="inline-actions">
           <button class="ghost-btn small-btn" onclick="window.open('${attachmentUrl}', '_blank')">${t("download")}</button>
         </div>
@@ -3466,11 +4276,11 @@ function openNotificationDetailModal(item) {
     (!item.submitted_by && item.user_id === state.currentUser?.id);
   const ownerNote =
     isOwnRequest && item.status === "PENDING"
-      ? `<div class="feed-item muted-item">So'rovingiz ko'rib chiqilmoqda. Tahrirlash va baholash faqat batafsil oynada, tasdiqlangandan keyin.</div>`
+      ? `<div class="feed-item muted-item">${t("notification_pending_note")}</div>`
       : "";
   const statusNote =
     !reviewBar && ["APPROVED", "REJECTED"].includes(item.status || "")
-      ? `<div class="feed-item muted-item">Bu so'rov allaqachon ko'rib chiqilgan (${escapeHtml(item.status)}).</div>`
+      ? `<div class="feed-item muted-item">${t("notification_reviewed_note").replace("{status}", escapeHtml(translateStatus(item.status)))}</div>`
       : "";
 
   openContentModal(
@@ -3479,13 +4289,13 @@ function openNotificationDetailModal(item) {
     makeDetailItems([
       [t("report_title"), item.title || "-"],
       [t("report_comment"), item.message || "-"],
-      ["Type", item.type || "-"],
-      ["Status", item.status || "-"],
+      [t("type_label"), item.type || "-"],
+      [t("status"), item.status || "-"],
       [t("full_name"), item.submitted_by_name || "-"],
-      ["Read", item.is_read ? t("active") : t("inactive")],
+      [t("read_label"), item.is_read ? t("active") : t("inactive")],
       ["ID", item.notification_number || item.id || "-"],
-      ["Sana", formatDate(item.created_at)],
-      ["Reference", item.reference_type || "-"],
+      [t("date_label"), formatDate(item.created_at)],
+      [t("reference_label"), item.reference_type || "-"],
     ]) + attachmentHtml + ownerNote + statusNote + reviewBar
   );
   bindReviewActionButtons();
@@ -3552,14 +4362,14 @@ function openCollectionModal(title, items, type) {
               itemType === "report"
                 ? item.title
                 : itemType === "leave"
-                  ? `${item.leave_type || "-"} / ${item.status || "-"}`
+                  ? `${item.leave_type || "-"} / ${translateStatus(item.status) || "-"}`
                   : item.message;
             const meta =
               itemType === "report"
-                ? `${item.created_by_name || item.created_by__full_name || "-"} / ${item.status || "-"}`
+                ? `${item.created_by_name || item.created_by__full_name || "-"} / ${translateStatus(item.status) || "-"}`
                 : itemType === "leave"
                   ? `${item.start_date || "-"} - ${item.end_date || "-"}`
-                  : `${item.submitted_by_name || "-"} / ${item.status || item.type || "-"} / ${formatDate(item.created_at)}`;
+                  : `${item.submitted_by_name || "-"} / ${translateStatus(item.status) || item.type || "-"} / ${formatDate(item.created_at)}`;
             return `
               <button type="button" class="detail-list-item entity-detail-open-btn" data-type="${itemType}" data-id="${item.id}">
                 <span class="item-type-pill">${escapeHtml(getCollectionTypeLabel(itemType))}</span>
@@ -3633,7 +4443,7 @@ function bindDashboardDrilldowns() {
     );
   });
   statCards[2]?.querySelector('[data-dashboard-filter="pending-features"]')?.addEventListener("click", () => {
-    openCollectionModal("Funksiya talablari", getPendingFeatureRequests(), "notification");
+    openCollectionModal(t("feature_requests"), getPendingFeatureRequests(), "notification");
   });
   statCards[2]?.querySelector('[data-dashboard-filter="pending-all"]')?.addEventListener("click", () => {
     openManagerPendingApprovalsModal();
@@ -3726,8 +4536,8 @@ async function apiRequest(path, options = {}) {
   if (!response.ok || data?.success === false) {
     const fallbackMessage =
       response.status === 404
-        ? `API topilmadi. Backend server ${state.apiBase} da ishga tushganini tekshiring.`
-        : `So'rov bajarilmadi (${response.status}).`;
+        ? t("err_api_not_found").replace("{base}", state.apiBase)
+        : t("err_request_failed").replace("{status}", response.status);
 
     let payloadText = "";
     if (typeof data?.data === "string") payloadText = data.data;
@@ -3743,36 +4553,36 @@ async function apiRequest(path, options = {}) {
   return data || {};
 }
 
-// FIXED: Centralized user-friendly error message mapping
+// FIXED: Centralized user-friendly error message mapping (keys map to translation keys)
 const ERROR_MESSAGES = {
-  "Bu rol uchun department majburiy": "Bu rol uchun bo'lim (department) tanlanishi shart. Iltimos, bo'limni tanlang.",
-  "UNIT_HEAD uchun unit majburiy": "UNIT_HEAD roli uchun birlik (unit) tanlanishi shart. Iltimos, birlikni tanlang.",
-  "DEPT_HEAD uchun unit kiritilmaydi": "DEPT_HEAD roli uchun birlik (unit) tanlanmasligi kerak. Iltimos, birlik maydonini bo'sh qoldiring.",
-  "DIRECTOR uchun department va unit biriktirilmaydi": "DIRECTOR roli uchun bo'lim va birlik biriktirilmaydi. Iltimos, ularni bo'sh qoldiring.",
-  "Tanlangan unit shu departmentga tegishli emas": "Tanlangan birlik tanlangan bo'limga tegishli emas. Iltimos, mos birlikni tanlang.",
-  "Kasbiy rol berilganda department majburiy": "Kasbiy rol berilganda bo'lim tanlanishi shart. Iltimos, bo'limni tanlang.",
-  "Daraja berish uchun avval job_role tanlang": "Daraja berish uchun avval kasbiy rol (job_role) tanlanishi kerak.",
-  "Baho 1 dan 5 gacha bo'lishi kerak": "Baho 1 dan 5 gacha bo'lishi kerak. Iltimos, to'g'ri baho tanlang.",
-  "User not found": "Foydalanuvchi topilmadi. Iltimos, ID ni tekshiring.",
-  "O'zingizni delete qila olmaysiz": "O'zingizni o'chira olmaysiz. Iltimos, boshqa foydalanuvchini tanlang.",
+  "Bu rol uchun department majburiy": "err_role_dept_required",
+  "UNIT_HEAD uchun unit majburiy": "err_unit_head_unit_required",
+  "DEPT_HEAD uchun unit kiritilmaydi": "err_dept_head_no_unit",
+  "DIRECTOR uchun department va unit biriktirilmaydi": "err_director_no_dept_unit",
+  "Tanlangan unit shu departmentga tegishli emas": "err_unit_not_in_dept",
+  "Kasbiy rol berilganda department majburiy": "err_job_role_dept_required",
+  "Daraja berish uchun avval job_role tanlang": "err_level_requires_job_role",
+  "Baho 1 dan 5 gacha bo'lishi kerak": "err_rating_range",
+  "User not found": "err_user_not_found",
+  "O'zingizni delete qila olmaysiz": "err_cannot_delete_self",
 };
 
 function getUserFriendlyError(rawText) {
   if (!rawText) return t("generic_error");
   const normalized = String(rawText).toLowerCase();
-  for (const [technical, friendly] of Object.entries(ERROR_MESSAGES)) {
-    if (normalized.includes(technical.toLowerCase())) return friendly;
+  for (const [technical, key] of Object.entries(ERROR_MESSAGES)) {
+    if (normalized.includes(technical.toLowerCase())) return t(key);
   }
   // If it's a field-level error like "field: message", return just the message part in a friendly way
   const fieldMatch = String(rawText).match(/^[^:]+:\s*(.+)$/);
   if (fieldMatch) {
     const msg = fieldMatch[1].trim();
-    for (const [technical, friendly] of Object.entries(ERROR_MESSAGES)) {
-      if (msg.toLowerCase().includes(technical.toLowerCase())) return friendly;
+    for (const [technical, key] of Object.entries(ERROR_MESSAGES)) {
+      if (msg.toLowerCase().includes(technical.toLowerCase())) return t(key);
     }
-    return msg + ". Iltimos, ma'lumotlarni tekshiring.";
+    return msg + ". " + t("please_check_info");
   }
-  return rawText + ". Iltimos, ma'lumotlarni tekshiring.";
+  return rawText + ". " + t("please_check_info");
 }
 
 function formatApiErrorMessage(data) {
@@ -3830,7 +4640,7 @@ function renderFeedbackList() {
   if (!feedbackList) return;
   if (!state.feedbackEntries.length) {
     feedbackList.innerHTML = hasFeedbackPermission()
-      ? '<div class="feedback-item muted-item">Hozircha kommentariya yo\'q.</div>'
+      ? `<div class="feedback-item muted-item">${t("no_comments_yet")}</div>`
       : `<div class="feedback-item muted-item feedback-lock-note">${escapeHtml(t("feedback_locked"))}</div>`;
     return;
   }
@@ -3842,7 +4652,7 @@ function renderFeedbackList() {
       (entry) => `
         <article class="feedback-item">
           <div class="feedback-item-head">
-            <strong>${entry.author_name || entry.author || "Foydalanuvchi"}</strong>
+            <strong>${entry.author_name || entry.author || t("user")}</strong>
             <span>${"★".repeat(entry.rating)}${"☆".repeat(5 - entry.rating)}</span>
           </div>
           <p>${entry.comment}</p>
@@ -3860,46 +4670,89 @@ function renderActivityFilters() {
   });
 }
 
+function translateAuditDescription(description) {
+  if (!description) return description;
+  const replacements = {
+    uz: {},
+    ru: {
+      "tizimga kirdi": "вошел в систему",
+      "hisobot yaratdi": "создал отчет",
+      "ariza yaratdi": "создал заявку",
+      "tasdiqladi": "утвердил",
+      "rad etdi": "отклонил",
+      "parolni o'zgartirdi": "изменил пароль",
+      "chiqdi": "вышел",
+      "authenticator orqali": "через authenticator",
+    },
+    en: {
+      "tizimga kirdi": "logged in",
+      "hisobot yaratdi": "created a report",
+      "ariza yaratdi": "created a request",
+      "tasdiqladi": "approved",
+      "rad etdi": "rejected",
+      "parolni o'zgartirdi": "changed password",
+      "chiqdi": "logged out",
+      "authenticator orqali": "via authenticator",
+    },
+    tr: {
+      "tizimga kirdi": "giriş yaptı",
+      "hisobot yaratdi": "rapor oluşturdu",
+      "ariza yaratdi": "talep oluşturdu",
+      "tasdiqladi": "onayladı",
+      "rad etdi": "reddetti",
+      "parolni o'zgartirdi": "parola değiştirdi",
+      "chiqdi": "çıktı",
+      "authenticator orqali": "authenticator ile",
+    },
+  };
+  const map = replacements[state.language] || {};
+  let result = description;
+  for (const [pattern, replacement] of Object.entries(map)) {
+    result = result.split(pattern).join(replacement);
+  }
+  return result;
+}
+
 function formatAuditActivityTitle(log) {
-  const actor = log.actor_name || "Foydalanuvchi";
+  const actor = log.actor_name || t("user");
   const action = String(log.action || "").toUpperCase();
   const targetId = String(log.target_id || "").trim();
   const shortTargetId = targetId ? targetId.slice(0, 8) : "";
   const description = String(log.description || "").trim();
 
-  if (description) return description;
-  if (action.includes("REPORT_CREATE")) return `${actor} ${shortTargetId} hisobot yaratdi`.trim();
-  if (action.includes("REPORT_UPDATE")) return `${actor} ${shortTargetId} hisobotni yangiladi`.trim();
-  if (action.includes("LEAVE") && action.includes("CREATE")) return `${actor} ${shortTargetId} talab yaratdi`.trim();
-  if (action.includes("LEAVE") && action.includes("APPROVE")) return `${actor} ${shortTargetId} talabni tasdiqladi`.trim();
-  if (action.includes("NOTIFICATION_CREATE")) return `${actor} bildirishnoma yaratdi`;
+  if (description) return translateAuditDescription(description);
+  if (action.includes("REPORT_CREATE")) return `${actor} ${shortTargetId} ${t("audit_report_created")}`.trim();
+  if (action.includes("REPORT_UPDATE")) return `${actor} ${shortTargetId} ${t("audit_report_updated")}`.trim();
+  if (action.includes("LEAVE") && action.includes("CREATE")) return `${actor} ${shortTargetId} ${t("audit_leave_created")}`.trim();
+  if (action.includes("LEAVE") && action.includes("APPROVE")) return `${actor} ${shortTargetId} ${t("audit_leave_approved")}`.trim();
+  if (action.includes("NOTIFICATION_CREATE")) return `${actor} ${t("audit_notification_created")}`;
   if (action) return `${actor} ${action.replace(/_/g, " ").toLowerCase()}`.trim();
 
-  return `${actor} amal bajardi`;
+  return `${actor} ${t("audit_action_performed")}`;
 }
 
 function buildActivityItems() {
   const reportItems = state.reports.map((report) => ({
     type: "reports",
-    actor: report.created_by_name || "Foydalanuvchi",
-    title: `${report.report_number || "Hisobot"} ${report.created_by_name || "foydalanuvchi"} tomonidan yaratildi`,
-    meta: report.title || report.status || "Hisobot",
+    actor: report.created_by_name || t("user"),
+    title: `${report.report_number || t("report")} ${report.created_by_name || t("user")} ${t("created_by_suffix")}`,
+    meta: report.title || report.status || t("report"),
     time: report.created_at,
   }));
 
   const leaveItems = state.leaves.map((leave) => ({
     type: "requests",
-    actor: leave.requested_by_name || "Foydalanuvchi",
-    title: `#${leave.leave_number || leave.id?.slice(0, 8)} ${leave.requested_by_name || "foydalanuvchi"} arizani yaratdi`,
-    meta: `${leave.leave_type || "Ariza"} / ${leave.status || "Holat yo'q"}`,
+    actor: leave.requested_by_name || t("user"),
+    title: `#${leave.leave_number || leave.id?.slice(0, 8)} ${leave.requested_by_name || t("user")} ${t("leave_created_suffix")}`,
+    meta: `${leave.leave_type || t("leave")} / ${translateStatus(leave.status) || t("status_no_data")}`,
     time: leave.created_at || leave.start_date,
   }));
 
   const auditItems = state.auditLogs.map((log) => ({
     type: /LEAVE|REQUEST/i.test(log.action || "") ? "requests" : "reports",
-    actor: log.actor_name || "Tizim",
+    actor: log.actor_name || t("system"),
     title: formatAuditActivityTitle(log),
-    meta: log.action || log.target_type || "Audit",
+    meta: log.action || log.target_type || t("audit"),
     time: log.created_at,
   }));
 
@@ -3915,7 +4768,7 @@ function renderActivityHistory() {
   const items = buildActivityItems();
 
   if (!items.length) {
-    activityHistoryList.innerHTML = '<div class="feed-item muted-item">Hali activity history mavjud emas.</div>';
+    activityHistoryList.innerHTML = `<div class="feed-item muted-item">${t("no_activity_history")}</div>`;
     return;
   }
 
@@ -3923,7 +4776,7 @@ function renderActivityHistory() {
     .map(
       (item) => `
         <article class="activity-item activity-item-${item.type}">
-          <div class="activity-avatar">${String(item.actor || "User")
+          <div class="activity-avatar">${String(item.actor || t("user"))
             .trim()
             .split(/\s+/)
             .slice(0, 2)
@@ -4000,7 +4853,7 @@ function finalizeAuthenticatedSession(payload) {
   }
 
   if (topbarUserLabel) {
-    topbarUserLabel.textContent = payload.data.user.full_name || payload.data.user.username || "Mehmon";
+    topbarUserLabel.textContent = payload.data.user.full_name || payload.data.user.username || t("guest");
   }
 
   resetPendingLogin();
@@ -4265,7 +5118,7 @@ function renderUsers() {
   });
 
   if (!filteredUsers.length) {
-    usersTableBody.innerHTML = makeEmptyRow(6, "IT xodimlari hali mavjud emas");
+    usersTableBody.innerHTML = makeEmptyRow(6, t("no_employees_found"));
     return;
   }
 
@@ -4305,7 +5158,7 @@ function renderReports() {
   });
 
   if (!filteredReports.length) {
-    reportsTableBody.innerHTML = makeEmptyRow(6, "Reportlar topilmadi");
+    reportsTableBody.innerHTML = makeEmptyRow(6, t("no_reports_found"));
     return;
   }
 
@@ -4322,7 +5175,7 @@ function renderReports() {
               <button class="ghost-btn small-btn report-detail-btn" data-id="${report.id}" type="button">${t("open_details")}</button>
             </div>
           </td>
-          <td><span class="pill role">${report.status}</span></td>
+          <td><span class="pill role">${translateStatus(report.status)}</span></td>
           <td><span class="pill level">L${report.current_approval_level || "-"}</span></td>
           <td>${report.department_name || "-"}</td>
           <td>${report.created_by_name || "-"}</td>
@@ -4367,7 +5220,7 @@ function renderLeaves() {
   });
 
   if (!filteredLeaves.length) {
-    leavesTableBody.innerHTML = makeEmptyRow(6, "Leave requests topilmadi");
+    leavesTableBody.innerHTML = makeEmptyRow(6, t("no_leaves_found"));
     return;
   }
 
@@ -4386,7 +5239,7 @@ function renderLeaves() {
           <td>${leave.leave_type}</td>
           <td>${leave.start_date} - ${leave.end_date}</td>
           <td>${leave.total_days}</td>
-          <td><span class="pill status">${leave.status}</span></td>
+          <td><span class="pill status">${translateStatus(leave.status)}</span></td>
           <td>${leave.reviewed_by_name || "-"}</td>
         </tr>
       `
@@ -4484,12 +5337,12 @@ function renderRecentLists(payload) {
             <div class="feed-item">
               <strong>${item.report_number}</strong>
               <span>${item.title}</span>
-              <small>${item.status} - ${item.created_by__full_name}</small>
+              <small>${translateStatus(item.status)} - ${item.created_by__full_name}</small>
             </div>
           `
         )
         .join("")
-    : '<div class="feed-item muted-item">Recent reports yoq</div>';
+    : `<div class="feed-item muted-item">${t("no_recent_reports")}</div>`;
 
   recentLeavesList.innerHTML = recentLeaves.length
     ? recentLeaves
@@ -4498,12 +5351,12 @@ function renderRecentLists(payload) {
             <div class="feed-item">
               <strong>${item.requested_by__full_name}</strong>
               <span>${item.leave_type}</span>
-              <small>${item.status} - ${item.start_date} / ${item.end_date}</small>
+              <small>${translateStatus(item.status)} - ${item.start_date} / ${item.end_date}</small>
             </div>
           `
         )
         .join("")
-    : '<div class="feed-item muted-item">Recent leave requests yoq</div>';
+    : `<div class="feed-item muted-item">${t("no_recent_leaves")}</div>`;
 }
 
 function renderProfile() {
@@ -4555,10 +5408,10 @@ function renderProfile() {
 
 function renderTwoFactorState() {
   const enabled = Boolean(state.currentUser?.two_factor_enabled);
-  twoFactorStatusLabel.textContent = enabled ? "Active" : "Inactive";
+  twoFactorStatusLabel.textContent = enabled ? t("active") : t("inactive");
   twoFactorStatusLabel.className = `pill ${enabled ? "level" : "role"}`;
   if (setupTwoFactorButton) {
-    setupTwoFactorButton.textContent = enabled ? "QR ni qayta yaratish" : "QR yaratish";
+    setupTwoFactorButton.textContent = enabled ? t("regenerate_qr") : t("create_qr");
   }
   if (twoFactorDisableForm) {
     twoFactorDisableForm.classList.toggle("hidden", !enabled);
@@ -4619,7 +5472,7 @@ function renderNotifications() {
           <div>
             <strong>#${item.notification_number || item.id?.slice(0, 8)} ${item.title}</strong>
             <span>${escapeHtml(item.message)}</span>
-            <small>${item.type} / ${item.status || "-"} / ${item.submitted_by_name || "-"} - ${formatDate(item.created_at)}</small>
+            <small>${item.type} / ${translateStatus(item.status) || "-"} / ${item.submitted_by_name || "-"} - ${formatDate(item.created_at)}</small>
           </div>
           <div class="inline-actions">
             <button class="ghost-btn small-btn mark-read-btn" data-id="${item.id}" type="button">${t("mark_as_read")}</button>
@@ -4663,8 +5516,8 @@ function renderAdminDashboard() {
             <div class="feed-item">
               <div class="feed-item-content">
                 <strong>#${item.leave_number || item.report_number || item.id?.slice(0, 8)}</strong>
-                <span>${item.title || item.reason || 'Noma\'lum'}</span>
-                <small>${item.status} - ${item.created_by__full_name || item.employee_name || '-'}</small>
+                <span>${item.title || item.reason || t("unknown")}</span>
+                <small>${translateStatus(item.status)} - ${item.created_by__full_name || item.employee_name || '-'}</small>
               </div>
               <div class="feed-item-actions">
                 <button type="button" class="ghost-btn small-btn admin-approve-btn" data-id="${item.id}" data-type="${item.item_type || 'report'}" data-action="APPROVE">${t("approve")}</button>
@@ -4674,7 +5527,7 @@ function renderAdminDashboard() {
           `
         )
         .join("")
-    : '<div class="feed-item muted-item">Pending approvals yoq</div>';
+    : `<div class="feed-item muted-item">${t("no_pending_approvals")}</div>`;
 
   document.querySelectorAll(".admin-approve-btn").forEach((button) => {
     button?.addEventListener("click", async () => {
@@ -4687,19 +5540,19 @@ function renderAdminDashboard() {
           await apiRequest(`/api/v1/leaves/${itemId}/review/`, {
             method: "POST",
             headers: getHeaders(),
-            body: JSON.stringify({ action, review_comment: "Admin tomonidan tasdiqlandi" }),
+            body: JSON.stringify({ action, review_comment: t("admin_approved_comment") }),
           });
         } else if (itemType === 'notification') {
           await apiRequest(`/api/v1/notifications/${itemId}/review/`, {
             method: "POST",
             headers: getHeaders(),
-            body: JSON.stringify({ action, review_comment: "Admin tomonidan tasdiqlandi" }),
+            body: JSON.stringify({ action, review_comment: t("admin_approved_comment") }),
           });
         } else {
           await apiRequest(`/api/v1/reports/${itemId}/actions/`, {
             method: "POST",
             headers: getHeaders(),
-            body: JSON.stringify({ action, comment: "Admin tomonidan tasdiqlandi" }),
+            body: JSON.stringify({ action, comment: t("admin_approved_comment") }),
           });
         }
         await Promise.all([
@@ -4805,7 +5658,7 @@ function renderPendingItemsInDashboard() {
       ? pendingLeaves.slice(0, 3).map(item => `
           <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="leave">
             <span class="pending-title">${escapeHtml(item.reason || t("label_leave"))}</span>
-            <span class="pending-meta">${item.status} - ${isManager ? (item.requested_by_name || item.employee_name || "-") : t("your_leave")}</span>
+            <span class="pending-meta">${translateStatus(item.status)} - ${isManager ? (item.requested_by_name || item.employee_name || "-") : t("your_leave")}</span>
           </button>
         `).join('')
       : `<div class="dashboard-pending-empty">${t("no_pending_leaves")}</div>`;
@@ -4826,7 +5679,7 @@ function renderPendingItemsInDashboard() {
       ? pendingReports.slice(0, 3).map(item => `
           <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="report">
             <span class="pending-title">${escapeHtml(item.title || item.report_number || t("label_report"))}</span>
-            <span class="pending-meta">${item.status} - ${isManager ? (item.created_by__full_name || '-') : t("your_report")}</span>
+            <span class="pending-meta">${translateStatus(item.status)} - ${isManager ? (item.created_by__full_name || '-') : t("your_report")}</span>
           </button>
         `).join('')
       : `<div class="dashboard-pending-empty">${t("no_pending_reports")}</div>`;
@@ -4882,8 +5735,8 @@ function renderPendingItemsInDashboard() {
                   : item.reason || t("label_leave");
             const meta =
               itemType === "notification"
-                ? `${item.reference_type || "NOTIF"} / ${item.status || "PENDING"}`
-                : `${item.status || "-"} - ${item.requested_by_name || item.created_by__full_name || item.submitted_by_name || "-"}`;
+                ? `${item.reference_type || "NOTIF"} / ${translateStatus(item.status) || t("pending")}`
+                : `${translateStatus(item.status) || "-"} - ${item.requested_by_name || item.created_by__full_name || item.submitted_by_name || "-"}`;
             return `
               <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="${itemType}">
                 <span class="pending-title">${escapeHtml(title || "-")}</span>
@@ -4935,7 +5788,7 @@ function renderNotificationDashboardCard() {
             return `
               <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="notification">
                 <span class="pending-title">${escapeHtml(label)}</span>
-                <span class="pending-meta">${escapeHtml(item.status || "PENDING")} - ${escapeHtml(item.submitted_by_name || "-")}</span>
+                <span class="pending-meta">${escapeHtml(translateStatus(item.status || t("pending")))} - ${escapeHtml(item.submitted_by_name || "-")}</span>
               </button>
             `;
           })
@@ -4989,8 +5842,8 @@ function buildOperationsMetricCell(metric) {
   return `
     <div class="operations-metric-cell">
       <span class="operations-metric-total">${total}</span>
-      <span class="status-pill status-pill--pending">${pending} kut.</span>
-      <span class="status-pill status-pill--approved">${approved} tasd.</span>
+      <span class="status-pill status-pill--pending">${pending} ${t("pending_short")}</span>
+      <span class="status-pill status-pill--approved">${approved} ${t("approved_short")}</span>
     </div>
   `;
 }
@@ -5006,7 +5859,7 @@ function renderOperationsDistribution(container, departments, metricKey, pending
     .sort((a, b) => b.count - a.count);
   const total = rows.reduce((sum, row) => sum + row.count, 0);
   if (!rows.length) {
-    container.innerHTML = `<div class="operations-dist-row muted-item">Ma'lumot yo'q</div>`;
+    container.innerHTML = `<div class="operations-dist-row muted-item">${t("no_data")}</div>`;
     return;
   }
   container.innerHTML = rows
@@ -5190,13 +6043,13 @@ function renderAnalyticsDashboard() {
           (item) => `
             <button type="button" class="feed-item feed-item-button analytics-department-btn" data-department-name="${escapeHtml(item.department_name)}">
               <strong>${item.department_name}</strong>
-              <span>Total: ${item.total_reports}</span>
-              <small>Approved: ${item.approved_reports}, Pending: ${item.pending_reports}, Rejected: ${item.rejected_reports}</small>
+              <span>${t("total_reports_short")}: ${item.total_reports}</span>
+              <small>${t("approved_reports_short")}: ${item.approved_reports}, ${t("pending_reports_short")}: ${item.pending_reports}, ${t("rejected_reports_short")}: ${item.rejected_reports}</small>
             </button>
           `
         )
         .join("")
-    : '<div class="feed-item muted-item">Analytics data yoq</div>';
+    : `<div class="feed-item muted-item">${t("no_analytics_data")}</div>`;
 
   document.querySelectorAll(".analytics-department-btn").forEach((button) => {
     button?.addEventListener("click", () => openUsersByDepartmentModal(button.dataset.departmentName));
@@ -5217,10 +6070,10 @@ function getReviewHistoryActionLabel(action) {
   const labels = {
     APPROVE: t("approved_label"),
     REJECT: t("rejected_label"),
-    REQUEST_REVISION: "Qayta ko'rish",
-    SUBMIT: "Yuborilgan",
-    ARCHIVE: "Arxivlangan",
-    CANCEL: "Bekor qilingan",
+    REQUEST_REVISION: t("action_request_revision_label"),
+    SUBMIT: t("action_submitted"),
+    ARCHIVE: t("action_archived"),
+    CANCEL: t("action_cancelled"),
   };
   return labels[action] || action || "-";
 }
@@ -5298,7 +6151,7 @@ function renderReviewHistory() {
 
   if (!items.length) {
     reportHistoryList.innerHTML =
-      '<div class="feed-item muted-item">Hali tasdiqlash tarixi yo\'q. Ariza, hisobot yoki bildirishnomani tasdiqlaganingizdan keyin shu yerda ko\'rinadi.</div>';
+      `<div class="feed-item muted-item">${t("no_review_history")}</div>`;
     return;
   }
 
@@ -5308,7 +6161,7 @@ function renderReviewHistory() {
         return `
           <div class="feed-item">
             <strong>${escapeHtml(item.action)}</strong>
-            <span>${escapeHtml(item.comment || "Izoh yo'q")}</span>
+            <span>${escapeHtml(item.comment || t("no_comment"))}</span>
             <small>${escapeHtml(item.previous_status)} → ${escapeHtml(item.new_status)} — ${escapeHtml(item.approver_name || "-")} · ${formatDate(item.created_at)}</small>
           </div>
         `;
@@ -5374,13 +6227,13 @@ function renderLeaveCalendar() {
           (item) => `
             <div class="feed-item">
               <strong>${item.requested_by__full_name}</strong>
-              <span>${item.leave_type} - ${item.total_days} kun</span>
+              <span>${item.leave_type} - ${item.total_days} ${t("days")}</span>
               <small>${item.start_date} / ${item.end_date} - ${item.requested_by__department_id__name || "-"}</small>
             </div>
           `
         )
         .join("")
-    : '<div class="feed-item muted-item">Approved leave calendar bo\'sh</div>';
+    : `<div class="feed-item muted-item">${t("no_approved_leaves_calendar")}</div>`;
 }
 
 async function loadDepartments() {
@@ -6032,7 +6885,7 @@ roleManagementForm?.addEventListener("submit", async (event) => {
   const newRole = formData.get("role");
 
   if (!userId || !newRole) {
-    setMessage(t("select_user") + " va " + t("new_role").toLowerCase() + "ni tanlang", "error");
+    setMessage(t("msg_select_user_and_role"), "error");
     return;
   }
 
@@ -7144,7 +7997,8 @@ function getPreferredTheme() {
     return savedTheme;
   }
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  // Default to light mode
+  return "light";
 }
 
 function applyTheme(theme) {
@@ -7183,7 +8037,7 @@ function updateThemeIcons(theme, themeToggleButton, themeIconSun, themeIconMoon)
 
   themeToggleButton?.setAttribute(
     "aria-label",
-    theme === "dark" ? "Kunduz rejimiga o'tish" : "Tun rejimiga o'tish"
+    theme === "dark" ? t("switch_to_light") : t("switch_to_dark")
   );
 }
 
@@ -7195,7 +8049,7 @@ function toggleTheme(themeToggleButton, themeIconSun, themeIconMoon) {
   updateThemeIcons(newTheme, themeToggleButton, themeIconSun, themeIconMoon);
   updateThemeIcons(newTheme, loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
   console.debug("Theme toggled", { currentTheme, newTheme });
-  setMessage(newTheme === "dark" ? "Tun rejimi yoqildi" : "Kunduz rejimi yoqildi", "info");
+  setMessage(newTheme === "dark" ? t("dark_mode_enabled") : t("light_mode_enabled"), "info");
 }
 
 if (document.readyState === "loading") {
