@@ -57,26 +57,26 @@
 
 /* Dark Theme - Modern, not too dark */
 [data-theme="dark"] {
-  /* Background scale - soft dark tones */
-  --bg: #0f172a;
-  --bg-deep: #1e293b;
-  --bg-elevated: #334155;
-  --panel: #1e293b;
-  --panel-strong: #1e293b;
-  --surface: #1e293b;
-  --surface-elevated: #334155;
+  /* Background scale - lighter dark tones for better contrast */
+  --bg: #1a1f2e;
+  --bg-deep: #242b3d;
+  --bg-elevated: #2d3548;
+  --panel: #242b3d;
+  --panel-strong: #242b3d;
+  --surface: #242b3d;
+  --surface-elevated: #2d3548;
   
-  /* Text scale - darker for better readability */
-  --text: #e2e8f0;
-  --text-primary: #e2e8f0;
-  --text-secondary: #a8b3c1;
-  --text-muted: #6b7280;
-  --muted: #6b7280;
+  /* Text scale - brighter for better readability */
+  --text: #f8fafc;
+  --text-primary: #f8fafc;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --muted: #9ca3af;
   
   /* Borders & lines - subtle */
-  --line: #334155;
-  --border-subtle: #334155;
-  --border-strong: #475569;
+  --line: #374151;
+  --border-subtle: #374151;
+  --border-strong: #4b5563;
   
   /* Accent color - lighter blue for dark mode */
   --accent: #60a5fa;
