@@ -8023,9 +8023,13 @@ function getPreferredTheme() {
 }
 
 function applyTheme(theme) {
+  // Single source of truth: data-theme attribute on html element
   document.documentElement.setAttribute("data-theme", theme);
+  // Also set on body for any legacy selectors
   document.body.setAttribute("data-theme", theme);
+  // Toggle dark class for any legacy selectors that use it
   document.documentElement.classList.toggle("dark", theme === "dark");
+  document.body.classList.toggle("dark", theme === "dark");
 }
 
 function toggleTopbarMobileMenu(forceOpen) {
