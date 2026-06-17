@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=2" />
+    <link rel="stylesheet" href="styles.css?v=3" />
     <!-- API BASE INJECTION -->
   </head>
   <body>
@@ -43,30 +43,42 @@
         <div class="login-card">
           <div class="login-card-topbar">
             <span id="loginCardBadge" class="login-card-badge">Kirish</span>
-            <div class="login-language-shell">
-              <button id="loginThemeToggleButton" type="button" class="login-theme-btn" aria-label="Tun/kunduz rejimi" title="Tun/kunduz rejimi" data-translate="theme_toggle" data-translate-title="theme_toggle">
-                <span class="sr-only" data-translate="theme">Mavzu</span>
-                <strong>
-                  <span id="loginThemeIconSun">☀️</span>
-                  <span id="loginThemeIconMoon" class="hidden">🌙</span>
-                </strong>
+            <div class="login-card-controls">
+              <button id="loginThemeToggleButton" type="button" class="icon-btn theme-toggle-btn" aria-label="Tun/kunduz rejimi" title="Tun/kunduz rejimi" data-translate-title="theme_toggle">
+                <svg id="loginThemeIconSun" class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+                </svg>
+                <svg id="loginThemeIconMoon" class="theme-icon theme-icon-moon hidden" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+                <span class="sr-only" data-translate="theme_toggle">Tun/kunduz rejimi</span>
               </button>
-              <button
-                id="loginLanguageButton"
-                type="button"
-                class="login-language-btn"
-                aria-haspopup="menu"
-                aria-expanded="false"
-                aria-controls="loginLanguageDropdown"
-              >
-                <span id="loginLanguageLabel">Til</span>
-                <strong id="loginCurrentLanguageLabel">O'zbek tili</strong>
-              </button>
-              <div id="loginLanguageDropdown" class="login-language-dropdown hidden" role="menu">
-                <button type="button" class="login-language-option" data-language="uz">O'zbekcha</button>
-                <button type="button" class="login-language-option" data-language="ru">Русский</button>
-                <button type="button" class="login-language-option" data-language="en">English</button>
-                <button type="button" class="login-language-option" data-language="tr">Türkçe</button>
+              <div class="language-switcher">
+                <button
+                  id="loginLanguageButton"
+                  type="button"
+                  class="icon-btn language-switcher-btn"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
+                  aria-controls="loginLanguageDropdown"
+                  aria-label="Til"
+                  title="Til"
+                  data-translate-title="language"
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" fill="none" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                  <span class="sr-only" id="loginLanguageLabel">Til</span>
+                  <span class="sr-only" id="loginCurrentLanguageLabel">O'zbekcha</span>
+                </button>
+                <div id="loginLanguageDropdown" class="language-dropdown hidden" role="menu">
+                  <button type="button" class="language-option login-language-option" data-language="uz">O'zbekcha</button>
+                  <button type="button" class="language-option login-language-option" data-language="ru">Русский</button>
+                  <button type="button" class="language-option login-language-option" data-language="en">English</button>
+                  <button type="button" class="language-option login-language-option" data-language="tr">Türkçe</button>
+                </div>
               </div>
             </div>
           </div>
@@ -227,7 +239,12 @@
       </aside>
 
       <main class="main-content">
-        <section class="topbar-panel">
+        <section class="topbar-panel" id="topbarPanel">
+          <button id="topbarMobileToggle" type="button" class="icon-btn topbar-mobile-toggle" aria-label="Menyu" aria-expanded="false" aria-controls="topbarActionsInner">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
           <div class="topbar-searches">
             <label class="search-shell">
               <span data-translate="search_global_label"><svg viewBox="0 0 24 24" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:6px;opacity:0.6;"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Global qidiruv</span>
@@ -245,22 +262,23 @@
             </label>
           </div>
           <div class="topbar-actions">
-            <button id="openAuxMenuButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Qo'shimcha modullar" aria-label="Qo'shimcha modullar" data-translate="auxiliary_modules" data-translate-title="auxiliary_modules">
-              <svg viewBox="0 0 24 24" width="20" height="20">
+            <div class="topbar-actions-inner" id="topbarActionsInner">
+            <button id="openAuxMenuButton" type="button" class="icon-btn topbar-btn-ghost" title="Qo'shimcha modullar" aria-label="Qo'shimcha modullar" data-translate-title="auxiliary_modules">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                 <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </button>
-            <button id="themeToggleButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Tun/kunduz rejimi" aria-label="Tun/kunduz rejimi" data-translate="theme_toggle" data-translate-title="theme_toggle">
-              <svg id="themeIconSun" viewBox="0 0 24 24" width="20" height="20">
+            <button id="themeToggleButton" type="button" class="icon-btn theme-toggle-btn topbar-btn-ghost" title="Tun/kunduz rejimi" aria-label="Tun/kunduz rejimi" data-translate-title="theme_toggle">
+              <svg id="themeIconSun" class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                 <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
                 <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
               </svg>
-              <svg id="themeIconMoon" class="hidden" viewBox="0 0 24 24" width="20" height="20">
+              <svg id="themeIconMoon" class="theme-icon theme-icon-moon hidden" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
               </svg>
             </button>
-            <button id="refreshAllButton" type="button" class="topbar-btn topbar-btn-ghost topbar-btn-icon" title="Yangilash" aria-label="Yangilash" data-translate="refresh" data-translate-title="refresh">
-              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <button id="refreshAllButton" type="button" class="icon-btn topbar-btn-ghost" title="Yangilash" aria-label="Yangilash" data-translate-title="refresh">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="create-menu-shell">
               <button
@@ -282,26 +300,31 @@
                 <button id="createFeatureItem" type="button" class="create-menu-item" data-create-action="feature" data-translate="create_feature_menu">Yangi funksiya talabi</button>
               </div>
             </div>
-            <button id="topbarNotificationsButton" type="button" class="ghost-btn icon-action-btn topbar-bell-btn" aria-label="Bildirishnomalar" data-translate="sidebar_notifications">
-              <span class="icon-action-symbol" aria-hidden="true">
-                <svg viewBox="0 0 24 24" role="presentation">
-                  <path d="M12 4a4 4 0 0 0-4 4v1.4c0 .8-.24 1.58-.68 2.24L6 14h12l-1.32-2.36A4.5 4.5 0 0 1 16 9.4V8a4 4 0 0 0-4-4Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                  <path d="M10 18a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
-                </svg>
-              </span>
+            <button id="topbarNotificationsButton" type="button" class="icon-btn topbar-bell-btn" aria-label="Bildirishnomalar" data-translate-title="sidebar_notifications">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path d="M12 4a4 4 0 0 0-4 4v1.4c0 .8-.24 1.58-.68 2.24L6 14h12l-1.32-2.36A4.5 4.5 0 0 1 16 9.4V8a4 4 0 0 0-4-4Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+                <path d="M10 18a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
+              </svg>
+              <span id="topbarNotificationBadge" class="notification-badge hidden" aria-hidden="true">0</span>
             </button>
-            <div class="language-menu-shell">
+            <div class="language-switcher language-menu-shell">
               <button
                 id="languageMenuButton"
                 type="button"
-                class="topbar-btn"
+                class="icon-btn language-switcher-btn"
                 aria-haspopup="menu"
                 aria-expanded="false"
                 aria-controls="languageDropdown"
+                aria-label="Til"
+                title="Til"
+                data-translate-title="language"
               >
-                <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                <span id="languageMenuLabel">Til</span>
-                <strong id="currentLanguageLabel">O'zbek tili</strong>
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span class="sr-only" id="languageMenuLabel">Til</span>
+                <span class="sr-only" id="currentLanguageLabel">O'zbekcha</span>
               </button>
               <div id="languageDropdown" class="language-dropdown hidden" role="menu">
                 <button type="button" class="language-option" data-language="uz">O'zbekcha</button>
@@ -314,17 +337,14 @@
               <button
                 id="profileMenuButton"
                 type="button"
-                class="profile-chip profile-chip-button"
+                class="profile-chip profile-chip-button topbar-profile-btn"
                 aria-haspopup="menu"
                 aria-expanded="false"
                 aria-controls="profileDropdown"
-                style="padding: 0.4rem 0.7rem; display: flex; align-items: center; gap: 8px; background: white; border-radius: 50px; border: 1.5px solid var(--line); cursor: pointer; transition: all 0.2s ease;"
               >
-                <div id="profileButtonAvatar" style="width: 28px; height: 28px; border-radius: 50%; background: rgba(23,74,139,0.15); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; color: var(--accent); flex-shrink: 0;">
-                  MM
-                </div>
-                <strong id="topbarUserLabel" style="font-weight: 600; font-size: 11px; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Mehmon</strong>
-                <svg id="profileMenuChevron" viewBox="0 0 24 24" width="16" height="16" style="color: var(--muted); transition: transform 0.3s ease; margin-left: 2px; flex-shrink: 0;"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <div id="profileButtonAvatar" class="topbar-profile-avatar">MM</div>
+                <strong id="topbarUserLabel" class="topbar-profile-name">Mehmon</strong>
+                <svg id="profileMenuChevron" class="topbar-profile-chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
               </button>
               <div id="profileDropdown" class="profile-dropdown hidden" role="menu">
   
@@ -509,6 +529,8 @@
   <span id="profileDeptIcon" style="display:none;"></span>
   <span id="profileUnitIcon" style="display:none;"></span>
 </div>
+            </div>
+            </div>
           </div>
         </section>
 

@@ -155,6 +155,9 @@ const languageDropdown = document.getElementById("languageDropdown");
 const currentLanguageLabel = document.getElementById("currentLanguageLabel");
 const languageOptions = document.querySelectorAll(".language-option");
 const topbarNotificationsButton = document.getElementById("topbarNotificationsButton");
+const topbarNotificationBadge = document.getElementById("topbarNotificationBadge");
+const topbarPanel = document.getElementById("topbarPanel");
+const topbarMobileToggle = document.getElementById("topbarMobileToggle");
 const dashboardWelcomeName = document.getElementById("dashboardWelcomeName");
 const unreadNotificationsValue = document.getElementById("unreadNotificationsValue");
 const approvedLeavesShortcutValue = document.getElementById("approvedLeavesShortcutValue");
@@ -3131,12 +3134,18 @@ function requestCreationWarning(type) {
 }
 
 function updateCurrentLanguageLabel() {
+  const label = languageNames[state.language] || languageNames.uz;
   if (currentLanguageLabel) {
-    currentLanguageLabel.textContent = languageNames[state.language] || languageNames.uz;
+    currentLanguageLabel.textContent = label;
   }
   if (loginCurrentLanguageLabel) {
-    loginCurrentLanguageLabel.textContent = languageNames[state.language] || languageNames.uz;
+    loginCurrentLanguageLabel.textContent = label;
   }
+  const langTitle = `${t("language")}: ${label}`;
+  languageMenuButton?.setAttribute("aria-label", langTitle);
+  languageMenuButton?.setAttribute("title", langTitle);
+  loginLanguageButton?.setAttribute("aria-label", langTitle);
+  loginLanguageButton?.setAttribute("title", langTitle);
 }
 
 function setFieldText(form, fieldName, labelText, placeholderText) {
@@ -3237,8 +3246,8 @@ function applyTranslations() {
   if (topbarUserLabel && !state.currentUser?.full_name) {
     topbarUserLabel.textContent = t("guest");
   }
-  if (languageMenuButton?.querySelector("span")) {
-    languageMenuButton.querySelector("span").textContent = t("language");
+  if (languageMenuButton?.querySelector("#languageMenuLabel")) {
+    languageMenuButton.querySelector("#languageMenuLabel").textContent = t("language");
   }
   if (refreshAllButton) refreshAllButton.setAttribute("aria-label", t("refresh"));
   if (createMenuButton?.querySelector("#createMenuLabel")) {
@@ -4985,8 +4994,18 @@ async function resolveAttachmentIdFromInput(rawValue) {
   }
 }
 
-function makeEmptyRow(colspan, text) {
-  return `<tr><td colspan="${colspan}" class="empty-state">${text}</td></tr>`;
+function makeEmptyRow(colspan, text, withIcon = false) {
+  if (!withIcon) {
+    return `<tr><td colspan="${colspan}" class="empty-state">${text}</td></tr>`;
+  }
+  return `<tr><td colspan="${colspan}" class="empty-state-cell">
+    <div class="empty-state-content">
+      <span class="empty-state-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6M9 15h6M9 11h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m9 17 2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span>${text}</span>
+    </div>
+  </td></tr>`;
 }
 
 function renderUserDepartmentOptions() {
@@ -5158,7 +5177,7 @@ function renderReports() {
   });
 
   if (!filteredReports.length) {
-    reportsTableBody.innerHTML = makeEmptyRow(6, t("no_reports_found"));
+    reportsTableBody.innerHTML = makeEmptyRow(6, t("no_reports_found"), true);
     return;
   }
 
@@ -5769,6 +5788,10 @@ function renderNotificationDashboardCard() {
   }
   if (unreadNotificationsBadgeCount) {
     unreadNotificationsBadgeCount.textContent = String(unread);
+  }
+  if (topbarNotificationBadge) {
+    topbarNotificationBadge.textContent = unread > 99 ? "99+" : String(unread);
+    topbarNotificationBadge.classList.toggle("hidden", unread === 0);
   }
   if (approvedNotificationsCount) {
     approvedNotificationsCount.textContent = String(approvedReview);
@@ -7480,15 +7503,12 @@ loginLanguageButton?.addEventListener("click", (event) => {
 loginLanguageDropdown?.addEventListener("click", (event) => {
   event.stopPropagation();
 });
-loginThemeToggleButton?.addEventListener("click", (event) => {
-  event.stopPropagation();
-  toggleTheme(loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
-});
 document?.addEventListener("click", () => {
   toggleProfileMenu(false);
   toggleCreateMenu(false);
   toggleLanguageMenu(false);
   toggleLoginLanguageMenu(false);
+  toggleTopbarMobileMenu(false);
 });
 sectionModalBackdrop?.addEventListener("click", closeSectionModal);
 sectionModalClose?.addEventListener("click", closeSectionModal);
@@ -7503,6 +7523,7 @@ document?.addEventListener("keydown", (event) => {
       toggleCreateMenu(false);
       toggleLanguageMenu(false);
       toggleLoginLanguageMenu(false);
+      toggleTopbarMobileMenu(false);
       closeSectionModal();
       closeQuickCreate();
       closeCreationWarning(false);
@@ -8004,6 +8025,15 @@ function getPreferredTheme() {
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   document.body.setAttribute("data-theme", theme);
+  document.documentElement.classList.toggle("dark", theme === "dark");
+}
+
+function toggleTopbarMobileMenu(forceOpen) {
+  if (!topbarPanel || !topbarMobileToggle) return;
+  const shouldOpen =
+    typeof forceOpen === "boolean" ? forceOpen : !topbarPanel.classList.contains("menu-open");
+  topbarPanel.classList.toggle("menu-open", shouldOpen);
+  topbarMobileToggle.setAttribute("aria-expanded", String(shouldOpen));
 }
 
 function initTheme() {
@@ -8018,16 +8048,21 @@ function initTheme() {
   updateThemeIcons(preferredTheme, loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
 
   if (themeToggleButton) {
-    themeToggleButton?.addEventListener("click", () => toggleTheme(themeToggleButton, themeIconSun, themeIconMoon));
+    themeToggleButton.addEventListener("click", () => toggleTheme());
   }
-  // FIXED: Add login page theme toggle listener
   if (loginThemeToggleButton) {
-    loginThemeToggleButton?.addEventListener("click", () => toggleTheme(loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon));
+    loginThemeToggleButton.addEventListener("click", () => toggleTheme());
   }
 }
 
+topbarMobileToggle?.addEventListener("click", (event) => {
+  event.stopPropagation();
+  toggleTopbarMobileMenu();
+});
+
 function updateThemeIcons(theme, themeToggleButton, themeIconSun, themeIconMoon) {
-  if (theme === "dark") {
+  const isDark = theme === "dark";
+  if (isDark) {
     themeIconSun?.classList.add("hidden");
     themeIconMoon?.classList.remove("hidden");
   } else {
@@ -8035,20 +8070,27 @@ function updateThemeIcons(theme, themeToggleButton, themeIconSun, themeIconMoon)
     themeIconMoon?.classList.add("hidden");
   }
 
+  themeToggleButton?.classList.toggle("is-dark", isDark);
   themeToggleButton?.setAttribute(
     "aria-label",
-    theme === "dark" ? t("switch_to_light") : t("switch_to_dark")
+    isDark ? t("switch_to_light") : t("switch_to_dark")
+  );
+  themeToggleButton?.setAttribute(
+    "title",
+    isDark ? t("switch_to_light") : t("switch_to_dark")
   );
 }
 
-function toggleTheme(themeToggleButton, themeIconSun, themeIconMoon) {
+function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
   const newTheme = currentTheme === "dark" ? "light" : "dark";
   applyTheme(newTheme);
   window.localStorage.setItem("hrmm_theme", newTheme);
+  const themeToggleButton = document.getElementById("themeToggleButton");
+  const themeIconSun = document.getElementById("themeIconSun");
+  const themeIconMoon = document.getElementById("themeIconMoon");
   updateThemeIcons(newTheme, themeToggleButton, themeIconSun, themeIconMoon);
   updateThemeIcons(newTheme, loginThemeToggleButton, loginThemeIconSun, loginThemeIconMoon);
-  console.debug("Theme toggled", { currentTheme, newTheme });
   setMessage(newTheme === "dark" ? t("dark_mode_enabled") : t("light_mode_enabled"), "info");
 }
 
