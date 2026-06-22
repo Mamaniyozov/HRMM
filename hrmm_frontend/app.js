@@ -18,6 +18,7 @@ const state = {
   themeId: window.localStorage.getItem("hrmm_theme_id") || window.localStorage.getItem("hrmm_theme") || "classic-dark",
   themeMode: window.localStorage.getItem("hrmm_theme_mode") || "single",
   increaseContrast: window.localStorage.getItem("hrmm_increase_contrast") === "true",
+  bgEffect: window.localStorage.getItem("hrmm_bg_effect") || "none",
   accessToken: "",
   refreshToken: "",
   currentUser: null,
@@ -185,6 +186,7 @@ const refreshAllButton = document.getElementById("refreshAllButton");
 const navLinks = document.querySelectorAll(".nav-link");
 const themeModeSelect = document.getElementById("themeModeSelect");
 const themeCardGrid = document.getElementById("themeCardGrid");
+const backgroundEffectSelect = document.getElementById("backgroundEffectSelect");
 const increaseContrastToggle = document.getElementById("increaseContrastToggle");
 
 const roleFilter = document.getElementById("roleFilter");
@@ -1607,6 +1609,12 @@ const newTranslations = {
     otp_status_enter_code: "Authenticator kodini kiriting.",
     preferences: "Afzalliklar",
     appearance_settings: "Tashqi ko'rinish sozlamalari",
+    background_effect: "Animatsion fon",
+    bg_none: "Yo'q",
+    bg_particles: "Zarrachalar tarmog'i",
+    bg_matrix: "Matritsa yomg'iri",
+    bg_mesh: "Suyuq gradient",
+    bg_cosmos: "Kosmos va galaktika",
     appearance_copy: "HRMM sizga qanday ko'rinishini tanlang. Mavzuni tanlang - tanlovingiz darhol qo'llaniladi va avtomatik ravishda saqlanadi.",
     theme_mode: "Mavzu rejimi",
     single_theme: "Yagona mavzu",
@@ -2035,6 +2043,12 @@ const newTranslations = {
     otp_status_enter_code: "Введите код Authenticator.",
     preferences: "Настройки",
     appearance_settings: "Настройки внешнего вида",
+    background_effect: "Анимированный фон",
+    bg_none: "Нет",
+    bg_particles: "Сеть частиц",
+    bg_matrix: "Цифровой дождь",
+    bg_mesh: "Жидкий градиент",
+    bg_cosmos: "Космос и галактика",
     appearance_copy: "Выберите, как HRMM выглядит для вас. Выберите тему — ваш выбор применяется немедленно и сохраняется автоматически.",
     theme_mode: "Режим темы",
     single_theme: "Один режим",
@@ -2463,6 +2477,12 @@ const newTranslations = {
     otp_status_enter_code: "Enter the Authenticator code.",
     preferences: "Preferences",
     appearance_settings: "Appearance settings",
+    background_effect: "Animated background",
+    bg_none: "None",
+    bg_particles: "Particle network",
+    bg_matrix: "Matrix rain",
+    bg_mesh: "Liquid gradient",
+    bg_cosmos: "Cosmos & galaxy",
     appearance_copy: "Choose how HRMM looks to you. Select a theme - your choice is applied immediately and saved automatically.",
     theme_mode: "Theme mode",
     single_theme: "Single theme",
@@ -2891,6 +2911,12 @@ const newTranslations = {
     otp_status_enter_code: "Authenticator kodunu girin.",
     preferences: "Tercihler",
     appearance_settings: "Görünüm ayarları",
+    background_effect: "Animasyonlu arka plan",
+    bg_none: "Yok",
+    bg_particles: "Parçacık ağı",
+    bg_matrix: "Matrix yağmuru",
+    bg_mesh: "Sıvı gradyan",
+    bg_cosmos: "Kozmos ve galaksi",
     appearance_copy: "HRMM'nin size nasıl görüneceğini seçin. Bir tema seçin - seçiminiz hemen uygulanır ve otomatik olarak kaydedilir.",
     theme_mode: "Tema modu",
     single_theme: "Tek tema",
@@ -8401,6 +8427,227 @@ function bindSystemThemeSync() {
   themeMediaQuery.addListener?.(syncHandler);
 }
 
+// ===== Animated background effects =====
+const BG_EFFECTS = ["none", "particles", "matrix", "mesh", "cosmos"];
+const bgEffectCanvas = document.getElementById("bgEffectCanvas");
+let bgEffectRaf = null;
+let bgEffectResizeHandler = null;
+const bgEffectMouse = { x: -9999, y: -9999 };
+
+function normalizeBgEffect(value) {
+  return BG_EFFECTS.includes(value) ? value : "none";
+}
+
+function persistBgEffect() {
+  window.localStorage.setItem("hrmm_bg_effect", normalizeBgEffect(state.bgEffect));
+}
+
+function stopBgEffect() {
+  if (bgEffectRaf) {
+    cancelAnimationFrame(bgEffectRaf);
+    bgEffectRaf = null;
+  }
+  if (bgEffectResizeHandler) {
+    window.removeEventListener("resize", bgEffectResizeHandler);
+    bgEffectResizeHandler = null;
+  }
+}
+
+function setupBgCanvas(onResize) {
+  const canvas = bgEffectCanvas;
+  const ctx = canvas.getContext("2d");
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    if (typeof onResize === "function") onResize();
+  };
+  resize();
+  bgEffectResizeHandler = resize;
+  window.addEventListener("resize", resize);
+  return ctx;
+}
+
+function startParticlesEffect() {
+  const canvas = bgEffectCanvas;
+  const ctx = setupBgCanvas();
+  let points = [];
+  const seed = () => {
+    const count = Math.max(40, Math.min(120, Math.floor((canvas.width * canvas.height) / 16000)));
+    points = Array.from({ length: count }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+    }));
+  };
+  seed();
+  const draw = () => {
+    const w = canvas.width;
+    const h = canvas.height;
+    const bg = ctx.createLinearGradient(0, 0, w, h);
+    bg.addColorStop(0, "#070a1c");
+    bg.addColorStop(1, "#0d0a24");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+    for (const p of points) {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
+      const dx = bgEffectMouse.x - p.x;
+      const dy = bgEffectMouse.y - p.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 160) {
+        p.x += dx * 0.012;
+        p.y += dy * 0.012;
+      }
+    }
+    for (let i = 0; i < points.length; i++) {
+      for (let j = i + 1; j < points.length; j++) {
+        const dx = points[i].x - points[j].x;
+        const dy = points[i].y - points[j].y;
+        const d = Math.hypot(dx, dy);
+        if (d < 130) {
+          ctx.strokeStyle = `rgba(86, 180, 255, ${(1 - d / 130) * 0.45})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(points[i].x, points[i].y);
+          ctx.lineTo(points[j].x, points[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    for (const p of points) {
+      ctx.fillStyle = "#7dd3fc";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    bgEffectRaf = requestAnimationFrame(draw);
+  };
+  bgEffectResizeHandler = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    seed();
+  };
+  window.addEventListener("resize", bgEffectResizeHandler);
+  draw();
+}
+
+function startMatrixEffect() {
+  const canvas = bgEffectCanvas;
+  const fontSize = 16;
+  let drops = [];
+  const ctx = setupBgCanvas(() => {
+    const columns = Math.floor(canvas.width / fontSize);
+    drops = Array.from({ length: columns }, () => Math.random() * -50);
+  });
+  const columns = Math.floor(canvas.width / fontSize);
+  drops = Array.from({ length: columns }, () => Math.random() * -50);
+  const chars = "アイウエオカキクケコサシスセソタチツテト0123456789ABCDEF<>/\\{}[]=+*";
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const draw = () => {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#15ff6a";
+    ctx.font = `${fontSize}px monospace`;
+    for (let i = 0; i < drops.length; i++) {
+      const ch = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+    bgEffectRaf = requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+function startCosmosEffect() {
+  const canvas = bgEffectCanvas;
+  let stars = [];
+  const seed = () => {
+    const count = Math.max(120, Math.min(320, Math.floor((canvas.width * canvas.height) / 8000)));
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.4 + 0.2,
+      tw: Math.random() * Math.PI * 2,
+      sp: Math.random() * 0.02 + 0.004,
+    }));
+  };
+  const ctx = setupBgCanvas(seed);
+  seed();
+  const draw = () => {
+    const w = canvas.width;
+    const h = canvas.height;
+    const base = ctx.createLinearGradient(0, 0, w, h);
+    base.addColorStop(0, "#05030f");
+    base.addColorStop(0.5, "#0a0820");
+    base.addColorStop(1, "#03020a");
+    ctx.fillStyle = base;
+    ctx.fillRect(0, 0, w, h);
+    const nebulae = [
+      ["rgba(123, 80, 220, 0.22)", w * 0.34, h * 0.4, Math.max(w, h) * 0.42],
+      ["rgba(220, 80, 160, 0.16)", w * 0.72, h * 0.62, Math.max(w, h) * 0.36],
+      ["rgba(60, 120, 230, 0.15)", w * 0.55, h * 0.28, Math.max(w, h) * 0.3],
+    ];
+    for (const [color, x, y, rad] of nebulae) {
+      const rg = ctx.createRadialGradient(x, y, 0, x, y, rad);
+      rg.addColorStop(0, color);
+      rg.addColorStop(1, "transparent");
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, w, h);
+    }
+    for (const s of stars) {
+      s.tw += s.sp;
+      const alpha = 0.45 + Math.sin(s.tw) * 0.45;
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    bgEffectRaf = requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+function applyBgEffect(effect) {
+  const value = normalizeBgEffect(effect);
+  state.bgEffect = value;
+  stopBgEffect();
+  document.body.classList.remove(
+    "bg-effect-particles",
+    "bg-effect-matrix",
+    "bg-effect-mesh",
+    "bg-effect-cosmos"
+  );
+  document.body.classList.toggle("bg-effect-active", value !== "none");
+  if (value === "none") return;
+  document.body.classList.add(`bg-effect-${value}`);
+  if (value === "mesh") return; // handled purely with CSS
+  if (!bgEffectCanvas) return;
+  if (document.visibilityState !== "visible") return;
+  if (value === "particles") startParticlesEffect();
+  else if (value === "matrix") startMatrixEffect();
+  else if (value === "cosmos") startCosmosEffect();
+}
+
+window.addEventListener("mousemove", (event) => {
+  bgEffectMouse.x = event.clientX;
+  bgEffectMouse.y = event.clientY;
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    stopBgEffect();
+  } else if (state.bgEffect && state.bgEffect !== "none") {
+    applyBgEffect(state.bgEffect);
+  }
+});
+
 function initAppearanceSettings() {
   state.themeId = normalizeThemeId(state.themeId);
   state.themeMode = state.themeMode === "system" ? "system" : "single";
@@ -8410,6 +8657,15 @@ function initAppearanceSettings() {
   renderThemeCards();
   applyTheme(getActiveThemeId());
   bindSystemThemeSync();
+
+  state.bgEffect = normalizeBgEffect(state.bgEffect);
+  if (backgroundEffectSelect) backgroundEffectSelect.value = state.bgEffect;
+  applyBgEffect(state.bgEffect);
+  backgroundEffectSelect?.addEventListener("change", () => {
+    state.bgEffect = normalizeBgEffect(backgroundEffectSelect.value);
+    persistBgEffect();
+    applyBgEffect(state.bgEffect);
+  });
 
   themeModeSelect?.addEventListener("change", () => {
     state.themeMode = themeModeSelect.value === "system" ? "system" : "single";

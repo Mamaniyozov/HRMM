@@ -917,6 +917,22 @@ body {
   cursor: pointer;
 }
 
+.language-option,
+.login-language-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lang-flag {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
 .language-option:hover,
 .create-menu-item:hover {
   background: var(--accent-bg);
@@ -4647,4 +4663,58 @@ td {
     align-items: stretch;
     flex-direction: column;
   }
+}
+
+/* ===== Animated background effects ===== */
+#bgEffectLayer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#bgEffectCanvas {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+#bgEffectMesh {
+  display: none;
+  position: absolute;
+  inset: -25%;
+  filter: blur(70px);
+  background:
+    radial-gradient(at 20% 30%, #ffb38a 0px, transparent 45%),
+    radial-gradient(at 78% 18%, #f7a8c0 0px, transparent 45%),
+    radial-gradient(at 72% 82%, #b9a6ff 0px, transparent 45%),
+    radial-gradient(at 28% 74%, #9bf0c4 0px, transparent 45%),
+    radial-gradient(at 50% 50%, #8ec5ff 0px, transparent 55%),
+    #1b1630;
+}
+
+body.bg-effect-active {
+  background: transparent !important;
+}
+
+body.bg-effect-active.bg-effect-particles #bgEffectCanvas,
+body.bg-effect-active.bg-effect-matrix #bgEffectCanvas,
+body.bg-effect-active.bg-effect-cosmos #bgEffectCanvas {
+  display: block;
+}
+
+body.bg-effect-active.bg-effect-mesh #bgEffectMesh {
+  display: block;
+  animation: bgMeshMove 22s ease-in-out infinite alternate;
+}
+
+@keyframes bgMeshMove {
+  0% { transform: translate3d(-4%, -3%, 0) scale(1.05) rotate(0deg); }
+  50% { transform: translate3d(4%, 2%, 0) scale(1.15) rotate(8deg); }
+  100% { transform: translate3d(-2%, 4%, 0) scale(1.08) rotate(-6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #bgEffectMesh { animation: none; }
 }

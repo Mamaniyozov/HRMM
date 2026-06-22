@@ -10,10 +10,14 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=6" />
     <!-- API BASE INJECTION -->
   </head>
   <body>
+    <div id="bgEffectLayer" aria-hidden="true">
+      <canvas id="bgEffectCanvas"></canvas>
+      <div id="bgEffectMesh"></div>
+    </div>
     <section id="loginView" class="login-view">
       <div class="login-showcase">
         <div class="login-copy">
@@ -73,10 +77,10 @@
                   <span class="sr-only" id="loginCurrentLanguageLabel">O'zbekcha</span>
                 </button>
                 <div id="loginLanguageDropdown" class="language-dropdown hidden" role="menu">
-                  <button type="button" class="language-option login-language-option" data-language="uz">O'zbekcha</button>
-                  <button type="button" class="language-option login-language-option" data-language="ru">Русский</button>
-                  <button type="button" class="language-option login-language-option" data-language="en">English</button>
-                  <button type="button" class="language-option login-language-option" data-language="tr">Türkçe</button>
+                  <button type="button" class="language-option login-language-option" data-language="uz"><svg class="lang-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="5" fill="#0099b5"/><rect y="11" width="24" height="5" fill="#1eb53a"/><rect y="5" width="24" height="1" fill="#ce1126"/><rect y="10" width="24" height="1" fill="#ce1126"/><circle cx="4.5" cy="2.6" r="1.5" fill="#fff"/></svg><span>O'zbekcha</span></button>
+                  <button type="button" class="language-option login-language-option" data-language="ru"><svg class="lang-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect y="5.33" width="24" height="5.33" fill="#0039a6"/><rect y="10.66" width="24" height="5.34" fill="#d52b1e"/></svg><span>Русский</span></button>
+                  <button type="button" class="language-option login-language-option" data-language="en"><svg class="lang-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0 24 16M24 0 0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0 24 16M24 0 0 16" stroke="#c8102e" stroke-width="1.6"/><rect x="9.6" width="4.8" height="16" fill="#fff"/><rect y="5.6" width="24" height="4.8" fill="#fff"/><rect x="10.8" width="2.4" height="16" fill="#c8102e"/><rect y="6.8" width="24" height="2.4" fill="#c8102e"/></svg><span>English</span></button>
+                  <button type="button" class="language-option login-language-option" data-language="tr"><svg class="lang-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#e30a17"/><circle cx="9" cy="8" r="3.6" fill="#fff"/><circle cx="10.2" cy="8" r="2.9" fill="#e30a17"/><path d="M14 5.8l0.7 1.9 2 0.1-1.6 1.2 0.6 1.9-1.7-1.1-1.7 1.1 0.6-1.9-1.6-1.2 2-0.1z" fill="#fff"/></svg><span>Türkçe</span></button>
                 </div>
               </div>
             </div>
@@ -321,10 +325,10 @@
                 <span class="sr-only" id="currentLanguageLabel">O'zbekcha</span>
               </button>
               <div id="languageDropdown" class="language-dropdown hidden" role="menu">
-                <button type="button" class="language-option" data-language="uz">O'zbekcha</button>
-                <button type="button" class="language-option" data-language="ru">Русский</button>
-                <button type="button" class="language-option" data-language="en">English</button>
-                <button type="button" class="language-option" data-language="tr">Türkçe</button>
+                <button type="button" class="language-option" data-language="uz"><svg class="lang-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect width="24" height="5" fill="#0099b5"/><rect y="11" width="24" height="5" fill="#1eb53a"/><rect y="5" width="24" height="1" fill="#ce1126"/><rect y="10" width="24" height="1" fill="#ce1126"/><circle cx="4.5" cy="2.6" r="1.5" fill="#fff"/></svg><span>O'zbekcha</span></button>
+                <button type="button" class="language-option" data-language="ru"><svg class="lang-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect y="5.33" width="24" height="5.33" fill="#0039a6"/><rect y="10.66" width="24" height="5.34" fill="#d52b1e"/></svg><span>Русский</span></button>
+                <button type="button" class="language-option" data-language="en"><svg class="lang-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0 24 16M24 0 0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0 24 16M24 0 0 16" stroke="#c8102e" stroke-width="1.6"/><rect x="9.6" width="4.8" height="16" fill="#fff"/><rect y="5.6" width="24" height="4.8" fill="#fff"/><rect x="10.8" width="2.4" height="16" fill="#c8102e"/><rect y="6.8" width="24" height="2.4" fill="#c8102e"/></svg><span>English</span></button>
+                <button type="button" class="language-option" data-language="tr"><svg class="lang-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#e30a17"/><circle cx="9" cy="8" r="3.6" fill="#fff"/><circle cx="10.2" cy="8" r="2.9" fill="#e30a17"/><path d="M14 5.8l0.7 1.9 2 0.1-1.6 1.2 0.6 1.9-1.7-1.1-1.7 1.1 0.6-1.9-1.6-1.2 2-0.1z" fill="#fff"/></svg><span>Türkçe</span></button>
               </div>
             </div>
             <div class="profile-menu-shell">
@@ -1252,6 +1256,16 @@
                 <option value="system" data-translate="sync_with_system">Sync with system</option>
               </select>
             </label>
+            <label class="appearance-mode-field">
+              <span data-translate="background_effect">Animated background</span>
+              <select id="backgroundEffectSelect" aria-label="Animated background">
+                <option value="none" data-translate="bg_none">None</option>
+                <option value="particles" data-translate="bg_particles">Particle network</option>
+                <option value="matrix" data-translate="bg_matrix">Matrix rain</option>
+                <option value="mesh" data-translate="bg_mesh">Liquid gradient</option>
+                <option value="cosmos" data-translate="bg_cosmos">Cosmos & galaxy</option>
+              </select>
+            </label>
           </div>
 
           <div id="themeCardGrid" class="theme-card-grid" role="radiogroup" aria-label="Theme choices"></div>
@@ -1460,6 +1474,6 @@
     </div>
 
       <script src="./themes.js?v=6"></script>
-      <script src="./app.js?v=6"></script>
+      <script src="./app.js?v=7"></script>
     </body>
   </html>
