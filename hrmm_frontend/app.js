@@ -1655,6 +1655,7 @@ const newTranslations = {
     creation_warning_report_item4_title: "Bir xil hujjatni takror yaratmaslik kerak.",
     creation_warning_report_item4_text: "Shu mavzuda avval hujjat bo'lsa, yangisini ochishdan oldin mavjudini tekshirib chiqing.",
     creation_warning_confirm: "Tushunarli",
+    confirm_reject_action: "Haqiqatan ham rad etmoqchimisiz?",
     label_element: "Element",
     status_pending: "Kutilmoqda",
     status_approved: "Tasdiqlangan",
@@ -2110,6 +2111,7 @@ const newTranslations = {
     creation_warning_report_item4_title: "Не следует повторно создавать одинаковый документ.",
     creation_warning_report_item4_text: "Если по этой теме уже есть документ, перед созданием нового проверьте существующий.",
     creation_warning_confirm: "Понятно",
+    confirm_reject_action: "Вы действительно хотите отклонить?",
     label_element: "Элемент",
     status_pending: "В ожидании",
     status_approved: "Утверждено",
@@ -2565,6 +2567,7 @@ const newTranslations = {
     creation_warning_report_item4_title: "The same document should not be created repeatedly.",
     creation_warning_report_item4_text: "If there is already a document on this topic, check the existing one before opening a new one.",
     creation_warning_confirm: "Understood",
+    confirm_reject_action: "Are you sure you want to reject?",
     label_element: "Element",
     status_pending: "Pending",
     status_approved: "Approved",
@@ -3020,6 +3023,7 @@ const newTranslations = {
     creation_warning_report_item4_title: "Aynı belge tekrar oluşturulmamalıdır.",
     creation_warning_report_item4_text: "Bu konuda daha önce belge varsa, yenisini açmadan önce mevcut olanı kontrol edin.",
     creation_warning_confirm: "Anlaşıldı",
+    confirm_reject_action: "Gerçekten reddetmek istiyor musunuz?",
     label_element: "Öğe",
     status_pending: "Beklemede",
     status_approved: "Onaylanan",
@@ -7460,6 +7464,10 @@ workflowForm?.addEventListener("submit", async (event) => {
       return;
     }
 
+    if (action === "REJECT") {
+      if (!confirm(t("confirm_reject_action"))) return;
+    }
+
     if (action === "REQUEST_REVISION" && !comment) {
       setMessage(t("msg_comment_required_revision"), "error");
       return;
@@ -7506,6 +7514,10 @@ leaveReviewForm?.addEventListener("submit", async (event) => {
   if (!isUuid(leaveId)) {
     setMessage(t("msg_leave_id_invalid"), "error");
     return;
+  }
+
+  if (action === "REJECT") {
+    if (!confirm(t("confirm_reject_action"))) return;
   }
 
   try {
