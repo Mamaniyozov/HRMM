@@ -4691,3 +4691,36 @@ body.bg-effect-active {
 body.bg-effect-active #bgEffectCanvas {
   display: block;
 }
+
+/* ===== Text contrast guarantee: dark text on light themes, light text on dark themes ===== */
+[data-theme-mode] td,
+[data-theme-mode] th,
+[data-theme-mode] .panel,
+[data-theme-mode] .feed-card,
+[data-theme-mode] .feed-item,
+[data-theme-mode] .summary-card,
+[data-theme-mode] .summary-card span,
+[data-theme-mode] .metric-card,
+[data-theme-mode] .metric-card span,
+[data-theme-mode] .status-pill,
+[data-theme-mode] .pill,
+[data-theme-mode] .dashboard-badge.neutral {
+  color: var(--text-primary);
+}
+
+[data-theme-mode] .nav-link.active,
+[data-theme-mode] .language-option:hover,
+[data-theme-mode] .login-language-option:hover,
+[data-theme-mode] .create-menu-item:hover,
+[data-theme-mode] .ghost-btn:hover,
+[data-theme-mode] .topbar-btn:hover,
+[data-theme-mode] .dashboard-filter-chip:hover,
+[data-theme-mode] .dashboard-badge:hover {
+  color: var(--text-primary);
+}
+
+/* Muted/secondary text still adapts via tokens (already readable on both modes) */
+[data-theme-mode] .summary-card span.card-label,
+[data-theme-mode] .metric-card span.card-label {
+  color: var(--text-muted);
+}
