@@ -1624,6 +1624,19 @@ button.dashboard-filter-chip {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* Ensure form fields expand to full width in report and leave panels */
+#reportForm,
+#leaveCreateForm {
+  width: 100%;
+  max-width: none;
+}
+
+#reportForm label,
+#leaveCreateForm label {
+  width: 100%;
+  max-width: none;
+}
+
 label {
   display: grid;
   gap: 6px;

@@ -1636,6 +1636,15 @@ const newTranslations = {
     creation_warning_leave_item3_text: "Pasport, parol, shaxsiy tibbiy tafsilotlar yoki boshqa nozik ma'lumotlarni yozmang.",
     creation_warning_leave_item4_title: "Takroriy ariza yuborilmasligi kerak.",
     creation_warning_leave_item4_text: "Shu davr uchun oldin ariza yuborilgan bo'lsa, yangisini emas, mavjudini tekshiring.",
+    creation_warning_feature_title: "Funksiya talabi yuborishda e'tiborga olish kerak bo'lgan jihatlar",
+    creation_warning_feature_item1_title: "Talab aniq va oqilona bo'lishi kerak.",
+    creation_warning_feature_item1_text: "Funksiya qanday ishlashi va qanday muammoni hal qilishi haqida tushuntiring.",
+    creation_warning_feature_item2_title: "Maxfiy ma'lumot kiritilmasligi kerak.",
+    creation_warning_feature_item2_text: "Parol, login yoki boshqa maxfiy ma'lumotlarni talab matniga yozmang.",
+    creation_warning_feature_item3_title: "Takroriy talab yuborilmasligi kerak.",
+    creation_warning_feature_item3_text: "Shu funksiya uchun oldin talab yuborilgan bo'lsa, yangisini emas, mavjudini qo'llab-quvvatlang.",
+    creation_warning_feature_item4_title: "Matn ixcham va tushunarli bo'lishi kerak.",
+    creation_warning_feature_item4_text: "Qisqa, aniq va hammaga bir xil tushuniladigan uslubdan foydalaning.",
     creation_warning_report_title: "Hujjat yaratishda e'tiborga olish kerak bo'lgan jihatlar",
     creation_warning_report_item1_title: "Sarlavha mazmunga mos va rasmiy bo'lishi kerak.",
     creation_warning_report_item1_text: "Hujjat nomi qisqa, aniq va keyinchalik qidiruvda topiladigan ko'rinishda yozilsin.",
@@ -1645,6 +1654,7 @@ const newTranslations = {
     creation_warning_report_item3_text: "Faqat ish jarayoniga tegishli ma'lumotlarni yozing, oshkor qilinmasligi kerak bo'lgan ma'lumotlarni kiritmang.",
     creation_warning_report_item4_title: "Bir xil hujjatni takror yaratmaslik kerak.",
     creation_warning_report_item4_text: "Shu mavzuda avval hujjat bo'lsa, yangisini ochishdan oldin mavjudini tekshirib chiqing.",
+    creation_warning_confirm: "Tushunarli",
     label_element: "Element",
     status_pending: "Kutilmoqda",
     status_approved: "Tasdiqlangan",
@@ -2081,6 +2091,15 @@ const newTranslations = {
     creation_warning_leave_item3_text: "Не указывайте паспортные данные, пароли, личную медицинскую информацию или другие деликатные сведения.",
     creation_warning_leave_item4_title: "Не следует отправлять повторную заявку.",
     creation_warning_leave_item4_text: "Если заявка на этот период уже отправлена, не создавайте новую, а проверьте существующую.",
+    creation_warning_feature_title: "Важные моменты при отправке запроса функции",
+    creation_warning_feature_item1_title: "Запрос должен быть четким и разумным.",
+    creation_warning_feature_item1_text: "Объясните, как функция должна работать и какую проблему она решает.",
+    creation_warning_feature_item2_title: "Нельзя вводить конфиденциальную информацию.",
+    creation_warning_feature_item2_text: "Не пишите пароль, логин или другие конфиденциальные данные в тексте запроса.",
+    creation_warning_feature_item3_title: "Не следует отправлять повторный запрос.",
+    creation_warning_feature_item3_text: "Если запрос на эту функцию уже отправлен, не создавайте новый, а поддержите существующий.",
+    creation_warning_feature_item4_title: "Текст должен быть кратким и понятным.",
+    creation_warning_feature_item4_text: "Используйте краткий, четкий и одинаково понятный для всех стиль.",
     creation_warning_report_title: "Важные моменты при создании документа",
     creation_warning_report_item1_title: "Заголовок должен соответствовать содержанию и быть официальным.",
     creation_warning_report_item1_text: "Название документа должно быть кратким, точным и легко находимым при поиске.",
@@ -2090,6 +2109,7 @@ const newTranslations = {
     creation_warning_report_item3_text: "Указывайте только информацию, относящуюся к рабочему процессу, не вводите данные, которые не должны быть раскрыты.",
     creation_warning_report_item4_title: "Не следует повторно создавать одинаковый документ.",
     creation_warning_report_item4_text: "Если по этой теме уже есть документ, перед созданием нового проверьте существующий.",
+    creation_warning_confirm: "Понятно",
     label_element: "Элемент",
     status_pending: "В ожидании",
     status_approved: "Утверждено",
@@ -2526,6 +2546,15 @@ const newTranslations = {
     creation_warning_leave_item3_text: "Do not write passport details, passwords, personal medical details or other sensitive information.",
     creation_warning_leave_item4_title: "Duplicate requests should not be sent.",
     creation_warning_leave_item4_text: "If a request has already been sent for this period, do not create a new one, check the existing one.",
+    creation_warning_feature_title: "Important points when submitting a feature request",
+    creation_warning_feature_item1_title: "The request must be clear and reasonable.",
+    creation_warning_feature_item1_text: "Explain how the function should work and what problem it solves.",
+    creation_warning_feature_item2_title: "Confidential information must not be entered.",
+    creation_warning_feature_item2_text: "Do not write password, login or other confidential data in the request text.",
+    creation_warning_feature_item3_title: "Duplicate requests should not be sent.",
+    creation_warning_feature_item3_text: "If a request for this function has already been sent, do not create a new one, support the existing one.",
+    creation_warning_feature_item4_title: "The text must be concise and understandable.",
+    creation_warning_feature_item4_text: "Use a short, clear, and equally understandable style for everyone.",
     creation_warning_report_title: "Important points when creating a document",
     creation_warning_report_item1_title: "The title must match the content and be official.",
     creation_warning_report_item1_text: "The document name should be short, precise and easily found in search.",
@@ -2535,6 +2564,7 @@ const newTranslations = {
     creation_warning_report_item3_text: "Write only information related to the work process, do not enter information that should not be disclosed.",
     creation_warning_report_item4_title: "The same document should not be created repeatedly.",
     creation_warning_report_item4_text: "If there is already a document on this topic, check the existing one before opening a new one.",
+    creation_warning_confirm: "Understood",
     label_element: "Element",
     status_pending: "Pending",
     status_approved: "Approved",
@@ -2971,6 +3001,15 @@ const newTranslations = {
     creation_warning_leave_item3_text: "Pasaport, şifre, kişisel tıbbi ayrıntılar veya diğer hassas bilgileri yazmayın.",
     creation_warning_leave_item4_title: "Tekrarlayan talep gönderilmemelidir.",
     creation_warning_leave_item4_text: "Bu dönem için daha önce talep gönderildiyse, yenisini değil, mevcut olanı kontrol edin.",
+    creation_warning_feature_title: "Özellik talebi gönderirken dikkat edilmesi gereken noktalar",
+    creation_warning_feature_item1_title: "Talep net ve mantıklı olmalıdır.",
+    creation_warning_feature_item1_text: "Fonksiyonun nasıl çalışacağını ve hangi sorunu çözeceğini açıklayın.",
+    creation_warning_feature_item2_title: "Gizli bilgi girilmemelidir.",
+    creation_warning_feature_item2_text: "Talep metnine şifre, giriş veya diğer gizli verileri yazmayın.",
+    creation_warning_feature_item3_title: "Tekrarlayan talep gönderilmemelidir.",
+    creation_warning_feature_item3_text: "Bu fonksiyon için daha önce talep gönderildiyse, yenisini değil, mevcut olanı destekleyin.",
+    creation_warning_feature_item4_title: "Metin kısa ve anlaşılır olmalıdır.",
+    creation_warning_feature_item4_text: "Kısa, net ve herkes için aynı derecede anlaşılır bir stil kullanın.",
     creation_warning_report_title: "Belge oluştururken dikkat edilmesi gereken noktalar",
     creation_warning_report_item1_title: "Başlık içeriğe uygun ve resmi olmalıdır.",
     creation_warning_report_item1_text: "Belge adı kısa, kesin ve daha sonra aramada bulunabilir şekilde yazılmalıdır.",
@@ -2980,6 +3019,7 @@ const newTranslations = {
     creation_warning_report_item3_text: "Sadece iş sürecine ilişkin bilgileri yazın, açıklanmaması gereken bilgileri girmeyin.",
     creation_warning_report_item4_title: "Aynı belge tekrar oluşturulmamalıdır.",
     creation_warning_report_item4_text: "Bu konuda daha önce belge varsa, yenisini açmadan önce mevcut olanı kontrol edin.",
+    creation_warning_confirm: "Anlaşıldı",
     label_element: "Öğe",
     status_pending: "Beklemede",
     status_approved: "Onaylanan",
@@ -3368,7 +3408,7 @@ function closeQuickCreate() {
 }
 
 function getCreationWarningConfig(type) {
-  const prefix = type === "notification" ? "creation_warning_notification" : type === "leave" ? "creation_warning_leave" : "creation_warning_report";
+  const prefix = type === "notification" ? "creation_warning_notification" : type === "leave" ? "creation_warning_leave" : type === "feature" ? "creation_warning_feature" : "creation_warning_report";
   return {
     title: t(`${prefix}_title`),
     items: [
@@ -7928,6 +7968,7 @@ createMenuItems.forEach((button) => {
 
 leaveCreateForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (!(await requestCreationWarning("leave"))) return;
   const formData = new FormData(leaveCreateForm);
   const leaveType = String(formData.get("leave_type") || "").trim();
   const reason = String(formData.get("reason") || "").trim();
@@ -8325,6 +8366,7 @@ quickCreateForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const mode = quickCreateType?.value || "notification";
   if (mode === "notification" && !(await requestCreationWarning("notification"))) return;
+  if (mode === "feature" && !(await requestCreationWarning("feature"))) return;
   const title = String(quickCreateTitleInput?.value || "").trim();
   const message = String(quickCreateMessageInput?.value || "").trim();
   if (!title || !message) {
