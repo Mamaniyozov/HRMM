@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <!-- API BASE INJECTION -->
   </head>
   <body>
@@ -692,6 +692,39 @@
             <a href="https://t.me/Muhammadyusuf_5538" target="_blank" rel="noopener noreferrer" class="primary-btn" data-translate="connect_help_center">
               Yordam markaziga ulanish
             </a>
+          </div>
+
+          <div id="systemLogsPanel" class="system-logs-panel hidden">
+            <div class="panel-heading inline">
+              <div>
+                <p class="eyebrow" data-translate="system_logs">Tizim loglari</p>
+                <h3 data-translate="system_logs_title">Log fayllar yig'ish tizimi</h3>
+              </div>
+              <div class="system-logs-actions">
+                <select id="systemLogsLevelFilter" aria-label="Log level">
+                  <option value="" data-translate="all">Hammasi</option>
+                  <option value="error">Error</option>
+                  <option value="warn">Warn</option>
+                  <option value="info">Info</option>
+                </select>
+                <button id="downloadSystemLogs" type="button" class="ghost-btn" data-translate="download_logs">Yuklab olish</button>
+                <button id="clearSystemLogs" type="button" class="ghost-btn" data-translate="clear_logs">Tozalash</button>
+              </div>
+            </div>
+            <div class="table-wrap" style="max-height: 360px; overflow-y: auto;">
+              <table class="system-logs-table">
+                <thead>
+                  <tr>
+                    <th data-translate="col_time">Vaqt</th>
+                    <th data-translate="col_level">Daraja</th>
+                    <th data-translate="col_message">Xabar</th>
+                  </tr>
+                </thead>
+                <tbody id="systemLogsTableBody">
+                  <tr><td colspan="3" class="empty-state" data-translate="no_logs">Loglar yo'q</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
@@ -1477,6 +1510,6 @@
     </div>
 
       <script src="./themes.js?v=6"></script>
-      <script src="./app.js?v=8"></script>
+      <script src="./app.js?v=9"></script>
     </body>
   </html>

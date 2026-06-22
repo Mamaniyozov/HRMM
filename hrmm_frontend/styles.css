@@ -4724,3 +4724,68 @@ body.bg-effect-active #bgEffectCanvas {
 [data-theme-mode] .metric-card span.card-label {
   color: var(--text-muted);
 }
+
+/* Native <select> dropdown list: readable options on every theme */
+[data-theme-mode] select,
+[data-theme-mode] select option,
+[data-theme-mode] select optgroup {
+  color: var(--text-primary);
+  background-color: var(--surface-elevated);
+}
+
+/* ===== Admin system-logs panel (inside Archive) ===== */
+.system-logs-panel {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.system-logs-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.system-logs-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.system-logs-table td {
+  vertical-align: top;
+  word-break: break-word;
+}
+
+.log-meta {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.log-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+}
+
+.log-badge-error {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.log-badge-warn {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.log-badge-info {
+  background: var(--accent-bg);
+  color: var(--accent);
+}

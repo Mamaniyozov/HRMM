@@ -12,6 +12,81 @@ const DEFAULT_API_BASE = (() => {
   return API_URL;
 })();
 const DEFAULT_API_TIMEOUT_MS = 45000;
+
+// ===== Application log collection (admin-only, shown in Archive) =====
+const APP_LOG_KEY = "hrmm_app_logs";
+const APP_LOG_LIMIT = 500;
+let appLogEntries = [];
+try {
+  appLogEntries = JSON.parse(window.localStorage.getItem(APP_LOG_KEY) || "[]");
+  if (!Array.isArray(appLogEntries)) appLogEntries = [];
+} catch (_e) {
+  appLogEntries = [];
+}
+
+function persistAppLogs() {
+  try {
+    window.localStorage.setItem(APP_LOG_KEY, JSON.stringify(appLogEntries.slice(-APP_LOG_LIMIT)));
+  } catch (_e) {
+    /* storage full / unavailable - ignore */
+  }
+}
+
+function appLog(level, message, meta) {
+  const entry = {
+    ts: new Date().toISOString(),
+    level: String(level || "info").toLowerCase(),
+    message: typeof message === "string" ? message : safeStringify(message),
+  };
+  if (meta !== undefined) entry.meta = typeof meta === "string" ? meta : safeStringify(meta);
+  appLogEntries.push(entry);
+  if (appLogEntries.length > APP_LOG_LIMIT) {
+    appLogEntries = appLogEntries.slice(-APP_LOG_LIMIT);
+  }
+  persistAppLogs();
+  if (typeof renderSystemLogs === "function") {
+    try {
+      renderSystemLogs();
+    } catch (_e) {
+      /* table may not exist yet */
+    }
+  }
+}
+
+function safeStringify(value) {
+  try {
+    return JSON.stringify(value);
+  } catch (_e) {
+    return String(value);
+  }
+}
+
+// Capture uncaught errors and promise rejections.
+window.addEventListener("error", (event) => {
+  appLog("error", event.message || "Script error", {
+    source: event.filename,
+    line: event.lineno,
+    col: event.colno,
+  });
+});
+window.addEventListener("unhandledrejection", (event) => {
+  const reason = event.reason;
+  appLog("error", reason?.message || "Unhandled promise rejection", reason?.stack);
+});
+
+// Mirror console.error / console.warn into the log store.
+["error", "warn"].forEach((method) => {
+  const original = console[method].bind(console);
+  console[method] = (...args) => {
+    try {
+      appLog(method === "warn" ? "warn" : "error", args.map((a) => (typeof a === "string" ? a : safeStringify(a))).join(" "));
+    } catch (_e) {
+      /* never let logging break the app */
+    }
+    original(...args);
+  };
+});
+
 const state = {
   apiBase: DEFAULT_API_BASE,
   language: window.localStorage.getItem("hrmm_language") || "uz",
@@ -1618,6 +1693,14 @@ const newTranslations = {
     bg_retro: "Retro izometrik",
     bg_quantum: "Kvant to'lqinlari",
     bg_cosmos: "Kosmos va galaktika",
+    system_logs: "Tizim loglari",
+    system_logs_title: "Log fayllar yig'ish tizimi",
+    download_logs: "Yuklab olish",
+    clear_logs: "Tozalash",
+    col_time: "Vaqt",
+    col_level: "Daraja",
+    col_message: "Xabar",
+    no_logs: "Loglar yo'q",
     appearance_copy: "HRMM sizga qanday ko'rinishini tanlang. Mavzuni tanlang - tanlovingiz darhol qo'llaniladi va avtomatik ravishda saqlanadi.",
     theme_mode: "Mavzu rejimi",
     single_theme: "Yagona mavzu",
@@ -2055,6 +2138,14 @@ const newTranslations = {
     bg_retro: "Ретро изометрия",
     bg_quantum: "Квантовые волны",
     bg_cosmos: "Космос и галактика",
+    system_logs: "Системные логи",
+    system_logs_title: "Система сбора лог-файлов",
+    download_logs: "Скачать",
+    clear_logs: "Очистить",
+    col_time: "Время",
+    col_level: "Уровень",
+    col_message: "Сообщение",
+    no_logs: "Логов нет",
     appearance_copy: "Выберите, как HRMM выглядит для вас. Выберите тему — ваш выбор применяется немедленно и сохраняется автоматически.",
     theme_mode: "Режим темы",
     single_theme: "Один режим",
@@ -2492,6 +2583,14 @@ const newTranslations = {
     bg_retro: "Retro isometric",
     bg_quantum: "Quantum waves",
     bg_cosmos: "Cosmos & galaxy",
+    system_logs: "System logs",
+    system_logs_title: "Log file collection system",
+    download_logs: "Download",
+    clear_logs: "Clear",
+    col_time: "Time",
+    col_level: "Level",
+    col_message: "Message",
+    no_logs: "No logs",
     appearance_copy: "Choose how HRMM looks to you. Select a theme - your choice is applied immediately and saved automatically.",
     theme_mode: "Theme mode",
     single_theme: "Single theme",
@@ -2929,6 +3028,14 @@ const newTranslations = {
     bg_retro: "Retro izometrik",
     bg_quantum: "Kuantum dalgaları",
     bg_cosmos: "Kozmos ve galaksi",
+    system_logs: "Sistem günlükleri",
+    system_logs_title: "Günlük dosyası toplama sistemi",
+    download_logs: "İndir",
+    clear_logs: "Temizle",
+    col_time: "Zaman",
+    col_level: "Seviye",
+    col_message: "Mesaj",
+    no_logs: "Günlük yok",
     appearance_copy: "HRMM'nin size nasıl görüneceğini seçin. Bir tema seçin - seçiminiz hemen uygulanır ve otomatik olarak kaydedilir.",
     theme_mode: "Tema modu",
     single_theme: "Tek tema",
@@ -3049,6 +3156,10 @@ function getJobLevelLabel(jobLevel) {
 
 function setMessage(text, type = "") {
   const normalizedType = type || "info";
+
+  if (text && (normalizedType === "error" || normalizedType === "success")) {
+    appLog(normalizedType === "error" ? "error" : "info", text);
+  }
 
   if (!loginView.classList.contains("hidden")) {
     const activeStatusBox = loginTwoFactorStep.classList.contains("hidden") ? loginStatusBox : otpStatusBox;
@@ -3635,7 +3746,55 @@ function applyRoleBasedUi() {
     const allowed = true;
     button.classList.toggle("hidden", !allowed);
   });
+
+  // Log collection system is visible only to admins, inside the Archive section.
+  const isAdminRole = ["DIRECTOR", "ADMIN"].includes(role);
+  const systemLogsPanel = document.getElementById("systemLogsPanel");
+  systemLogsPanel?.classList.toggle("hidden", !isAdminRole);
+  if (isAdminRole) renderSystemLogs();
 }
+
+function renderSystemLogs() {
+  const tbody = document.getElementById("systemLogsTableBody");
+  if (!tbody) return;
+  const filter = document.getElementById("systemLogsLevelFilter")?.value || "";
+  const rows = appLogEntries.filter((e) => !filter || e.level === filter).slice(-300).reverse();
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="3" class="empty-state">${escapeHtml(t("no_logs"))}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows
+    .map((e) => {
+      const time = new Date(e.ts).toLocaleString();
+      const level = escapeHtml(e.level || "info");
+      const msg =
+        escapeHtml(e.message || "") +
+        (e.meta ? ` <span class="log-meta">${escapeHtml(e.meta)}</span>` : "");
+      return `<tr class="log-row log-${level}"><td>${escapeHtml(time)}</td><td><span class="log-badge log-badge-${level}">${level}</span></td><td>${msg}</td></tr>`;
+    })
+    .join("");
+}
+
+document.getElementById("systemLogsLevelFilter")?.addEventListener("change", renderSystemLogs);
+document.getElementById("clearSystemLogs")?.addEventListener("click", () => {
+  appLogEntries = [];
+  persistAppLogs();
+  renderSystemLogs();
+});
+document.getElementById("downloadSystemLogs")?.addEventListener("click", () => {
+  const text = appLogEntries
+    .map((e) => `[${e.ts}] ${String(e.level).toUpperCase()} ${e.message}${e.meta ? " | " + e.meta : ""}`)
+    .join("\n");
+  const blob = new Blob([text || "(no logs)"], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `hrmm-logs-${new Date().toISOString().slice(0, 10)}.log`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
 
 function openSectionModal(targetId, titleText) {
   const target = document.getElementById(targetId);
@@ -8988,6 +9147,12 @@ function applyRoleBasedUi() {
     const allowed = true;
     button.classList.toggle("hidden", !allowed);
   });
+
+  // Log collection system is visible only to admins, inside the Archive section.
+  const isAdminRole = ["DIRECTOR", "ADMIN"].includes(role);
+  const systemLogsPanel = document.getElementById("systemLogsPanel");
+  systemLogsPanel?.classList.toggle("hidden", !isAdminRole);
+  if (isAdminRole && typeof renderSystemLogs === "function") renderSystemLogs();
 }
 
 // Workflow form action select handler for comment hint
