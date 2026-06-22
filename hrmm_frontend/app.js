@@ -1613,7 +1613,10 @@ const newTranslations = {
     bg_none: "Yo'q",
     bg_particles: "Zarrachalar tarmog'i",
     bg_matrix: "Matritsa yomg'iri",
-    bg_mesh: "Suyuq gradient",
+    bg_lineart: "Chiziqli san'at",
+    bg_glass: "Shisha 3D shakllar",
+    bg_retro: "Retro izometrik",
+    bg_quantum: "Kvant to'lqinlari",
     bg_cosmos: "Kosmos va galaktika",
     appearance_copy: "HRMM sizga qanday ko'rinishini tanlang. Mavzuni tanlang - tanlovingiz darhol qo'llaniladi va avtomatik ravishda saqlanadi.",
     theme_mode: "Mavzu rejimi",
@@ -2047,7 +2050,10 @@ const newTranslations = {
     bg_none: "Нет",
     bg_particles: "Сеть частиц",
     bg_matrix: "Цифровой дождь",
-    bg_mesh: "Жидкий градиент",
+    bg_lineart: "Линейное искусство",
+    bg_glass: "Стеклянные 3D-формы",
+    bg_retro: "Ретро изометрия",
+    bg_quantum: "Квантовые волны",
     bg_cosmos: "Космос и галактика",
     appearance_copy: "Выберите, как HRMM выглядит для вас. Выберите тему — ваш выбор применяется немедленно и сохраняется автоматически.",
     theme_mode: "Режим темы",
@@ -2481,7 +2487,10 @@ const newTranslations = {
     bg_none: "None",
     bg_particles: "Particle network",
     bg_matrix: "Matrix rain",
-    bg_mesh: "Liquid gradient",
+    bg_lineart: "Minimal line art",
+    bg_glass: "Glassmorphism 3D",
+    bg_retro: "Retro isometric",
+    bg_quantum: "Quantum waves",
     bg_cosmos: "Cosmos & galaxy",
     appearance_copy: "Choose how HRMM looks to you. Select a theme - your choice is applied immediately and saved automatically.",
     theme_mode: "Theme mode",
@@ -2915,7 +2924,10 @@ const newTranslations = {
     bg_none: "Yok",
     bg_particles: "Parçacık ağı",
     bg_matrix: "Matrix yağmuru",
-    bg_mesh: "Sıvı gradyan",
+    bg_lineart: "Çizgi sanatı",
+    bg_glass: "Cam 3D şekiller",
+    bg_retro: "Retro izometrik",
+    bg_quantum: "Kuantum dalgaları",
     bg_cosmos: "Kozmos ve galaksi",
     appearance_copy: "HRMM'nin size nasıl görüneceğini seçin. Bir tema seçin - seçiminiz hemen uygulanır ve otomatik olarak kaydedilir.",
     theme_mode: "Tema modu",
@@ -8428,7 +8440,7 @@ function bindSystemThemeSync() {
 }
 
 // ===== Animated background effects =====
-const BG_EFFECTS = ["none", "particles", "matrix", "mesh", "cosmos"];
+const BG_EFFECTS = ["none", "particles", "matrix", "cosmos", "lineart", "glass", "retro", "quantum"];
 const bgEffectCanvas = document.getElementById("bgEffectCanvas");
 let bgEffectRaf = null;
 let bgEffectResizeHandler = null;
@@ -8614,6 +8626,213 @@ function startCosmosEffect() {
   draw();
 }
 
+function startLineArtEffect() {
+  const canvas = bgEffectCanvas;
+  const ctx = setupBgCanvas();
+  let t = 0;
+  const draw = () => {
+    const w = canvas.width;
+    const h = canvas.height;
+    const dark = document.body.classList.contains("dark");
+    ctx.fillStyle = dark ? "#0a0a12" : "#ffffff";
+    ctx.fillRect(0, 0, w, h);
+    const count = 20;
+    for (let i = 0; i < count; i++) {
+      ctx.beginPath();
+      ctx.strokeStyle = dark
+        ? `rgba(80, 170, 255, ${0.10 + 0.05 * Math.sin(i + t * 0.01)})`
+        : `rgba(120, 122, 135, ${0.18 + 0.06 * Math.sin(i)})`;
+      ctx.lineWidth = dark ? 1.2 : 1;
+      const amp = 30 + i * 5;
+      const yBase = (h / count) * i + h * 0.02;
+      for (let x = 0; x <= w; x += 8) {
+        const y =
+          yBase +
+          Math.sin(x * 0.006 + t * 0.02 + i * 0.5) * amp * 0.45 +
+          Math.sin(x * 0.0018 + t * 0.012) * 22;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    t += 1;
+    bgEffectRaf = requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+function startGlassEffect() {
+  const canvas = bgEffectCanvas;
+  let shapes = [];
+  const seed = () => {
+    shapes = Array.from({ length: 7 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: 60 + Math.random() * 130,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      hue: Math.random() * 360,
+    }));
+  };
+  const ctx = setupBgCanvas(seed);
+  seed();
+  const draw = () => {
+    const w = canvas.width;
+    const h = canvas.height;
+    const g = ctx.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, "#e9e4ff");
+    g.addColorStop(0.5, "#e2fff5");
+    g.addColorStop(1, "#ffe7f1");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    for (const s of shapes) {
+      s.x += s.vx;
+      s.y += s.vy;
+      if (s.x < -s.r) s.x = w + s.r;
+      if (s.x > w + s.r) s.x = -s.r;
+      if (s.y < -s.r) s.y = h + s.r;
+      if (s.y > h + s.r) s.y = -s.r;
+      const rg = ctx.createRadialGradient(s.x - s.r * 0.3, s.y - s.r * 0.3, s.r * 0.1, s.x, s.y, s.r);
+      rg.addColorStop(0, `hsla(${s.hue}, 80%, 85%, 0.55)`);
+      rg.addColorStop(1, `hsla(${s.hue}, 70%, 72%, 0.10)`);
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+      ctx.beginPath();
+      ctx.arc(s.x - s.r * 0.32, s.y - s.r * 0.32, s.r * 0.14, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    bgEffectRaf = requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+function startRetroEffect() {
+  const canvas = bgEffectCanvas;
+  let scene = null;
+  let grain = null;
+  const buildScene = () => {
+    const w = canvas.width;
+    const h = canvas.height;
+    scene = document.createElement("canvas");
+    scene.width = w;
+    scene.height = h;
+    const sctx = scene.getContext("2d");
+    sctx.fillStyle = "#2c2a28";
+    sctx.fillRect(0, 0, w, h);
+    const tile = 90;
+    const isoW = tile;
+    const isoH = tile * 0.5;
+    const tops = ["#c08457", "#d9c2a3", "#8a9a5b"];
+    const drawCube = (x, y, hgt, top) => {
+      const hw = isoW * 0.5;
+      const hh = isoH * 0.5;
+      sctx.fillStyle = top;
+      sctx.beginPath();
+      sctx.moveTo(x, y - hgt);
+      sctx.lineTo(x + hw, y - hh - hgt);
+      sctx.lineTo(x, y - isoH - hgt);
+      sctx.lineTo(x - hw, y - hh - hgt);
+      sctx.closePath();
+      sctx.fill();
+      sctx.fillStyle = "rgba(0,0,0,0.28)";
+      sctx.beginPath();
+      sctx.moveTo(x - hw, y - hh - hgt);
+      sctx.lineTo(x, y - hgt);
+      sctx.lineTo(x, y);
+      sctx.lineTo(x - hw, y - hh);
+      sctx.closePath();
+      sctx.fill();
+      sctx.fillStyle = "rgba(0,0,0,0.12)";
+      sctx.beginPath();
+      sctx.moveTo(x + hw, y - hh - hgt);
+      sctx.lineTo(x, y - hgt);
+      sctx.lineTo(x, y);
+      sctx.lineTo(x + hw, y - hh);
+      sctx.closePath();
+      sctx.fill();
+    };
+    for (let row = -2; row < h / isoH + 2; row++) {
+      for (let col = -2; col < w / isoW + 2; col++) {
+        const x = (col - row) * isoW * 0.5 + w * 0.5;
+        const y = (col + row) * isoH * 0.5;
+        const top = tops[((row + col) % 3 + 3) % 3];
+        const hgt = 18 + (((row * 7 + col * 13) % 3) + 3) % 3 * 16;
+        drawCube(x, y, hgt, top);
+      }
+    }
+    grain = document.createElement("canvas");
+    grain.width = 140;
+    grain.height = 140;
+    const gctx = grain.getContext("2d");
+    const img = gctx.createImageData(140, 140);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = 120 + Math.random() * 135;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+      img.data[i + 3] = Math.random() * 60;
+    }
+    gctx.putImageData(img, 0, 0);
+  };
+  const ctx = setupBgCanvas(buildScene);
+  buildScene();
+  const pattern = () => ctx.createPattern(grain, "repeat");
+  const draw = () => {
+    ctx.drawImage(scene, 0, 0);
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.translate(Math.random() * 140, Math.random() * 140);
+    ctx.fillStyle = pattern();
+    ctx.fillRect(-140, -140, canvas.width + 280, canvas.height + 280);
+    ctx.restore();
+    bgEffectRaf = requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+function startQuantumEffect() {
+  const canvas = bgEffectCanvas;
+  const ctx = setupBgCanvas();
+  let t = 0;
+  const draw = () => {
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.fillStyle = "#05030d";
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = "lighter";
+    const cy = h / 2;
+    const lines = 24;
+    for (let i = 0; i < lines; i++) {
+      ctx.beginPath();
+      const hue = 250 - i * 4;
+      ctx.strokeStyle = `hsla(${hue}, 90%, 62%, 0.32)`;
+      ctx.lineWidth = 1.4;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = `hsla(${hue}, 90%, 62%, 0.55)`;
+      for (let x = 0; x <= w; x += 6) {
+        const norm = (x / w) * Math.PI * 2;
+        const envelope = Math.sin((x / w) * Math.PI) * (h * 0.2);
+        const y =
+          cy +
+          Math.sin(norm * 2 + t * 0.02 + i * 0.3) * envelope * (1 - (i / lines) * 0.3) +
+          (i - lines / 2) * 4;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+    ctx.globalCompositeOperation = "source-over";
+    t += 1;
+    bgEffectRaf = requestAnimationFrame(draw);
+  };
+  draw();
+}
+
 function applyBgEffect(effect) {
   const value = normalizeBgEffect(effect);
   state.bgEffect = value;
@@ -8621,18 +8840,27 @@ function applyBgEffect(effect) {
   document.body.classList.remove(
     "bg-effect-particles",
     "bg-effect-matrix",
-    "bg-effect-mesh",
-    "bg-effect-cosmos"
+    "bg-effect-cosmos",
+    "bg-effect-lineart",
+    "bg-effect-glass",
+    "bg-effect-retro",
+    "bg-effect-quantum"
   );
   document.body.classList.toggle("bg-effect-active", value !== "none");
   if (value === "none") return;
   document.body.classList.add(`bg-effect-${value}`);
-  if (value === "mesh") return; // handled purely with CSS
   if (!bgEffectCanvas) return;
   if (document.visibilityState !== "visible") return;
-  if (value === "particles") startParticlesEffect();
-  else if (value === "matrix") startMatrixEffect();
-  else if (value === "cosmos") startCosmosEffect();
+  const starters = {
+    particles: startParticlesEffect,
+    matrix: startMatrixEffect,
+    cosmos: startCosmosEffect,
+    lineart: startLineArtEffect,
+    glass: startGlassEffect,
+    retro: startRetroEffect,
+    quantum: startQuantumEffect,
+  };
+  starters[value]?.();
 }
 
 window.addEventListener("mousemove", (event) => {
