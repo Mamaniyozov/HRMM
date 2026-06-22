@@ -242,7 +242,7 @@
                 <path d="M12 3C7 3 3 6.8 3 11.5S6.8 20 11.5 20H13a2 2 0 0 0 1.3-3.5 1.9 1.9 0 0 1 1.2-3.4H17a4 4 0 0 0 0-8 9.8 9.8 0 0 0-5-2.1Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/>
               </svg>
             </span>
-            <span class="nav-link-label">Appearance</span>
+            <span class="nav-link-label" data-translate="appearance_settings">Appearance</span>
           </button>
 
         </nav>
@@ -906,8 +906,8 @@
             <div><p class="eyebrow" data-translate="employees_list">Xodimlar ro'yxati</p><h3 data-translate="it_employees_view">IT xodimlar ko'rinishi</h3></div>
             <div class="toolbar">
               <input id="userSearchInput" type="text" placeholder="Xodim qidirish..." data-translate-placeholder="search_employee" />
-              <select id="roleFilter"><option value="" data-translate="all_positions">Barcha lavozimlar</option><option value="DEVOPS">DevOps</option><option value="IT_ENGINEER">IT muhandis</option><option value="ANDROID_DEV">Android dasturchi</option><option value="BACKEND_DEV">Backend dasturchi</option><option value="FRONTEND_DEV">Frontend dasturchi</option><option value="MANAGER">Menejer</option><option value="DIRECTOR">Direktor</option></select>
-              <select id="levelFilter"><option value="" data-translate="all_levels">Barcha darajalar</option><option value="JUNIOR">Junior</option><option value="MIDDLE">Middle</option><option value="SENIOR">Senior</option></select>
+              <select id="roleFilter"><option value="" data-translate="all_positions">Barcha lavozimlar</option><option value="DEVOPS" data-translate="role_devops">DevOps</option><option value="IT_ENGINEER" data-translate="role_it_engineer">IT muhandis</option><option value="ANDROID_DEV" data-translate="role_android_dev">Android dasturchi</option><option value="BACKEND_DEV" data-translate="role_backend_dev">Backend dasturchi</option><option value="FRONTEND_DEV" data-translate="role_frontend_dev">Frontend dasturchi</option><option value="MANAGER" data-translate="role_manager">Menejer</option><option value="DIRECTOR" data-translate="role_director">Direktor</option></select>
+              <select id="levelFilter"><option value="" data-translate="all_levels">Barcha darajalar</option><option value="JUNIOR" data-translate="level_junior">Junior</option><option value="MIDDLE" data-translate="level_middle">Middle</option><option value="SENIOR" data-translate="level_senior">Senior</option></select>
               <button id="refreshUsers" class="ghost-btn" type="button" data-translate="refresh_employees">Xodimlarni yangilash</button>
             </div>
           </div>
@@ -937,10 +937,10 @@
                 <span data-translate="management_role">Boshqaruv roli</span>
                 <select name="role" id="roleFilterSelect">
                   <option value="" data-translate="select">Tanlang</option>
-                  <option value="SPECIALIST">Specialist</option>
-                  <option value="UNIT_HEAD">Unit Head</option>
-                  <option value="DEPT_HEAD">Department Head</option>
-                  <option value="DIRECTOR">Director</option>
+                  <option value="SPECIALIST" data-translate="role_specialist">Specialist</option>
+                  <option value="UNIT_HEAD" data-translate="role_unit_head">Unit Head</option>
+                  <option value="DEPT_HEAD" data-translate="role_dept_head">Department Head</option>
+                  <option value="DIRECTOR" data-translate="role_director">Director</option>
                 </select>
               </label>
               <label>
@@ -979,11 +979,11 @@
                 <span data-translate="leave_type">Ta'til turi</span>
                 <select name="leave_type" required>
                   <option value="" data-translate="select">Tanlang</option>
-                  <option value="ANNUAL">Annual</option>
-                  <option value="SICK">Sick</option>
-                  <option value="UNPAID">Unpaid</option>
-                  <option value="MATERNITY">Maternity</option>
-                  <option value="OTHER">Other</option>
+                  <option value="ANNUAL" data-translate="leave_type_annual">Annual</option>
+                  <option value="SICK" data-translate="leave_type_sick">Sick</option>
+                  <option value="UNPAID" data-translate="leave_type_unpaid">Unpaid</option>
+                  <option value="MATERNITY" data-translate="leave_type_maternity">Maternity</option>
+                  <option value="OTHER" data-translate="leave_type_other">Other</option>
                 </select>
               </label>
               <label>
@@ -1263,9 +1263,9 @@
         <section id="appearanceSection" class="panel app-section hidden appearance-settings">
           <div class="appearance-header">
             <div>
-              <p class="eyebrow">Preferences</p>
-              <h3>Appearance settings</h3>
-              <p class="appearance-copy">
+              <p class="eyebrow" data-translate="preferences">Preferences</p>
+              <h3 data-translate="appearance_settings">Appearance settings</h3>
+              <p class="appearance-copy" data-translate="appearance_copy">
                 Choose how HRMM looks to you. Select a theme - your choice is applied immediately and saved automatically.
               </p>
             </div>
@@ -1273,10 +1273,10 @@
 
           <div class="appearance-control-row">
             <label class="appearance-mode-field">
-              <span>Theme mode</span>
+              <span data-translate="theme_mode">Theme mode</span>
               <select id="themeModeSelect" aria-label="Theme mode">
-                <option value="single">Single theme</option>
-                <option value="system">Sync with system</option>
+                <option value="single" data-translate="single_theme">Single theme</option>
+                <option value="system" data-translate="sync_with_system">Sync with system</option>
               </select>
             </label>
           </div>
@@ -1285,13 +1285,13 @@
 
           <section class="contrast-section" aria-labelledby="contrastHeading">
             <div>
-              <h4 id="contrastHeading">Increase contrast</h4>
-              <p>Boosts text, border, and background contrast for easier reading.</p>
+              <h4 id="contrastHeading" data-translate="increase_contrast">Increase contrast</h4>
+              <p data-translate="increase_contrast_copy">Boosts text, border, and background contrast for easier reading.</p>
             </div>
             <label class="switch-control">
               <input id="increaseContrastToggle" type="checkbox" />
               <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-              <span class="sr-only">Increase contrast</span>
+              <span class="sr-only" data-translate="increase_contrast">Increase contrast</span>
             </label>
           </section>
         </section>

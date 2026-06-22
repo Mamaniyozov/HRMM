@@ -1605,6 +1605,39 @@ const newTranslations = {
     err_user_not_found: "Foydalanuvchi topilmadi. Iltimos, ID ni tekshiring.",
     err_cannot_delete_self: "O'zingizni o'chira olmaysiz. Iltimos, boshqa foydalanuvchini tanlang.",
     otp_status_enter_code: "Authenticator kodini kiriting.",
+    preferences: "Afzalliklar",
+    appearance_settings: "Tashqi ko'rinish sozlamalari",
+    appearance_copy: "HRMM sizga qanday ko'rinishini tanlang. Mavzuni tanlang - tanlovingiz darhol qo'llaniladi va avtomatik ravishda saqlanadi.",
+    theme_mode: "Mavzu rejimi",
+    single_theme: "Yagona mavzu",
+    sync_with_system: "Tizim bilan sinxronlash",
+    increase_contrast: "Kontrastni oshirish",
+    increase_contrast_copy: "Osonroq o'qish uchun matn, chegara va fon kontrastini kuchaytiradi.",
+    role_devops: "DevOps",
+    role_it_engineer: "IT muhandis",
+    role_android_dev: "Android dasturchi",
+    role_backend_dev: "Backend dasturchi",
+    role_frontend_dev: "Frontend dasturchi",
+    role_manager: "Menejer",
+    role_director: "Direktor",
+    level_junior: "Junior",
+    level_middle: "Middle",
+    level_senior: "Senior",
+    role_specialist: "Mutaxassis",
+    role_unit_head: "Birlik boshlig'i",
+    role_dept_head: "Bo'lim boshlig'i",
+    leave_type_annual: "Yillik ta'til",
+    leave_type_sick: "Kasalik varaqasi",
+    leave_type_unpaid: "Ish haqisiz ta'til",
+    leave_type_maternity: "Dekret ta'tili",
+    leave_type_other: "Boshqa",
+    msg_2fa_setup_error: "2FA sozlashda xato yuz berdi.",
+    msg_action_failed: "Amal bajarilmadi.",
+    msg_read_notification_error: "Bildirishnomani o'qilgan qilishda xato yuz berdi.",
+    msg_otp_verify_error: "Tasdiqlash kodini tekshirishda xato yuz berdi.",
+    msg_feature_submitted: "Yangi funksiya talabi yuborildi.",
+    msg_notification_created: "Yangi bildirishnoma yaratildi.",
+    msg_record_create_error: "Yangi yozuv yaratishda xato yuz berdi.",
   },
   ru: {
     role_management: "Управление ролями пользователей",
@@ -2000,6 +2033,39 @@ const newTranslations = {
     err_user_not_found: "Пользователь не найден. Пожалуйста, проверьте ID.",
     err_cannot_delete_self: "Вы не можете удалить себя. Пожалуйста, выберите другого пользователя.",
     otp_status_enter_code: "Введите код Authenticator.",
+    preferences: "Настройки",
+    appearance_settings: "Настройки внешнего вида",
+    appearance_copy: "Выберите, как HRMM выглядит для вас. Выберите тему — ваш выбор применяется немедленно и сохраняется автоматически.",
+    theme_mode: "Режим темы",
+    single_theme: "Один режим",
+    sync_with_system: "Синхронизировать с системой",
+    increase_contrast: "Увеличить контраст",
+    increase_contrast_copy: "Увеличивает контраст текста, границ и фона для облегчения чтения.",
+    role_devops: "DevOps",
+    role_it_engineer: "IT-инженер",
+    role_android_dev: "Android-разработчик",
+    role_backend_dev: "Backend-разработчик",
+    role_frontend_dev: "Frontend-разработчик",
+    role_manager: "Менеджер",
+    role_director: "Директор",
+    level_junior: "Junior",
+    level_middle: "Middle",
+    level_senior: "Senior",
+    role_specialist: "Специалист",
+    role_unit_head: "Руководитель группы",
+    role_dept_head: "Руководитель отдела",
+    leave_type_annual: "Ежегодный",
+    leave_type_sick: "Больничный",
+    leave_type_unpaid: "Без сохранения з/п",
+    leave_type_maternity: "Декретный",
+    leave_type_other: "Другое",
+    msg_2fa_setup_error: "Ошибка настройки 2FA.",
+    msg_action_failed: "Действие не выполнено.",
+    msg_read_notification_error: "Ошибка при отметке уведомления как прочитанного.",
+    msg_otp_verify_error: "Ошибка при проверке кода подтверждения.",
+    msg_feature_submitted: "Запрос новой функции отправлен.",
+    msg_notification_created: "Новое уведомление создано.",
+    msg_record_create_error: "Ошибка при создании новой записи.",
   },
   en: {
     role_management: "User Role Management",
@@ -2395,6 +2461,39 @@ const newTranslations = {
     err_user_not_found: "User not found. Please check the ID.",
     err_cannot_delete_self: "You cannot delete yourself. Please select another user.",
     otp_status_enter_code: "Enter the Authenticator code.",
+    preferences: "Preferences",
+    appearance_settings: "Appearance settings",
+    appearance_copy: "Choose how HRMM looks to you. Select a theme - your choice is applied immediately and saved automatically.",
+    theme_mode: "Theme mode",
+    single_theme: "Single theme",
+    sync_with_system: "Sync with system",
+    increase_contrast: "Increase contrast",
+    increase_contrast_copy: "Boosts text, border, and background contrast for easier reading.",
+    role_devops: "DevOps",
+    role_it_engineer: "IT Engineer",
+    role_android_dev: "Android Developer",
+    role_backend_dev: "Backend Developer",
+    role_frontend_dev: "Frontend Developer",
+    role_manager: "Manager",
+    role_director: "Director",
+    level_junior: "Junior",
+    level_middle: "Middle",
+    level_senior: "Senior",
+    role_specialist: "Specialist",
+    role_unit_head: "Unit Head",
+    role_dept_head: "Department Head",
+    leave_type_annual: "Annual",
+    leave_type_sick: "Sick",
+    leave_type_unpaid: "Unpaid",
+    leave_type_maternity: "Maternity",
+    leave_type_other: "Other",
+    msg_2fa_setup_error: "Error setting up 2FA.",
+    msg_action_failed: "Action failed.",
+    msg_read_notification_error: "Error marking notification as read.",
+    msg_otp_verify_error: "Error verifying verification code.",
+    msg_feature_submitted: "New feature request submitted.",
+    msg_notification_created: "New notification created.",
+    msg_record_create_error: "Error creating new record.",
   },
   tr: {
     role_management: "Kullanici Rol Yonetimi",
@@ -2790,6 +2889,39 @@ const newTranslations = {
     err_user_not_found: "Kullanici bulunamadi. Lütfen ID'yi kontrol edin.",
     err_cannot_delete_self: "Kendinizi silemezsiniz. Lütfen baska bir kullanici seçin.",
     otp_status_enter_code: "Authenticator kodunu girin.",
+    preferences: "Tercihler",
+    appearance_settings: "Görünüm ayarları",
+    appearance_copy: "HRMM'nin size nasıl görüneceğini seçin. Bir tema seçin - seçiminiz hemen uygulanır ve otomatik olarak kaydedilir.",
+    theme_mode: "Tema modu",
+    single_theme: "Tek tema",
+    sync_with_system: "Sistemle eşitle",
+    increase_contrast: "Kontrastı artır",
+    increase_contrast_copy: "Daha kolay okuma için metin, kenarlık ve arka plan kontrastını artırır.",
+    role_devops: "DevOps",
+    role_it_engineer: "BT Mühendisi",
+    role_android_dev: "Android Geliştirici",
+    role_backend_dev: "Backend Geliştirici",
+    role_frontend_dev: "Frontend Geliştirici",
+    role_manager: "Yönetici",
+    role_director: "Direktör",
+    level_junior: "Junior",
+    level_middle: "Middle",
+    level_senior: "Senior",
+    role_specialist: "Uzman",
+    role_unit_head: "Birim Lideri",
+    role_dept_head: "Bölüm Başkanı",
+    leave_type_annual: "Yıllık",
+    leave_type_sick: "Hastalık",
+    leave_type_unpaid: "Ücretsiz",
+    leave_type_maternity: "Doğum",
+    leave_type_other: "Diğer",
+    msg_2fa_setup_error: "2FA ayarlanırken hata oluştu.",
+    msg_action_failed: "İşlem başarısız oldu.",
+    msg_read_notification_error: "Bildirim okundu olarak işaretlenirken hata oluştu.",
+    msg_otp_verify_error: "Doğrulama kodu doğrulanırken hata oluştu.",
+    msg_feature_submitted: "Yeni özellik talebi gönderildi.",
+    msg_notification_created: "Yeni bildirim oluşturuldu.",
+    msg_record_create_error: "Yeni kayıt oluşturulurken hata oluştu.",
   },
 };
 
@@ -3679,7 +3811,7 @@ function bindSecurityModalEvents() {
       if (secretLabel && result?.secret) secretLabel.textContent = result.secret;
       document.getElementById("modalTwoFactorSetupPanel")?.classList.remove("hidden");
     } catch (error) {
-      setMessage(error.message || "2FA sozlamada xato.", "error");
+      setMessage(error.message || t("msg_2fa_setup_error"), "error");
     }
   });
 
@@ -4218,7 +4350,7 @@ function bindReportDetailActionButtons(report) {
           });
         }
       } catch (error) {
-        setMessage(error.message || "Amal bajarilmadi.", "error");
+        setMessage(error.message || t("msg_action_failed"), "error");
       }
     });
   });
@@ -6553,7 +6685,7 @@ async function markNotificationRead(notificationId) {
     });
     await loadNotifications();
   } catch (error) {
-    setMessage(error.message || "Notificationni o'qilgan qilishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_read_notification_error"), "error");
   }
 }
 
@@ -6677,7 +6809,7 @@ if (otpForm) {
       const departmentCount = await loadDepartments();
       await loadAllData();
     } catch (error) {
-      setMessage(error.message || "Tasdiqlash kodini tekshirishda xato bo'ldi.", "error");
+      setMessage(error.message || t("msg_otp_verify_error"), "error");
     }
   });
 } else {
@@ -7981,9 +8113,9 @@ quickCreateForm?.addEventListener("submit", async (event) => {
     refreshHomeDashboard();
     closeQuickCreate();
     quickCreateForm.reset();
-    setMessage(mode === "feature" ? "Yangi funksiya talabi yuborildi." : "Yangi bildirim yaratildi.", "success");
+    setMessage(mode === "feature" ? t("msg_feature_submitted") : t("msg_notification_created"), "success");
   } catch (error) {
-    setMessage(error.message || "Yangi yozuv yaratishda xato bo'ldi.", "error");
+    setMessage(error.message || t("msg_record_create_error"), "error");
   }
 });
 globalSearchInput?.addEventListener("input", () => {
@@ -8259,7 +8391,7 @@ function initAppearanceSettings() {
   [document.getElementById("themeToggleButton"), loginThemeToggleButton].forEach((button) => {
     button?.addEventListener("click", () => {
       if (appView && !appView.classList.contains("hidden")) {
-        openSectionModal("appearanceSection", "Appearance settings");
+        openSectionModal("appearanceSection", t("appearance_settings"));
       } else {
         const currentIndex = Math.max(0, THEME_OPTIONS.findIndex((theme) => theme.id === getActiveThemeId()));
         state.themeId = THEME_OPTIONS[(currentIndex + 1) % THEME_OPTIONS.length]?.id || DEFAULT_THEME_ID;
