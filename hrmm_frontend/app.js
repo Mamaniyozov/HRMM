@@ -8272,12 +8272,13 @@ function applyTheme(themeId = getActiveThemeId()) {
 
 function forceThemeRepaint() {
   document.documentElement.style.setProperty("--theme-repaint", String(Date.now()));
-  [renderDashboard, renderRecentReports, renderRecentLeaves, renderNotifications, renderReports, renderLeaves, renderUsers]
-    .forEach((renderFn) => {
+  ["renderDashboard", "renderRecentReports", "renderRecentLeaves", "renderNotifications", "renderReports", "renderLeaves", "renderUsers"]
+    .forEach((name) => {
       try {
+        const renderFn = typeof window !== "undefined" ? window[name] : undefined;
         if (typeof renderFn === "function") renderFn();
       } catch (error) {
-        console.warn("Theme repaint skipped for one renderer:", error);
+        console.warn("Theme repaint skipped for one renderer:", name, error);
       }
     });
 }
