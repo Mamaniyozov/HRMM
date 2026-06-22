@@ -6725,6 +6725,50 @@ async function loadAllData() {
   refreshHomeDashboard();
 }
 
+// ===== Automatic refresh (replaces manual refresh buttons) =====
+const AUTO_REFRESH_INTERVAL_MS = 30000;
+let autoRefreshTimer = null;
+let autoRefreshInFlight = false;
+
+function isAutoRefreshBlocked() {
+  // Don't disrupt the user while they are typing or interacting with a modal.
+  const active = document.activeElement;
+  if (active && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName)) return true;
+  if (document.querySelector("#sectionModal:not(.hidden), #quickCreateModal:not(.hidden), #ratingModal:not(.hidden)")) {
+    return true;
+  }
+  return false;
+}
+
+async function autoRefreshTick() {
+  if (autoRefreshInFlight) return;
+  if (!state.currentUser) return;
+  if (document.visibilityState !== "visible") return;
+  if (isAutoRefreshBlocked()) return;
+  autoRefreshInFlight = true;
+  try {
+    await loadAllData();
+    if ((state.currentUser?.role || "") === "DIRECTOR") {
+      await loadUsersForRoleManagement().catch(() => {});
+    }
+  } catch (error) {
+    console.warn("Auto-refresh failed:", error);
+  } finally {
+    autoRefreshInFlight = false;
+  }
+}
+
+function startAutoRefresh() {
+  if (autoRefreshTimer) return;
+  autoRefreshTimer = window.setInterval(autoRefreshTick, AUTO_REFRESH_INTERVAL_MS);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") autoRefreshTick();
+});
+
+startAutoRefresh();
+
 if (loginForm) {
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -8468,6 +8512,7 @@ const workflowComment = document.getElementById("workflowComment");
 const commentHint = document.getElementById("commentHint");
 
 function updateCommentHint() {
+  if (!commentHint) return;
   const action = workflowActionSelect?.value;
   if (action === "REJECT" || action === "REQUEST_REVISION") {
     commentHint.textContent = "(majburiy)";
