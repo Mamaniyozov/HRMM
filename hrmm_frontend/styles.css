@@ -3218,6 +3218,7 @@ tbody tr:hover {
 }
 
 [data-theme-mode="light"] {
+  color-scheme: light;
   --bg: #f8fafc;
   --bg-deep: #f1f5f9;
   --panel: rgba(255, 255, 255, 0.75);
@@ -3246,6 +3247,7 @@ tbody tr:hover {
 }
 
 [data-theme-mode="dark"] {
+  color-scheme: dark;
   --bg: #0f1623;
   --bg-deep: #121b2c;
   --panel: rgba(26, 34, 54, 0.86);
@@ -4726,11 +4728,18 @@ body.bg-effect-active #bgEffectCanvas {
 }
 
 /* Native <select> dropdown list: readable options on every theme */
-[data-theme-mode] select,
-[data-theme-mode] select option,
-[data-theme-mode] select optgroup {
-  color: var(--text-primary);
-  background-color: var(--surface-elevated);
+[data-theme-mode="light"] select,
+[data-theme-mode="light"] select option,
+[data-theme-mode="light"] select optgroup {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
+[data-theme-mode="dark"] select,
+[data-theme-mode="dark"] select option,
+[data-theme-mode="dark"] select optgroup {
+  color: #f8fbff !important;
+  background-color: #1a2236 !important;
 }
 
 /* ===== Admin system-logs panel (inside Archive) ===== */
