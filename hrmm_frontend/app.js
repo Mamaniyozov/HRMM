@@ -885,37 +885,6 @@ function applyTranslations() {
 
 }
 
-function applyRoleBasedUi() {
-  const role = state.currentUser?.role || "";
-  const navVisibility = {
-    homeSection: true,
-    notificationsSection: true,
-    reportsSection: true,
-    appearanceSection: true,
-    institutionsSection: ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role),
-  };
-
-  navLinks.forEach((button) => {
-    const isVisible = navVisibility[button.dataset.target] !== false;
-    button.classList.toggle("hidden", !isVisible);
-  });
-
-  const usersSection = document.getElementById("usersSection");
-  usersSection?.classList.toggle("hidden", role !== "DIRECTOR");
-  createMenuItems.forEach((button) => {
-    const action = button.dataset.createAction;
-    // All roles can see all create menu items
-    const allowed = true;
-    button.classList.toggle("hidden", !allowed);
-  });
-
-  // Log collection system is visible only to admins, inside the Archive section.
-  const isAdminRole = ["DIRECTOR", "ADMIN"].includes(role);
-  const systemLogsPanel = document.getElementById("systemLogsPanel");
-  systemLogsPanel?.classList.toggle("hidden", !isAdminRole);
-  if (isAdminRole) renderSystemLogs();
-}
-
 function renderSystemLogs() {
   const tbody = document.getElementById("systemLogsTableBody");
   if (!tbody) return;
