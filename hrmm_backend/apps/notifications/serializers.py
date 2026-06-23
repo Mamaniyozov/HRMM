@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from config.uploads import ALLOWED_IMAGE_EXTENSIONS, validate_upload
 from apps.notifications.models import Notification
 
 
@@ -45,6 +46,19 @@ class NotificationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ["title", "message", "type", "reference_type", "reference_id", "screenshot"]
+
+    def validate_screenshot(self, value):
+        if not value:
+            return value
+        # Screenshots must be images only.
+        safe_name = validate_upload(value, allowed_extensions=ALLOWED_IMAGE_EXTENSIONS)
+        # Re-assign sanitised name to the file object so the storage backend
+        # uses it when generating the upload path.
+        try:
+            value.name = safe_name
+        except Exception:
+            pass
+        return value
 
     def create(self, validated_data):
         request = self.context["request"]

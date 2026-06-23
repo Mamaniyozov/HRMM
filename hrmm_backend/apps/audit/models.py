@@ -2,49 +2,6 @@ import uuid
 from django.db import models
 
 
-class User(models.Model):
-    ROLE_CHOICES = [
-        ("SPECIALIST", "Mutaxassis"),
-        ("UNIT_HEAD", "Bo'linma rahbari"),
-        ("DEPT_HEAD", "Bo'lim boshlig'i"),
-        ("DIRECTOR", "Direktor"),
-    ]
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(unique=True)
-    password_hash = models.CharField(max_length=255)
-    full_name = models.CharField(max_length=200)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    department_id = models.ForeignKey(
-        "departments.Department",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="audit_users",
-        db_column="department_id",
-    )
-    unit_id = models.ForeignKey(
-        "units.Unit",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="audit_users",
-        db_column="unit_id",
-    )
-
-    is_active = models.BooleanField(default=True)
-    phone = models.CharField(max_length=20, null=True, blank=True)
-    avatar_url = models.CharField(max_length=500, null=True, blank=True)
-
-    last_login_at = models.DateTimeField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.username} - {self.full_name}"
-
-
 class AuditLog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     actor = models.ForeignKey(

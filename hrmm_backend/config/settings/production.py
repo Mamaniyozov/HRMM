@@ -65,6 +65,29 @@ CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # ---------------------------------------------------------------------------
+# Additional security headers
+# ---------------------------------------------------------------------------
+
+# Prevent MIME-type sniffing on responses.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable browser XSS filtering on responses.
+SECURE_BROWSER_XSS_FILTER = True
+
+# Clickjacking protection — deny framing entirely (API + SPA, no embeds needed).
+X_FRAME_OPTIONS = "DENY"
+
+# Limit Referer header leakage to cross-origin requests.
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+# Cookie lifetime (in seconds) — keep sessions reasonably short.
+SESSION_COOKIE_AGE = int(os.getenv("SESSION_COOKIE_AGE", str(60 * 60 * 8)))  # 8h
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
+
+# ---------------------------------------------------------------------------
 # Static files — WhiteNoise is already configured in base.py
 # ---------------------------------------------------------------------------
 

@@ -3,12 +3,14 @@ import hashlib
 from django.db.models import Count, Q
 from django.http import FileResponse, Http404
 from rest_framework import permissions, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.audit.services import create_audit_log
 from config.api_utils import paginate_queryset
 from config.responses import api_success
+from config.uploads import validate_upload
 from apps.reports.models import Report, ReportAttachment
 from apps.reports.serializers import (
     ReportAttachmentSerializer,
@@ -176,8 +178,15 @@ class ReportAttachmentListCreateView(APIView):
         uploaded_file = request.FILES.get("file")
         if not uploaded_file:
             return api_success(message="file maydoni yuborilishi kerak", data=None, status_code=status.HTTP_400_BAD_REQUEST)
-        if uploaded_file.size > 10 * 1024 * 1024:
-            return api_success(message="Fayl hajmi 10 MB dan oshmasligi kerak", data=None, status_code=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            safe_name = validate_upload(uploaded_file)
+        except ValidationError as exc:
+            return api_success(
+                message="; ".join(exc.detail) if isinstance(exc.detail, list) else str(exc.detail),
+                data=None,
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
 
         checksum = hashlib.sha256()
         for chunk in uploaded_file.chunks():
@@ -187,7 +196,7 @@ class ReportAttachmentListCreateView(APIView):
         attachment = ReportAttachment.objects.create(
             report_id=report,
             file=uploaded_file,
-            file_name=uploaded_file.name,
+            file_name=safe_name,
             file_type=uploaded_file.content_type or "application/octet-stream",
             file_path="",
             file_size=uploaded_file.size,

@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from rest_framework import serializers
 
+from config.uploads import ALLOWED_IMAGE_EXTENSIONS, validate_upload
 from apps.leave_management.models import LeaveRequest
 
 
@@ -9,6 +10,16 @@ class LeaveRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveRequest
         fields = ["leave_type", "reason", "start_date", "end_date", "screenshot"]
+
+    def validate_screenshot(self, value):
+        if not value:
+            return value
+        safe_name = validate_upload(value, allowed_extensions=ALLOWED_IMAGE_EXTENSIONS)
+        try:
+            value.name = safe_name
+        except Exception:
+            pass
+        return value
 
     def validate(self, attrs):
         if attrs["end_date"] < attrs["start_date"]:

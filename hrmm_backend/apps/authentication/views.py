@@ -1,5 +1,7 @@
+import logging
+
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.exceptions import ValidationError
 from django.utils import timezone
 from django.core import signing
@@ -8,6 +10,8 @@ from config.responses import api_success
 from config.throttling import LoginRateThrottle, OTPRateThrottle
 from apps.reports.views import IsAuthenticatedHRMM
 from apps.users.models import User
+
+logger = logging.getLogger("hrmm")
 from .serializers import (
     EmailOTPLoginVerifySerializer,
     LoginSerializer,
@@ -140,35 +144,38 @@ class RegisterView(APIView):
     throttle_classes = [LoginRateThrottle]
 
     def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         try:
-            serializer = RegisterSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
             user = serializer.save()
-            user.totp_secret = generate_totp_secret()
-            user.save(update_fields=["totp_secret", "updated_at"])
-            create_audit_log(
-                actor=user,
-                action="USER_REGISTER",
-                target_type="users.User",
-                target_id=user.id,
-                description=f"{user.username} ro'yxatdan o'tdi",
-                request=request,
-            )
+        except serializers.ValidationError:
+            raise  # DRF avtomatik 400 bilan qaytaradi
+        except Exception:
+            logger.exception("Register failed for username=%s", request.data.get("username"))
             return api_success(
-                message="Registration successful",
-                data={
-                    "id": str(user.id),
-                    "username": user.username,
-                    "full_name": user.full_name,
-                },
-                status_code=status.HTTP_201_CREATED,
-            )
-        except Exception as e:
-            return api_success(
-                message=str(e),
+                message="Ro'yxatdan o'tishda xatolik yuz berdi. Qaytadan urinib ko'ring.",
                 data=None,
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
+        user.totp_secret = generate_totp_secret()
+        user.save(update_fields=["totp_secret", "updated_at"])
+        create_audit_log(
+            actor=user,
+            action="USER_REGISTER",
+            target_type="users.User",
+            target_id=user.id,
+            description=f"{user.username} ro'yxatdan o'tdi",
+            request=request,
+        )
+        return api_success(
+            message="Registration successful",
+            data={
+                "id": str(user.id),
+                "username": user.username,
+                "full_name": user.full_name,
+            },
+            status_code=status.HTTP_201_CREATED,
+        )
 
 
 class VerifyLoginEmailOTPView(APIView):

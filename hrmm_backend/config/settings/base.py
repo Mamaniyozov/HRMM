@@ -298,3 +298,16 @@ LOGGING = {
         },
     },
 }
+
+# ---------------------------------------------------------------------------
+# Upload size limits — protect server memory from oversized payloads.
+# ---------------------------------------------------------------------------
+
+# Files smaller than this are kept in memory; larger ones are streamed to disk.
+FILE_UPLOAD_MAX_MEMORY_SIZE = int(os.getenv("FILE_UPLOAD_MAX_MEMORY_SIZE", str(2 * 1024 * 1024)))  # 2 MB
+
+# Hard ceiling for the total size of any request body (covers all upload fields).
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.getenv("DATA_UPLOAD_MAX_MEMORY_SIZE", str(20 * 1024 * 1024)))  # 20 MB
+
+# Number of fields a single request can carry (Django default is 1000).
+DATA_UPLOAD_MAX_NUMBER_FIELDS = int(os.getenv("DATA_UPLOAD_MAX_NUMBER_FIELDS", "1000"))
