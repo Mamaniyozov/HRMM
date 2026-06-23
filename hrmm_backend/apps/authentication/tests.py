@@ -82,7 +82,9 @@ class AuthenticationTests(TestCase):
             format="json",
         )
         body = mail.outbox[0].body
-        code = next((part.strip() for part in body.splitlines() if part.strip().isdigit() and len(part.strip()) == 6), None)
+        import re
+        match = re.search(r"\b\d{6}\b", body)
+        code = match.group(0) if match else None
 
         verify_response = self.client.post(
             "/api/v1/auth/login/verify-email-otp/",

@@ -11,6 +11,7 @@ from apps.users.models import User
 class LeaveManagementTests(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
+        Department.objects.all().delete()
         self.department = Department.objects.create(name="HR", code="HR")
         self.employee = User.objects.create(
             username="employee",

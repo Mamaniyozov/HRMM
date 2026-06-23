@@ -20,11 +20,9 @@ from django.contrib import admin
 from django.urls import path,include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from config.frontend_views import frontend_app_js, frontend_index, frontend_styles_css
+from config.frontend_views import frontend_index, frontend_static
 
 urlpatterns = [
-    path("app.js", frontend_app_js, name="frontend-app-js"),
-    path("styles.css", frontend_styles_css, name="frontend-styles-css"),
     path('admin/', admin.site.urls),
     path("api/v1/auth/", include("apps.authentication.urls")),
     path("api/v1/audit/", include("apps.audit.urls")),
@@ -38,6 +36,8 @@ urlpatterns = [
     path("api/archive-logs/", include("apps.archives.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    # Static frontend assets (including src/*.js modules)
+    path("<path:filename>", frontend_static, name="frontend-static"),
     # Catch-all route for SPA - must be last
     path("", frontend_index, name="frontend-index"),
 ]

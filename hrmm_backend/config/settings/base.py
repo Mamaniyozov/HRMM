@@ -7,12 +7,17 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-# JWT HS256 tavsiya qiladi: kamida 32 belgi. Productionda .env da uzun kalit qo'ying.
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-local-hrmm-dev-secret-key-32b")
+# Ensure log directory exists for the file handler configured below.
+(BASE_DIR / "logs").mkdir(exist_ok=True)
+
+# SECRET_KEY: Required in production (production.py enforces this).
+# local.py provides a dev-only fallback so manage.py works without .env.
+SECRET_KEY = os.getenv("SECRET_KEY", "")
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+_allowed = os.getenv("ALLOWED_HOSTS", "")
+ALLOWED_HOSTS = [h.strip() for h in _allowed.split(",") if h.strip()] if _allowed else []
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -135,6 +140,14 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "config.exceptions.custom_exception_handler",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "20/minute",
+        "user": "200/minute",
+    },
 }
 
 SPECTACULAR_SETTINGS = {
@@ -194,8 +207,16 @@ _csrf_origins = [
 CSRF_TRUSTED_ORIGINS = _csrf_origins or _default_csrf_origins
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ALLOWED_ORIGINS: sourced from env var for production; local.py adds dev origins.
+_cors_raw = os.getenv("CORS_ALLOWED_ORIGINS", "")
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in _cors_raw.split(",")
+    if origin.strip().startswith(("http://", "https://"))
+] if _cors_raw else []
 STATICFILES_DIRS = []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -235,3 +256,41 @@ else:
                 "NAME": BASE_DIR / "db.sqlite3",
             }
         }
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "logs" / "hrmm.log",
+            "maxBytes": 10 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+        "hrmm": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+        },
+    },
+}

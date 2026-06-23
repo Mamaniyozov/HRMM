@@ -22,9 +22,13 @@ htmlcov/
 # Django / backend local files
 *.sqlite3
 db.sqlite3
+*.sql
+backup.sql
 media/
 staticfiles/
 uploads/
+hrmm_backend/archives/*.zip
+hrmm_backend/logs/
 
 # Node / frontend
 node_modules/

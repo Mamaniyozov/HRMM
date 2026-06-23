@@ -213,6 +213,12 @@ http://127.0.0.1:8000/api/schema/swagger/
 
 Swagger UI orqali barcha API endpoint-larini ko'rishingiz va sinashingiz mumkin.
 
+## 🚀 Static Serving & Production Deployment
+
+* **Production (Railway):** Loyihaning frontend qismi ham backend (Django) tomonidan WhiteNoise orqali serving qilinadi. Cache-busting avtomatlashtirilgan.
+* **Local Development:** Frontendni alohida Express.js (`server.js`) yordamida `npm start` orqali ishga tushirish tavsiya etiladi.
+
+
 ## 👨‍💻 Ishtirokdaorlik
 
 Bu loyihaga hissa qo'shish uchun:

@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.core import signing
 from apps.audit.services import create_audit_log
 from config.responses import api_success
+from config.throttling import LoginRateThrottle, OTPRateThrottle
 from apps.reports.views import IsAuthenticatedHRMM
 from apps.users.models import User
 from .serializers import (
@@ -35,6 +36,7 @@ from .two_factor import (
 class LoginView(APIView):
     authentication_classes = []  # login uchun auth keremas
     permission_classes = []
+    throttle_classes = [LoginRateThrottle]
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -46,26 +48,48 @@ class LoginView(APIView):
             user.save(update_fields=["totp_secret", "updated_at"])
 
         if not user.two_factor_enabled:
-            return api_success(
-                message="Authenticator QR setup required",
-                data={
-                    "requires_two_factor": True,
-                    "verification_method": "authenticator_setup",
-                    "challenge_token": build_login_challenge(user),
-                    "qr_code_url": build_qr_code_url(build_otpauth_url(user)),
-                    "otpauth_url": build_otpauth_url(user),
-                    "secret": user.totp_secret,
-                    "user": {
-                        "id": user.id,
-                        "username": user.username,
-                        "full_name": user.full_name,
-                        "role": user.role,
-                        "job_role": user.job_role,
-                        "job_level": user.job_level,
+            if user.email:
+                challenge, code = create_login_email_challenge(user)
+                send_login_email_code(user, code)
+                return api_success(
+                    message="Email verification required",
+                    data={
+                        "requires_two_factor": True,
+                        "verification_method": "email",
+                        "challenge_id": str(challenge.id),
+                        "masked_email": mask_email(user.email),
+                        "user": {
+                            "id": user.id,
+                            "username": user.username,
+                            "full_name": user.full_name,
+                            "role": user.role,
+                            "job_role": user.job_role,
+                            "job_level": user.job_level,
+                        },
                     },
-                },
-                status_code=status.HTTP_200_OK,
-            )
+                    status_code=status.HTTP_200_OK,
+                )
+            else:
+                return api_success(
+                    message="Authenticator QR setup required",
+                    data={
+                        "requires_two_factor": True,
+                        "verification_method": "authenticator_setup",
+                        "challenge_token": build_login_challenge(user),
+                        "qr_code_url": build_qr_code_url(build_otpauth_url(user)),
+                        "otpauth_url": build_otpauth_url(user),
+                        "secret": user.totp_secret,
+                        "user": {
+                            "id": user.id,
+                            "username": user.username,
+                            "full_name": user.full_name,
+                            "role": user.role,
+                            "job_role": user.job_role,
+                            "job_level": user.job_level,
+                        },
+                    },
+                    status_code=status.HTTP_200_OK,
+                )
 
         if user.two_factor_enabled and user.totp_secret:
             return api_success(
@@ -78,27 +102,6 @@ class LoginView(APIView):
                 status_code=status.HTTP_200_OK,
             )
 
-        if user.email:
-            challenge, code = create_login_email_challenge(user)
-            send_login_email_code(user, code)
-            return api_success(
-                message="Email verification required",
-                data={
-                    "requires_two_factor": True,
-                    "verification_method": "email",
-                    "challenge_id": str(challenge.id),
-                    "masked_email": mask_email(user.email),
-                    "user": {
-                        "id": user.id,
-                        "username": user.username,
-                        "full_name": user.full_name,
-                        "role": user.role,
-                        "job_role": user.job_role,
-                        "job_level": user.job_level,
-                    },
-                },
-                status_code=status.HTTP_200_OK,
-            )
 
         tokens = get_tokens_for_user(user)
         user.last_login_at = timezone.now()
@@ -134,6 +137,7 @@ class LoginView(APIView):
 class RegisterView(APIView):
     authentication_classes = []
     permission_classes = []
+    throttle_classes = [LoginRateThrottle]
 
     def post(self, request):
         try:
@@ -170,6 +174,7 @@ class RegisterView(APIView):
 class VerifyLoginEmailOTPView(APIView):
     authentication_classes = []
     permission_classes = []
+    throttle_classes = [OTPRateThrottle]
 
     def post(self, request):
         serializer = EmailOTPLoginVerifySerializer(data=request.data)
@@ -214,6 +219,7 @@ class VerifyLoginEmailOTPView(APIView):
 class VerifyLoginTwoFactorView(APIView):
     authentication_classes = []
     permission_classes = []
+    throttle_classes = [OTPRateThrottle]
 
     def post(self, request):
         serializer = TwoFactorLoginVerifySerializer(data=request.data)

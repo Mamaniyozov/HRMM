@@ -14,6 +14,7 @@ from apps.users.models import User
 class ReportAttachmentUploadTests(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
+        Department.objects.all().delete()
         self.department = Department.objects.create(name="IT", code="IT")
         self.user = User.objects.create(
             username="reporter",

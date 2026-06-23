@@ -42,6 +42,7 @@ class UserDeleteTests(TestCase):
 
 class UserJobProfileTests(TestCase):
     def setUp(self):
+        Department.objects.all().delete()
         self.backend_department = Department.objects.create(name="Backend Development", code="BACK")
         self.hr_department = Department.objects.create(name="HR Department", code="HR")
 
