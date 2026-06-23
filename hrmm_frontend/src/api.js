@@ -1,12 +1,9 @@
 import { state } from "./state.js";
 import { t } from "./i18n.js";
 
-// Production fallback — only used when neither window.__HRMM_API_BASE__,
-// localStorage, nor window.location.origin can be resolved.
-// In production the backend serves the SPA from the same origin, so
-// window.location.origin is the correct API base and this constant is
-// effectively unused.
-const FALLBACK_API_URL = "https://hrmm-production-b4ec.up.railway.app";
+// Backend API base used in production. The frontend and backend are deployed
+// on separate domains, so we must point API calls at the backend URL.
+const API_URL = "https://hrmm-production-b4ec.up.railway.app";
 
 const DEFAULT_API_BASE = (() => {
   // 1) Explicit override (injected by backend or set by admin in localStorage)
@@ -19,11 +16,8 @@ const DEFAULT_API_BASE = (() => {
     return "http://127.0.0.1:8000";
   }
 
-  // 3) Production — backend serves the SPA from the same origin.
-  if (origin) return origin;
-
-  // 4) Last-resort fallback (should never be reached in a browser).
-  return FALLBACK_API_URL;
+  // 3) Production — frontend and backend are on different origins.
+  return API_URL;
 })();
 const DEFAULT_API_TIMEOUT_MS = 45000;
 
@@ -129,4 +123,4 @@ function formatApiErrorMessage(data) {
   return getUserFriendlyError(data.message || "");
 }
 
-export { FALLBACK_API_URL, DEFAULT_API_BASE, DEFAULT_API_TIMEOUT_MS, getHeaders, apiRequest, ERROR_MESSAGES, getUserFriendlyError, formatApiErrorMessage };
+export { API_URL, DEFAULT_API_BASE, DEFAULT_API_TIMEOUT_MS, getHeaders, apiRequest, ERROR_MESSAGES, getUserFriendlyError, formatApiErrorMessage };
