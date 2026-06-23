@@ -158,6 +158,8 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "HRMM API",
     "DESCRIPTION": "Hierarchical Report Management Module backend API",
     "VERSION": "1.0.0",
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SECURITY": [{"jwtAuth": []}],
 }
 
 SIMPLE_JWT = {
