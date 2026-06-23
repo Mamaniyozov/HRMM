@@ -8,7 +8,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 # Ensure log directory exists for the file handler configured below.
-(BASE_DIR / "logs").mkdir(exist_ok=True)
+_LOGS_DIR = Path(os.getenv("HRMM_LOGS_DIR", BASE_DIR / "logs"))
+try:
+    _LOGS_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    pass
 
 # SECRET_KEY: Required in production (production.py enforces this).
 # local.py provides a dev-only fallback so manage.py works without .env.
@@ -277,7 +281,7 @@ LOGGING = {
         },
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": BASE_DIR / "logs" / "hrmm.log",
+            "filename": _LOGS_DIR / "hrmm.log",
             "maxBytes": 10 * 1024 * 1024,
             "backupCount": 5,
             "formatter": "verbose",

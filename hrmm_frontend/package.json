@@ -3,17 +3,9 @@
 "version": "1.0.0",
 "private": true,
 "scripts": {
-    "start": "node server.js",
-    "lint": "eslint app.js src",
-    "lint:fix": "eslint app.js src --fix",
-    "format": "prettier --write app.js src",
-    "format:check": "prettier --check app.js src"
+    "start": "node server.js"
 },
 "dependencies": {
     "express": "^4.18.2"
-},
-"devDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.3.0"
 }
 }

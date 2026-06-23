@@ -42,6 +42,6 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Lint
-        run: npm run lint
+        run: npx --yes eslint app.js src
       - name: Check formatting
-        run: npm run format:check
+        run: npx --yes prettier --check app.js src
