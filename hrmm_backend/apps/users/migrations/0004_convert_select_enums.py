@@ -43,10 +43,6 @@ END $$;
 """
 
 POSTGRES_ALTER_COLUMNS = """
-ALTER TABLE public.users_user
-  ALTER COLUMN role TYPE status_enum
-  USING role::text::status_enum;
-
 ALTER TABLE public.reports_report
   ALTER COLUMN status TYPE status_enum
   USING status::text::status_enum;
