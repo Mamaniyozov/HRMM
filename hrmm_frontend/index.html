@@ -853,10 +853,10 @@
               </label>
               <label><span data-translate="new_role">Yangi rol</span>
                 <select name="role" id="roleManagementRoleSelect" required>
-                  <option value="SPECIALIST">SPECIALIST (Mutaxassis)</option>
-                  <option value="UNIT_HEAD">UNIT_HEAD (Bo'lim boshlig'i)</option>
-                  <option value="DEPT_HEAD">DEPT_HEAD (Kafedra mudiri)</option>
-                  <option value="DIRECTOR">DIRECTOR (Direktor)</option>
+                  <option value="SPECIALIST" data-role-label="SPECIALIST">Mutaxassis</option>
+                  <option value="UNIT_HEAD" data-role-label="UNIT_HEAD">Birlik rahbari</option>
+                  <option value="DEPT_HEAD" data-role-label="DEPT_HEAD">Bo'lim rahbari</option>
+                  <option value="DIRECTOR" data-role-label="DIRECTOR">Direktor</option>
                 </select>
               </label>
               <!-- FIXED: Added department selector for role change -->
@@ -906,7 +906,7 @@
                 <label><span data-translate="report_content">Mazmun</span><textarea name="content" rows="6" class="auto-grow" placeholder="Batafsil report mazmuni" data-translate-placeholder="report_content_placeholder"></textarea></label>
                 <label><span data-translate="report_image">Biriktirma (rasm, skrinshot yoki fayl)</span><input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" /></label>
                 <label>
-                  <span data-translate="report_department">Bo'lim</span>
+                  <span data-translate="target_department">Yuboriladigan bo'lim</span>
                   <select name="department_id" id="reportDepartmentSelect">
                   <option value="" data-translate="report_department_default">Login qiling (departmentlar yuklanadi)</option>
                 </select>
@@ -928,7 +928,7 @@
                 </select>
               </label>
               <label>
-                <span data-translate="department">Bo'lim</span>
+                <span data-translate="target_department">Yuboriladigan bo'lim</span>
                 <select name="department_id" id="departmentSelect">
                   <option value="" data-translate="login_to_load_departments">Login qiling (departmentlar yuklanadi)</option>
                 </select>

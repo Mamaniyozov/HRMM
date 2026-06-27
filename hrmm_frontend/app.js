@@ -866,7 +866,7 @@ function applyTranslations() {
     setFieldText(reportPanel, "summary", t("report_comment"), t("report_comment_placeholder"));
     setFieldText(reportPanel, "content", t("report_content"), t("report_content_placeholder"));
     setFieldText(reportPanel, "screenshot", t("report_image"));
-    setFieldText(reportPanel, "department_id", t("report_department"));
+    setFieldText(reportPanel, "department_id", t("target_department"));
     if (submitButton) submitButton.textContent = t("create_report_button");
 
     const helperLabels = reportPanel.querySelectorAll(".report-id-meta span, .inline-actions .ghost-btn");
@@ -898,6 +898,12 @@ function applyTranslations() {
   renderDepartmentOptions();
   renderUsers();
   renderProfile();
+
+  // Update role management dropdown labels with localized role names
+  roleManagementRoleSelect?.querySelectorAll("option[data-role-label]").forEach((opt) => {
+    const roleKey = opt.getAttribute("data-role-label");
+    if (roleKey) opt.textContent = getRoleLabel(roleKey);
+  });
 
   // Translate all elements with data-translate attribute
   document.querySelectorAll('[data-translate]').forEach(el => {
@@ -2474,19 +2480,13 @@ function renderDepartmentOptions() {
   if (!reportDepartmentSelect) return;
   const previousDepartmentValue = departmentSelect?.value || "";
   renderUserDepartmentOptions();
-  const itDepartments = state.departments.filter((department) => {
-    const code = String(department.code || "").trim().toUpperCase();
-    const name = String(department.name || "").trim().toUpperCase();
-    return code === "IT" || name.includes("IT");
-  });
-  const userDepartments = itDepartments.length ? itDepartments : state.departments;
 
   if (departmentSelect) {
     departmentSelect.innerHTML = "";
   }
   reportDepartmentSelect.innerHTML = `<option value="">${t("report_department_default")}</option>`;
 
-  if (!userDepartments.length) {
+  if (!state.departments.length) {
     if (departmentSelect) {
       departmentSelect.innerHTML = `<option value="">${t("no_departments_available")}</option>`;
     }
@@ -2498,7 +2498,7 @@ function renderDepartmentOptions() {
   }
 
   if (departmentSelect) {
-    userDepartments.forEach((department) => {
+    state.departments.forEach((department) => {
       const option = document.createElement("option");
       option.value = department.id;
       option.textContent = `${department.name} (${department.code})`;
@@ -2514,12 +2514,12 @@ function renderDepartmentOptions() {
   });
 
   if (departmentSelect) {
-    const selectedDepartmentStillExists = userDepartments.some(
+    const selectedDepartmentStillExists = state.departments.some(
       (department) => department.id === previousDepartmentValue
     );
     departmentSelect.value = selectedDepartmentStillExists
       ? previousDepartmentValue
-      : userDepartments[0].id;
+      : state.departments[0].id;
   }
 }
 
