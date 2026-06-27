@@ -5035,10 +5035,9 @@ languageOptions.forEach((button) => {
     renderNotifications();
     renderAuditLogs();
     renderArchiveLogs();
-    renderDashboard();
+    refreshHomeDashboard();
     renderFeedbackList();
-    renderRecentReports();
-    renderRecentLeaves();
+    if (state.dashboardStats) renderRecentLists(state.dashboardStats);
     renderOperationsDashboard();
     renderAdminDashboard();
     renderUsersForRoleManagement();
@@ -5559,7 +5558,7 @@ function applyTheme(themeId = getActiveThemeId()) {
 
 function forceThemeRepaint() {
   document.documentElement.style.setProperty("--theme-repaint", String(Date.now()));
-  ["renderDashboard", "renderRecentReports", "renderRecentLeaves", "renderNotifications", "renderReports", "renderLeaves", "renderUsers"]
+  ["refreshHomeDashboard", "renderNotifications", "renderReports", "renderLeaves", "renderUsers"]
     .forEach((name) => {
       try {
         const renderFn = typeof window !== "undefined" ? window[name] : undefined;
