@@ -1772,6 +1772,13 @@ select {
   height: 40px;
 }
 
+/* Auto-grow textarea — no inner scrollbar, expands with content */
+textarea.auto-grow {
+  overflow-y: hidden;
+  resize: none;
+  min-height: 88px;
+}
+
 input:focus,
 select:focus,
 textarea:focus {

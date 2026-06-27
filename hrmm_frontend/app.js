@@ -521,6 +521,7 @@ function openQuickCreate(mode) {
   quickCreateMessageInput.placeholder = config.placeholder;
   quickCreateModal.classList.remove("hidden");
   quickCreateModal.setAttribute("aria-hidden", "false");
+  initAutoGrow(quickCreateModal);
 }
 
 function closeQuickCreate() {
@@ -927,6 +928,22 @@ document.getElementById("downloadSystemLogs")?.addEventListener("click", () => {
   URL.revokeObjectURL(url);
 });
 
+function autoResizeTextarea(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
+function initAutoGrow(container) {
+  const scope = container || document;
+  const textareas = scope.querySelectorAll("textarea.auto-grow");
+  textareas.forEach((ta) => {
+    if (ta.dataset.autoGrowBound) return;
+    ta.dataset.autoGrowBound = "true";
+    ta.addEventListener("input", () => autoResizeTextarea(ta));
+    autoResizeTextarea(ta);
+  });
+}
+
 function openSectionModal(targetId, titleText) {
   const target = document.getElementById(targetId);
   if (!target || !sectionModal || !sectionModalContent) return;
@@ -946,6 +963,7 @@ function openSectionModal(targetId, titleText) {
   }
   sectionModal.classList.remove("hidden");
   sectionModal.setAttribute("aria-hidden", "false");
+  initAutoGrow(target);
 }
 
 function openProfileDetailsModal() {
@@ -6208,3 +6226,5 @@ function updateCommentHint() {
 
 workflowActionSelect?.addEventListener("change", updateCommentHint);
 updateCommentHint();
+
+initAutoGrow(document);

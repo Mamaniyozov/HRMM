@@ -940,8 +940,8 @@
               <div class="panel-heading"><p class="eyebrow" data-translate="reports_eyebrow">Hisobotlar</p><h3 data-translate="create_report_title">Hisobot yaratish</h3></div>
               <form id="reportForm" class="form-grid">
                 <label><span data-translate="report_title">Sarlavha</span><input name="title" type="text" placeholder="Choraklik operatsion xulosa" data-translate-placeholder="report_title_placeholder" required /></label>
-                <label><span data-translate="report_comment">Izoh</span><textarea name="summary" rows="4" placeholder="Report haqida qisqa izoh (commit/comment)" data-translate-placeholder="report_comment_placeholder" required></textarea></label>
-                <label><span data-translate="report_content">Mazmun</span><textarea name="content" rows="6" placeholder="Batafsil report mazmuni" data-translate-placeholder="report_content_placeholder"></textarea></label>
+                <label><span data-translate="report_comment">Izoh</span><textarea name="summary" rows="4" class="auto-grow" placeholder="Report haqida qisqa izoh (commit/comment)" data-translate-placeholder="report_comment_placeholder" required></textarea></label>
+                <label><span data-translate="report_content">Mazmun</span><textarea name="content" rows="6" class="auto-grow" placeholder="Batafsil report mazmuni" data-translate-placeholder="report_content_placeholder"></textarea></label>
                 <label><span data-translate="report_image">Biriktirma (rasm, skrinshot yoki fayl)</span><input name="screenshot" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" /></label>
                 <label>
                   <span data-translate="report_department">Bo'lim</span>
@@ -1012,7 +1012,7 @@
               </label>
               <label>
                 <span data-translate="reason">Sabab</span>
-                <textarea name="reason" rows="5" placeholder="Ta'til sababi" data-translate-placeholder="leave_reason_placeholder" required></textarea>
+                <textarea name="reason" rows="5" class="auto-grow" placeholder="Ta'til sababi" data-translate-placeholder="leave_reason_placeholder" required></textarea>
               </label>
               <label>
                 <span data-translate="attachment">Biriktirma (rasm yoki fayl)</span>
@@ -1432,7 +1432,7 @@
             </label>
             <label>
               <span>Izoh</span>
-              <textarea id="quickCreateMessageInput" name="message" rows="5" placeholder="Kerakli talab yoki bildirish matni" required></textarea>
+              <textarea id="quickCreateMessageInput" name="message" rows="5" class="auto-grow" placeholder="Kerakli talab yoki bildirish matni" required></textarea>
             </label>
             <label>
               <span>Rasm yoki skrinshot biriktirish (faqat rasm fayllari)</span>
