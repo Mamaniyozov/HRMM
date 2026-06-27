@@ -128,6 +128,63 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ===== UX Guidelines: Accessibility ===== */
+
+/* Skip link for screen readers and keyboard users — WCAG 2.1 SC 2.4.1 */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: white;
+  border-radius: 0 0 var(--radius-md) 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 9999;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Focus-visible for keyboard navigation — WCAG 2.1 SC 2.4.7 */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Remove outline for mouse-only clicks */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Respect reduced motion preference — WCAG 2.1 SC 2.3.3 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Soft UI Evolution: smooth scrolling for anchor navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 .page-shell {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -265,6 +322,14 @@ body {
 .login-theme-btn:hover {
   background: var(--bg-deep);
   border-color: var(--border-strong);
+}
+
+/* Soft UI Evolution: theme toggle focus-visible */
+.login-theme-btn:focus-visible,
+.theme-toggle-btn:focus-visible,
+.icon-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .login-language-btn {
@@ -412,6 +477,12 @@ body {
   background: var(--accent-bg);
   border-color: var(--accent-soft);
   color: var(--accent);
+}
+
+/* Soft UI Evolution: nav-link focus-visible */
+.nav-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .nav-link-icon {
@@ -688,6 +759,17 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Soft UI Evolution: topbar button focus + press */
+.topbar-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.topbar-btn:active {
+  transform: scale(0.97);
+  transition-duration: 0.05s;
 }
 
 /* Topbar Search Enhancement */
@@ -1196,6 +1278,17 @@ body {
   border-color: var(--border-strong);
 }
 
+/* Soft UI Evolution: quick-icon focus + press */
+.quick-icon-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.quick-icon-chip:active {
+  transform: scale(0.95);
+  transition-duration: 0.05s;
+}
+
 .quick-icon-chip svg {
   width: 18px;
   height: 18px;
@@ -1216,6 +1309,13 @@ body {
   box-shadow: var(--shadow-sm);
   display: grid;
   gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Soft UI Evolution: card hover lift */
+.dashboard-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .dashboard-stat-head {
@@ -1680,6 +1780,16 @@ textarea:focus {
   box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
+/* Soft UI Evolution: input focus-visible with softer ring */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-bg);
+}
+
 .form-actions {
   display: flex;
   align-items: end;
@@ -1722,6 +1832,13 @@ textarea:focus {
   transform: translateY(-1px);
 }
 
+/* Soft UI Evolution: button press effect */
+.primary-btn:active,
+.ghost-btn:active {
+  transform: translateY(0);
+  transition-duration: 0.05s;
+}
+
 .toolbar {
   display: flex;
   gap: 12px;
@@ -1740,6 +1857,14 @@ textarea:focus {
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
   background: var(--panel);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Soft UI Evolution: card hover lift */
+.summary-card:hover,
+.feed-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .summary-card {
@@ -2716,6 +2841,13 @@ tbody tr:hover {
 
 .bottom-section-nav .section-nav-btn.active {
   color: var(--accent);
+}
+
+/* Soft UI Evolution: bottom nav focus-visible */
+.bottom-section-nav .section-nav-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
 }
 
 .bottom-section-nav .section-nav-btn svg {

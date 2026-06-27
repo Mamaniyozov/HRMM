@@ -14,6 +14,8 @@
     <!-- API BASE INJECTION -->
   </head>
   <body>
+    <!-- Accessibility: skip to main content -->
+    <a href="#appView" class="skip-link" aria-label="Asosiy kontentga o'tish">Asosiy kontentga o'tish</a>
     <div id="bgEffectLayer" aria-hidden="true">
       <canvas id="bgEffectCanvas"></canvas>
       <div id="bgEffectMesh"></div>
@@ -189,7 +191,7 @@
       </div>
     </section>
 
-    <div id="appView" class="page-shell hidden">
+    <div id="appView" class="page-shell hidden" role="main">
       <aside class="sidebar">
         <div class="brand-block">
           <div class="brand-mark">HR</div>
