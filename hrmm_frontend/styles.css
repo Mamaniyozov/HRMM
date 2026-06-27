@@ -2522,14 +2522,15 @@ tbody tr:hover {
 .creation-warning-card {
   padding: 18px 20px;
   border-radius: 18px;
-  border: 1px solid rgba(35, 196, 110, 0.7);
-  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--success);
+  background: var(--surface);
 }
 
 .creation-warning-card strong {
   display: block;
   margin-bottom: 8px;
   font-size: 1rem;
+  color: var(--text);
 }
 
 .creation-warning-card p {

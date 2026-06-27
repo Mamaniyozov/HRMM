@@ -583,6 +583,18 @@ function requestCreationWarning(type) {
   });
 }
 
+async function showWarningThenOpenForm(formType) {
+  const confirmed = await requestCreationWarning(formType);
+  if (!confirmed) return;
+  if (formType === "report") {
+    openSectionModal("reportCreatePanel", t("report_modal_title"));
+  } else if (formType === "leave") {
+    openSectionModal("leaveCreatePanel", t("create_leave_menu"));
+  } else {
+    openQuickCreate(formType);
+  }
+}
+
 function updateCurrentLanguageLabel() {
   const label = languageNames[state.language] || languageNames.uz;
   if (currentLanguageLabel) {
@@ -4385,7 +4397,6 @@ refreshUsersForRoleManagement?.addEventListener("click", async () => {
 
 reportForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (!(await requestCreationWarning("report"))) return;
   const formData = new FormData(reportForm);
   const payload = {
     title: formData.get("title"),
@@ -4958,21 +4969,12 @@ createMenuItems.forEach((button) => {
   button?.addEventListener("click", () => {
     const action = button.dataset.createAction;
     toggleCreateMenu(false);
-    if (action === "report") {
-      openSectionModal("reportCreatePanel", t("report_modal_title"));
-      return;
-    }
-    if (action === "leave") {
-      openSectionModal("leaveCreatePanel", t("create_leave_menu"));
-      return;
-    }
-    openQuickCreate(action);
+    showWarningThenOpenForm(action);
   });
 });
 
 leaveCreateForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (!(await requestCreationWarning("leave"))) return;
   const formData = new FormData(leaveCreateForm);
   const leaveType = String(formData.get("leave_type") || "").trim();
   const reason = String(formData.get("reason") || "").trim();
@@ -5368,8 +5370,6 @@ feedbackForm?.addEventListener("submit", async (event) => {
 quickCreateForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const mode = quickCreateType?.value || "notification";
-  if (mode === "notification" && !(await requestCreationWarning("notification"))) return;
-  if (mode === "feature" && !(await requestCreationWarning("feature"))) return;
   const title = String(quickCreateTitleInput?.value || "").trim();
   const message = String(quickCreateMessageInput?.value || "").trim();
   if (!title || !message) {
