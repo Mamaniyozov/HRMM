@@ -312,6 +312,7 @@ const creationWarningModal = document.getElementById("creationWarningModal");
 const creationWarningBackdrop = document.getElementById("creationWarningBackdrop");
 const creationWarningClose = document.getElementById("creationWarningClose");
 const creationWarningTitle = document.getElementById("creationWarningTitle");
+const creationWarningEyebrow = document.getElementById("creationWarningEyebrow");
 const creationWarningList = document.getElementById("creationWarningList");
 const creationWarningConfirm = document.getElementById("creationWarningConfirm");
 
@@ -599,6 +600,9 @@ function requestCreationWarning(type) {
 
   const config = getCreationWarningConfig(type);
   creationWarningTitle.textContent = config.title;
+  if (creationWarningEyebrow) creationWarningEyebrow.textContent = t("creation_warning_eyebrow");
+  if (creationWarningClose) creationWarningClose.textContent = t("creation_warning_close");
+  if (creationWarningConfirm) creationWarningConfirm.textContent = t("creation_warning_confirm");
   creationWarningList.innerHTML = config.items
     .map(
       (item) => `
