@@ -1301,8 +1301,8 @@ html {
   gap: 16px;
 }
 
-.dashboard-stat-card {
-  padding: 16px;
+.stat-card {
+  padding: 20px;
   border-radius: var(--radius-lg);
   background: var(--surface);
   border: 1px solid var(--line);
@@ -1312,106 +1312,115 @@ html {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Soft UI Evolution: card hover lift */
-.dashboard-stat-card:hover {
+.stat-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-.dashboard-stat-head {
+.stat-card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  color: var(--text-muted);
-  font-size: 0.85rem;
 }
 
-.stat-icon {
-  width: 36px;
-  height: 36px;
+.stat-card-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.stat-card-icon {
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
   border-radius: var(--radius-md);
-  font-weight: 600;
+  background: color-mix(in srgb, var(--card-accent) 12%, transparent);
+  color: var(--card-accent);
 }
 
-.stat-icon.blue {
-  color: var(--accent);
-  background: var(--accent-soft);
+.stat-card-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
-.stat-icon.red {
-  color: var(--danger);
-  background: var(--danger-soft);
+.stat-card-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--card-accent);
 }
 
-.stat-icon.green {
-  color: var(--success);
-  background: var(--success-soft);
-}
-
-.stat-icon.purple {
-  color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.dashboard-stat-card strong {
-  font-size: 1.75rem;
-  font-weight: 600;
-}
-
-.dashboard-chip-row,
-.dashboard-badge-row {
+.stat-card-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
 }
 
-.dashboard-filter-chip,
-.dashboard-badge {
-  min-height: 32px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.dashboard-filter-chip {
-  background: var(--accent-bg);
-  color: var(--accent);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.dashboard-filter-chip:hover {
-  background: var(--accent-soft);
-}
-
-.dashboard-badge {
-  cursor: pointer;
-  font: inherit;
-  font-family: inherit;
-}
-
-button.dashboard-badge,
-button.dashboard-filter-chip {
+.stat-card-link {
   appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--card-accent);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
 }
 
-.dashboard-badge strong {
-  display: inline;
-  margin-left: 4px;
+.stat-card-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.stat-card-link.active {
+  opacity: 1;
   font-weight: 700;
 }
 
-.dashboard-stat-card--approval {
-  border-color: rgba(22, 138, 100, 0.25);
+.stat-card-link-sep {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  opacity: 0.5;
 }
 
-.dashboard-stat-card--notifications {
-  border-color: rgba(122, 76, 224, 0.25);
+.stat-card-pending {
+  display: none;
+}
+
+.stat-card-sub-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-card-sub-link {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.stat-card-sub-link:hover {
+  color: var(--card-accent);
+}
+
+.stat-card-sub-link strong {
+  font-weight: 700;
+  color: var(--card-accent);
+}
+
+.stat-card-sub-link-sep {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  opacity: 0.4;
 }
 
 .collection-hint {
@@ -3759,9 +3768,8 @@ body::before {
   gap: 18px;
 }
 
-.dashboard-stat-card {
+.stat-card {
   position: relative;
-  min-height: 248px;
   overflow: hidden;
   padding: 22px;
   transition:
@@ -3771,29 +3779,7 @@ body::before {
     box-shadow 180ms ease;
 }
 
-.dashboard-stat-card::before {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 4px;
-  background: var(--card-accent, var(--accent));
-  content: "";
-}
-
-.dashboard-stat-card::after {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 36%);
-  opacity: 0.32;
-  content: "";
-}
-
-.dashboard-stat-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.dashboard-stat-card:hover {
+.stat-card:hover {
   transform: translateY(-3px);
   border-color: var(--card-accent, var(--accent));
   background:
@@ -3804,51 +3790,20 @@ body::before {
     0 24px 60px var(--shadow);
 }
 
-.dashboard-stat-card:nth-child(1) {
-  --card-accent: var(--accent);
-}
-
-.dashboard-stat-card:nth-child(2) {
-  --card-accent: var(--purple);
-}
-
-.dashboard-stat-card:nth-child(3),
-.dashboard-stat-card--approval {
-  --card-accent: var(--warning);
-}
-
-.dashboard-stat-card:nth-child(4),
-.dashboard-stat-card--notifications {
-  --card-accent: var(--coral);
-}
-
-.dashboard-stat-head span:first-child {
+.stat-card-label {
   color: var(--muted);
   font-size: 13px;
   font-weight: 800;
 }
 
-.dashboard-stat-card strong {
-  color: var(--text);
+.stat-card-number {
   font-size: 36px;
   line-height: 1;
 }
 
-.stat-icon {
-  display: inline-grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border-radius: 8px;
+.stat-card-icon {
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.045);
-  color: var(--card-accent, var(--accent));
-  font-weight: 900;
-}
-
-.dashboard-pending-list {
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.025);
 }
 
 .dashboard-pending-item,
@@ -3861,33 +3816,8 @@ body::before {
   color: var(--text);
 }
 
-.dashboard-badge-row {
-  gap: 10px;
-}
-
-.dashboard-badge {
-  min-height: 42px;
-  align-items: center;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.dashboard-badge.neutral {
-  background: rgba(255, 255, 255, 0.045);
-  color: #a9b6c6;
-}
-
-.dashboard-badge.neutral strong {
-  color: var(--success);
-  font-size: 16px;
-}
-
-.dashboard-filter-chip.active,
-.dashboard-badge.active,
-.status-pill--approved {
-  border-color: rgba(0, 201, 167, 0.24);
-  background: rgba(0, 201, 167, 0.13);
-  color: #8ff8e4;
+.stat-card-link.active {
+  color: var(--card-accent);
 }
 
 .status-pill,

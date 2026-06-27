@@ -100,7 +100,7 @@ class DashboardStatsView(APIView):
         recent_reports = list(
             reports.select_related("created_by")
             .order_by("-created_at")
-            .values("id", "report_number", "title", "status", "created_by__full_name")[:5]
+            .values("id", "sequence_number", "report_number", "title", "status", "created_by__full_name")[:5]
         )
         recent_leaves = list(
             leaves.select_related("requested_by")
@@ -141,7 +141,7 @@ class DashboardAdminView(DashboardStatsView):
         employees_on_leave = leaves.filter(status="APPROVED").values("requested_by__full_name", "start_date", "end_date")[:10]
         pending_reports = list(
             reports.filter(status__in=reviewable_report_statuses_for_user(request.user))
-            .values("id", "report_number", "title", "status", "created_by__full_name")[:10]
+            .values("id", "sequence_number", "report_number", "title", "status", "created_by__full_name")[:10]
         )
         for item in pending_reports:
             item["item_type"] = "report"
@@ -346,7 +346,7 @@ class DashboardReviewHistoryView(APIView):
                 {
                     "item_type": "report",
                     "item_id": str(report.id),
-                    "reference": report.report_number,
+                    "reference": f"#{report.sequence_number or '-'}",
                     "title": report.title,
                     "action": item.action,
                     "previous_status": item.previous_status,

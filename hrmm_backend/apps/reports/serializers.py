@@ -117,6 +117,7 @@ class ReportListSerializer(serializers.ModelSerializer):
         model = Report
         fields = [
             "id",
+            "sequence_number",
             "report_number",
             "title",
             "status",
@@ -161,6 +162,7 @@ class ReportDetailSerializer(serializers.ModelSerializer):
         model = Report
         fields = [
             "id",
+            "sequence_number",
             "report_number",
             "title",
             "summary",

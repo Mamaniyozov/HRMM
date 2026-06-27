@@ -58,7 +58,11 @@ class ReportListCreateView(APIView):
         if department_id:
             reports = reports.filter(department_id_id=department_id)
         if search:
-            reports = reports.filter(Q(title__icontains=search) | Q(report_number__icontains=search))
+            reports = reports.filter(
+                Q(title__icontains=search)
+                | Q(report_number__icontains=search)
+                | Q(sequence_number__icontains=search)
+            )
 
         return paginate_queryset(request, reports.order_by("-created_at"), ReportListSerializer)
 

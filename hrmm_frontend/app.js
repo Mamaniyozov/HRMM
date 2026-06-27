@@ -9,6 +9,7 @@ import {
 import {
   apiRequest,
   getHeaders,
+  setAuthFailureHandler,
   DEFAULT_API_BASE,
 } from "./src/api.js";
 import {
@@ -62,6 +63,40 @@ function appLog(level, message, meta) {
   }
 }
 
+function logError(context, error) {
+  const detail = {
+    context: context || "unknown",
+    message: error?.message || String(error),
+    name: error?.name || "Error",
+    stack: error?.stack || "",
+  };
+  if (error?.status) detail.status = error.status;
+  if (error?.url) detail.url = error.url;
+  if (error?.responseStatus) detail.responseStatus = error.responseStatus;
+  if (error?.responseBody) {
+    try {
+      detail.responseBody = typeof error.responseBody === "string"
+        ? error.responseBody
+        : JSON.stringify(error.responseBody);
+    } catch (_e) {
+      detail.responseBody = String(error.responseBody);
+    }
+  }
+  console.error(`[${detail.context}] ${detail.name}: ${detail.message}`, detail);
+}
+
+setAuthFailureHandler(() => {
+  state.accessToken = "";
+  state.refreshToken = "";
+  state.currentUser = null;
+  if (authStateLabel) authStateLabel.textContent = t("offline");
+  authStateDot?.classList.remove("online");
+  authStateDot?.classList.add("offline");
+  if (currentUserLabel) currentUserLabel.textContent = "-";
+  if (loggedInAsLabel) loggedInAsLabel.textContent = "-";
+  setAuthUi(false);
+  setMessage(t("session_expired") || "Session expired. Please log in again.", "error");
+});
 
 // Capture uncaught errors and promise rejections.
 window.addEventListener("error", (event) => {
@@ -1717,7 +1752,7 @@ function bindReportDetailActionButtons(report) {
 function openReportDetailModal(report) {
   const actionBar = makeReportDetailActionBar(report);
   openContentModal(
-    report.report_number || t("collection_title_reports"),
+    `#${report.sequence_number || ""} ${report.report_number || t("collection_title_reports")}`.trim(),
     t("collection_title_reports"),
     makeDetailItems([
       [t("report_title"), report.title],
@@ -1727,7 +1762,6 @@ function openReportDetailModal(report) {
       [t("management_role"), report.created_by_name || "-"],
       [t("status"), report.status || "-"],
       [t("level"), report.current_approval_level ? `L${report.current_approval_level}` : "-"],
-      ["ID", report.id || "-"],
       [t("date_label"), formatDate(report.created_at)],
     ]) + actionBar
   );
@@ -1861,10 +1895,10 @@ function openCollectionModal(title, items, type) {
             const itemType = resolveCollectionItemType(item, type);
             const primary =
               itemType === "report"
-                ? item.report_number || item.title
+                ? `#${item.sequence_number || "-"} ${item.report_number || item.title || ""}`.trim()
                 : itemType === "leave"
                   ? item.requested_by_name || item.leave_type
-                  : item.title || item.id || `${itemType} ${index + 1}`;
+                  : item.title || `${itemType} ${index + 1}`;
             const secondary =
               itemType === "report"
                 ? item.title
@@ -1925,7 +1959,7 @@ function updateFeedbackAvailability() {
 }
 
 function bindDashboardDrilldowns() {
-  const statCards = document.querySelectorAll("#homeSection .dashboard-stat-card");
+  const statCards = document.querySelectorAll("#homeSection .stat-card");
   statCards[0]?.querySelector('[data-activity-filter="requests"]')?.addEventListener("click", () => {
     openCollectionModal(t("collection_title_requests"), getVisibleLeavesForDashboard(), "leave");
   });
@@ -1955,10 +1989,10 @@ function bindDashboardDrilldowns() {
   statCards[2]?.querySelector('[data-dashboard-filter="pending-all"]')?.addEventListener("click", () => {
     openManagerPendingApprovalsModal();
   });
-  statCards[2]?.querySelector(".dashboard-stat-head")?.addEventListener("click", () => {
+  statCards[2]?.querySelector(".stat-card-head")?.addEventListener("click", () => {
     openManagerPendingApprovalsModal();
   });
-  statCards[2]?.querySelector("strong")?.addEventListener("click", () => {
+  statCards[2]?.querySelector(".stat-card-number")?.addEventListener("click", () => {
     openManagerPendingApprovalsModal();
   });
 
@@ -1973,10 +2007,10 @@ function bindDashboardDrilldowns() {
       "notification"
     );
   });
-  notificationsCard?.querySelector("strong")?.addEventListener("click", () => {
+  notificationsCard?.querySelector(".stat-card-number")?.addEventListener("click", () => {
     openCollectionModal(t("collection_title_notifications"), getDashboardPendingNotifications(), "notification");
   });
-  notificationsCard?.querySelector(".dashboard-stat-head")?.addEventListener("click", () => {
+  notificationsCard?.querySelector(".stat-card-head")?.addEventListener("click", () => {
     openCollectionModal(t("collection_title_notifications"), getDashboardPendingNotifications(), "notification");
   });
 }
@@ -2134,7 +2168,7 @@ function buildActivityItems() {
   const reportItems = state.reports.map((report) => ({
     type: "reports",
     actor: report.created_by_name || t("user"),
-    title: `${report.report_number || t("report")} ${report.created_by_name || t("user")} ${t("created_by_suffix")}`,
+    title: `#${report.sequence_number || "-"} ${report.report_number || t("report")} ${report.created_by_name || t("user")} ${t("created_by_suffix")}`.trim(),
     meta: report.title || report.status || t("report"),
     time: report.created_at,
   }));
@@ -2550,6 +2584,7 @@ function renderReports() {
   const statusNeedle = normalizeSearchValue(reportStatusFilter?.value || getCombinedStatusNeedle());
   const filteredReports = state.reports.filter((report) => {
     const haystack = [
+      report.sequence_number,
       report.report_number,
       report.title,
       report.department_name,
@@ -2572,9 +2607,9 @@ function renderReports() {
         <tr>
           <td>
             <div class="employee-cell">
-              <strong>${report.report_number}</strong>
+              <strong>#${report.sequence_number || "-"}</strong>
               <span>${report.title}</span>
-              <small>ID: ${report.id}</small>
+              <small>${report.report_number || ""}</small>
               <button class="ghost-btn small-btn use-report-id-btn" data-id="${report.id}" type="button">${t("use_report_id")}</button>
               <button class="ghost-btn small-btn report-detail-btn" data-id="${report.id}" type="button">${t("open_details")}</button>
             </div>
@@ -2691,6 +2726,10 @@ function renderAudit() {
   renderActivityHistory();
 }
 
+function renderAuditLogs() {
+  renderAudit();
+}
+
 function renderArchiveLogs() {
   if (!archiveLogsTableBody) return;
 
@@ -2725,7 +2764,7 @@ async function loadArchiveLogs() {
     state.archiveLogs = payload.results || [];
   } catch (error) {
     state.archiveLogs = [];
-    console.warn("Archive logs:", error.message);
+    logError("Archive logs", error);
   }
   renderArchiveLogs();
 }
@@ -2739,7 +2778,7 @@ function renderRecentLists(payload) {
         .map(
           (item) => `
             <div class="feed-item">
-              <strong>${item.report_number}</strong>
+              <strong>#${item.sequence_number || "-"} ${item.report_number || ""}</strong>
               <span>${item.title}</span>
               <small>${translateStatus(item.status)} - ${item.created_by__full_name}</small>
             </div>
@@ -2919,7 +2958,7 @@ function renderAdminDashboard() {
           (item) => `
             <div class="feed-item">
               <div class="feed-item-content">
-                <strong>#${item.leave_number || item.report_number || item.id?.slice(0, 8)}</strong>
+                <strong>#${item.sequence_number || item.leave_number || item.report_number || "-"}</strong>
                 <span>${item.title || item.reason || t("unknown")}</span>
                 <small>${translateStatus(item.status)} - ${item.created_by__full_name || item.employee_name || '-'}</small>
               </div>
@@ -3058,14 +3097,18 @@ function renderPendingItemsInDashboard() {
   // Render pending leaves in "Yangi arizalar" card
   const pendingLeavesList = document.getElementById('pendingLeavesList');
   if (pendingLeavesList) {
-    pendingLeavesList.innerHTML = pendingLeaves.length
-      ? pendingLeaves.slice(0, 3).map(item => `
+    if (pendingLeaves.length) {
+      pendingLeavesList.innerHTML = pendingLeaves.slice(0, 3).map(item => `
           <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="leave">
             <span class="pending-title">${escapeHtml(item.reason || t("label_leave"))}</span>
             <span class="pending-meta">${translateStatus(item.status)} - ${isManager ? (item.requested_by_name || item.employee_name || "-") : t("your_leave")}</span>
           </button>
-        `).join('')
-      : `<div class="dashboard-pending-empty">${t("no_pending_leaves")}</div>`;
+        `).join('');
+      pendingLeavesList.style.display = '';
+    } else {
+      pendingLeavesList.innerHTML = '';
+      pendingLeavesList.style.display = 'none';
+    }
 
     // Add click handlers
     pendingLeavesList.querySelectorAll('.dashboard-pending-item').forEach(btn => {
@@ -3079,14 +3122,18 @@ function renderPendingItemsInDashboard() {
   // Render pending reports in "Mening hisobotlarim" card
   const pendingReportsList = document.getElementById('pendingReportsDashboardList');
   if (pendingReportsList) {
-    pendingReportsList.innerHTML = pendingReports.length
-      ? pendingReports.slice(0, 3).map(item => `
+    if (pendingReports.length) {
+      pendingReportsList.innerHTML = pendingReports.slice(0, 3).map(item => `
           <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="report">
-            <span class="pending-title">${escapeHtml(item.title || item.report_number || t("label_report"))}</span>
-            <span class="pending-meta">${translateStatus(item.status)} - ${isManager ? (item.created_by__full_name || '-') : t("your_report")}</span>
+            <span class="pending-title">#${item.sequence_number || "-"} ${escapeHtml(item.title || item.report_number || t("label_report"))}</span>
+            <span class="pending-meta">${translateStatus(item.status)} - ${isManager ? (item.created_by_name || item.created_by__full_name || '-') : t("your_report")}</span>
           </button>
-        `).join('')
-      : `<div class="dashboard-pending-empty">${t("no_pending_reports")}</div>`;
+        `).join('');
+      pendingReportsList.style.display = '';
+    } else {
+      pendingReportsList.innerHTML = '';
+      pendingReportsList.style.display = 'none';
+    }
 
     // Add click handlers
     pendingReportsList.querySelectorAll('.dashboard-pending-item').forEach(btn => {
@@ -3126,14 +3173,14 @@ function renderPendingItemsInDashboard() {
   const pendingApprovalList = document.getElementById("pendingApprovalList");
   if (pendingApprovalList) {
     const queueItems = isManager ? managerQueue : [...pendingLeaves, ...pendingReports];
-    pendingApprovalList.innerHTML = queueItems.length
-      ? queueItems
+    if (queueItems.length) {
+      pendingApprovalList.innerHTML = queueItems
           .slice(0, 3)
           .map((item) => {
             const itemType = item._collectionType || (item.report_number ? "report" : "leave");
             const title =
               itemType === "report"
-                ? item.title || item.report_number
+                ? `#${item.sequence_number || "-"} ${item.title || item.report_number || ""}`.trim()
                 : itemType === "notification"
                   ? item.title || t("label_notification")
                   : item.reason || t("label_leave");
@@ -3148,8 +3195,12 @@ function renderPendingItemsInDashboard() {
               </button>
             `;
           })
-          .join("")
-      : `<div class="dashboard-pending-empty">${t("no_pending_items")}</div>`;
+          .join("");
+      pendingApprovalList.style.display = "";
+    } else {
+      pendingApprovalList.innerHTML = "";
+      pendingApprovalList.style.display = "none";
+    }
 
     pendingApprovalList.querySelectorAll(".dashboard-pending-item").forEach((btn) => {
       btn?.addEventListener("click", () => openEntityDetailModal(btn.dataset.type, btn.dataset.id));
@@ -3187,8 +3238,8 @@ function renderNotificationDashboardCard() {
 
   const pendingNotificationsDashboardList = document.getElementById("pendingNotificationsDashboardList");
   if (pendingNotificationsDashboardList) {
-    pendingNotificationsDashboardList.innerHTML = pendingItems.length
-      ? pendingItems
+    if (pendingItems.length) {
+      pendingNotificationsDashboardList.innerHTML = pendingItems
           .slice(0, 3)
           .map((item) => {
             const label =
@@ -3200,8 +3251,12 @@ function renderNotificationDashboardCard() {
               </button>
             `;
           })
-          .join("")
-      : `<div class="dashboard-pending-empty">${t("no_pending_notifications")}</div>`;
+          .join("");
+      pendingNotificationsDashboardList.style.display = "";
+    } else {
+      pendingNotificationsDashboardList.innerHTML = "";
+      pendingNotificationsDashboardList.style.display = "none";
+    }
 
     pendingNotificationsDashboardList.querySelectorAll(".dashboard-pending-item").forEach((btn) => {
       btn?.addEventListener("click", () => openEntityDetailModal("notification", btn.dataset.id));
@@ -3419,7 +3474,7 @@ async function loadOperationsDashboard() {
     });
   } catch (error) {
     state.operationsDashboard = buildOperationsFromState();
-    console.warn("Operations dashboard API failed, using local state:", error);
+    logError("Operations dashboard API failed, using local state", error);
   }
   renderOperationsDashboard();
 }
@@ -3498,7 +3553,7 @@ function buildReviewHistoryFromState() {
         entries.push({
           item_type: "report",
           item_id: report.id,
-          reference: report.report_number,
+          reference: `#${report.sequence_number || "-"}`,
           title: report.title,
           action: item.action,
           previous_status: item.previous_status,
@@ -3622,7 +3677,7 @@ async function loadReviewHistory() {
   } catch (error) {
     state.reviewHistory = buildReviewHistoryFromState();
     if (!state.reviewHistory.length) {
-      console.warn("Review history:", error.message);
+      logError("Review history", error);
     }
   }
   renderReviewHistory();
@@ -3699,7 +3754,7 @@ async function loadUsersForRoleManagement() {
           .join("")
       : `<div class="feed-item muted-item">${t("no_items_found")}</div>`;
   } catch (error) {
-    console.error("Foydalanuvchilarni yuklashda xato:", error);
+    logError("Foydalanuvchilarni yuklashda xato", error);
     setMessage(t("generic_error"), "error");
   }
 }
@@ -3964,7 +4019,10 @@ async function loadAllData() {
 
   const rejected = results.filter((item) => item.status === "rejected");
   if (rejected.length) {
-    console.warn("Some dashboard requests failed:", rejected);
+    console.warn(`Some dashboard requests failed: ${rejected.length} rejected`);
+    rejected.forEach((item, index) => {
+      logError(`Dashboard request #${index + 1}`, item.reason);
+    });
   }
 
   refreshHomeDashboard();
@@ -3997,7 +4055,7 @@ async function autoRefreshTick() {
       await loadUsersForRoleManagement().catch(() => {});
     }
   } catch (error) {
-    console.warn("Auto-refresh failed:", error);
+    logError("Auto-refresh failed", error);
   } finally {
     autoRefreshInFlight = false;
   }
@@ -4381,7 +4439,7 @@ roleManagementForm?.addEventListener("submit", async (event) => {
     syncRoleManagementForm(); // Reset visibility after form reset
     setMessage(t("role_change_success"), "success");
   } catch (error) {
-    console.error("Rol o'zgartirish xatosi:", error);
+    logError("Rol o'zgartirish xatosi", error);
     setMessage(error.message || t("role_change_error"), "error");
   }
 });
@@ -4537,7 +4595,7 @@ leaveReviewForm?.addEventListener("submit", async (event) => {
     await Promise.all([loadLeaves(), loadDashboard(), loadAuditLogs()]);
     setMessage(t("msg_leave_reviewed"), "success");
   } catch (error) {
-    console.error("Leave review xatosi:", error);
+    logError("Leave review xatosi", error);
     setMessage(error.message || t("msg_leave_review_error"), "error");
   }
 });
@@ -5010,7 +5068,7 @@ leaveCreateForm?.addEventListener("submit", async (event) => {
     closeSectionModal();
     setMessage(t("msg_leave_submitted"), "success");
   } catch (error) {
-    console.error("Leave create xatosi:", error);
+    logError("Leave create", error);
     setMessage(error.message || t("msg_leave_create_error"), "error");
   }
 });
@@ -5056,7 +5114,7 @@ languageOptions.forEach((button) => {
         body: JSON.stringify({ language: state.language }),
       });
     } catch (error) {
-      console.error("Language preference update failed:", error);
+      logError("Language preference update failed", error);
     }
   });
 });
@@ -5252,7 +5310,7 @@ async function archiveItem(itemId, itemType) {
       headers: getHeaders(),
     });
   } catch (error) {
-    console.error("Arxivlash xatosi:", error);
+    logError("Arxivlash xatosi", error);
   }
 }
 

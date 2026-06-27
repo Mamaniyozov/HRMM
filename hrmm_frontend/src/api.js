@@ -21,6 +21,44 @@ const DEFAULT_API_BASE = (() => {
 })();
 const DEFAULT_API_TIMEOUT_MS = 45000;
 
+// ===== Token refresh interceptor (prevents parallel 401 race condition) =====
+let _refreshPromise = null;
+let _onAuthFailure = null;
+
+function setAuthFailureHandler(handler) {
+  _onAuthFailure = handler;
+}
+
+async function refreshAccessToken() {
+  if (!state.refreshToken) {
+    throw new Error("No refresh token available");
+  }
+  if (_refreshPromise) return _refreshPromise;
+
+  _refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${state.apiBase}/api/v1/auth/refresh/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh: state.refreshToken }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.data?.access) {
+        throw new Error("Token refresh failed");
+      }
+      state.accessToken = data.data.access;
+      if (data.data.refresh) {
+        state.refreshToken = data.data.refresh;
+      }
+      return state.accessToken;
+    } finally {
+      _refreshPromise = null;
+    }
+  })();
+
+  return _refreshPromise;
+}
+
 function getHeaders(isJson = true) {
   const headers = {};
   if (isJson) headers["Content-Type"] = "application/json";
@@ -51,6 +89,25 @@ async function apiRequest(path, options = {}) {
   }
   const data = await response.json().catch(() => null);
 
+  // ===== 401 interceptor: refresh token once, then retry the original request =====
+  if (response.status === 401 && state.refreshToken && !options._isRetry) {
+    try {
+      await refreshAccessToken();
+      const retryHeaders = { ...fetchOptions.headers };
+      if (state.accessToken) retryHeaders.Authorization = `Bearer ${state.accessToken}`;
+      return apiRequest(path, { ...options, headers: retryHeaders, _isRetry: true });
+    } catch (refreshError) {
+      if (typeof _onAuthFailure === "function") {
+        _onAuthFailure();
+      }
+      const err = new Error(t("session_expired") || "Session expired. Please log in again.");
+      err.status = 401;
+      err.responseStatus = 401;
+      err.responseBody = JSON.stringify(data);
+      throw err;
+    }
+  }
+
   if (!response.ok || data?.success === false) {
     const fallbackMessage =
       response.status === 404
@@ -64,8 +121,20 @@ async function apiRequest(path, options = {}) {
     else if (data && typeof data === "object") payloadText = JSON.stringify(data);
 
     const normalizedPayloadText = payloadText && payloadText !== "null" ? payloadText : "";
-    const message = formatApiErrorMessage(data) || data?.detail || normalizedPayloadText || fallbackMessage;
-    throw new Error(message);
+    let detailText = "";
+    if (data?.detail) {
+      detailText = typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail);
+    }
+    const message = formatApiErrorMessage(data) || detailText || normalizedPayloadText || fallbackMessage;
+    const err = new Error(message);
+    err.status = response.status;
+    err.responseStatus = response.status;
+    try {
+      err.responseBody = typeof data === "string" ? data : JSON.stringify(data);
+    } catch (_e) {
+      err.responseBody = String(data);
+    }
+    throw err;
   }
 
   return data || {};
@@ -87,20 +156,33 @@ const ERROR_MESSAGES = {
 
 function getUserFriendlyError(rawText) {
   if (!rawText) return t("generic_error");
-  const normalized = String(rawText).toLowerCase();
+  // Convert non-string inputs to string safely — avoid [object Object]
+  let text = rawText;
+  if (typeof rawText === "object") {
+    try {
+      if (rawText?.detail) text = String(rawText.detail);
+      else if (rawText?.message) text = String(rawText.message);
+      else if (Array.isArray(rawText?.messages) && rawText.messages[0]?.message) text = String(rawText.messages[0].message);
+      else text = JSON.stringify(rawText);
+    } catch (_e) {
+      text = String(rawText);
+    }
+  }
+  text = String(text);
+  const normalized = text.toLowerCase();
   for (const [technical, key] of Object.entries(ERROR_MESSAGES)) {
     if (normalized.includes(technical.toLowerCase())) return t(key);
   }
-  // If it's a field-level error like "field: message", return just the message part in a friendly way
-  const fieldMatch = String(rawText).match(/^[^:]+:\s*(.+)$/);
+  // If it's a field-level error like "field: message", return just the message part
+  const fieldMatch = text.match(/^[^:]+:\s*(.+)$/);
   if (fieldMatch) {
     const msg = fieldMatch[1].trim();
     for (const [technical, key] of Object.entries(ERROR_MESSAGES)) {
       if (msg.toLowerCase().includes(technical.toLowerCase())) return t(key);
     }
-    return msg + ". " + t("please_check_info");
+    return msg;
   }
-  return rawText + ". " + t("please_check_info");
+  return text;
 }
 
 function formatApiErrorMessage(data) {
@@ -112,15 +194,20 @@ function formatApiErrorMessage(data) {
       if (Array.isArray(value)) {
         rawMessage = value.join("; ");
       } else if (value && typeof value === "object") {
-        rawMessage = JSON.stringify(value);
+        rawMessage = value;
       } else if (value) {
         rawMessage = String(value);
       }
       parts.push(getUserFriendlyError(rawMessage));
     });
-    if (parts.length) return parts.join(" ");
+    if (parts.length) return parts.join(" ") + ". " + t("please_check_info");
+  }
+  // Handle Django JWT-style errors where data.detail is an object or string
+  if (data.detail) {
+    const detailMsg = getUserFriendlyError(data.detail);
+    if (detailMsg && detailMsg !== t("generic_error")) return detailMsg;
   }
   return getUserFriendlyError(data.message || "");
 }
 
-export { API_URL, DEFAULT_API_BASE, DEFAULT_API_TIMEOUT_MS, getHeaders, apiRequest, ERROR_MESSAGES, getUserFriendlyError, formatApiErrorMessage };
+export { API_URL, DEFAULT_API_BASE, DEFAULT_API_TIMEOUT_MS, getHeaders, apiRequest, setAuthFailureHandler, ERROR_MESSAGES, getUserFriendlyError, formatApiErrorMessage };

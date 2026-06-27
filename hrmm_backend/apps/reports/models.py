@@ -1,6 +1,6 @@
 import uuid
 
-from django.db import models
+from django.db import models, transaction
 
 
 def report_attachment_upload_to(instance, filename):
@@ -20,6 +20,7 @@ class Report(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    sequence_number = models.PositiveIntegerField(null=True, blank=True, unique=True)
     report_number = models.CharField(max_length=50, unique=True)
     title = models.CharField(max_length=300)
     summary = models.TextField()
@@ -54,7 +55,16 @@ class Report(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.report_number} - {self.title}"
+        return f"#{self.sequence_number} - {self.title}"
+
+    def save(self, *args, **kwargs):
+        if self.sequence_number is None and not self.pk:
+            from django.db import connection
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT nextval('report_sequence_number_seq')")
+                row = cursor.fetchone()
+                self.sequence_number = row[0]
+        super().save(*args, **kwargs)
 
 
 class ReportAttachment(models.Model):

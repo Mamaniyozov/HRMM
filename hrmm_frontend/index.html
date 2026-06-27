@@ -541,68 +541,71 @@
             <div id="homeQuickActions" class="toolbar"></div>
           </div>
           <div class="dashboard-card-grid">
-            <article class="dashboard-stat-card">
-              <div class="dashboard-stat-head">
-                <span data-translate="new_requests">Yangi arizalar</span>
-                <span class="stat-icon blue">A</span>
+            <article class="stat-card" style="--card-accent: var(--accent);">
+              <div class="stat-card-head">
+                <span class="stat-card-label" data-translate="new_requests">Yangi arizalar</span>
+                <span class="stat-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                </span>
               </div>
-              <strong id="pendingLeavesValue">0</strong>
-              <div class="dashboard-pending-list" id="pendingLeavesList">
-                <div class="dashboard-pending-empty" data-translate="no_pending_leaves">Kutilayotgan ariza yo'q</div>
+              <strong class="stat-card-number" id="pendingLeavesValue">0</strong>
+              <div class="stat-card-links">
+                <button type="button" class="stat-card-link active" data-activity-filter="requests" data-translate="current_request">Hozir yaratilgan ariza</button>
               </div>
-              <div class="dashboard-chip-row">
-                <button class="dashboard-filter-chip active" type="button" data-activity-filter="requests" data-translate="current_request">Hozir yaratilgan ariza</button>
+              <div class="stat-card-pending" id="pendingLeavesList"></div>
+            </article>
+
+            <article class="stat-card" style="--card-accent: var(--purple);">
+              <div class="stat-card-head">
+                <span class="stat-card-label" data-translate="my_reports">Mening hisobotlarim</span>
+                <span class="stat-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                </span>
+              </div>
+              <strong class="stat-card-number" id="totalReportsValue">0</strong>
+              <div class="stat-card-links">
+                <button type="button" class="stat-card-link" data-activity-filter="reports" data-translate="reports_short">Hisobotlar</button>
+                <span class="stat-card-link-sep">|</span>
+                <button type="button" class="stat-card-link" data-activity-filter="all" data-translate="all">Hammasi</button>
+              </div>
+              <div class="stat-card-pending" id="pendingReportsDashboardList"></div>
+            </article>
+
+            <article class="stat-card" style="--card-accent: var(--warning);">
+              <div class="stat-card-head">
+                <span class="stat-card-label" data-translate="approval_status">Tasdiqlash holati</span>
+                <span class="stat-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </span>
+              </div>
+              <strong class="stat-card-number" id="pendingApprovalStatusValue">0</strong>
+              <div class="stat-card-links">
+                <button type="button" class="stat-card-link active" data-dashboard-filter="pending-all" data-translate="all_queue">Barcha navbat</button>
+              </div>
+              <div class="stat-card-pending" id="pendingApprovalList"></div>
+              <div class="stat-card-sub-links">
+                <span class="stat-card-sub-link" data-dashboard-filter="pending-features"><span data-translate="feature_requests_short">Funksiya talablari</span>: <strong id="pendingFeaturesValue">0</strong></span>
+                <span class="stat-card-sub-link-sep">|</span>
+                <span class="stat-card-sub-link" data-dashboard-filter="resolved-leaves"><span data-translate="resolved_leaves_short">Hal qilingan arizalar</span>: <strong id="resolvedLeavesValue">0</strong></span>
+                <span class="stat-card-sub-link-sep">|</span>
+                <span class="stat-card-sub-link" data-dashboard-filter="approved-reports"><span data-translate="approved_reports_short2">Tasdiqlangan hisobotlar</span>: <strong id="homeApprovedReportsValue">0</strong></span>
               </div>
             </article>
 
-            <article class="dashboard-stat-card">
-              <div class="dashboard-stat-head">
-                <span data-translate="my_reports">Mening hisobotlarim</span>
-                <span class="stat-icon red">H</span>
+            <article class="stat-card" style="--card-accent: var(--coral);">
+              <div class="stat-card-head">
+                <span class="stat-card-label" data-translate="notifications">Bildirishnomalar</span>
+                <span class="stat-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                </span>
               </div>
-              <strong id="totalReportsValue">0</strong>
-              <div class="dashboard-pending-list" id="pendingReportsDashboardList">
-                <div class="dashboard-pending-empty" data-translate="no_pending_reports">Kutilayotgan hisobot yo'q</div>
+              <strong class="stat-card-number" id="unreadNotificationsValue">0</strong>
+              <div class="stat-card-links">
+                <button type="button" class="stat-card-link" data-notification-filter="pending" data-translate="notifications_pending">Kutilmoqda</button>
               </div>
-              <div class="dashboard-chip-row">
-                <button class="dashboard-filter-chip" type="button" data-activity-filter="reports" data-translate="reports_short">Hisobotlar</button>
-                <button class="dashboard-filter-chip" type="button" data-activity-filter="all" data-translate="all">Hammasi</button>
-              </div>
-            </article>
-
-            <article class="dashboard-stat-card dashboard-stat-card--approval">
-              <div class="dashboard-stat-head">
-                <span data-translate="approval_status">Tasdiqlash holati</span>
-                <span class="stat-icon green">T</span>
-              </div>
-              <strong id="pendingApprovalStatusValue">0</strong>
-              <div class="dashboard-pending-list" id="pendingApprovalList">
-                <div class="dashboard-pending-empty" data-translate="no_pending_items">Kutilayotgan element yo'q</div>
-              </div>
-              <div class="dashboard-chip-row">
-                <button class="dashboard-filter-chip active" type="button" data-dashboard-filter="pending-all" data-translate="all_queue">Barcha navbat</button>
-              </div>
-              <div class="dashboard-badge-row">
-                <button class="dashboard-badge neutral" type="button" data-dashboard-filter="pending-features">Funksiya talablari: <strong id="pendingFeaturesValue">0</strong></button>
-                <button class="dashboard-badge neutral" type="button" data-dashboard-filter="resolved-leaves">Hal qilingan arizalar: <strong id="resolvedLeavesValue">0</strong></button>
-                <button class="dashboard-badge neutral" type="button" data-dashboard-filter="approved-reports">Tasdiqlangan hisobotlar: <strong id="homeApprovedReportsValue">0</strong></button>
-              </div>
-            </article>
-
-            <article class="dashboard-stat-card dashboard-stat-card--notifications">
-              <div class="dashboard-stat-head">
-                <span data-translate="notifications">Bildirishnomalar</span>
-                <span class="stat-icon purple">B</span>
-              </div>
-              <strong id="unreadNotificationsValue">0</strong>
-              <div class="dashboard-pending-list" id="pendingNotificationsDashboardList">
-                <div class="dashboard-pending-empty" data-translate="no_pending_notifications">Kutilayotgan bildirishnoma yo'q</div>
-              </div>
-              <div class="dashboard-chip-row">
-                <button class="dashboard-filter-chip" type="button" data-notification-filter="pending" data-translate="notifications_pending">Kutilmoqda</button>
-              </div>
-              <div class="dashboard-badge-row">
-                <button class="dashboard-badge neutral" type="button" data-notification-filter="approved">Tasdiqlangan: <strong id="approvedNotificationsCount">0</strong></button>
+              <div class="stat-card-pending" id="pendingNotificationsDashboardList"></div>
+              <div class="stat-card-sub-links">
+                <span class="stat-card-sub-link" data-notification-filter="approved"><span data-translate="approved_short">Tasdiqlangan</span>: <strong id="approvedNotificationsCount">0</strong></span>
               </div>
             </article>
           </div>
