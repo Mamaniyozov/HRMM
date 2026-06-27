@@ -245,10 +245,6 @@ const topbarPanel = document.getElementById("topbarPanel");
 const topbarMobileToggle = document.getElementById("topbarMobileToggle");
 const dashboardWelcomeName = document.getElementById("dashboardWelcomeName");
 const unreadNotificationsValue = document.getElementById("unreadNotificationsValue");
-const approvedLeavesShortcutValue = document.getElementById("approvedLeavesShortcutValue");
-const notificationsShortcutValue = document.getElementById("notificationsShortcutValue");
-const pendingRequestsShortcutValue = document.getElementById("pendingRequestsShortcutValue");
-const reviewShortcutSection = document.getElementById("reviewShortcutSection");
 const resolvedLeavesValue = document.getElementById("resolvedLeavesValue");
 const activityHistoryList = document.getElementById("activityHistoryList");
 const feedbackForm = document.getElementById("feedbackForm");
@@ -3212,7 +3208,6 @@ function renderPendingItemsInDashboard() {
   }
 
   renderNotificationDashboardCard();
-  renderReviewShortcutPanel();
 }
 
 function renderNotificationDashboardCard() {
@@ -3275,31 +3270,6 @@ function getPendingNotificationsForDashboard() {
 function refreshHomeDashboard() {
   renderNotificationDashboardCard();
   renderPendingItemsInDashboard();
-  renderReviewShortcutPanel();
-}
-
-function renderReviewShortcutPanel() {
-  const role = state.currentUser?.role || "";
-  const isManager = ["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(role);
-  if (!reviewShortcutSection) return;
-
-  reviewShortcutSection.classList.toggle("hidden", !isManager);
-  if (!isManager) return;
-
-  const approvedLeaves = state.leaves.length
-    ? state.leaves.filter((leave) => leave.status === "APPROVED").length
-    : Number(approvedLeavesValue?.textContent || 0);
-  const notificationsCount = state.notifications.filter((item) => !item.is_read).length;
-  const pendingLeavesCount = state.leaves.filter((leave) => leave.status === "PENDING").length;
-  const pendingReportsCount = state.reports.filter((report) =>
-    ["PENDING_L2", "PENDING_L3", "PENDING_L4"].includes(report.status)
-  ).length;
-  const pendingNotificationsCount = state.notifications.filter((item) => canManagerReviewNotification(item)).length;
-  const pendingRequests = pendingLeavesCount + pendingReportsCount + pendingNotificationsCount;
-
-  if (approvedLeavesShortcutValue) approvedLeavesShortcutValue.textContent = String(approvedLeaves);
-  if (notificationsShortcutValue) notificationsShortcutValue.textContent = String(notificationsCount);
-  if (pendingRequestsShortcutValue) pendingRequestsShortcutValue.textContent = String(pendingRequests);
 }
 
 function buildOperationsMetricCell(metric) {
@@ -3859,12 +3829,7 @@ async function loadReports() {
     ? await fetchAllPaginatedResults("/api/v1/reports/", params)
     : (await apiRequest(`/api/v1/reports/${params.toString() ? `?${params.toString()}` : ""}`, { headers: getHeaders(true) })).results || [];
   renderReports();
-  if (["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(state.currentUser?.role || "")) {
-    renderPendingItemsInDashboard();
-    renderReviewShortcutPanel();
-  } else {
-    renderPendingItemsInDashboard();
-  }
+  renderPendingItemsInDashboard();
 }
 
 async function loadLeaves() {
@@ -3875,12 +3840,7 @@ async function loadLeaves() {
     ? await fetchAllPaginatedResults("/api/v1/leaves/", params)
     : (await apiRequest(`/api/v1/leaves/${params.toString() ? `?${params.toString()}` : ""}`, { headers: getHeaders(true) })).results || [];
   renderLeaves();
-  if (["DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"].includes(state.currentUser?.role || "")) {
-    renderPendingItemsInDashboard();
-    renderReviewShortcutPanel();
-  } else {
-    renderPendingItemsInDashboard();
-  }
+  renderPendingItemsInDashboard();
 }
 
 async function loadAuditLogs() {
@@ -3942,7 +3902,6 @@ async function loadNotifications() {
   state.notifications = payload.results || [];
   renderNotifications();
   renderNotificationDashboardCard();
-  renderReviewShortcutPanel();
 }
 
 async function loadAdminDashboard() {
