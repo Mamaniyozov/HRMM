@@ -493,13 +493,9 @@ def main() -> None:
         raise SystemExit("TELEGRAM_BOT_TOKEN o'rnatilmagan (.env yoki Railway Variables)")
     if not HRMM_API_BASE_URL:
         raise SystemExit("HRMM_API_BASE_URL o'rnatilmagan (.env yoki Railway Variables)")
-    if not os.getenv("SESSION_ENCRYPTION_KEY"):
-        raise SystemExit(
-            "SESSION_ENCRYPTION_KEY o'rnatilmagan. Generatsiya qiling: "
-            "python -c \"import secrets; print(secrets.token_urlsafe(32))\""
-        )
 
-    logger.info("Config: TOKEN=ok, API=ok, ENC_KEY=ok, PORT=%s", PORT)
+    enc_source = "ENC_KEY" if os.getenv("SESSION_ENCRYPTION_KEY") else "BOT_TOKEN(fallback)"
+    logger.info("Config: TOKEN=ok, API=ok, encryption=%s, PORT=%s", enc_source, PORT)
     threading.Thread(target=_start_health_server, daemon=True).start()
 
     app = (

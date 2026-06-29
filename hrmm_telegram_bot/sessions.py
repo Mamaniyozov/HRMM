@@ -15,10 +15,10 @@ try:
     def _get_key():
         token = os.getenv("SESSION_ENCRYPTION_KEY", "")
         if not token:
-            raise RuntimeError(
-                "SESSION_ENCRYPTION_KEY environment variable is required. "
-                "Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
-            )
+            # Fallback: TELEGRAM_BOT_TOKEN'dan kalit hosil qilamiz (barqaror, har doim mavjud)
+            token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+        if not token:
+            raise RuntimeError("SESSION_ENCRYPTION_KEY yoki TELEGRAM_BOT_TOKEN kerak")
         fernet_key = hashlib.sha256(token.encode()).digest()
         return Fernet(base64.urlsafe_b64encode(fernet_key))
 
