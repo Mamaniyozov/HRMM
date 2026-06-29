@@ -112,3 +112,64 @@ class WorkflowServiceTests(TestCase):
         perform_workflow_action(report, self.dept_head, "APPROVE", "dept self approve", request)
         report.refresh_from_db()
         self.assertEqual(report.status, "PENDING_L4")
+
+    def test_unit_head_cannot_approve_other_unit_report(self):
+        request = self.factory.post("/api/v1/reports/")
+        other_unit = Unit.objects.create(name="Frontend", code="FE", department_id=self.department)
+        other_unit_head = User.objects.create(
+            username="other_unit_head",
+            email="other_unit_head@example.com",
+            password_hash="password123",
+            full_name="Other Unit Head",
+            role="UNIT_HEAD",
+            department_id=self.department,
+            unit_id=other_unit,
+        )
+        report = Report.objects.create(
+            report_number="REP-004",
+            title="Other Unit Report",
+            summary="Summary",
+            created_by=self.specialist,
+            department_id=self.department,
+            status="PENDING_L2",
+            current_approval_level=2,
+        )
+        with self.assertRaises(PermissionDenied):
+            perform_workflow_action(report, other_unit_head, "APPROVE", "cross-unit", request)
+
+    def test_dept_head_cannot_approve_other_department_report(self):
+        request = self.factory.post("/api/v1/reports/")
+        other_dept = Department.objects.create(name="Frontend", code="FE")
+        other_dept_head = User.objects.create(
+            username="other_dept_head",
+            email="other_dept_head@example.com",
+            password_hash="password123",
+            full_name="Other Dept Head",
+            role="DEPT_HEAD",
+            department_id=other_dept,
+        )
+        report = Report.objects.create(
+            report_number="REP-005",
+            title="Other Dept Report",
+            summary="Summary",
+            created_by=self.specialist,
+            department_id=self.department,
+            status="PENDING_L3",
+            current_approval_level=3,
+        )
+        with self.assertRaises(PermissionDenied):
+            perform_workflow_action(report, other_dept_head, "APPROVE", "cross-dept", request)
+
+    def test_specialist_cannot_approve_any_report(self):
+        request = self.factory.post("/api/v1/reports/")
+        report = Report.objects.create(
+            report_number="REP-006",
+            title="Test Report",
+            summary="Summary",
+            created_by=self.dept_head,
+            department_id=self.department,
+            status="PENDING_L2",
+            current_approval_level=2,
+        )
+        with self.assertRaises(PermissionDenied):
+            perform_workflow_action(report, self.specialist, "APPROVE", "specialist approve", request)

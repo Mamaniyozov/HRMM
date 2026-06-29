@@ -134,8 +134,11 @@ class LeaveReviewView(APIView):
         if request.user.role not in {"DEPT_HEAD", "DIRECTOR"}:
             return api_success(message="Sizda leave review vakolati yo'q", data=None, status_code=403)
 
-        if request.user.role == "DEPT_HEAD" and request.user.department_id.id != leave_request.requested_by.department_id.id:
-            return api_success(message="Faqat o'z bo'limingiz so'rovlarini ko'ra olasiz", data=None, status_code=403)
+        if request.user.role == "DEPT_HEAD":
+            actor_dept_id = request.user.department_id_id
+            target_dept_id = leave_request.requested_by.department_id_id
+            if not actor_dept_id or actor_dept_id != target_dept_id:
+                return api_success(message="Faqat o'z bo'limingiz so'rovlarini ko'ra olasiz", data=None, status_code=403)
 
         leave_request.status = "APPROVED" if action == "APPROVE" else "REJECTED"
         leave_request.reviewed_by = request.user

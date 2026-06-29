@@ -273,7 +273,7 @@ class ReportWorkflowActionView(APIView):
     permission_classes = [IsAuthenticatedHRMM]
 
     def post(self, request, report_id):
-        report = Report.objects.select_related("created_by", "department_id").filter(id=report_id).first()
+        report = _report_queryset_for_user(request.user).filter(id=report_id).first()
         if not report:
             return api_success(message="Report not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
 

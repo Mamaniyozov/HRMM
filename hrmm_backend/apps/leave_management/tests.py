@@ -79,3 +79,23 @@ class LeaveManagementTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data["data"]), 1)
+
+    def test_dept_head_cannot_approve_other_department_leave(self):
+        other_dept = Department.objects.create(name="IT", code="IT")
+        other_dept_head = User.objects.create(
+            username="other_depthead",
+            email="other_depthead@example.com",
+            password_hash="password123",
+            full_name="Other Dept Head",
+            role="DEPT_HEAD",
+            department_id=other_dept,
+        )
+        request = self.factory.post(
+            f"/api/v1/leaves/{self.leave_request.id}/review/",
+            {"action": "APPROVE", "review_comment": "Approved"},
+            format="json",
+        )
+        force_authenticate(request, user=other_dept_head)
+
+        response = LeaveReviewView.as_view()(request, leave_id=self.leave_request.id)
+        self.assertEqual(response.status_code, 403)

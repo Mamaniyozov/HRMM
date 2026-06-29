@@ -125,11 +125,20 @@ def perform_workflow_action(report, actor, action, comment, request):
     if actor.role == "DIRECTOR" and report.status in {"PENDING_L2", "PENDING_L3", "PENDING_L4"}:
         role_config = {"approved_status": "APPROVED", "next_level": 4}
     elif actor.role == "DEPT_HEAD" and report.status == "PENDING_L2":
+        if not actor.department_id_id or actor.department_id_id != report.department_id_id:
+            raise PermissionDenied("Faqat o'z bo'limingiz hisobotlarini tasdiqlay olasiz.")
         role_config = {"approved_status": "PENDING_L4", "next_level": 4}
     elif not role_config:
         raise PermissionDenied("Sizda tasdiqlash vakolati yo'q.")
     elif report.status != role_config["pending_status"]:
         raise ValidationError("Hisobot sizning tasdiqlash bosqichingizda emas.")
+    else:
+        if actor.role == "UNIT_HEAD":
+            if not actor.unit_id_id or actor.unit_id_id != report.created_by.unit_id_id:
+                raise PermissionDenied("Faqat o'z birligingiz hisobotlarini tasdiqlay olasiz.")
+        if actor.role == "DEPT_HEAD":
+            if not actor.department_id_id or actor.department_id_id != report.department_id_id:
+                raise PermissionDenied("Faqat o'z bo'limingiz hisobotlarini tasdiqlay olasiz.")
 
     if action == "APPROVE":
         report.status = role_config["approved_status"]

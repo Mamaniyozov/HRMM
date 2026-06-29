@@ -1379,28 +1379,28 @@
         <div class="section-modal-dialog quick-create-dialog" role="dialog" aria-modal="true" aria-labelledby="quickCreateTitle">
           <div class="section-modal-header">
             <div>
-              <p class="eyebrow">Yangi yaratish</p>
-              <h3 id="quickCreateTitle">Yangi yozuv</h3>
+              <p class="eyebrow" data-translate="quick_create_eyebrow">Yangi yaratish</p>
+              <h3 id="quickCreateTitle" data-translate="quick_notification_heading">Yangi yozuv</h3>
             </div>
-            <button id="quickCreateClose" type="button" class="ghost-btn section-modal-close" aria-label="Yopish">
+            <button id="quickCreateClose" type="button" class="ghost-btn section-modal-close" aria-label="Yopish" data-translate="close" data-translate-title="close">
               Yopish
             </button>
           </div>
           <form id="quickCreateForm" class="form-grid">
             <input id="quickCreateType" name="mode" type="hidden" value="notification" />
             <label>
-              <span>Sarlavha</span>
-              <input id="quickCreateTitleInput" name="title" type="text" placeholder="Yangi yozuv sarlavhasi" required />
+              <span data-translate="form_title">Sarlavha</span>
+              <input id="quickCreateTitleInput" name="title" type="text" placeholder="Yangi yozuv sarlavhasi" data-translate-placeholder="form_title_placeholder" required />
             </label>
             <label>
-              <span>Izoh</span>
-              <textarea id="quickCreateMessageInput" name="message" rows="5" class="auto-grow" placeholder="Kerakli talab yoki bildirish matni" required></textarea>
+              <span data-translate="form_note">Izoh</span>
+              <textarea id="quickCreateMessageInput" name="message" rows="5" class="auto-grow" placeholder="Kerakli talab yoki bildirish matni" data-translate-placeholder="form_note_placeholder" required></textarea>
             </label>
             <label>
-              <span>Rasm yoki skrinshot biriktirish (faqat rasm fayllari)</span>
+              <span data-translate="form_screenshot">Rasm yoki skrinshot biriktirish (faqat rasm fayllari)</span>
               <input id="quickCreateScreenshotInput" name="screenshot" type="file" accept="image/*" />
             </label>
-            <button type="submit" class="primary-btn">Saqlash</button>
+            <button type="submit" class="primary-btn" data-translate="save">Saqlash</button>
           </form>
         </div>
       </div>
@@ -1410,9 +1410,9 @@
           <div class="section-modal-header">
             <div>
               <p class="eyebrow" id="creationWarningEyebrow" data-translate="creation_warning_eyebrow">Ogohlantirish</p>
-              <h3 id="creationWarningTitle">Yaratishdan oldin e'tibor bering</h3>
+              <h3 id="creationWarningTitle" data-translate="creation_warning_title">Yaratishdan oldin e'tibor bering</h3>
             </div>
-            <button id="creationWarningClose" type="button" class="ghost-btn section-modal-close" aria-label="Yopish" data-translate="creation_warning_close">
+            <button id="creationWarningClose" type="button" class="ghost-btn section-modal-close" aria-label="Yopish" data-translate="creation_warning_close" data-translate-title="close">
               Yopish
             </button>
           </div>
@@ -1428,10 +1428,10 @@
         <div class="modal-panel">
           <div class="modal-header">
             <div>
-              <p class="eyebrow" id="ratingEyebrow">Baholash</p>
-              <h3 id="ratingTitle">Tasdiqlashni baholang</h3>
+              <p class="eyebrow" id="ratingEyebrow" data-translate="rating_eyebrow">Baholash</p>
+              <h3 id="ratingTitle" data-translate="rating_title">Tasdiqlashni baholang</h3>
             </div>
-            <button type="button" class="modal-close" id="ratingClose" aria-label="Yopish">×</button>
+            <button type="button" class="modal-close" id="ratingClose" aria-label="Yopish" data-translate-title="close">×</button>
           </div>
           <div class="modal-body">
             <form id="ratingForm" class="form-grid">
@@ -1445,7 +1445,7 @@
               </div>
 
               <div class="form-field">
-                <label>Tasdiqlash sifatini baholang</label>
+                <label data-translate="rating_quality_label">Tasdiqlash sifatini baholang</label>
                 <div class="rating-stars-large" id="ratingStars" aria-label="Baholash yulduzlari">
                   <button type="button" class="star-btn-large" data-rating="1">★</button>
                   <button type="button" class="star-btn-large" data-rating="2">★</button>
@@ -1454,18 +1454,18 @@
                   <button type="button" class="star-btn-large" data-rating="5">★</button>
                 </div>
                 <input id="ratingValue" name="rating" type="hidden" value="0" required />
-                <p class="rating-hint" id="ratingHint">Bahoni tanlang</p>
+                <p class="rating-hint" id="ratingHint" data-translate="rating_hint">Bahoni tanlang</p>
               </div>
 
               <div class="form-field">
-                <label for="ratingComment">Fikr va mulohazalar (ixtiyoriy)</label>
-                <textarea id="ratingComment" name="comment" rows="3" placeholder="Tasdiqlash jarayoni haqida fikringiz..." maxlength="500"></textarea>
-                <small class="char-count">Max 500 belgi</small>
+                <label for="ratingComment" data-translate="rating_comment_label">Fikr va mulohazalar (ixtiyoriy)</label>
+                <textarea id="ratingComment" name="comment" rows="3" placeholder="Tasdiqlash jarayoni haqida fikringiz..." data-translate-placeholder="rating_comment_placeholder" maxlength="500"></textarea>
+                <small class="char-count" data-translate="max_chars">Max 500 belgi</small>
               </div>
 
               <div class="form-actions">
-                <button type="button" class="ghost-btn" id="skipRatingBtn">Keyinroq</button>
-                <button type="submit" class="primary-btn" id="submitRatingBtn" disabled>Baholash va arxivlash</button>
+                <button type="button" class="ghost-btn" id="skipRatingBtn" data-translate="skip_rating">Keyinroq</button>
+                <button type="submit" class="primary-btn" id="submitRatingBtn" disabled data-translate="submit_rating">Baholash va arxivlash</button>
               </div>
             </form>
           </div>

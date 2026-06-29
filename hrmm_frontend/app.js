@@ -1504,6 +1504,45 @@ function translateStatus(status) {
   return key ? t(key) : status;
 }
 
+function getLeaveTypeLabel(leaveType) {
+  if (!leaveType) return "-";
+  const keyMap = {
+    ANNUAL: "leave_type_annual",
+    SICK: "leave_type_sick",
+    UNPAID: "leave_type_unpaid",
+    MATERNITY: "leave_type_maternity",
+    OTHER: "leave_type_other",
+  };
+  const key = keyMap[String(leaveType).toUpperCase()];
+  return key ? t(key) : leaveType;
+}
+
+function getNotificationTypeLabel(type) {
+  if (!type) return "-";
+  const keyMap = {
+    NOTIFICATION: "label_notification",
+    FEATURE_REQUEST: "label_feature_request",
+    FEEDBACK: "label_notification",
+    COMPLAINT: "label_notification",
+    SUGGESTION: "label_notification",
+  };
+  const key = keyMap[String(type).toUpperCase()];
+  return key ? t(key) : type;
+}
+
+function getReferenceTypeLabel(referenceType) {
+  if (!referenceType) return "-";
+  const keyMap = {
+    FEATURE_REQUEST: "feature_request_label",
+    NOTIFICATION: "label_notification",
+    FEEDBACK: "label_notification",
+    COMPLAINT: "label_notification",
+    SUGGESTION: "label_notification",
+  };
+  const key = keyMap[String(referenceType).toUpperCase()];
+  return key ? t(key) : referenceType;
+}
+
 function openEntityDetailModal(typeName, id) {
   if (typeName === "report") {
     const report = state.reports.find((item) => item.id === id);
@@ -1766,7 +1805,7 @@ function openReportDetailModal(report) {
       [t("report_content"), report.content || "-"],
       [t("report_department"), report.department_name || "-"],
       [t("management_role"), report.created_by_name || "-"],
-      [t("status"), report.status || "-"],
+      [t("status"), translateStatus(report.status)],
       [t("level"), report.current_approval_level ? `L${report.current_approval_level}` : "-"],
       [t("date_label"), formatDate(report.created_at)],
     ]) + actionBar
@@ -1788,8 +1827,8 @@ function openLeaveDetailModal(leave) {
     t("collection_title_requests"),
     makeDetailItems([
       [t("full_name"), leave.requested_by_name || "-"],
-      [t("leave_type"), leave.leave_type || "-"],
-      [t("status"), leave.status || "-"],
+      [t("leave_type"), getLeaveTypeLabel(leave.leave_type)],
+      [t("status"), translateStatus(leave.status)],
       [t("start_date"), leave.start_date || "-"],
       [t("end_date"), leave.end_date || "-"],
       [t("days_label"), leave.total_days ?? "-"],
@@ -1836,13 +1875,13 @@ function openNotificationDetailModal(item) {
     makeDetailItems([
       [t("report_title"), item.title || "-"],
       [t("report_comment"), item.message || "-"],
-      [t("type_label"), item.type || "-"],
-      [t("status"), item.status || "-"],
+      [t("type_label"), getNotificationTypeLabel(item.type)],
+      [t("status"), translateStatus(item.status)],
       [t("full_name"), item.submitted_by_name || "-"],
       [t("read_label"), item.is_read ? t("active") : t("inactive")],
       ["ID", item.notification_number || item.id || "-"],
       [t("date_label"), formatDate(item.created_at)],
-      [t("reference_label"), item.reference_type || "-"],
+      [t("reference_label"), getReferenceTypeLabel(item.reference_type)],
     ]) + attachmentHtml + ownerNote + statusNote + reviewBar
   );
   bindReviewActionButtons();
@@ -1903,20 +1942,20 @@ function openCollectionModal(title, items, type) {
               itemType === "report"
                 ? `#${item.sequence_number || "-"} ${item.report_number || item.title || ""}`.trim()
                 : itemType === "leave"
-                  ? item.requested_by_name || item.leave_type
+                  ? item.requested_by_name || getLeaveTypeLabel(item.leave_type)
                   : item.title || `${itemType} ${index + 1}`;
             const secondary =
               itemType === "report"
                 ? item.title
                 : itemType === "leave"
-                  ? `${item.leave_type || "-"} / ${translateStatus(item.status) || "-"}`
+                  ? `${getLeaveTypeLabel(item.leave_type)} / ${translateStatus(item.status) || "-"}`
                   : item.message;
             const meta =
               itemType === "report"
                 ? `${item.created_by_name || item.created_by__full_name || "-"} / ${translateStatus(item.status) || "-"}`
                 : itemType === "leave"
                   ? `${item.start_date || "-"} - ${item.end_date || "-"}`
-                  : `${item.submitted_by_name || "-"} / ${translateStatus(item.status) || item.type || "-"} / ${formatDate(item.created_at)}`;
+                  : `${item.submitted_by_name || "-"} / ${translateStatus(item.status) || getNotificationTypeLabel(item.type) || "-"} / ${formatDate(item.created_at)}`;
             return `
               <button type="button" class="detail-list-item entity-detail-open-btn" data-type="${itemType}" data-id="${item.id}">
                 <span class="item-type-pill">${escapeHtml(getCollectionTypeLabel(itemType))}</span>
@@ -2175,7 +2214,7 @@ function buildActivityItems() {
     type: "reports",
     actor: report.created_by_name || t("user"),
     title: `#${report.sequence_number || "-"} ${report.report_number || t("report")} ${report.created_by_name || t("user")} ${t("created_by_suffix")}`.trim(),
-    meta: report.title || report.status || t("report"),
+    meta: report.title || translateStatus(report.status) || t("report"),
     time: report.created_at,
   }));
 
@@ -2183,7 +2222,7 @@ function buildActivityItems() {
     type: "requests",
     actor: leave.requested_by_name || t("user"),
     title: `#${leave.leave_number || leave.id?.slice(0, 8)} ${leave.requested_by_name || t("user")} ${t("leave_created_suffix")}`,
-    meta: `${leave.leave_type || t("leave")} / ${translateStatus(leave.status) || t("status_no_data")}`,
+    meta: `${getLeaveTypeLabel(leave.leave_type) || t("leave")} / ${translateStatus(leave.status) || t("status_no_data")}`,
     time: leave.created_at || leave.start_date,
   }));
 
@@ -2675,7 +2714,7 @@ function renderLeaves() {
               <button class="ghost-btn small-btn leave-detail-btn" data-id="${leave.id}" type="button">${t("open_details")}</button>
             </div>
           </td>
-          <td>${leave.leave_type}</td>
+          <td>${getLeaveTypeLabel(leave.leave_type)}</td>
           <td>${leave.start_date} - ${leave.end_date}</td>
           <td>${leave.total_days}</td>
           <td><span class="pill status">${translateStatus(leave.status)}</span></td>
@@ -2793,7 +2832,7 @@ function renderRecentLists(payload) {
           (item) => `
             <div class="feed-item">
               <strong>${item.requested_by__full_name}</strong>
-              <span>${item.leave_type}</span>
+              <span>${getLeaveTypeLabel(item.leave_type)}</span>
               <small>${translateStatus(item.status)} - ${item.start_date} / ${item.end_date}</small>
             </div>
           `
@@ -2915,7 +2954,7 @@ function renderNotifications() {
           <div>
             <strong>#${item.notification_number || item.id?.slice(0, 8)} ${item.title}</strong>
             <span>${escapeHtml(item.message)}</span>
-            <small>${item.type} / ${translateStatus(item.status) || "-"} / ${item.submitted_by_name || "-"} - ${formatDate(item.created_at)}</small>
+            <small>${getNotificationTypeLabel(item.type)} / ${translateStatus(item.status) || "-"} / ${item.submitted_by_name || "-"} - ${formatDate(item.created_at)}</small>
           </div>
           <div class="inline-actions">
             <button class="ghost-btn small-btn mark-read-btn" data-id="${item.id}" type="button">${t("mark_as_read")}</button>
@@ -3186,7 +3225,7 @@ function renderPendingItemsInDashboard() {
                   : item.reason || t("label_leave");
             const meta =
               itemType === "notification"
-                ? `${item.reference_type || "NOTIF"} / ${translateStatus(item.status) || t("pending")}`
+                ? `${getReferenceTypeLabel(item.reference_type) || t("label_notification")} / ${translateStatus(item.status) || translateStatus("PENDING")}`
                 : `${translateStatus(item.status) || "-"} - ${item.requested_by_name || item.created_by__full_name || item.submitted_by_name || "-"}`;
             return `
               <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="${itemType}">
@@ -3246,7 +3285,7 @@ function renderNotificationDashboardCard() {
             return `
               <button type="button" class="dashboard-pending-item" data-id="${item.id}" data-type="notification">
                 <span class="pending-title">${escapeHtml(label)}</span>
-                <span class="pending-meta">${escapeHtml(translateStatus(item.status || t("pending")))} - ${escapeHtml(item.submitted_by_name || "-")}</span>
+                <span class="pending-meta">${escapeHtml(translateStatus(item.status) || translateStatus("PENDING"))} - ${escapeHtml(item.submitted_by_name || "-")}</span>
               </button>
             `;
           })
@@ -3546,7 +3585,7 @@ function buildReviewHistoryFromState() {
         item_type: "leave",
         item_id: leave.id,
         reference: leave.leave_number,
-        title: leave.reason || leave.leave_type,
+        title: leave.reason || getLeaveTypeLabel(leave.leave_type),
         action: leave.status === "APPROVED" ? "APPROVE" : leave.status,
         previous_status: "PENDING",
         new_status: leave.status,
@@ -3597,9 +3636,9 @@ function renderReviewHistory() {
       if (isLegacyReportOnly) {
         return `
           <div class="feed-item">
-            <strong>${escapeHtml(item.action)}</strong>
+            <strong>${escapeHtml(getReviewHistoryActionLabel(item.action))}</strong>
             <span>${escapeHtml(item.comment || t("no_comment"))}</span>
-            <small>${escapeHtml(item.previous_status)} → ${escapeHtml(item.new_status)} — ${escapeHtml(item.approver_name || "-")} · ${formatDate(item.created_at)}</small>
+            <small>${escapeHtml(translateStatus(item.previous_status))} → ${escapeHtml(translateStatus(item.new_status))} — ${escapeHtml(item.approver_name || "-")} · ${formatDate(item.created_at)}</small>
           </div>
         `;
       }
@@ -3618,7 +3657,7 @@ function renderReviewHistory() {
           <span class="item-type-pill">${escapeHtml(typeLabel)}</span>
           <strong>${escapeHtml(item.reference || "")} — ${escapeHtml(item.title || "-")}</strong>
           <span>${escapeHtml(actionLabel)} · ${escapeHtml(item.subject_name || "-")}</span>
-          <span class="status-pill ${statusClass}">${escapeHtml(item.previous_status || "")} → ${escapeHtml(item.new_status || "")}</span>
+          <span class="status-pill ${statusClass}">${escapeHtml(translateStatus(item.previous_status))} → ${escapeHtml(translateStatus(item.new_status))}</span>
           ${item.comment ? `<span class="review-history-comment">${escapeHtml(item.comment)}</span>` : ""}
           <small>${formatDate(item.created_at)}</small>
         </button>
@@ -3664,7 +3703,7 @@ function renderLeaveCalendar() {
           (item) => `
             <div class="feed-item">
               <strong>${item.requested_by__full_name}</strong>
-              <span>${item.leave_type} - ${item.total_days} ${t("days")}</span>
+              <span>${getLeaveTypeLabel(item.leave_type)} - ${item.total_days} ${t("days")}</span>
               <small>${item.start_date} / ${item.end_date} - ${item.requested_by__department_id__name || "-"}</small>
             </div>
           `
@@ -4479,7 +4518,7 @@ workflowForm?.addEventListener("submit", async (event) => {
 
     const validActions = getValidActionsForStatus(report.status);
     if (!validActions.includes(action)) {
-      setMessage(t("msg_action_not_allowed").replace("{action}", action).replace("{status}", report.status).replace("{actions}", validActions.join(", ")), "error");
+      setMessage(t("msg_action_not_allowed").replace("{action}", action).replace("{status}", translateStatus(report.status)).replace("{actions}", validActions.join(", ")), "error");
       return;
     }
 
@@ -5210,7 +5249,7 @@ ratingStars?.addEventListener("click", (event) => {
   const rating = parseInt(button.dataset.rating, 10);
   ratingValue.value = rating;
   setRatingStars(rating);
-  ratingHint.textContent = `${rating} yulduz`;
+  ratingHint.textContent = `${rating} ${t("star_label")}`;
   submitRatingBtn.disabled = false;
 });
 
@@ -6230,17 +6269,17 @@ function updateCommentHint() {
   if (!commentHint) return;
   const action = workflowActionSelect?.value;
   if (action === "REJECT" || action === "REQUEST_REVISION") {
-    commentHint.textContent = "(majburiy)";
+    commentHint.textContent = t("comment_hint_mandatory");
     workflowComment?.setAttribute("required", "true");
-    workflowComment?.setAttribute("placeholder", "Rad etish sababini yoki qayta ko'rib chiqish talablarini yozing...");
+    workflowComment?.setAttribute("placeholder", t("comment_placeholder_reject_revision"));
   } else if (action === "APPROVE") {
-    commentHint.textContent = "(ixtiyoriy, tavsiya etiladi)";
+    commentHint.textContent = t("comment_hint_optional_recommended");
     workflowComment?.removeAttribute("required");
-    workflowComment?.setAttribute("placeholder", "Tasdiqlash izohi (ixtiyoriy)...");
+    workflowComment?.setAttribute("placeholder", t("comment_placeholder_approve"));
   } else {
-    commentHint.textContent = "(ixtiyoriy)";
+    commentHint.textContent = t("comment_hint_optional");
     workflowComment?.removeAttribute("required");
-    workflowComment?.setAttribute("placeholder", "Tasdiqlash yoki rad etish izohi...");
+    workflowComment?.setAttribute("placeholder", t("workflow_comment_placeholder"));
   }
 }
 
