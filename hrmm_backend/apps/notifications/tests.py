@@ -45,7 +45,7 @@ class NotificationTests(TestCase):
         self.assertLessEqual(len(path), 255)
 
     def test_user_can_create_notification_with_screenshot(self):
-        upload = SimpleUploadedFile("Screenshot_2026-04-22_164051_3ACUclV.png", b"fake-image", content_type="image/png")
+        upload = SimpleUploadedFile("Screenshot_2026-04-22_164051_3ACUclV.png", b"\x89PNG\r\n\x1a\n" + b"\x00" * 100, content_type="image/png")
         response = self.client.post(
             "/api/v1/notifications/",
             {

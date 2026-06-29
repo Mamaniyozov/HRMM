@@ -3,11 +3,12 @@ import logging
 from rest_framework.views import APIView
 from rest_framework import status, serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.views import TokenRefreshView
 from django.utils import timezone
 from django.core import signing
 from apps.audit.services import create_audit_log
 from config.responses import api_success
-from config.throttling import LoginRateThrottle, OTPRateThrottle
+from config.throttling import LoginRateThrottle, OTPRateThrottle, UsernameIPLocaleRateThrottle
 from apps.reports.views import IsAuthenticatedHRMM
 from apps.users.models import User
 
@@ -40,13 +41,46 @@ from .two_factor import (
 class LoginView(APIView):
     authentication_classes = []  # login uchun auth keremas
     permission_classes = []
-    throttle_classes = [LoginRateThrottle]
+    throttle_classes = [LoginRateThrottle, UsernameIPLocaleRateThrottle]
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         user = serializer.validated_data["user"]
+
+        if user.role == "DIRECTOR" and not user.two_factor_enabled:
+            if not user.totp_secret:
+                user.totp_secret = generate_totp_secret()
+                user.save(update_fields=["totp_secret", "updated_at"])
+            if user.email:
+                challenge, code = create_login_email_challenge(user)
+                send_login_email_code(user, code)
+                return api_success(
+                    message="Email verification required. DIRECTOR uchun 2FA majburiy.",
+                    data={
+                        "requires_two_factor": True,
+                        "verification_method": "email",
+                        "challenge_id": str(challenge.id),
+                        "masked_email": mask_email(user.email),
+                        "mandatory_2fa": True,
+                    },
+                    status_code=status.HTTP_200_OK,
+                )
+            return api_success(
+                message="DIRECTOR uchun 2FA majburiy. Iltimos, authenticator ilovasini sozlang.",
+                data={
+                    "requires_two_factor": True,
+                    "verification_method": "authenticator_setup",
+                    "challenge_token": build_login_challenge(user),
+                    "qr_code_url": build_qr_code_url(build_otpauth_url(user)),
+                    "otpauth_url": build_otpauth_url(user),
+                    "secret": user.totp_secret,
+                    "mandatory_2fa": True,
+                },
+                status_code=status.HTTP_200_OK,
+            )
+
         if not user.totp_secret:
             user.totp_secret = generate_totp_secret()
             user.save(update_fields=["totp_secret", "updated_at"])
@@ -62,14 +96,6 @@ class LoginView(APIView):
                         "verification_method": "email",
                         "challenge_id": str(challenge.id),
                         "masked_email": mask_email(user.email),
-                        "user": {
-                            "id": user.id,
-                            "username": user.username,
-                            "full_name": user.full_name,
-                            "role": user.role,
-                            "job_role": user.job_role,
-                            "job_level": user.job_level,
-                        },
                     },
                     status_code=status.HTTP_200_OK,
                 )
@@ -83,14 +109,6 @@ class LoginView(APIView):
                         "qr_code_url": build_qr_code_url(build_otpauth_url(user)),
                         "otpauth_url": build_otpauth_url(user),
                         "secret": user.totp_secret,
-                        "user": {
-                            "id": user.id,
-                            "username": user.username,
-                            "full_name": user.full_name,
-                            "role": user.role,
-                            "job_role": user.job_role,
-                            "job_level": user.job_level,
-                        },
                     },
                     status_code=status.HTTP_200_OK,
                 )
@@ -139,11 +157,16 @@ class LoginView(APIView):
 
 
 class RegisterView(APIView):
-    authentication_classes = []
-    permission_classes = []
+    permission_classes = [IsAuthenticatedHRMM]
     throttle_classes = [LoginRateThrottle]
 
     def post(self, request):
+        if getattr(request.user, "role", None) != "DIRECTOR":
+            return api_success(
+                message="Faqat direktor yangi foydalanuvchi qo'sha oladi.",
+                data=None,
+                status_code=status.HTTP_403_FORBIDDEN,
+            )
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
@@ -316,6 +339,32 @@ class LogoutView(APIView):
             request=request,
         )
         return api_success(message="Logout successful")
+
+
+class HRMMTokenRefreshView(TokenRefreshView):
+    """Token refresh with revoked token check."""
+
+    def post(self, request, *args, **kwargs):
+        from rest_framework_simplejwt.tokens import RefreshToken
+        from apps.authentication.models import RevokedToken
+
+        refresh_token = request.data.get("refresh", "")
+        try:
+            token = RefreshToken(refresh_token)
+            jti = str(token.get("jti"))
+            if RevokedToken.objects.filter(jti=jti).exists():
+                return api_success(
+                    message="Refresh token bekor qilingan.",
+                    data=None,
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                )
+        except Exception:
+            return api_success(
+                message="Noto'g'ri refresh token.",
+                data=None,
+                status_code=status.HTTP_401_UNAUTHORIZED,
+            )
+        return super().post(request, *args, **kwargs)
 
 
 class PasswordChangeView(APIView):

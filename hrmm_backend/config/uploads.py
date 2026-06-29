@@ -17,7 +17,7 @@ ALLOWED_DOCUMENT_EXTENSIONS = {
     ".txt", ".csv", ".md", ".rtf",
 }
 ALLOWED_IMAGE_EXTENSIONS = {
-    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg",
+    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp",
 }
 ALLOWED_ARCHIVE_EXTENSIONS = {".zip", ".tar", ".gz", ".7z"}
 
@@ -38,7 +38,6 @@ EXTENSION_CONTENT_TYPES = {
     ".gif": {"image/gif"},
     ".webp": {"image/webp"},
     ".bmp": {"image/bmp"},
-    ".svg": {"image/svg+xml"},
     ".txt": {"text/plain"},
     ".csv": {"text/csv", "application/vnd.ms-excel"},
     ".md": {"text/markdown", "text/plain"},
@@ -94,4 +93,43 @@ def validate_upload(
                     f"Fayl content-type '{actual_ct}' kengaytma '{ext}' ga mos kelmadi."
                 )
 
+    # Magic bytes verification — detect actual file type from content
+    _verify_magic_bytes(uploaded_file, ext)
+
     return safe_name
+
+
+# Magic byte signatures for common file types.
+_MAGIC_SIGNATURES = {
+    ".pdf": [b"%PDF"],
+    ".jpg": [b"\xff\xd8\xff"],
+    ".jpeg": [b"\xff\xd8\xff"],
+    ".png": [b"\x89PNG\r\n\x1a\n"],
+    ".gif": [b"GIF87a", b"GIF89a"],
+    ".zip": [b"PK\x03\x04", b"PK\x05\x06"],
+    ".bmp": [b"BM"],
+    ".webp": [b"RIFF"],
+}
+
+
+def _verify_magic_bytes(uploaded_file, ext):
+    """Check that the file's magic bytes match the expected type for *ext*."""
+    expected = _MAGIC_SIGNATURES.get(ext)
+    if not expected:
+        return  # No signature to check for this extension
+
+    pos = uploaded_file.tell() if hasattr(uploaded_file, "tell") else None
+    try:
+        uploaded_file.seek(0)
+        header = uploaded_file.read(16)
+    finally:
+        if pos is not None and hasattr(uploaded_file, "seek"):
+            uploaded_file.seek(pos)
+
+    if not header:
+        return  # Empty file, let other validators catch it
+
+    if not any(header.startswith(sig) for sig in expected):
+        raise ValidationError(
+            f"Fayl tarkibi kengaytma '{ext}' ga mos kelmadi (magic bytes mismatch)."
+        )

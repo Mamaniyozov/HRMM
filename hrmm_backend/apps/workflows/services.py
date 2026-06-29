@@ -4,6 +4,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from apps.notifications.services import create_notification
 from apps.workflows.models import ApprovalHistory
 from apps.users.models import User
+from apps.reports.models import Report
 
 
 ROLE_APPROVAL_MATRIX = {
@@ -28,8 +29,13 @@ SELF_APPROVAL_ROLES = {"UNIT_HEAD", "DEPT_HEAD", "DIRECTOR"}
 
 
 def _request_meta(request):
+    forwarded = request.META.get("HTTP_X_FORWARDED_FOR", "")
+    if forwarded:
+        ip = forwarded.split(",")[0].strip()
+    else:
+        ip = request.META.get("REMOTE_ADDR")
     return {
-        "ip_address": request.META.get("REMOTE_ADDR"),
+        "ip_address": ip,
         "user_agent": request.META.get("HTTP_USER_AGENT", ""),
     }
 
@@ -73,6 +79,7 @@ def _next_approvers_for_report(report):
 
 @transaction.atomic
 def perform_workflow_action(report, actor, action, comment, request):
+    report = Report.objects.select_for_update().get(id=report.id)
     previous_status = report.status
 
     if (
@@ -122,7 +129,11 @@ def perform_workflow_action(report, actor, action, comment, request):
         return report
 
     role_config = ROLE_APPROVAL_MATRIX.get(actor.role)
-    if actor.role == "DIRECTOR" and report.status in {"PENDING_L2", "PENDING_L3", "PENDING_L4"}:
+    if actor.role == "DIRECTOR" and report.status == "PENDING_L4":
+        role_config = {"approved_status": "APPROVED", "next_level": 4}
+    elif actor.role == "DIRECTOR" and report.status in {"PENDING_L2", "PENDING_L3"}:
+        if actor.id != report.created_by_id:
+            raise PermissionDenied("Direktor faqat oxirgi bosqichdagi (PENDING_L4) hisobotni tasdiqlay oladi.")
         role_config = {"approved_status": "APPROVED", "next_level": 4}
     elif actor.role == "DEPT_HEAD" and report.status == "PENDING_L2":
         if not actor.department_id_id or actor.department_id_id != report.department_id_id:

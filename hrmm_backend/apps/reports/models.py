@@ -60,10 +60,17 @@ class Report(models.Model):
     def save(self, *args, **kwargs):
         if self.sequence_number is None and not self.pk:
             from django.db import connection
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT nextval('report_sequence_number_seq')")
-                row = cursor.fetchone()
-                self.sequence_number = row[0]
+            with transaction.atomic():
+                try:
+                    with connection.cursor() as cursor:
+                        cursor.execute("SELECT nextval('report_sequence_number_seq')")
+                        row = cursor.fetchone()
+                        self.sequence_number = row[0]
+                except Exception:
+                    last = Report.objects.aggregate(
+                        max_seq=models.Max("sequence_number")
+                    )
+                    self.sequence_number = (last["max_seq"] or 0) + 1
         super().save(*args, **kwargs)
 
 

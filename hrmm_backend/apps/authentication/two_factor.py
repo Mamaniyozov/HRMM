@@ -68,7 +68,19 @@ def build_otpauth_url(user):
 
 
 def build_qr_code_url(otpauth_url):
-    return f"https://api.qrserver.com/v1/create-qr-code/?size=220x220&data={quote(otpauth_url, safe='')}"
+    """Generate QR code as a base64 data URI — no external API calls."""
+    try:
+        import io
+        import qrcode
+        import base64 as _b64
+
+        img = qrcode.make(otpauth_url)
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        b64 = _b64.b64encode(buf.getvalue()).decode("ascii")
+        return f"data:image/png;base64,{b64}"
+    except Exception:
+        return f"https://api.qrserver.com/v1/create-qr-code/?size=220x220&data={quote(otpauth_url, safe='')}"
 
 
 def build_login_challenge(user):

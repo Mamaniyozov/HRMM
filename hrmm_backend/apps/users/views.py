@@ -88,6 +88,9 @@ class UserUpdateView(APIView):
         except User.DoesNotExist:
             return api_success(message="User not found", data=None, status_code=404)
 
+        if request.user.id == user.id and request.data.get("is_active") is False:
+            return api_success(message="O'zingizni deactivate qila olmaysiz", data=None, status_code=400)
+
         serializer = UserUpdateSerializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

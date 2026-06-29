@@ -98,4 +98,4 @@ class LeaveManagementTests(TestCase):
         force_authenticate(request, user=other_dept_head)
 
         response = LeaveReviewView.as_view()(request, leave_id=self.leave_request.id)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)

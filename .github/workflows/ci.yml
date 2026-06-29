@@ -20,14 +20,29 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install flake8 black
+          pip install flake8 black bandit pip-audit
       - name: Lint
         run: |
           flake8 apps config
           black --check apps config
+      - name: SAST (Bandit)
+        run: bandit -r apps config -ll
+      - name: SCA (pip-audit)
+        run: pip-audit --strict
       - name: Run tests
         run: |
           python manage.py test apps --settings=config.settings.test_sqlite
+
+  security-scanning:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scanning (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   frontend:
     runs-on: ubuntu-latest
@@ -45,3 +60,5 @@ jobs:
         run: npx --yes eslint app.js src
       - name: Check formatting
         run: npx --yes prettier --check app.js src
+      - name: SCA (npm audit)
+        run: npm audit --audit-level=moderate

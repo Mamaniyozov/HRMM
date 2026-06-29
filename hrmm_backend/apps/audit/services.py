@@ -5,7 +5,11 @@ def create_audit_log(*, actor=None, action="", target_type="", target_id=None, d
     ip_address = None
     user_agent = ""
     if request is not None:
-        ip_address = request.META.get("REMOTE_ADDR")
+        forwarded = request.META.get("HTTP_X_FORWARDED_FOR", "")
+        if forwarded:
+            ip_address = forwarded.split(",")[0].strip()
+        else:
+            ip_address = request.META.get("REMOTE_ADDR")
         user_agent = request.META.get("HTTP_USER_AGENT", "")
 
     AuditLog.objects.create(

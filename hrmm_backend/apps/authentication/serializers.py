@@ -62,7 +62,7 @@ class MeSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, min_length=8)
+    password = serializers.CharField(write_only=True, min_length=12)
     password_confirm = serializers.CharField(write_only=True)
 
     class Meta:
@@ -113,7 +113,7 @@ class LogoutSerializer(serializers.Serializer):
 
 class PasswordChangeSerializer(serializers.Serializer):
     current_password = serializers.CharField()
-    new_password = serializers.CharField(min_length=8)
+    new_password = serializers.CharField(min_length=12)
 
     def validate_current_password(self, value):
         user = self.context["request"].user

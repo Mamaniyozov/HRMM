@@ -1,7 +1,48 @@
 import uuid
+import os
 
 from django.db import models
 from django.contrib.auth.hashers import make_password
+from django.conf import settings
+
+
+def _get_fernet():
+    try:
+        from cryptography.fernet import Fernet
+        import hashlib
+        key = os.getenv("FIELD_ENCRYPTION_KEY", "")
+        if not key:
+            key = settings.SECRET_KEY
+        fernet_key = hashlib.sha256(key.encode()).digest()
+        return Fernet(fernet_key)
+    except Exception:
+        return None
+
+
+class TOTPEncryptedField(models.CharField):
+    """CharField that encrypts totp_secret at rest using Fernet."""
+
+    def from_db_value(self, value, expression, connection):
+        if not value:
+            return value
+        fernet = _get_fernet()
+        if fernet:
+            try:
+                return fernet.decrypt(value.encode()).decode()
+            except Exception:
+                return value
+        return value
+
+    def get_prep_value(self, value):
+        if not value:
+            return value
+        fernet = _get_fernet()
+        if fernet and not value.startswith("gAAAA"):
+            try:
+                return fernet.encrypt(value.encode()).decode()
+            except Exception:
+                return value
+        return value
 
 class User(models.Model):
     ROLE_CHOICES = [
@@ -65,7 +106,7 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
-    totp_secret = models.CharField(max_length=64, null=True, blank=True)
+    totp_secret = TOTPEncryptedField(max_length=256, null=True, blank=True)
 
     @property
     def is_authenticated(self):

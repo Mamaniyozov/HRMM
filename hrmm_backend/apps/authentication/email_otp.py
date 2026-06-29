@@ -56,18 +56,22 @@ def send_login_email_code(user, code):
 
 
 def verify_email_challenge(challenge, code):
-    if challenge.used_at:
-        return False, "Kod allaqachon ishlatilgan."
-    if challenge.expires_at <= timezone.now():
-        return False, "Kod muddati tugagan."
-    if challenge.attempt_count >= 5:
-        return False, "Urinishlar soni oshib ketdi. Qayta login qiling."
+    from django.db import transaction
 
-    challenge.attempt_count += 1
-    challenge.save(update_fields=["attempt_count"])
-    if challenge.code_hash != _hash_code(code):
-        return False, "6 xonali kod noto'g'ri."
+    with transaction.atomic():
+        locked = EmailOTPChallenge.objects.select_for_update().get(id=challenge.id)
+        if locked.used_at:
+            return False, "Kod allaqachon ishlatilgan."
+        if locked.expires_at <= timezone.now():
+            return False, "Kod muddati tugagan."
+        if locked.attempt_count >= 5:
+            return False, "Urinishlar soni oshib ketdi. Qayta login qiling."
 
-    challenge.used_at = timezone.now()
-    challenge.save(update_fields=["used_at"])
-    return True, None
+        locked.attempt_count = locked.attempt_count + 1
+        if locked.code_hash != _hash_code(code):
+            locked.save(update_fields=["attempt_count"])
+            return False, "6 xonali kod noto'g'ri."
+
+        locked.used_at = timezone.now()
+        locked.save(update_fields=["attempt_count", "used_at"])
+        return True, None

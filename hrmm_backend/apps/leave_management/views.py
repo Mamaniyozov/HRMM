@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 
@@ -93,74 +94,85 @@ class LeaveDetailView(APIView):
 class LeaveReviewView(APIView):
     permission_classes = [IsAuthenticatedHRMM]
 
+    def get_queryset(self, user):
+        queryset = LeaveRequest.objects.select_related("requested_by", "requested_by__department_id", "requested_by__unit_id")
+        if user.role == "DIRECTOR":
+            return queryset
+        if user.role == "DEPT_HEAD" and user.department_id:
+            return queryset.filter(requested_by__department_id=user.department_id)
+        if user.role == "UNIT_HEAD" and user.unit_id:
+            return queryset.filter(requested_by__unit_id=user.unit_id)
+        return queryset.filter(requested_by=user)
+
     def post(self, request, leave_id):
-        leave_request = LeaveRequest.objects.select_related("requested_by").filter(id=leave_id).first()
-        if not leave_request:
-            return api_success(message="Leave request not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+        with transaction.atomic():
+            leave_request = self.get_queryset(request.user).select_for_update().filter(id=leave_id).first()
+            if not leave_request:
+                return api_success(message="Leave request not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
 
-        serializer = LeaveReviewSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+            serializer = LeaveReviewSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
 
-        action = serializer.validated_data["action"]
-        comment = serializer.validated_data["review_comment"]
+            action = serializer.validated_data["action"]
+            comment = serializer.validated_data["review_comment"]
 
-        if action == "CANCEL":
-            if leave_request.requested_by_id != request.user.id:
-                return api_success(message="Faqat egasi ta'til so'rovini bekor qila oladi", data=None, status_code=403)
-            if leave_request.status != "PENDING":
-                return api_success(message="Faqat pending so'rov bekor qilinadi", data=None, status_code=400)
-            leave_request.status = "CANCELLED"
+            if action == "CANCEL":
+                if leave_request.requested_by_id != request.user.id:
+                    return api_success(message="Faqat egasi ta'til so'rovini bekor qila oladi", data=None, status_code=403)
+                if leave_request.status != "PENDING":
+                    return api_success(message="Faqat pending so'rov bekor qilinadi", data=None, status_code=400)
+                leave_request.status = "CANCELLED"
+                leave_request.reviewed_by = request.user
+                leave_request.review_comment = comment
+                leave_request.save(update_fields=["status", "reviewed_by", "review_comment", "updated_at"])
+                create_audit_log(
+                    actor=request.user,
+                    action="LEAVE_CANCEL",
+                    target_type="leave_management.LeaveRequest",
+                    target_id=leave_request.id,
+                    description="Ta'til so'rovi bekor qilindi",
+                    request=request,
+                )
+                create_notification(
+                    user=leave_request.requested_by,
+                    title="Leave request cancelled",
+                    message="Ta'til so'rovi bekor qilindi.",
+                    notification_type="INFO",
+                    reference_type="leave_management.LeaveRequest",
+                    reference_id=leave_request.id,
+                )
+                return api_success(data=LeaveRequestListSerializer(leave_request, context={"request": request}).data)
+
+            if request.user.role not in {"DEPT_HEAD", "DIRECTOR"}:
+                return api_success(message="Sizda leave review vakolati yo'q", data=None, status_code=403)
+
+            if request.user.role == "DEPT_HEAD":
+                actor_dept_id = request.user.department_id_id
+                target_dept_id = leave_request.requested_by.department_id_id
+                if not actor_dept_id or actor_dept_id != target_dept_id:
+                    return api_success(message="Faqat o'z bo'limingiz so'rovlarini ko'ra olasiz", data=None, status_code=403)
+
+            leave_request.status = "APPROVED" if action == "APPROVE" else "REJECTED"
             leave_request.reviewed_by = request.user
             leave_request.review_comment = comment
             leave_request.save(update_fields=["status", "reviewed_by", "review_comment", "updated_at"])
             create_audit_log(
                 actor=request.user,
-                action="LEAVE_CANCEL",
+                action=f"LEAVE_{action}",
                 target_type="leave_management.LeaveRequest",
                 target_id=leave_request.id,
-                description="Ta'til so'rovi bekor qilindi",
+                description=f"Ta'til so'rovi {action.lower()} qilindi",
                 request=request,
             )
             create_notification(
                 user=leave_request.requested_by,
-                title="Leave request cancelled",
-                message="Ta'til so'rovi bekor qilindi.",
-                notification_type="INFO",
+                title=f"Leave request {action.lower()}",
+                message=f"Ta'til so'rovingiz {action.lower()} qilindi.",
+                notification_type="INFO" if action == "APPROVE" else "REJECTION",
                 reference_type="leave_management.LeaveRequest",
                 reference_id=leave_request.id,
             )
             return api_success(data=LeaveRequestListSerializer(leave_request, context={"request": request}).data)
-
-        if request.user.role not in {"DEPT_HEAD", "DIRECTOR"}:
-            return api_success(message="Sizda leave review vakolati yo'q", data=None, status_code=403)
-
-        if request.user.role == "DEPT_HEAD":
-            actor_dept_id = request.user.department_id_id
-            target_dept_id = leave_request.requested_by.department_id_id
-            if not actor_dept_id or actor_dept_id != target_dept_id:
-                return api_success(message="Faqat o'z bo'limingiz so'rovlarini ko'ra olasiz", data=None, status_code=403)
-
-        leave_request.status = "APPROVED" if action == "APPROVE" else "REJECTED"
-        leave_request.reviewed_by = request.user
-        leave_request.review_comment = comment
-        leave_request.save(update_fields=["status", "reviewed_by", "review_comment", "updated_at"])
-        create_audit_log(
-            actor=request.user,
-            action=f"LEAVE_{action}",
-            target_type="leave_management.LeaveRequest",
-            target_id=leave_request.id,
-            description=f"Ta'til so'rovi {action.lower()} qilindi",
-            request=request,
-        )
-        create_notification(
-            user=leave_request.requested_by,
-            title=f"Leave request {action.lower()}",
-            message=f"Ta'til so'rovingiz {action.lower()} qilindi.",
-            notification_type="INFO" if action == "APPROVE" else "REJECTION",
-            reference_type="leave_management.LeaveRequest",
-            reference_id=leave_request.id,
-        )
-        return api_success(data=LeaveRequestListSerializer(leave_request, context={"request": request}).data)
 
 
 class LeaveCalendarView(APIView):

@@ -140,7 +140,7 @@ class AuthenticationTests(TestCase):
 
         response = self.client.put(
             "/api/v1/auth/password/",
-            {"current_password": "12345678", "new_password": "newpass123"},
+            {"current_password": "12345678", "new_password": "newpass123456"},
             format="json",
         )
 

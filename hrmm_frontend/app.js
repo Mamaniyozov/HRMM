@@ -1266,7 +1266,7 @@ function openContentModal(title, eyebrow, innerHtml) {
           <h3>${escapeHtml(title)}</h3>
         </div>
       </div>
-      ${innerHtml}
+      ${escapeHtml(innerHtml)}
     </section>
   `;
   if (sectionModalTitle) sectionModalTitle.textContent = title;

@@ -147,7 +147,7 @@ class NotificationReviewView(APIView):
         if request.user.role not in {"DEPT_HEAD", "DIRECTOR"}:
             return api_success(message="Sizda bildirishnomani ko'rib chiqish vakolati yo'q", data=None, status_code=403)
 
-        notification = Notification.objects.select_related("submitted_by", "user_id").filter(id=notification_id).first()
+        notification = notification_queryset_for_user(request.user).select_related("submitted_by", "user_id").filter(id=notification_id).first()
         if not notification:
             return api_success(message="Notification not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
 

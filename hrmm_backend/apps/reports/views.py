@@ -94,6 +94,14 @@ class ReportDetailView(APIView):
         report = _report_queryset_for_user(request.user).filter(id=report_id).first()
         if not report:
             return api_success(message="Report not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+        create_audit_log(
+            actor=request.user,
+            action="REPORT_VIEW",
+            target_type="reports.Report",
+            target_id=report.id,
+            description=f"{request.user.username} hisobotni ko'rdi: {report.report_number}",
+            request=request,
+        )
         return api_success(data=ReportDetailSerializer(report, context={"request": request}).data)
 
     def put(self, request, report_id):
@@ -236,6 +244,15 @@ class AttachmentDownloadView(APIView):
         report = _report_queryset_for_user(request.user).filter(id=attachment.report_id.id).first()
         if not report:
             return api_success(message="Attachment not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+
+        create_audit_log(
+            actor=request.user,
+            action="ATTACHMENT_DOWNLOAD",
+            target_type="reports.ReportAttachment",
+            target_id=attachment.id,
+            description=f"{request.user.username} fayl yuklab oldi: {attachment.file_name}",
+            request=request,
+        )
 
         response = FileResponse(attachment.file.open("rb"), as_attachment=True, filename=attachment.file_name)
         response["Content-Type"] = attachment.file_type or "application/octet-stream"
