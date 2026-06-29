@@ -1,4 +1,5 @@
 import json
+import os
 import threading
 from pathlib import Path
 
@@ -9,17 +10,21 @@ _lock = threading.Lock()
 try:
     from cryptography.fernet import Fernet
     import hashlib
-    import os
+    import base64
 
     def _get_key():
         token = os.getenv("SESSION_ENCRYPTION_KEY", "")
         if not token:
-            token = os.getenv("TELEGRAM_BOT_TOKEN", "fallback-dev-key")
-        return Fernet(hashlib.sha256(token.encode()).digest()[:32].hex().encode()[:44])
+            raise RuntimeError(
+                "SESSION_ENCRYPTION_KEY environment variable is required. "
+                "Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
+            )
+        fernet_key = hashlib.sha256(token.encode()).digest()
+        return Fernet(base64.urlsafe_b64encode(fernet_key))
 
     _fernet = None
     try:
-        _fernet = Fernet(_get_key())
+        _fernet = _get_key()
     except Exception:
         _fernet = None
 except ImportError:
@@ -27,18 +32,15 @@ except ImportError:
 
 
 def _encrypt(data: str) -> str:
-    if _fernet:
-        return _fernet.encrypt(data.encode()).decode()
-    return data
+    if not _fernet:
+        raise RuntimeError("Session encryption is not available. Set SESSION_ENCRYPTION_KEY.")
+    return _fernet.encrypt(data.encode()).decode()
 
 
 def _decrypt(data: str) -> str:
-    if _fernet:
-        try:
-            return _fernet.decrypt(data.encode()).decode()
-        except Exception:
-            return data
-    return data
+    if not _fernet:
+        raise RuntimeError("Session encryption is not available. Set SESSION_ENCRYPTION_KEY.")
+    return _fernet.decrypt(data.encode()).decode()
 
 
 def _load_all() -> dict:
@@ -52,20 +54,17 @@ def _load_all() -> dict:
             decrypted = _decrypt(data.get("_payload", ""))
             return json.loads(decrypted) if decrypted else {}
         return data
-    except (json.JSONDecodeError, OSError):
+    except (json.JSONDecodeError, OSError, RuntimeError):
         return {}
 
 
 def _save_all(data: dict) -> None:
     path = Path(SESSIONS_FILE)
     path.parent.mkdir(parents=True, exist_ok=True)
-    if _fernet:
-        payload = json.dumps(data, ensure_ascii=False, indent=2)
-        encrypted = _encrypt(payload)
-        output = {"_encrypted": True, "_payload": encrypted}
-        path.write_text(json.dumps(output), encoding="utf-8")
-    else:
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    payload = json.dumps(data, ensure_ascii=False, indent=2)
+    encrypted = _encrypt(payload)
+    output = {"_encrypted": True, "_payload": encrypted}
+    path.write_text(json.dumps(output), encoding="utf-8")
 
 
 def get_session(telegram_id: int) -> dict | None:

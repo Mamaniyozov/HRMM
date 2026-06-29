@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from telegram import Update
@@ -14,8 +15,13 @@ from telegram.constants import ParseMode
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 from config import HRMM_API_BASE_URL, PORT, TELEGRAM_BOT_TOKEN
-from hrmm_client import HRMMClient
+from hrmm_client import HRMMClient, close_http_client
 from sessions import clear_session, get_session, pop_login_challenge, save_login_challenge, save_session
+
+# OTP rate limit: telegram_id -> {"attempts": int, "blocked_until": float}
+_otp_attempts: dict[int, dict] = {}
+_OTP_MAX_ATTEMPTS = 3
+_OTP_BLOCK_SECONDS = 900  # 15 daqiqa
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
@@ -42,9 +48,7 @@ Agar 2FA so'rasa: <code>/code 123456</code>
 <b>Boshqa</b>
 /logout — chiqish
 /help — yordam
-
-API: {api}
-""".format(api=HRMM_API_BASE_URL)
+"""
 
 
 def _escape_html(text: str) -> str:
@@ -60,7 +64,7 @@ def _client_for_user(telegram_id: int) -> tuple[HRMMClient | None, dict | None]:
     session = get_session(telegram_id)
     if not session or not session.get("access"):
         return None, session
-    return HRMMClient(session["access"]), session
+    return HRMMClient(session["access"], session.get("refresh")), session
 
 
 async def _reply(update: Update, text: str, *, html: bool = True) -> None:
@@ -93,6 +97,15 @@ def _store_tokens(telegram_id: int, data: dict, user: dict) -> None:
     )
 
 
+async def _delete_user_message(update: Update) -> None:
+    """Foydalanuvchi yuborgan xabarni o'chirish — parol/OTP leak oldini olish."""
+    try:
+        if update.message:
+            await update.message.delete()
+    except Exception:
+        pass
+
+
 async def start_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await _reply(
         update,
@@ -111,7 +124,8 @@ async def login_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await _reply(
             update,
             "Foydalanish:\n<code>/login username parol</code>\n\n"
-            "Parolda bo'shliq bo'lsa, ikkala qismni alohida yozing.",
+            "⚠️ Xavfsizlik: parol chat tarixida saqlanadi.\n"
+            "Kirishdan keyin /logout va qayta /login qiling yoki parolni o'chiring.",
         )
         return
 
@@ -119,8 +133,11 @@ async def login_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     password = " ".join(context.args[1:])
     telegram_id = update.effective_user.id
 
+    # Foydalanuvchi xabarini darhol o'chirish — parol chat tarixida qolmasligi uchun
+    await _delete_user_message(update)
+
     try:
-        payload = HRMMClient().login(username, password)
+        payload = await HRMMClient().login(username, password)
     except Exception as exc:
         await _reply(update, f"❌ Kirish xatosi: {_escape_html(str(exc))}")
         return
@@ -162,6 +179,18 @@ async def code_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     telegram_id = update.effective_user.id
+
+    # OTP rate limit tekshiruvi
+    now = time.time()
+    attempt_data = _otp_attempts.get(telegram_id, {})
+    if attempt_data.get("blocked_until", 0) > now:
+        remaining = int(attempt_data["blocked_until"] - now)
+        await _reply(update, f"⏳ Juda ko'p urinish. {remaining}s dan keyin qayta urinib ko'ring.")
+        return
+
+    # OTP kodni o'chirish — chat tarixida qolmasligi uchun
+    await _delete_user_message(update)
+
     challenge = pop_login_challenge(telegram_id)
     if not challenge:
         await _reply(update, "Avval <code>/login</code> qiling.")
@@ -172,13 +201,27 @@ async def code_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     try:
         if challenge.get("method") == "email":
-            payload = client.verify_email_otp(challenge["challenge_id"], code)
+            payload = await client.verify_email_otp(challenge["challenge_id"], code)
         else:
-            payload = client.verify_2fa(challenge["challenge_token"], code)
+            payload = await client.verify_2fa(challenge["challenge_token"], code)
     except Exception as exc:
         save_login_challenge(telegram_id, challenge)
-        await _reply(update, f"❌ Kod xatosi: {_escape_html(str(exc))}")
+        # Rate limit: urinishlar sonini oshirish
+        attempts = _otp_attempts.get(telegram_id, {"attempts": 0, "blocked_until": 0})
+        attempts["attempts"] = attempts.get("attempts", 0) + 1
+        if attempts["attempts"] >= _OTP_MAX_ATTEMPTS:
+            attempts["blocked_until"] = now + _OTP_BLOCK_SECONDS
+            attempts["attempts"] = 0
+            _otp_attempts[telegram_id] = attempts
+            await _reply(update, f"⏳ {_OTP_MAX_ATTEMPTS} marta noto'g'ri kod. 15 daqiqaga bloklandi.")
+            return
+        _otp_attempts[telegram_id] = attempts
+        remaining = _OTP_MAX_ATTEMPTS - attempts["attempts"]
+        await _reply(update, f"❌ Kod xatosi. Qolgan urinishlar: {remaining}")
         return
+
+    # Muvaffaqiyatli — urinishlar tozalash
+    _otp_attempts.pop(telegram_id, None)
 
     data = payload.get("data") or {}
     user = data.get("user") or {}
@@ -200,7 +243,7 @@ async def me_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await _reply(update, "Avval <code>/login</code> qiling.")
         return
     try:
-        payload = client.me()
+        payload = await client.me()
         user = payload.get("data") or session.get("user") or {}
         await _reply(
             update,
@@ -221,7 +264,7 @@ async def stat_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await _reply(update, "Avval <code>/login</code> qiling.")
         return
     try:
-        stats = client.dashboard_stats()
+        stats = await client.dashboard_stats()
         reports = stats.get("reports") or {}
         leaves = stats.get("leaves") or {}
         await _reply(
@@ -252,7 +295,7 @@ async def navbat_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
     try:
         if role in {"DIRECTOR", "DEPT_HEAD", "UNIT_HEAD"}:
-            admin = client.dashboard_admin()
+            admin = await client.dashboard_admin()
             pending = admin.get("pending_approvals") or []
             if not pending:
                 lines.append("Navbat bo'sh ✅")
@@ -265,8 +308,8 @@ async def navbat_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
                     f"  {_escape_html(item.get('status', ''))} — {_escape_html(who)}"
                 )
         else:
-            leaves = client.leaves(page_size=5)
-            reports = client.reports(page_size=5)
+            leaves = await client.leaves(page_size=5)
+            reports = await client.reports(page_size=5)
             for leave in leaves.get("results") or []:
                 if leave.get("status") == "PENDING":
                     lines.append(f"• [ariza] {_escape_html(leave.get('reason', '—'))}")
@@ -288,7 +331,7 @@ async def bolimlar_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         return
 
     try:
-        ops = client.dashboard_operations()
+        ops = await client.dashboard_operations()
         overall = ops.get("overall") or {}
         departments = ops.get("departments") or []
 
@@ -344,21 +387,21 @@ async def _list_items(update: Update, kind: str, title: str) -> None:
 
     try:
         if kind == "arizalar":
-            data = client.leaves()
+            data = await client.leaves()
             rows = data.get("results") or []
             formatter = lambda r: (
                 f"• {_escape_html(r.get('requested_by_name', '—'))}: "
                 f"{_escape_html(r.get('leave_type', ''))} — <b>{_escape_html(r.get('status', ''))}</b>"
             )
         elif kind == "hisobotlar":
-            data = client.reports()
+            data = await client.reports()
             rows = data.get("results") or []
             formatter = lambda r: (
                 f"• {_escape_html(r.get('report_number', r.get('id', '')[:8]))}: "
                 f"{_escape_html(r.get('title', '—'))} — <b>{_escape_html(r.get('status', ''))}</b>"
             )
         else:
-            data = client.notifications()
+            data = await client.notifications()
             rows = data.get("results") or []
             formatter = lambda r: (
                 f"• {_escape_html(r.get('title', '—'))}\n"
@@ -384,13 +427,57 @@ async def unknown_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         )
 
 
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Global xato ushlagich — kutilmagan xatolarda foydalanuvchiga xabar yuboradi."""
+    logger.error("Unhandled exception: %s", context.error, exc_info=context.error)
+    if isinstance(update, Update) and update.effective_chat:
+        try:
+            await context.bot.send_message(
+                update.effective_chat.id,
+                "⚠️ Ichki xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.",
+            )
+        except Exception:
+            pass
+
+
+# Health-check uchun: polling holatini kuzatish
+_bot_running = False
+
+
+async def _post_init(application: Application) -> None:
+    """Bot ishga tushganda Telegram command menyusini o'rnatish."""
+    global _bot_running
+    from telegram import BotCommand
+    await application.bot.set_my_commands([
+        BotCommand("start", "Botni ishga tushirish"),
+        BotCommand("login", "Tizimga kirish"),
+        BotCommand("code", "2FA/OTP kodni kiriting"),
+        BotCommand("logout", "Tizimdan chiqish"),
+        BotCommand("me", "Profil ma'lumotlari"),
+        BotCommand("stat", "Umumiy statistika"),
+        BotCommand("navbat", "Kutilayotgan tasdiqlar"),
+        BotCommand("bolimlar", "Bo'limlar bo'yicha"),
+        BotCommand("arizalar", "So'nggi arizalar"),
+        BotCommand("hisobotlar", "So'nggi hisobotlar"),
+        BotCommand("xabarlar", "Bildirishnomalar"),
+        BotCommand("help", "Yordam"),
+    ])
+    _bot_running = True
+
+
 def _start_health_server() -> None:
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
-            self.send_response(200)
-            self.send_header("Content-Type", "text/plain")
-            self.end_headers()
-            self.wfile.write(b"HRMM Telegram bot is running")
+            if _bot_running:
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"OK")
+            else:
+                self.send_response(503)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"Bot not running")
 
         def log_message(self, *_args):
             return
@@ -403,12 +490,15 @@ def _start_health_server() -> None:
 def main() -> None:
     if not TELEGRAM_BOT_TOKEN:
         raise SystemExit("TELEGRAM_BOT_TOKEN o'rnatilmagan (.env yoki Railway Variables)")
+    if not HRMM_API_BASE_URL:
+        raise SystemExit("HRMM_API_BASE_URL o'rnatilmagan (.env yoki Railway Variables)")
 
     threading.Thread(target=_start_health_server, daemon=True).start()
 
     app = (
         Application.builder()
         .token(TELEGRAM_BOT_TOKEN)
+        .post_init(_post_init)
         .build()
     )
 
@@ -425,8 +515,9 @@ def main() -> None:
     app.add_handler(CommandHandler("hisobotlar", hisobotlar_cmd))
     app.add_handler(CommandHandler("xabarlar", xabarlar_cmd))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unknown_msg))
+    app.add_error_handler(error_handler)
 
-    logger.info("HRMM bot ishga tushdi. API: %s", HRMM_API_BASE_URL)
+    logger.info("HRMM bot ishga tushdi")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
