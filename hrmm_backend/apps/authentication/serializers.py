@@ -114,6 +114,7 @@ class LogoutSerializer(serializers.Serializer):
 class PasswordChangeSerializer(serializers.Serializer):
     current_password = serializers.CharField()
     new_password = serializers.CharField(min_length=12)
+    refresh = serializers.CharField(required=False, write_only=True)
 
     def validate_current_password(self, value):
         user = self.context["request"].user
@@ -125,6 +126,17 @@ class PasswordChangeSerializer(serializers.Serializer):
         user = self.context["request"].user
         user.password_hash = make_password(self.validated_data["new_password"])
         user.save(update_fields=["password_hash", "updated_at"])
+
+        refresh_token = self.validated_data.get("refresh")
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                RevokedToken.objects.get_or_create(
+                    jti=str(token.get("jti")),
+                    defaults={"token_type": "refresh"},
+                )
+            except Exception:
+                pass
         return user
 
 

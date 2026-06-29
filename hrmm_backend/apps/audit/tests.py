@@ -17,14 +17,14 @@ class AuditLogTests(TestCase):
         self.director = User.objects.create(
             username="director_audit",
             email="director_audit@example.com",
-            password_hash="password123",
+            password_hash="password123456",
             full_name="Director Audit",
             role="DIRECTOR",
         )
         self.specialist = User.objects.create(
             username="specialist_audit",
             email="specialist_audit@example.com",
-            password_hash="password123",
+            password_hash="password123456",
             full_name="Specialist Audit",
             role="SPECIALIST",
             department_id=self.department,
@@ -113,7 +113,7 @@ class AuditLogTests(TestCase):
                 "username": "new_user_audit",
                 "email": "new_user_audit@example.com",
                 "full_name": "New User",
-                "password": "password123",
+                "password": "password123456",
                 "role": "SPECIALIST",
                 "department_id": str(self.department.id),
             },
@@ -129,7 +129,7 @@ class AuditLogTests(TestCase):
     def test_audit_log_written_on_login_and_logout(self):
         login_response = self.client.post(
             "/api/v1/auth/login/",
-            {"username": self.director.username, "password": "password123"},
+            {"username": self.director.username, "password": "password123456"},
             format="json",
         )
         challenge_id = login_response.data["data"]["challenge_id"]

@@ -80,7 +80,7 @@ def build_qr_code_url(otpauth_url):
         b64 = _b64.b64encode(buf.getvalue()).decode("ascii")
         return f"data:image/png;base64,{b64}"
     except Exception:
-        return f"https://api.qrserver.com/v1/create-qr-code/?size=220x220&data={quote(otpauth_url, safe='')}"
+        return ""
 
 
 def build_login_challenge(user):

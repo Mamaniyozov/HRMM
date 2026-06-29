@@ -67,7 +67,7 @@ class Report(models.Model):
                         row = cursor.fetchone()
                         self.sequence_number = row[0]
                 except Exception:
-                    last = Report.objects.aggregate(
+                    last = Report.objects.select_for_update().aggregate(
                         max_seq=models.Max("sequence_number")
                     )
                     self.sequence_number = (last["max_seq"] or 0) + 1

@@ -317,6 +317,12 @@ class MeView(APIView):
         return api_success(data=MeSerializer(request.user).data)
     
     def put(self, request):
+        if request.data.get("is_active") is False:
+            return api_success(
+                message="O'zingizni deactivate qila olmaysiz",
+                data=None,
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = MeSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

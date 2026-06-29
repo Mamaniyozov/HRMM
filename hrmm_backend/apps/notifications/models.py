@@ -76,3 +76,13 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user_id} - {self.title}"
+
+    def save(self, *args, **kwargs):
+        from django.db import transaction
+        if self.notification_number is None:
+            with transaction.atomic():
+                last = Notification.objects.select_for_update().aggregate(
+                    max_num=models.Max("notification_number")
+                )
+                self.notification_number = (last["max_num"] or 0) + 1
+        super().save(*args, **kwargs)

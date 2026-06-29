@@ -10,11 +10,12 @@ def _get_fernet():
     try:
         from cryptography.fernet import Fernet
         import hashlib
+        import base64
         key = os.getenv("FIELD_ENCRYPTION_KEY", "")
         if not key:
             key = settings.SECRET_KEY
         fernet_key = hashlib.sha256(key.encode()).digest()
-        return Fernet(fernet_key)
+        return Fernet(base64.urlsafe_b64encode(fernet_key))
     except Exception:
         return None
 

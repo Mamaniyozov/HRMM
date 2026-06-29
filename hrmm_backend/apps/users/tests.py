@@ -12,7 +12,7 @@ class UserDeleteTests(TestCase):
         self.director = User.objects.create(
             username="director_delete",
             email="director_delete@example.com",
-            password_hash="12345678",
+            password_hash="123456789012",
             full_name="Director Delete",
             role="DIRECTOR",
             is_active=True,
@@ -20,7 +20,7 @@ class UserDeleteTests(TestCase):
         self.target_user = User.objects.create(
             username="target_user",
             email="target_user@example.com",
-            password_hash="12345678",
+            password_hash="123456789012",
             full_name="Target User",
             role="SPECIALIST",
             is_active=True,
@@ -51,7 +51,7 @@ class UserJobProfileTests(TestCase):
             data={
                 "username": "backend_junior",
                 "email": "backend_junior@example.com",
-                "password": "12345678",
+                "password": "123456789012",
                 "full_name": "Backend Junior",
                 "role": "SPECIALIST",
                 "job_role": "BACKEND_DEV",
@@ -71,7 +71,7 @@ class UserJobProfileTests(TestCase):
             data={
                 "username": "frontend_middle",
                 "email": "frontend_middle@example.com",
-                "password": "12345678",
+                "password": "123456789012",
                 "full_name": "Frontend Middle",
                 "role": "SPECIALIST",
                 "job_level": "MIDDLE",
@@ -87,7 +87,7 @@ class UserJobProfileTests(TestCase):
             data={
                 "username": "it_manager",
                 "email": "it_manager@example.com",
-                "password": "12345678",
+                "password": "123456789012",
                 "full_name": "IT Manager",
                 "role": "SPECIALIST",
                 "job_role": "MANAGER",

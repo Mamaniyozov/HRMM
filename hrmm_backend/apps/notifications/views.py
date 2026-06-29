@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework import status
@@ -147,66 +148,67 @@ class NotificationReviewView(APIView):
         if request.user.role not in {"DEPT_HEAD", "DIRECTOR"}:
             return api_success(message="Sizda bildirishnomani ko'rib chiqish vakolati yo'q", data=None, status_code=403)
 
-        notification = notification_queryset_for_user(request.user).select_related("submitted_by", "user_id").filter(id=notification_id).first()
-        if not notification:
-            return api_success(message="Notification not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+        with transaction.atomic():
+            notification = notification_queryset_for_user(request.user).select_for_update().select_related("submitted_by", "user_id").filter(id=notification_id).first()
+            if not notification:
+                return api_success(message="Notification not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
 
-        target = resolve_notification_for_review(notification)
-        if not target:
-            return api_success(
-                message="Faqat funksiya talabi yoki foydalanuvchi bildirishnomasi ko'rib chiqiladi",
-                data=None,
-                status_code=status.HTTP_400_BAD_REQUEST,
+            target = resolve_notification_for_review(notification)
+            if not target:
+                return api_success(
+                    message="Faqat funksiya talabi yoki foydalanuvchi bildirishnomasi ko'rib chiqiladi",
+                    data=None,
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if target.status not in {None, "PENDING"}:
+                return api_success(
+                    message="Bu so'rov allaqachon ko'rib chiqilgan",
+                    data=NotificationSerializer(target, context={"request": request}).data,
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if request.user.role == "DEPT_HEAD":
+                submitter_department_id = getattr(target.submitted_by, "department_id_id", None)
+                if submitter_department_id and submitter_department_id != request.user.department_id_id:
+                    return api_success(message="Faqat o'z bo'limingiz so'rovlarini ko'ra olasiz", data=None, status_code=403)
+
+            serializer = NotificationReviewSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            action = serializer.validated_data["action"]
+            comment = serializer.validated_data.get("review_comment", "")
+
+            if action == "REJECT" and not comment:
+                return api_success(message="Rad etish uchun izoh majburiy", data=None, status_code=400)
+
+            new_status = "APPROVED" if action == "APPROVE" else "REJECTED"
+            target.status = new_status
+            target.reviewed_by = request.user
+            target.review_comment = comment
+            target.is_read = True
+            target.read_at = timezone.now()
+            target.save(update_fields=["status", "reviewed_by", "review_comment", "is_read", "read_at"])
+
+            sync_reviewer_alerts(target, new_status=new_status)
+
+            submitter = target.submitted_by or target.user_id
+            if submitter:
+                create_notification(
+                    user=submitter,
+                    submitted_by=target.submitted_by,
+                    title=f"So'rovingiz {action.lower()} qilindi",
+                    message=f"{target.title}: {comment or 'Izoh kiritilmagan'}",
+                    notification_type="INFO" if action == "APPROVE" else "REJECTION",
+                    reference_type=target.reference_type,
+                    reference_id=str(target.id),
+                )
+
+            create_audit_log(
+                actor=request.user,
+                action=f"NOTIFICATION_{action}",
+                target_type="notifications.Notification",
+                target_id=target.id,
+                description=f"{target.title} {action.lower()} qilindi",
+                request=request,
             )
-
-        if target.status not in {None, "PENDING"}:
-            return api_success(
-                message="Bu so'rov allaqachon ko'rib chiqilgan",
-                data=NotificationSerializer(target, context={"request": request}).data,
-                status_code=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if request.user.role == "DEPT_HEAD":
-            submitter_department_id = getattr(target.submitted_by, "department_id_id", None)
-            if submitter_department_id and submitter_department_id != request.user.department_id_id:
-                return api_success(message="Faqat o'z bo'limingiz so'rovlarini ko'ra olasiz", data=None, status_code=403)
-
-        serializer = NotificationReviewSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        action = serializer.validated_data["action"]
-        comment = serializer.validated_data.get("review_comment", "")
-
-        if action == "REJECT" and not comment:
-            return api_success(message="Rad etish uchun izoh majburiy", data=None, status_code=400)
-
-        new_status = "APPROVED" if action == "APPROVE" else "REJECTED"
-        target.status = new_status
-        target.reviewed_by = request.user
-        target.review_comment = comment
-        target.is_read = True
-        target.read_at = timezone.now()
-        target.save(update_fields=["status", "reviewed_by", "review_comment", "is_read", "read_at"])
-
-        sync_reviewer_alerts(target, new_status=new_status)
-
-        submitter = target.submitted_by or target.user_id
-        if submitter:
-            create_notification(
-                user=submitter,
-                submitted_by=target.submitted_by,
-                title=f"So'rovingiz {action.lower()} qilindi",
-                message=f"{target.title}: {comment or 'Izoh kiritilmagan'}",
-                notification_type="INFO" if action == "APPROVE" else "REJECTION",
-                reference_type=target.reference_type,
-                reference_id=str(target.id),
-            )
-
-        create_audit_log(
-            actor=request.user,
-            action=f"NOTIFICATION_{action}",
-            target_type="notifications.Notification",
-            target_id=target.id,
-            description=f"{target.title} {action.lower()} qilindi",
-            request=request,
-        )
         return api_success(data=NotificationSerializer(target, context={"request": request}).data)

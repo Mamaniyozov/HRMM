@@ -59,3 +59,13 @@ class LeaveRequest(models.Model):
 
     def __str__(self):
         return f"{self.requested_by} - {self.leave_type} ({self.status})"
+
+    def save(self, *args, **kwargs):
+        from django.db import transaction
+        if self.leave_number is None:
+            with transaction.atomic():
+                last = LeaveRequest.objects.select_for_update().aggregate(
+                    max_num=models.Max("leave_number")
+                )
+                self.leave_number = (last["max_num"] or 0) + 1
+        super().save(*args, **kwargs)

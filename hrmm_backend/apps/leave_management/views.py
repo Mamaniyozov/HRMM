@@ -88,6 +88,14 @@ class LeaveDetailView(APIView):
         leave_request = self.get_queryset(request.user).filter(id=leave_id).first()
         if not leave_request:
             return api_success(message="Leave request not found", data=None, status_code=status.HTTP_404_NOT_FOUND)
+        create_audit_log(
+            actor=request.user,
+            action="LEAVE_VIEW",
+            target_type="leave_management.LeaveRequest",
+            target_id=leave_request.id,
+            description=f"{request.user.username} ta'til so'rovini ko'rdi: {leave_request.id}",
+            request=request,
+        )
         return api_success(data=LeaveRequestListSerializer(leave_request, context={"request": request}).data)
 
 

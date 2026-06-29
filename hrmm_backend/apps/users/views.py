@@ -74,6 +74,14 @@ class UserDetailView(APIView):
         except User.DoesNotExist:
             return api_success(message="User not found", data=None, status_code=404)
 
+        create_audit_log(
+            actor=request.user,
+            action="USER_VIEW",
+            target_type="users.User",
+            target_id=user.id,
+            description=f"{request.user.username} foydalanuvchi ma'lumotlarini ko'rdi: {user.username}",
+            request=request,
+        )
         serializer = UserDetailSerializer(user)
         return api_success(data=serializer.data)
 
@@ -135,7 +143,13 @@ class UserFeedbackListCreateView(APIView):
     permission_classes = [IsAuthenticatedHRMM]
 
     def get(self, request):
-        feedback = UserFeedback.objects.select_related("author").all()
+        feedback = UserFeedback.objects.select_related("author")
+        if request.user.role == "DIRECTOR":
+            pass
+        elif request.user.role == "DEPT_HEAD" and request.user.department_id_id:
+            feedback = feedback.filter(author__department_id=request.user.department_id_id)
+        else:
+            feedback = feedback.filter(author=request.user)
         return api_success(data=UserFeedbackSerializer(feedback, many=True).data)
 
     def post(self, request):
