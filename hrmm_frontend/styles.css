@@ -4881,3 +4881,370 @@ body.bg-effect-active #bgEffectCanvas {
   background: var(--accent-bg);
   color: var(--accent);
 }
+
+/* =====================================================================
+   Login Experience Refinement (v3)
+   Vizual-only qatlam: mavjud class/id/atributlar o'zgartirilmagan.
+   Faqat tema o'zgaruvchilaridan foydalanadi (dark + light bir xil sifat).
+   ===================================================================== */
+
+.login-view {
+  padding: clamp(16px, 4vw, 40px);
+}
+
+.login-showcase {
+  width: min(1180px, 100%);
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+/* ---- Showcase (chap panel) ---- */
+.login-copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  min-height: 640px;
+  padding: clamp(32px, 4vw, 52px);
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+/* Yumshoq harakatlanuvchi gradient bloblar (tema-aware, --radial-* dan) */
+.login-copy::before {
+  content: "";
+  position: absolute;
+  inset: auto auto -22% -18%;
+  width: 460px;
+  height: 460px;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--radial-1), transparent 68%);
+  filter: blur(26px);
+  opacity: 0.85;
+  transform: none;
+  box-shadow: none;
+  animation: loginBlobFloat 16s ease-in-out infinite;
+}
+
+.login-copy::after {
+  content: "";
+  position: absolute;
+  inset: -20% -14% auto auto;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--radial-2), transparent 66%);
+  filter: blur(30px);
+  opacity: 0.8;
+  animation: loginBlobFloat 22s ease-in-out infinite reverse;
+}
+
+@keyframes loginBlobFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(18px, -22px, 0) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-copy::before,
+  .login-copy::after {
+    animation: none;
+  }
+}
+
+.login-copy .eyebrow {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.login-copy h2 {
+  max-width: 15ch;
+  margin: 0;
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--login-copy-text);
+}
+
+.login-copy .hero-copy {
+  max-width: 46ch;
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+/* ---- Feature kartalar ---- */
+.login-feature-grid {
+  margin-top: 8px;
+  gap: 12px;
+}
+
+.login-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--border-glow);
+  background: rgba(255, 255, 255, 0.05);
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.login-feature-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-soft);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.login-feature-card strong {
+  position: relative;
+  padding-left: 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--login-copy-text);
+}
+
+.login-feature-card strong::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateY(-50%);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.login-feature-card span {
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+/* ---- Login card (o'ng panel) ---- */
+.login-view .login-card {
+  width: min(440px, 100%);
+  align-self: center;
+  padding: clamp(28px, 3vw, 36px);
+  border-radius: 24px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 30px 80px rgba(0, 0, 0, 0.22);
+}
+
+.login-card-topbar {
+  margin-bottom: 20px;
+}
+
+.login-card-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.login-card .panel-heading {
+  margin-bottom: 22px;
+}
+
+.login-card .panel-heading .eyebrow {
+  margin-bottom: 6px;
+  color: var(--accent);
+}
+
+.login-card .panel-heading h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+/* Qadamlar orasidagi silliq o'tish (display:none -> block animatsiyani qayta ishga tushiradi) */
+#loginCredentialsStep,
+#registerStep,
+#loginTwoFactorStep {
+  animation: loginStepIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes loginStepIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #loginCredentialsStep,
+  #registerStep,
+  #loginTwoFactorStep {
+    animation: none;
+  }
+}
+
+/* ---- Inputlar: 48px balandlik, yorqin focus halo ---- */
+.login-card .form-grid {
+  gap: 18px;
+}
+
+.login-card .form-grid label span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.login-card .form-grid input {
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.login-card .form-grid input:focus,
+.login-card .form-grid input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-bg);
+}
+
+/* ---- Submit tugma: to'liq kenglik, 48px ---- */
+.login-card .primary-btn {
+  width: 100%;
+  height: 48px;
+  margin-top: 4px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.login-card .primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px var(--accent-bg);
+}
+
+.login-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.login-switch .ghost-btn {
+  height: auto;
+  padding: 4px 10px;
+  background: transparent;
+  border: 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.login-switch .ghost-btn:hover {
+  transform: none;
+  text-decoration: underline;
+  background: transparent;
+}
+
+/* ---- Status xabarlar ---- */
+.login-status-box {
+  min-height: 46px;
+  margin-top: 18px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.session-footnote {
+  font-size: 0.83rem;
+  line-height: 1.55;
+}
+
+/* ---- 2FA qadam ---- */
+.login-card #otpForm .form-grid,
+#loginTwoFactorStep .form-grid {
+  gap: 16px;
+}
+
+#otpCodeInput {
+  height: 58px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.55em;
+  padding-left: calc(16px + 0.55em);
+}
+
+#otpCodeInput::placeholder {
+  letter-spacing: 0.35em;
+  font-weight: 500;
+  opacity: 0.5;
+}
+
+.two-factor-setup {
+  margin-top: 16px;
+  padding: 20px;
+  border-radius: 18px;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+}
+
+.two-factor-qr {
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 10px;
+}
+
+#loginTwoFactorStep .full-width-btn {
+  height: 44px;
+  border-radius: 12px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1080px) {
+  .login-showcase {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    gap: 20px;
+  }
+
+  .login-copy {
+    min-height: auto;
+    padding: 32px;
+  }
+}
+
+@media (max-width: 880px) {
+  /* Mobil: showcase (marketing matn) yashiriladi, login card markazda */
+  .login-copy {
+    display: none;
+  }
+
+  .login-showcase {
+    max-width: 440px;
+  }
+}
+
