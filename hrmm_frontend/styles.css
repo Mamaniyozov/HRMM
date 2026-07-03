@@ -5248,3 +5248,321 @@ body.bg-effect-active #bgEffectCanvas {
   }
 }
 
+/* =====================================================================
+   Aurora Precision — Modern Design Layer (v3)
+   Vizual-only qatlam: id/class/atributlar o'zgartirilmagan.
+   Fon, shisha panellar, ierarxiya — dark + light bir xil sifat.
+   ===================================================================== */
+
+/* ---- 1. Aurora background (asosiy fon) ---- */
+body {
+  background:
+    radial-gradient(ellipse 90% 60% at 8% -10%, var(--radial-1), transparent 52%),
+    radial-gradient(ellipse 70% 55% at 96% 4%, var(--radial-2), transparent 50%),
+    radial-gradient(ellipse 80% 60% at 55% 108%, var(--radial-3), transparent 48%),
+    radial-gradient(ellipse 45% 40% at 40% 42%, var(--accent-bg), transparent 60%),
+    var(--bg-gradient);
+  background-attachment: fixed;
+}
+
+/* Nozik panjara to'qimasi — chuqurlik hissi uchun */
+body::before {
+  background-image:
+    linear-gradient(var(--border-glow) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-glow) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 100% 68% at 50% 0%, rgba(0, 0, 0, 0.6), transparent 78%);
+}
+
+.login-view {
+  background:
+    radial-gradient(ellipse 80% 65% at 12% -8%, var(--radial-1), transparent 50%),
+    radial-gradient(ellipse 70% 60% at 92% 12%, var(--radial-2), transparent 48%),
+    radial-gradient(ellipse 60% 50% at 50% 112%, var(--radial-3), transparent 46%),
+    var(--bg-gradient);
+  background-attachment: fixed;
+}
+
+/* ---- 2. Shisha panellar — yagona material tili ---- */
+.panel,
+.topbar-panel,
+.sidebar,
+.dashboard-stat-card,
+.summary-card,
+.feed-card,
+.metric-card,
+.sidebar-card,
+.operations-kpi-card,
+.operations-dist-card,
+.hero-panel {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background:
+    linear-gradient(160deg, var(--border-glow), transparent 40%),
+    var(--panel);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 1px 0 var(--border-glow),
+    var(--shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+[data-theme-mode="light"] .panel,
+[data-theme-mode="light"] .topbar-panel,
+[data-theme-mode="light"] .sidebar,
+[data-theme-mode="light"] .dashboard-stat-card,
+[data-theme-mode="light"] .summary-card,
+[data-theme-mode="light"] .feed-card,
+[data-theme-mode="light"] .metric-card,
+[data-theme-mode="light"] .hero-panel {
+  background: var(--panel-strong);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* Interaktiv kartalar — hover'da yumshoq ko'tarilish */
+.dashboard-stat-card:hover,
+.summary-card:hover,
+.metric-card:hover,
+.feed-card:hover,
+.operations-kpi-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-soft);
+  box-shadow:
+    inset 0 1px 0 var(--border-glow),
+    var(--shadow-lg);
+}
+
+/* ---- 3. Topbar — muzlatilgan shisha ---- */
+.topbar-panel {
+  backdrop-filter: blur(22px) saturate(1.3);
+  border-radius: 16px;
+}
+
+/* ---- 4. Sidebar — aktiv bo'lim indikatori ---- */
+.nav-link {
+  position: relative;
+  border-radius: 12px;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.nav-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  transform: translateY(-50%);
+  transition: height 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
+  opacity: 0;
+}
+
+.nav-link.active::before {
+  height: 60%;
+  opacity: 1;
+}
+
+.nav-link.active {
+  background: var(--accent-bg);
+}
+
+.brand-mark {
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover, var(--accent)));
+  box-shadow: 0 6px 16px var(--accent-bg);
+}
+
+/* ---- 5. Jadvallar ---- */
+.table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+}
+
+.table-wrap table {
+  border: 0;
+}
+
+th {
+  padding: 12px 14px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+}
+
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+tbody tr {
+  transition: background 0.15s ease;
+}
+
+tbody tr:hover {
+  background: var(--accent-bg);
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ---- 6. Modal — chuqur blur va kirish animatsiyasi ---- */
+.section-modal-backdrop {
+  backdrop-filter: blur(16px) saturate(0.9);
+}
+
+.section-modal-dialog {
+  border-radius: 22px;
+  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- 7. Tugmalar — yagona radius va mikro-harakat ---- */
+.primary-btn,
+.ghost-btn,
+.topbar-btn,
+.topbar-btn-primary,
+.create-menu-btn {
+  border-radius: 11px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.primary-btn,
+.topbar-btn-primary,
+.create-menu-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover, var(--accent)));
+  box-shadow: 0 4px 14px var(--accent-bg);
+}
+
+.primary-btn:hover,
+.topbar-btn-primary:hover,
+.create-menu-btn:hover {
+  background: linear-gradient(135deg, var(--accent-hover, var(--accent)), var(--accent));
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px var(--accent-bg);
+}
+
+.primary-btn:active,
+.topbar-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px var(--accent-bg);
+}
+
+.icon-btn {
+  border-radius: 10px;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.icon-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* ---- 8. Dropdown menyular ---- */
+.profile-dropdown,
+.create-menu-dropdown,
+.language-dropdown,
+.login-language-dropdown {
+  border-radius: 14px;
+  backdrop-filter: blur(20px);
+  animation: dropdownIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- 9. Inputlar — yagona focus tili ---- */
+input,
+select,
+textarea {
+  border-radius: 11px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+/* ---- 10. Scrollbar — ingichka va tema-aware ---- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-color: var(--border-strong);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted);
+}
+
+/* ---- 11. Status pill / badge sayqali ---- */
+.status-pill,
+.pill,
+.dashboard-badge,
+.log-badge {
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ---- 12. Harakat kamaytirilgan rejim ---- */
+@media (prefers-reduced-motion: reduce) {
+  .section-modal-dialog,
+  .profile-dropdown,
+  .create-menu-dropdown,
+  .language-dropdown,
+  .login-language-dropdown {
+    animation: none;
+  }
+
+  .dashboard-stat-card:hover,
+  .summary-card:hover,
+  .metric-card:hover,
+  .feed-card:hover,
+  .primary-btn:hover,
+  .icon-btn:hover {
+    transform: none;
+  }
+}
+
