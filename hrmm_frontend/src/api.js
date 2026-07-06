@@ -210,4 +210,4 @@ function formatApiErrorMessage(data) {
   return getUserFriendlyError(data.message || "");
 }
 
-export { API_URL, DEFAULT_API_BASE, DEFAULT_API_TIMEOUT_MS, getHeaders, apiRequest, setAuthFailureHandler, ERROR_MESSAGES, getUserFriendlyError, formatApiErrorMessage };
+export { API_URL, DEFAULT_API_BASE, DEFAULT_API_TIMEOUT_MS, getHeaders, apiRequest, setAuthFailureHandler, refreshAccessToken, ERROR_MESSAGES, getUserFriendlyError, formatApiErrorMessage };

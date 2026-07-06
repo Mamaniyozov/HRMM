@@ -2448,6 +2448,44 @@ tbody tr:hover {
   gap: 14px;
 }
 
+.detail-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-info-card {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg-deep);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.detail-info-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.detail-info-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.detail-info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
 .detail-shell {
   display: grid;
   gap: 16px;
@@ -2796,7 +2834,8 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 
-  .profile-details-grid {
+  .profile-details-grid,
+  .detail-info-grid {
     grid-template-columns: 1fr;
   }
 
@@ -3476,7 +3515,8 @@ body::before {
 .metric-card,
 .sidebar-card,
 .operations-kpi-card,
-.operations-dist-card {
+.operations-dist-card,
+.detail-info-card {
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
@@ -3671,6 +3711,7 @@ body::before {
 .dashboard-home-header strong,
 .topbar-panel strong,
 .summary-card strong,
+.detail-info-value,
 .feed-card h4 {
   color: var(--text);
 }
@@ -3837,7 +3878,8 @@ body::before {
 .summary-card,
 .feed-card,
 .metric-card,
-.panel {
+.panel,
+.detail-info-card {
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
     rgba(26, 34, 54, 0.82);
@@ -3847,6 +3889,7 @@ body::before {
 .metric-card span,
 .feed-card,
 .panel,
+.detail-info-label,
 td,
 th {
   color: #a9b6c6;
@@ -4368,6 +4411,7 @@ body,
 .sidebar-card,
 .operations-kpi-card,
 .operations-dist-card,
+.detail-info-card,
 .table-wrap,
 .two-factor-setup,
 .security-settings-card,
@@ -4500,6 +4544,7 @@ textarea:focus,
 .dashboard-home-header strong,
 .topbar-panel strong,
 .summary-card strong,
+.detail-info-value,
 .feed-card h4,
 .login-feature-card strong,
 th {
@@ -4508,6 +4553,7 @@ th {
 
 td,
 .summary-card span,
+.detail-info-label,
 .metric-card span,
 .feed-card,
 .panel {
@@ -4785,6 +4831,8 @@ body.bg-effect-active #bgEffectCanvas {
 [data-theme-mode] .feed-item,
 [data-theme-mode] .summary-card,
 [data-theme-mode] .summary-card span,
+[data-theme-mode] .detail-info-card,
+[data-theme-mode] .detail-info-label,
 [data-theme-mode] .metric-card,
 [data-theme-mode] .metric-card span,
 [data-theme-mode] .status-pill,
@@ -4806,6 +4854,7 @@ body.bg-effect-active #bgEffectCanvas {
 
 /* Muted/secondary text still adapts via tokens (already readable on both modes) */
 [data-theme-mode] .summary-card span.card-label,
+[data-theme-mode] .detail-info-label,
 [data-theme-mode] .metric-card span.card-label {
   color: var(--text-muted);
 }
@@ -5294,6 +5343,7 @@ body::before {
 .sidebar-card,
 .operations-kpi-card,
 .operations-dist-card,
+.detail-info-card,
 .hero-panel {
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -5314,6 +5364,7 @@ body::before {
 [data-theme-mode="light"] .summary-card,
 [data-theme-mode="light"] .feed-card,
 [data-theme-mode="light"] .metric-card,
+[data-theme-mode="light"] .detail-info-card,
 [data-theme-mode="light"] .hero-panel {
   background: var(--panel-strong);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.06);
@@ -5324,7 +5375,8 @@ body::before {
 .summary-card:hover,
 .metric-card:hover,
 .feed-card:hover,
-.operations-kpi-card:hover {
+.operations-kpi-card:hover,
+.detail-info-card:hover {
   transform: translateY(-3px);
   border-color: var(--accent-soft);
   box-shadow:
@@ -5560,6 +5612,7 @@ textarea:focus {
   .summary-card:hover,
   .metric-card:hover,
   .feed-card:hover,
+  .detail-info-card:hover,
   .primary-btn:hover,
   .icon-btn:hover {
     transform: none;

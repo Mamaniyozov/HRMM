@@ -33,7 +33,7 @@ def create_login_email_challenge(user):
         user=user,
         purpose="LOGIN",
         code_hash=_hash_code(code),
-        expires_at=timezone.now() + timedelta(minutes=5),
+        expires_at=timezone.now() + timedelta(minutes=15),
     )
     return challenge, code
 
@@ -43,7 +43,7 @@ def send_login_email_code(user, code):
     message = (
         f"Salom, {user.full_name}.\n\n"
         f"HRMM tizimiga kirish uchun tasdiqlash kodi: {code}\n"
-        f"Kod 5 daqiqa davomida amal qiladi.\n\n"
+        f"Kod 15 daqiqa davomida amal qiladi.\n\n"
         "Agar bu kirish siz tomonidan bo'lmasa, bu xabarni e'tiborsiz qoldiring."
     )
     send_mail(

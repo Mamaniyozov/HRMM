@@ -10,6 +10,7 @@ import {
   apiRequest,
   getHeaders,
   setAuthFailureHandler,
+  refreshAccessToken,
   DEFAULT_API_BASE,
 } from "./src/api.js";
 import {
@@ -97,6 +98,27 @@ setAuthFailureHandler(() => {
   setAuthUi(false);
   setMessage(t("session_expired") || "Session expired. Please log in again.", "error");
 });
+
+// ===== Sliding session: keep the session alive while the user is active =====
+const ACTIVITY_IDLE_LIMIT_MS = 30 * 60 * 1000; // consider user active if any interaction within 30 min
+const TOKEN_REFRESH_INTERVAL_MS = 10 * 60 * 1000; // proactively refresh every 10 min
+let _lastActivityAt = Date.now();
+
+["click", "keydown", "mousemove", "scroll", "touchstart"].forEach((eventName) => {
+  window.addEventListener(eventName, () => {
+    _lastActivityAt = Date.now();
+  }, { passive: true });
+});
+
+window.setInterval(async () => {
+  if (!state.refreshToken) return;
+  if (Date.now() - _lastActivityAt > ACTIVITY_IDLE_LIMIT_MS) return;
+  try {
+    await refreshAccessToken();
+  } catch (_e) {
+    // Refresh failed; the 401 interceptor will handle logout on the next request.
+  }
+}, TOKEN_REFRESH_INTERVAL_MS);
 
 // Capture uncaught errors and promise rejections.
 window.addEventListener("error", (event) => {
@@ -1037,36 +1059,15 @@ function openUserProfileModal(profile) {
           <h3>${escapeHtml(selectedProfile.full_name || t("guest"))}</h3>
         </div>
       </div>
-      <div class="profile-details-grid">
-        <article class="summary-card">
-          <span>${escapeHtml(t("full_name"))}</span>
-          <strong>${escapeHtml(selectedProfile.full_name || "-")}</strong>
-        </article>
-        <article class="summary-card">
-          <span>${escapeHtml(t("username"))}</span>
-          <strong>${escapeHtml(selectedProfile.username || "-")}</strong>
-        </article>
-        <article class="summary-card">
-          <span>${escapeHtml(t("email"))}</span>
-          <strong>${escapeHtml(selectedProfile.email || "-")}</strong>
-        </article>
-        <article class="summary-card">
-          <span>${escapeHtml(t("management_role"))}</span>
-          <strong>${escapeHtml(getRoleLabel(selectedProfile.role))}</strong>
-        </article>
-        <article class="summary-card">
-          <span>${escapeHtml(t("department"))}</span>
-          <strong>${escapeHtml(selectedProfile.department_name || t("department_unassigned"))}</strong>
-        </article>
-        <article class="summary-card">
-          <span>${escapeHtml(t("unit"))}</span>
-          <strong>${escapeHtml(selectedProfile.unit_name || t("unit_unassigned"))}</strong>
-        </article>
-        <article class="summary-card">
-          <span>${escapeHtml(t("two_factor_status"))}</span>
-          <strong>${escapeHtml(twoFactorText)}</strong>
-        </article>
-      </div>
+      ${makeDetailItems([
+        [t("full_name"), selectedProfile.full_name],
+        [t("username"), selectedProfile.username],
+        [t("email"), selectedProfile.email],
+        [t("management_role"), getRoleLabel(selectedProfile.role)],
+        [t("department"), selectedProfile.department_name || t("department_unassigned")],
+        [t("unit"), selectedProfile.unit_name || t("unit_unassigned")],
+        [t("two_factor_status"), twoFactorText],
+      ])}
       <div class="profile-actions" style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
         <button type="button" class="ghost-btn" id="openSecuritySettingsBtn" title="${t("security_settings")}">
           <span style="display: flex; align-items: center; gap: 8px;">
@@ -1275,14 +1276,20 @@ function openContentModal(title, eyebrow, innerHtml) {
 }
 
 function makeDetailItems(entries) {
+  const valid = entries.filter(
+    ([, value]) => value !== null && value !== undefined && String(value).trim() !== "" && String(value).trim() !== "-"
+  );
+  if (!valid.length) {
+    return `<div class="feed-item muted-item">${escapeHtml(t("no_data"))}</div>`;
+  }
   return `
-    <div class="profile-details-grid">
-      ${entries
+    <div class="detail-info-grid">
+      ${valid
         .map(
           ([label, value]) => `
-            <article class="summary-card">
-              <span>${escapeHtml(label)}</span>
-              <strong>${escapeHtml(value ?? "-")}</strong>
+            <article class="detail-info-card">
+              <span class="detail-info-label">${escapeHtml(label)}</span>
+              <strong class="detail-info-value">${escapeHtml(value)}</strong>
             </article>
           `
         )
@@ -1802,11 +1809,11 @@ function openReportDetailModal(report) {
     makeDetailItems([
       [t("report_title"), report.title],
       [t("report_comment"), report.summary],
-      [t("report_content"), report.content || "-"],
-      [t("report_department"), report.department_name || "-"],
-      [t("management_role"), report.created_by_name || "-"],
+      [t("report_content"), report.content],
+      [t("report_department"), report.department_name],
+      [t("management_role"), report.created_by_name],
       [t("status"), translateStatus(report.status)],
-      [t("level"), report.current_approval_level ? `L${report.current_approval_level}` : "-"],
+      [t("level"), report.current_approval_level ? `L${report.current_approval_level}` : ""],
       [t("date_label"), formatDate(report.created_at)],
     ]) + actionBar
   );
@@ -1826,15 +1833,15 @@ function openLeaveDetailModal(leave) {
     leave.requested_by_name || t("collection_title_requests"),
     t("collection_title_requests"),
     makeDetailItems([
-      [t("full_name"), leave.requested_by_name || "-"],
+      [t("full_name"), leave.requested_by_name],
       [t("leave_type"), getLeaveTypeLabel(leave.leave_type)],
       [t("status"), translateStatus(leave.status)],
-      [t("start_date"), leave.start_date || "-"],
-      [t("end_date"), leave.end_date || "-"],
-      [t("days_label"), leave.total_days ?? "-"],
-      [t("reviewer"), leave.reviewed_by_name || "-"],
-      [t("reason"), leave.reason || "-"],
-      ["ID", leave.leave_number || leave.id || "-"],
+      [t("start_date"), leave.start_date],
+      [t("end_date"), leave.end_date],
+      [t("days_label"), leave.total_days != null ? String(leave.total_days) : ""],
+      [t("reviewer"), leave.reviewed_by_name],
+      [t("reason"), leave.reason],
+      [t("report_number"), leave.leave_number || leave.id],
     ]) + ownerNote + reviewBar
   );
   bindReviewActionButtons();
@@ -1873,13 +1880,13 @@ function openNotificationDetailModal(item) {
     item.title || t("collection_title_notifications"),
     t("collection_title_notifications"),
     makeDetailItems([
-      [t("report_title"), item.title || "-"],
-      [t("report_comment"), item.message || "-"],
+      [t("report_title"), item.title],
+      [t("report_comment"), item.message],
       [t("type_label"), getNotificationTypeLabel(item.type)],
       [t("status"), translateStatus(item.status)],
-      [t("full_name"), item.submitted_by_name || "-"],
+      [t("full_name"), item.submitted_by_name],
       [t("read_label"), item.is_read ? t("active") : t("inactive")],
-      ["ID", item.notification_number || item.id || "-"],
+      [t("report_number"), item.notification_number || item.id],
       [t("date_label"), formatDate(item.created_at)],
       [t("reference_label"), getReferenceTypeLabel(item.reference_type)],
     ]) + attachmentHtml + ownerNote + statusNote + reviewBar
