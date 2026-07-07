@@ -148,6 +148,50 @@ class AuthenticationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(user.password_hash.startswith("pbkdf2_"))
 
+    def test_refresh_returns_wrapped_tokens(self):
+        user = User.objects.get(username="authuser")
+        tokens = get_tokens_for_user(user)
+
+        response = self.client.post(
+            "/api/v1/auth/refresh/",
+            {"refresh": tokens["refresh"]},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["success"])
+        self.assertIn("access", response.data["data"])
+        self.assertIn("refresh", response.data["data"])
+
+        me_response = self.client.get(
+            "/api/v1/auth/me/",
+            HTTP_AUTHORIZATION=f"Bearer {response.data['data']['access']}",
+        )
+        self.assertEqual(me_response.status_code, 200)
+
+    def test_refresh_rejects_invalid_token(self):
+        response = self.client.post(
+            "/api/v1/auth/refresh/",
+            {"refresh": "not-a-token"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_refresh_rejects_inactive_user(self):
+        user = User.objects.get(username="authuser")
+        tokens = get_tokens_for_user(user)
+        user.is_active = False
+        user.save(update_fields=["is_active", "updated_at"])
+
+        response = self.client.post(
+            "/api/v1/auth/refresh/",
+            {"refresh": tokens["refresh"]},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 401)
+
     def test_logout_blacklists_refresh_token(self):
         user = User.objects.get(username="authuser")
         self.client.force_authenticate(user=user)

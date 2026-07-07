@@ -351,6 +351,7 @@ class HRMMTokenRefreshView(TokenRefreshView):
     """Token refresh with revoked token check."""
 
     def post(self, request, *args, **kwargs):
+        from rest_framework_simplejwt.settings import api_settings as jwt_settings
         from rest_framework_simplejwt.tokens import RefreshToken
         from apps.authentication.models import RevokedToken
 
@@ -364,13 +365,28 @@ class HRMMTokenRefreshView(TokenRefreshView):
                     data=None,
                     status_code=status.HTTP_401_UNAUTHORIZED,
                 )
+            user = User.objects.filter(id=token.get("user_id")).first()
+            if not user or not user.is_active:
+                return api_success(
+                    message="Foydalanuvchi topilmadi yoki faol emas.",
+                    data=None,
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                )
         except Exception:
             return api_success(
                 message="Noto'g'ri refresh token.",
                 data=None,
                 status_code=status.HTTP_401_UNAUTHORIZED,
             )
-        return super().post(request, *args, **kwargs)
+
+        data = {"access": str(token.access_token)}
+        if jwt_settings.ROTATE_REFRESH_TOKENS:
+            token.set_jti()
+            token.set_exp()
+            token.set_iat()
+            data["refresh"] = str(token)
+
+        return api_success(message="Token refreshed", data=data)
 
 
 class PasswordChangeView(APIView):
