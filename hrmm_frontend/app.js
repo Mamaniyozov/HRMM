@@ -21,6 +21,7 @@ import {
   normalizeSearchValue,
   isUuid,
 } from "./src/utils.js";
+import { initAida, showAidaWidget, hideAidaWidget } from "./src/aida.js";
 
 state.apiBase = DEFAULT_API_BASE;
 
@@ -2349,6 +2350,10 @@ function finalizeAuthenticatedSession(payload) {
 
   // Show welcome toast notification
   showWelcomeToast(payload.data.user.full_name || payload.data.user.username);
+
+  // Initialize AIDA AI assistant widget
+  initAida();
+  showAidaWidget();
 }
 
 function showWelcomeToast(userName) {
@@ -4875,6 +4880,7 @@ logoutButton?.addEventListener("click", async () => {
     renderProfile();
     toggleProfileMenu(false);
     closeSectionModal();
+    hideAidaWidget();
     setMessage(t("msg_logout_success"), "success");
   } catch (error) {
     setMessage(error.message || t("msg_logout_error"), "error");

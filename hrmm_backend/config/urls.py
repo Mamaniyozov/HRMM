@@ -33,6 +33,7 @@ urlpatterns = [
     path("api/v1/leaves/", include("apps.leave_management.urls")),
     path("api/v1/dashboard/", include("apps.dashboard.urls")),
     path("api/v1/notifications/", include("apps.notifications.urls")),
+    path("api/v1/aida/", include("apps.aida.urls")),
     path("api/archive-logs/", include("apps.archives.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),

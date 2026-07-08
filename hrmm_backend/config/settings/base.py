@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "apps.audit",
     "apps.notifications",
     "apps.archives",
+    "apps.aida",
 ]
 
 MIDDLEWARE = [
@@ -315,3 +316,12 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.getenv("DATA_UPLOAD_MAX_MEMORY_SIZE", str(2
 
 # Number of fields a single request can carry (Django default is 1000).
 DATA_UPLOAD_MAX_NUMBER_FIELDS = int(os.getenv("DATA_UPLOAD_MAX_NUMBER_FIELDS", "1000"))
+
+# ---------------------------------------------------------------------------
+# AIDA AI Assistant — Anthropic Claude
+# ---------------------------------------------------------------------------
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+AIDA_MODEL = os.getenv("AIDA_MODEL", "claude-sonnet-4-20250514")
+AIDA_MAX_TOKENS = int(os.getenv("AIDA_MAX_TOKENS", "1024"))
+AIDA_TEMPERATURE = float(os.getenv("AIDA_TEMPERATURE", "0.7"))
+AIDA_MAX_HISTORY = int(os.getenv("AIDA_MAX_HISTORY", "20"))
