@@ -1,0 +1,23 @@
+/* Minimal base — box model + font stack, ported from hrmm_frontend/styles.css.
+   Scoped intentionally light: components carry their own class rules. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:where([data-theme]) {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus-visible for keyboard navigation — WCAG 2.1 SC 2.4.7 */
+:where([data-theme]) :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

@@ -1,0 +1,14 @@
+/* Import-closure root. This is the single stylesheet a consumer (and Claude Design)
+   loads to get the full look: tokens + base + every component's CSS. Keep every
+   component .css reachable from here. */
+@import "./tokens.css";
+@import "./base.css";
+
+@import "../Button/Button.css";
+@import "../Panel/Panel.css";
+@import "../Card/Card.css";
+@import "../Badge/Badge.css";
+@import "../Form/Form.css";
+@import "../Table/Table.css";
+@import "../EmptyState/EmptyState.css";
+@import "../Eyebrow/Eyebrow.css";

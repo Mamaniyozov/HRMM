@@ -130,6 +130,15 @@ async function _sendMessage() {
   }
 }
 
+function _onOutsideClick(e) {
+  const widget = _el("aidaWidget");
+  if (widget && !widget.contains(e.target)) _closePanel();
+}
+
+function _onEscapeKey(e) {
+  if (e.key === "Escape") _closePanel();
+}
+
 function _openPanel() {
   const widget = _el("aidaWidget");
   const panel = _el("aidaPanel");
@@ -140,6 +149,8 @@ function _openPanel() {
   _panelOpen = true;
   const input = _el("aidaInput");
   if (input) setTimeout(() => input.focus(), 100);
+  document.addEventListener("mousedown", _onOutsideClick, true);
+  document.addEventListener("keydown", _onEscapeKey);
 }
 
 function _closePanel() {
@@ -148,6 +159,8 @@ function _closePanel() {
   if (panel) panel.hidden = true;
   if (fab) fab.style.display = "flex";
   _panelOpen = false;
+  document.removeEventListener("mousedown", _onOutsideClick, true);
+  document.removeEventListener("keydown", _onEscapeKey);
 }
 
 function _newSession() {

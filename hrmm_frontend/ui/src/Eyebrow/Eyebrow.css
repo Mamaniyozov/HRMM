@@ -1,0 +1,9 @@
+/* Ported verbatim from hrmm_frontend/styles.css: .eyebrow @542-549 */
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 600;
+}

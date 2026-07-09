@@ -1,0 +1,19 @@
+/* Ported verbatim from hrmm_frontend/styles.css: .panel @1709-1714/434-436, .panel-heading @1716-1724 */
+.panel {
+  padding: 20px;
+  border-radius: var(--radius-xl);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+}
+
+.panel-heading {
+  margin-bottom: 16px;
+}
+
+.panel-heading.inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}

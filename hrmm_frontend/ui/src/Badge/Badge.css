@@ -1,0 +1,33 @@
+/* Ported verbatim from hrmm_frontend/styles.css: .status-pill @2099-2113 (pending/approved only) */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-pill--pending {
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+
+.status-pill--approved {
+  color: var(--success);
+  background: var(--success-soft);
+}
+
+/* Not present in source styles.css — extrapolated from the same token pattern
+   (color/*-soft pairs) used above, since the prototype has no rejected/neutral
+   pill in its CSS despite HR approve/reject flows existing in the app. */
+.status-pill--rejected {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.status-pill--neutral {
+  color: var(--text-muted);
+  background: var(--bg-deep);
+}
