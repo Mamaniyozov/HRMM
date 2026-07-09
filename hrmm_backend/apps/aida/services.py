@@ -13,7 +13,7 @@ logger = logging.getLogger("hrmm.aida")
 # OpenRouter settings
 OPENROUTER_API_KEY = getattr(settings, "OPENROUTER_API_KEY", "")
 OPENROUTER_BASE_URL = getattr(settings, "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-AIDA_MODEL = getattr(settings, "AIDA_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
+AIDA_MODEL = getattr(settings, "AIDA_MODEL", "meta-llama/llama-3.1-8b-instruct")
 MAX_TOKENS = getattr(settings, "AIDA_MAX_TOKENS", 1024)
 TEMPERATURE = getattr(settings, "AIDA_TEMPERATURE", 0.7)
 MAX_HISTORY_MESSAGES = getattr(settings, "AIDA_MAX_HISTORY", 20)
@@ -26,6 +26,10 @@ def _get_client():
     return anthropic.Anthropic(
         api_key=api_key,
         base_url=OPENROUTER_BASE_URL,
+        default_headers={
+            "HTTP-Referer": "https://hrmm-production-b4ec.up.railway.app",
+            "X-Title": "HRMM AIDA",
+        },
     )
 
 
