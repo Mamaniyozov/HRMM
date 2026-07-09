@@ -1475,47 +1475,53 @@
     </div>
 
     <!-- AIDA AI Assistant Widget -->
-    <div id="aidaWidget" class="aida-widget" hidden>
-      <div id="aidaPanel" class="aida-panel" hidden>
+    <div id="aidaWidget" class="aida-widget" hidden role="region" aria-label="AIDA AI yordamchisi">
+      <div id="aidaPanel" class="aida-panel" hidden role="dialog" aria-modal="false" aria-labelledby="aidaTitle">
         <div class="aida-panel-header">
           <div class="aida-panel-title">
-            <span class="aida-avatar">A</span>
+            <div class="aida-avatar" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+            </div>
             <div class="aida-title-text">
-              <strong>AIDA</strong>
-              <small id="aidaStatus" data-translate="aida_online">Onlayn</small>
+              <strong id="aidaTitle">AIDA</strong>
+              <small id="aidaStatus" data-translate="aida_online" aria-live="polite">Onlayn</small>
             </div>
           </div>
           <div class="aida-panel-actions">
-            <button type="button" id="aidaNewSessionBtn" class="aida-icon-btn" title="Yangi suhbat" data-translate-title="aida_new_chat">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            <button type="button" id="aidaNewSessionBtn" class="aida-icon-btn" title="Yangi suhbat" aria-label="Yangi suhbat boshlash" data-translate-title="aida_new_chat">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             </button>
-            <button type="button" id="aidaCloseBtn" class="aida-icon-btn" title="Yopish" data-translate-title="aida_close">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            <button type="button" id="aidaCloseBtn" class="aida-icon-btn" title="Yopish" aria-label="Yopish" data-translate-title="aida_close">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
           </div>
         </div>
-        <div id="aidaMessages" class="aida-messages">
+        <div id="aidaMessages" class="aida-messages" role="log" aria-live="polite" aria-atomic="false">
           <div class="aida-message aida-message-assistant">
             <div class="aida-message-content" id="aidaWelcomeMessage" data-translate="aida_welcome">
               Salom! Men AIDA — HRMM tizimining AI yordamchisiman. Hisobotlar, tasdiqlash jarayoni, ta'til so'rovlari va tizim bo'yicha savollaringizga javob beraman. Sizga qanday yordam bera olaman?
             </div>
           </div>
         </div>
-        <div id="aidaTyping" class="aida-typing" hidden>
-          <span class="aida-typing-dot"></span>
-          <span class="aida-typing-dot"></span>
-          <span class="aida-typing-dot"></span>
+        <div id="aidaTyping" class="aida-typing" hidden aria-live="polite" aria-label="AIDA yozmoqda">
+          <span class="aida-typing-dot" aria-hidden="true"></span>
+          <span class="aida-typing-dot" aria-hidden="true"></span>
+          <span class="aida-typing-dot" aria-hidden="true"></span>
         </div>
         <div class="aida-input-area">
-          <textarea id="aidaInput" class="aida-input" rows="1" placeholder="Savolingizni yozing..." data-translate-placeholder="aida_input_placeholder" maxlength="4000"></textarea>
-          <button type="button" id="aidaSendBtn" class="aida-send-btn" title="Yuborish" data-translate-title="aida_send">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          <label for="aidaInput" class="sr-only">Savolingizni yozing</label>
+          <textarea id="aidaInput" class="aida-input" rows="1" placeholder="Savolingizni yozing..." data-translate-placeholder="aida_input_placeholder" maxlength="4000" aria-label="Savolingizni yozing"></textarea>
+          <button type="button" id="aidaSendBtn" class="aida-send-btn" title="Yuborish" aria-label="Xabarni yuborish" data-translate-title="aida_send">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           </button>
         </div>
       </div>
-      <button type="button" id="aidaFab" class="aida-fab" title="AIDA yordamchisi" data-translate-title="aida_assistant">
-        <span class="aida-fab-icon">A</span>
-        <span class="aida-fab-badge" id="aidaBadge" hidden></span>
+      <button type="button" id="aidaFab" class="aida-fab" title="AIDA yordamchisi" aria-label="AIDA yordamchisini ochish" data-translate-title="aida_assistant">
+        <span class="aida-fab-icon" aria-hidden="true">A</span>
+        <span class="aida-fab-badge" id="aidaBadge" hidden aria-hidden="true"></span>
       </button>
     </div>
 

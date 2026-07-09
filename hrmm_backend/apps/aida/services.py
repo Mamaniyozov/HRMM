@@ -85,6 +85,8 @@ def chat_with_claude(
             raise RuntimeError("AIDA API kaliti noto'g'ri yoki muddati o'tgan.")
         if exc.status_code == 429:
             raise RuntimeError("AIDA so'rovlar chegarasiga yetildi. Birozdan keyin urinib ko'ring.")
+        if exc.status_code == 400 and "credit balance" in str(exc.message).lower():
+            raise RuntimeError("AIDA xizmati uchun creditlar tugagan. Anthropic konsolida (console.anthropic.com) Plans & Billing bo'limidan credit qo'shing.")
         raise RuntimeError(f"AIDA xizmatida xatolik yuz berdi (HTTP {exc.status_code}).")
     except anthropic.APIConnectionError:
         logger.error("Claude API connection error")
