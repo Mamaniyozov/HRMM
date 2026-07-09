@@ -1,4 +1,4 @@
-"""Anthropic Claude API integratsiyasi — AIDA AI yordamchisi uchun."""
+"""OpenRouter API integratsiyasi — AIDA AI yordamchisi uchun (bepul modellar)."""
 
 import logging
 
@@ -10,17 +10,23 @@ from apps.aida.system_prompt import build_system_prompt
 
 logger = logging.getLogger("hrmm.aida")
 
-CLAUDE_MODEL = getattr(settings, "AIDA_MODEL", "claude-sonnet-4-20250514")
+# OpenRouter settings
+OPENROUTER_API_KEY = getattr(settings, "OPENROUTER_API_KEY", "")
+OPENROUTER_BASE_URL = getattr(settings, "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+AIDA_MODEL = getattr(settings, "AIDA_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
 MAX_TOKENS = getattr(settings, "AIDA_MAX_TOKENS", 1024)
 TEMPERATURE = getattr(settings, "AIDA_TEMPERATURE", 0.7)
 MAX_HISTORY_MESSAGES = getattr(settings, "AIDA_MAX_HISTORY", 20)
 
 
 def _get_client():
-    api_key = getattr(settings, "ANTHROPIC_API_KEY", "") or ""
+    api_key = OPENROUTER_API_KEY or ""
     if not api_key:
-        raise RuntimeError("ANTHROPIC_API_KEY sozlanmagan.")
-    return anthropic.Anthropic(api_key=api_key)
+        raise RuntimeError("OPENROUTER_API_KEY sozlanmagan.")
+    return anthropic.Anthropic(
+        api_key=api_key,
+        base_url=OPENROUTER_BASE_URL,
+    )
 
 
 def _build_messages(session, user_message):
@@ -63,7 +69,7 @@ def chat_with_claude(
     try:
         client = _get_client()
         response = client.messages.create(
-            model=CLAUDE_MODEL,
+            model=AIDA_MODEL,
             max_tokens=MAX_TOKENS,
             temperature=TEMPERATURE,
             system=system_prompt,
@@ -77,20 +83,20 @@ def chat_with_claude(
         return {
             "content": content,
             "tokens_used": tokens_used,
-            "model": CLAUDE_MODEL,
+            "model": AIDA_MODEL,
         }
     except anthropic.APIStatusError as exc:
-        logger.error("Claude API error: %s — %s", exc.status_code, exc.message)
+        logger.error("OpenRouter API error: %s — %s", exc.status_code, exc.message)
         if exc.status_code == 401:
             raise RuntimeError("AIDA API kaliti noto'g'ri yoki muddati o'tgan.")
         if exc.status_code == 429:
             raise RuntimeError("AIDA so'rovlar chegarasiga yetildi. Birozdan keyin urinib ko'ring.")
         if exc.status_code == 400 and "credit balance" in str(exc.message).lower():
-            raise RuntimeError("AIDA xizmati uchun creditlar tugagan. Anthropic konsolida (console.anthropic.com) Plans & Billing bo'limidan credit qo'shing.")
+            raise RuntimeError("AIDA xizmati uchun creditlar tugagan. OpenRouter konsolida (openrouter.ai) Plans & Billing bo'limidan credit qo'shing.")
         raise RuntimeError(f"AIDA xizmatida xatolik yuz berdi (HTTP {exc.status_code}).")
     except anthropic.APIConnectionError:
-        logger.error("Claude API connection error")
+        logger.error("OpenRouter API connection error")
         raise RuntimeError("AIDA xizmatiga ulanib bo'lmadi. Internet aloqasini tekshiring.")
     except Exception as exc:
-        logger.exception("Unexpected Claude API error: %s", exc)
+        logger.exception("Unexpected OpenRouter API error: %s", exc)
         raise RuntimeError("AIDA bilan aloqada kutilmagan xatolik yuz berdi.")
