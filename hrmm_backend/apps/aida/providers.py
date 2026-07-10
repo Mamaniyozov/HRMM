@@ -1,6 +1,6 @@
-"""AIDA uchun provider-agnostic AI adapterlari — Gemini (OpenAI-compatible) va Anthropic.
+"""AIDA uchun provider-agnostic AI adapterlari — Gemini, Groq (OpenAI-compatible) va Anthropic.
 
-Ikkala provider ham bir xil `AidaProvider` interfeysini amalga oshiradi, shuning
+Barcha providerlar bir xil `AidaProvider` interfeysini amalga oshiradi, shuning
 uchun `apps.aida.services` qaysi provider ishlatilayotganini bilishi shart emas.
 Almashtirish faqat `AI_PROVIDER` environment o'zgaruvchisi orqali bo'ladi.
 """
@@ -25,12 +25,12 @@ logger = logging.getLogger("hrmm.aida")
 
 REQUEST_TIMEOUT = 30.0
 MAX_RETRIES = 3
+# 429 (rate limit) atayin bu ro'yxatda YO'Q: band bo'lganda darhol foydalanuvchiga
+# tushunarli xabar qaytishi kerak, kutish/qayta urinish bilan kechiktirilmasdan.
 RETRYABLE_EXCEPTIONS = (
     anthropic.APIConnectionError,
-    anthropic.RateLimitError,
     anthropic.InternalServerError,
     openai.APIConnectionError,
-    openai.RateLimitError,
     openai.InternalServerError,
 )
 
@@ -53,7 +53,7 @@ def _with_retry(func, *args, **kwargs):
 
 
 class AidaProvider(ABC):
-    """Gemini va Anthropic uchun umumiy interfeys."""
+    """Gemini, Groq va Anthropic uchun umumiy interfeys."""
 
     @abstractmethod
     def generate(self, *, system_prompt: str, messages: list[dict[str, Any]]) -> AidaResponse:
@@ -75,25 +75,17 @@ class AidaProvider(ABC):
         """Matn bo'laklarini generator sifatida qaytaradi (SSE uchun)."""
 
 
-class GeminiProvider(AidaProvider):
-    """Google Gemini — OpenAI-compatible endpoint orqali (`openai` kutubxonasi)."""
+class _OpenAICompatibleProvider(AidaProvider):
+    """Gemini va Groq uchun umumiy amalga oshirish — ikkalasi ham OpenAI-compatible
+    endpoint va bir xil `openai` kutubxonasi orqali ishlaydi, farq faqat
+    `base_url`/`api_key`/model default'ida. Konkret provider klasslari faqat
+    `__init__`ni belgilaydi."""
 
-    def __init__(self):
-        api_key = getattr(settings, "GEMINI_API_KEY", "")
-        if not api_key:
-            raise RuntimeError("GEMINI_API_KEY sozlanmagan.")
-        self.model = getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
-        self.max_tokens = getattr(settings, "AIDA_MAX_TOKENS", 1000)
-        self.temperature = getattr(settings, "AIDA_TEMPERATURE", 0.3)
-        self.client = openai.OpenAI(
-            api_key=api_key,
-            base_url=getattr(
-                settings,
-                "GEMINI_BASE_URL",
-                "https://generativelanguage.googleapis.com/v1beta/openai/",
-            ),
-            timeout=REQUEST_TIMEOUT,
-        )
+    client: openai.OpenAI
+    model: str
+    max_tokens: int
+    temperature: float
+    provider_label: str = "OpenAI-compatible"
 
     def _build_messages(self, system_prompt: str, messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
         return [{"role": "system", "content": system_prompt}, *messages]
@@ -103,6 +95,9 @@ class GeminiProvider(AidaProvider):
         text = choice.message.content or ""
         function_calls = None
         if choice.message.tool_calls:
+            # Ba'zi modellar (masalan Groq'dagi Llama) bitta javobda bir nechta
+            # tool_call qaytarishi mumkin — hammasi ro'yxatga yig'iladi va
+            # apps.aida.services.generate_response ularni ketma-ket bajaradi.
             function_calls = [
                 FunctionCall(
                     id=tc.id,
@@ -166,7 +161,8 @@ class GeminiProvider(AidaProvider):
     def stream(self, *, system_prompt: str, messages: list[dict[str, Any]]) -> Iterator[str]:
         # To'liq retry: agar oqim ochilgandan keyin uzilsa, butun so'rov qaytadan
         # boshlanadi (allaqachon yuborilgan matn frontend'da qoladi — bu
-        # streaming uchun eng oddiy va yetarlicha to'g'ri yechim).
+        # streaming uchun eng oddiy va yetarlicha to'g'ri yechim). 429'da
+        # qayta urinilmaydi (RETRYABLE_EXCEPTIONS'da yo'q) — darhol ko'tariladi.
         delay = 0.5
         last_exc = None
         for attempt in range(MAX_RETRIES):
@@ -187,10 +183,54 @@ class GeminiProvider(AidaProvider):
                 last_exc = exc
                 if attempt == MAX_RETRIES - 1:
                     break
-                logger.warning("AIDA Gemini stream retry %s/%s: %s", attempt + 1, MAX_RETRIES, exc)
+                logger.warning(
+                    "AIDA %s stream retry %s/%s: %s", self.provider_label, attempt + 1, MAX_RETRIES, exc
+                )
                 time.sleep(delay)
                 delay *= 2
         raise last_exc
+
+
+class GeminiProvider(_OpenAICompatibleProvider):
+    """Google Gemini — OpenAI-compatible endpoint orqali (`openai` kutubxonasi)."""
+
+    provider_label = "Gemini"
+
+    def __init__(self):
+        api_key = getattr(settings, "GEMINI_API_KEY", "")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY sozlanmagan.")
+        self.model = getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
+        self.max_tokens = getattr(settings, "AIDA_MAX_TOKENS", 1000)
+        self.temperature = getattr(settings, "AIDA_TEMPERATURE", 0.3)
+        self.client = openai.OpenAI(
+            api_key=api_key,
+            base_url=getattr(
+                settings,
+                "GEMINI_BASE_URL",
+                "https://generativelanguage.googleapis.com/v1beta/openai/",
+            ),
+            timeout=REQUEST_TIMEOUT,
+        )
+
+
+class GroqProvider(_OpenAICompatibleProvider):
+    """Groq — OpenAI-compatible endpoint orqali (`openai` kutubxonasi)."""
+
+    provider_label = "Groq"
+
+    def __init__(self):
+        api_key = getattr(settings, "GROQ_API_KEY", "")
+        if not api_key:
+            raise RuntimeError("GROQ_API_KEY sozlanmagan.")
+        self.model = getattr(settings, "GROQ_MODEL", "llama-3.3-70b-versatile")
+        self.max_tokens = getattr(settings, "AIDA_MAX_TOKENS", 1000)
+        self.temperature = getattr(settings, "AIDA_TEMPERATURE", 0.3)
+        self.client = openai.OpenAI(
+            api_key=api_key,
+            base_url=getattr(settings, "GROQ_BASE_URL", "https://api.groq.com/openai/v1"),
+            timeout=REQUEST_TIMEOUT,
+        )
 
 
 class AnthropicProvider(AidaProvider):
@@ -269,7 +309,8 @@ class AnthropicProvider(AidaProvider):
     def stream(self, *, system_prompt: str, messages: list[dict[str, Any]]) -> Iterator[str]:
         # To'liq retry: agar oqim ochilgandan keyin uzilsa, butun so'rov qaytadan
         # boshlanadi (allaqachon yuborilgan matn frontend'da qoladi — bu
-        # streaming uchun eng oddiy va yetarlicha to'g'ri yechim).
+        # streaming uchun eng oddiy va yetarlicha to'g'ri yechim). 429'da
+        # qayta urinilmaydi (RETRYABLE_EXCEPTIONS'da yo'q) — darhol ko'tariladi.
         delay = 0.5
         last_exc = None
         for attempt in range(MAX_RETRIES):
@@ -300,4 +341,8 @@ def get_provider() -> AidaProvider:
         return AnthropicProvider()
     if provider_name == "gemini":
         return GeminiProvider()
-    raise RuntimeError(f"Noma'lum AI_PROVIDER: {provider_name!r}. 'gemini' yoki 'anthropic' bo'lishi kerak.")
+    if provider_name == "groq":
+        return GroqProvider()
+    raise RuntimeError(
+        f"Noma'lum AI_PROVIDER: {provider_name!r}. 'gemini', 'anthropic' yoki 'groq' bo'lishi kerak."
+    )

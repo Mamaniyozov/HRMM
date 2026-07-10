@@ -1,7 +1,7 @@
 # AIDA — provider-agnostic AI yordamchi
 
 AIDA barcha AI chaqiruvlarini bitta joydan (`apps/aida/services.py`) boshqaradi.
-Provider (Google Gemini yoki Anthropic Claude) `AI_PROVIDER` environment
+Provider (Google Gemini, Anthropic Claude yoki Groq) `AI_PROVIDER` environment
 o'zgaruvchisi orqali tanlanadi — kodni o'zgartirish shart emas.
 
 ## Fayl tuzilishi
@@ -9,7 +9,7 @@ o'zgaruvchisi orqali tanlanadi — kodni o'zgartirish shart emas.
 | Fayl | Vazifasi |
 |---|---|
 | `services.py` | Orkestratsiya: tarix, system prompt, tool-call loop, xatolik handling |
-| `providers.py` | `GeminiProvider` (OpenAI-compatible endpoint) va `AnthropicProvider` (rasmiy `anthropic` SDK) |
+| `providers.py` | `GeminiProvider` / `GroqProvider` (ikkalasi ham OpenAI-compatible endpoint, umumiy `_OpenAICompatibleProvider` bazasidan) va `AnthropicProvider` (rasmiy `anthropic` SDK) |
 | `tools.py` | Function-calling tool definitionlari + ikkala formatga konvertor + RBAC-gated executor |
 | `schemas.py` | `FunctionCall` / `AidaResponse` dataclasslari |
 | `system_prompt.py` + `prompts/aida_system_prompt.md` | System prompt shabloni |
@@ -29,20 +29,43 @@ ANTHROPIC_API_KEY=sk-ant-...
 Orqaga (Anthropic'dan Gemini'ga) qaytish uchun ham xuddi shu — `AI_PROVIDER=gemini` +
 `GEMINI_API_KEY` yetarli.
 
+## Groq'ga o'tish
+
+Faqat **2 ta environment o'zgaruvchisini** o'rnatish kifoya:
+
+```
+AI_PROVIDER=groq
+GROQ_API_KEY=gsk_...
+```
+
+`GROQ_MODEL` (default `llama-3.3-70b-versatile`) o'zgarishsiz qoladi. Groq ham
+OpenAI-compatible endpoint orqali ishlaydi (Gemini bilan bir xil `_OpenAICompatibleProvider`
+bazasi) — tool calling, streaming va RBAC oqimi boshqa providerlar bilan bir xil ishlaydi.
+
 ## Environment o'zgaruvchilari
 
 | O'zgaruvchi | Default | Izoh |
 |---|---|---|
-| `AI_PROVIDER` | `gemini` | `gemini` yoki `anthropic` |
+| `AI_PROVIDER` | `gemini` | `gemini` \| `anthropic` \| `groq` |
 | `GEMINI_API_KEY` | — | Gemini uchun majburiy (`AI_PROVIDER=gemini` bo'lsa) |
 | `GEMINI_MODEL` | `gemini-2.0-flash` | |
 | `GEMINI_BASE_URL` | Google'ning rasmiy OpenAI-compat URL'i | Odatda o'zgartirilmaydi |
 | `ANTHROPIC_API_KEY` | — | Anthropic uchun majburiy (`AI_PROVIDER=anthropic` bo'lsa) |
 | `ANTHROPIC_MODEL` | `claude-haiku-4-5` | |
-| `AIDA_MAX_TOKENS` | `1000` | Ikkala provider uchun umumiy |
-| `AIDA_TEMPERATURE` | `0.3` | Ikkala provider uchun umumiy |
+| `GROQ_API_KEY` | — | Groq uchun majburiy (`AI_PROVIDER=groq` bo'lsa) |
+| `GROQ_MODEL` | `llama-3.3-70b-versatile` | |
+| `GROQ_BASE_URL` | Groq'ning rasmiy OpenAI-compat URL'i | Odatda o'zgartirilmaydi |
+| `AIDA_MAX_TOKENS` | `1000` | Barcha providerlar uchun umumiy |
+| `AIDA_TEMPERATURE` | `0.3` | Barcha providerlar uchun umumiy |
 | `AIDA_MAX_HISTORY` | `20` | Kontekstga qo'shiladigan oxirgi xabarlar soni |
 | `REDIS_URL` | — | Bo'lmasa Django LocMemCache'ga o'tadi (rate limit ko'p worker orasida noto'g'ri hisoblanishi mumkin) |
+
+## Rate limit (429) xatti-harakati
+
+Barcha providerlarda (Gemini, Anthropic, Groq) 429 (rate limit) xatosida **qayta
+urinilmaydi** — darhol foydalanuvchiga "AIDA hozircha band, birozdan keyin qayta
+urinib ko'ring" xabari qaytadi. Boshqa vaqtinchalik xatolar (tarmoq uzilishi, 5xx)
+uchun 3 marta exponential backoff bilan qayta urinish davom etadi.
 
 ## RBAC va function calling
 

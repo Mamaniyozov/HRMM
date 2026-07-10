@@ -1,5 +1,4 @@
 import json
-import logging
 
 from django.http import StreamingHttpResponse
 from rest_framework import status
@@ -12,13 +11,11 @@ from apps.aida.serializers import (
     ChatRequestSerializer,
     ChatSessionSerializer,
 )
-from apps.aida.services import build_conversation_messages, chat_with_claude
+from apps.aida.services import build_conversation_messages, chat_with_claude, describe_provider_error
 from apps.aida.system_prompt import build_system_prompt
 from apps.aida.throttling import AidaChatThrottle
 from apps.reports.views import IsAuthenticatedHRMM
 from config.responses import api_success
-
-logger = logging.getLogger("hrmm.aida")
 
 
 class AidaChatView(APIView):
@@ -179,8 +176,8 @@ class AidaChatStreamView(APIView):
                     full_text.append(delta)
                     yield f"data: {json.dumps({'delta': delta}, ensure_ascii=False)}\n\n"
             except Exception as exc:  # noqa: BLE001 — SSE ichida xatolikni oqim orqali yuborish kerak
-                logger.exception("AIDA stream error: %s", exc)
-                yield f"event: error\ndata: {json.dumps({'message': str(exc)}, ensure_ascii=False)}\n\n"
+                message = describe_provider_error(exc)
+                yield f"event: error\ndata: {json.dumps({'message': message}, ensure_ascii=False)}\n\n"
                 return
 
             content = "".join(full_text)

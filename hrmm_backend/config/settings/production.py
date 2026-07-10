@@ -94,7 +94,7 @@ SESSION_COOKIE_SAMESITE = "Lax"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ---------------------------------------------------------------------------
-# AIDA AI Assistant — provider-agnostic (Gemini / Anthropic)
+# AIDA AI Assistant — provider-agnostic (Gemini / Anthropic / Groq)
 # ---------------------------------------------------------------------------
 
 _ai_provider = os.getenv("AI_PROVIDER", "gemini").lower()
@@ -117,7 +117,16 @@ elif _ai_provider == "gemini":
             "deployment platformangizning environment variables bo'limiga qo'ying."
         )
     GEMINI_API_KEY = _aida_key
+elif _ai_provider == "groq":
+    _aida_key = os.getenv("GROQ_API_KEY", "")
+    if not _aida_key:
+        raise ImproperlyConfigured(
+            "AI_PROVIDER=groq bo'lganda GROQ_API_KEY majburiy. "
+            "Kalitni https://console.groq.com/keys dan oling va "
+            "deployment platformangizning environment variables bo'limiga qo'ying."
+        )
+    GROQ_API_KEY = _aida_key
 else:
     raise ImproperlyConfigured(
-        f"Noto'g'ri AI_PROVIDER: {_ai_provider!r}. 'gemini' yoki 'anthropic' bo'lishi kerak."
+        f"Noto'g'ri AI_PROVIDER: {_ai_provider!r}. 'gemini', 'anthropic' yoki 'groq' bo'lishi kerak."
     )

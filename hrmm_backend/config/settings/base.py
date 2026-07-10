@@ -3,6 +3,7 @@ import dj_database_url
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -319,10 +320,14 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.getenv("DATA_UPLOAD_MAX_MEMORY_SIZE", str(2
 DATA_UPLOAD_MAX_NUMBER_FIELDS = int(os.getenv("DATA_UPLOAD_MAX_NUMBER_FIELDS", "1000"))
 
 # ---------------------------------------------------------------------------
-# AIDA AI Assistant — provider-agnostic (Gemini / Anthropic)
+# AIDA AI Assistant — provider-agnostic (Gemini / Anthropic / Groq)
 # ---------------------------------------------------------------------------
-# AI_PROVIDER orqali almashtiriladi: "gemini" (test, bepul) yoki "anthropic" (production).
+# AI_PROVIDER orqali almashtiriladi: "gemini" | "anthropic" | "groq".
 AI_PROVIDER = os.getenv("AI_PROVIDER", "gemini")
+if AI_PROVIDER.lower() not in {"gemini", "anthropic", "groq"}:
+    raise ImproperlyConfigured(
+        f"Noto'g'ri AI_PROVIDER: {AI_PROVIDER!r}. 'gemini', 'anthropic' yoki 'groq' bo'lishi kerak."
+    )
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
@@ -332,6 +337,10 @@ GEMINI_BASE_URL = os.getenv(
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-haiku-4-5")
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_BASE_URL = os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
 
 AIDA_MAX_TOKENS = int(os.getenv("AIDA_MAX_TOKENS", "1000"))
 AIDA_TEMPERATURE = float(os.getenv("AIDA_TEMPERATURE", "0.3"))

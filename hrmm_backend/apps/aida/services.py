@@ -30,6 +30,39 @@ STATUS_ERRORS = (anthropic.APIStatusError, openai.APIStatusError)
 CONNECTION_ERRORS = (anthropic.APIConnectionError, openai.APIConnectionError)
 
 
+def describe_provider_error(exc: Exception) -> str:
+    """Provider xatosini foydalanuvchiga tushunarli o'zbekcha xabarga aylantiradi.
+
+    `generate_response` (POST /chat/) va SSE stream view ikkalasi ham shu
+    funksiyadan foydalanadi — xabar matni bir joyda saqlanadi.
+    """
+    if isinstance(exc, AUTH_ERRORS):
+        logger.error("AIDA provider authentication error: %s", exc)
+        return "AIDA API kaliti noto'g'ri yoki muddati o'tgan."
+    if isinstance(exc, NOT_FOUND_ERRORS):
+        logger.error("AIDA provider not found error: %s", exc)
+        return "AIDA modeli topilmadi. Model nomini tekshiring."
+    if isinstance(exc, RATE_LIMIT_ERRORS):
+        logger.error("AIDA provider rate limit error: %s", exc)
+        return "AIDA hozircha band, birozdan keyin qayta urinib ko'ring."
+    if isinstance(exc, STATUS_ERRORS):
+        logger.error("AIDA provider error: %s — %s", exc.status_code, exc.message)
+        if exc.status_code == 400 and "credit balance" in str(exc.message).lower():
+            return (
+                "AIDA xizmati uchun creditlar tugagan. Provayder konsolida "
+                "(Anthropic: console.anthropic.com/settings/billing, Gemini: aistudio.google.com) "
+                "billing bo'limini tekshiring."
+            )
+        if exc.status_code >= 500:
+            return "AIDA xizmatida vaqtinchalik uzilish yuz berdi. Birozdan keyin urinib ko'ring."
+        return f"AIDA xizmatida xatolik yuz berdi (HTTP {exc.status_code})."
+    if isinstance(exc, CONNECTION_ERRORS):
+        logger.error("AIDA provider connection error")
+        return "AIDA xizmatiga ulanib bo'lmadi. Internet aloqasini tekshiring."
+    logger.exception("Unexpected AIDA provider error: %s", exc)
+    return "AIDA bilan aloqada kutilmagan xatolik yuz berdi."
+
+
 def build_conversation_messages(session, user_message):
     """Convert stored chat history (Postgres, ChatMessage) into provider messages format."""
     history = session.messages.order_by("created_at").values("role", "content")[
@@ -81,34 +114,10 @@ def generate_response(
             )
         return response
 
-    except AUTH_ERRORS as exc:
-        logger.error("AIDA provider authentication error: %s", exc)
-        raise RuntimeError("AIDA API kaliti noto'g'ri yoki muddati o'tgan.")
-    except NOT_FOUND_ERRORS as exc:
-        logger.error("AIDA provider not found error: %s", exc)
-        raise RuntimeError("AIDA modeli topilmadi. Model nomini tekshiring.")
-    except RATE_LIMIT_ERRORS as exc:
-        logger.error("AIDA provider rate limit error: %s", exc)
-        raise RuntimeError("AIDA so'rovlar chegarasiga yetildi. Birozdan keyin urinib ko'ring.")
-    except STATUS_ERRORS as exc:
-        logger.error("AIDA provider error: %s — %s", exc.status_code, exc.message)
-        if exc.status_code == 400 and "credit balance" in str(exc.message).lower():
-            raise RuntimeError(
-                "AIDA xizmati uchun creditlar tugagan. Provayder konsolida "
-                "(Anthropic: console.anthropic.com/settings/billing, Gemini: aistudio.google.com) "
-                "billing bo'limini tekshiring."
-            )
-        if exc.status_code >= 500:
-            raise RuntimeError("AIDA xizmatida vaqtinchalik uzilish yuz berdi. Birozdan keyin urinib ko'ring.")
-        raise RuntimeError(f"AIDA xizmatida xatolik yuz berdi (HTTP {exc.status_code}).")
-    except CONNECTION_ERRORS:
-        logger.error("AIDA provider connection error")
-        raise RuntimeError("AIDA xizmatiga ulanib bo'lmadi. Internet aloqasini tekshiring.")
     except RuntimeError:
         raise
     except Exception as exc:
-        logger.exception("Unexpected AIDA provider error: %s", exc)
-        raise RuntimeError("AIDA bilan aloqada kutilmagan xatolik yuz berdi.")
+        raise RuntimeError(describe_provider_error(exc))
 
 
 def chat_with_claude(
