@@ -55,6 +55,7 @@ class ReportCreateSerializer(serializers.ModelSerializer):
             "title",
             "summary",
             "content",
+            "priority",
             "category_id",
             "department_id",
         ]
@@ -91,6 +92,7 @@ class ReportUpdateSerializer(serializers.ModelSerializer):
             "title",
             "summary",
             "content",
+            "priority",
             "category_id",
             "department_id",
         ]
@@ -121,6 +123,7 @@ class ReportListSerializer(serializers.ModelSerializer):
             "report_number",
             "title",
             "status",
+            "priority",
             "current_approval_level",
             "department_id",
             "department_name",
@@ -167,6 +170,7 @@ class ReportDetailSerializer(serializers.ModelSerializer):
             "title",
             "summary",
             "content",
+            "priority",
             "category_id",
             "department_id",
             "department_name",

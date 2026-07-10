@@ -1,39 +1,114 @@
-"""Anthropic Claude API integratsiyasi — AIDA AI yordamchisi uchun."""
+"""AIDA chat servisi — barcha AI chaqiruvlar shu fayl orqali o'tadi.
+
+Provider tanlovi (Gemini / Anthropic) `apps.aida.providers.get_provider()` orqali
+`AI_PROVIDER` environment o'zgaruvchisiga qarab amalga oshadi — bu faylda
+provider-specific kod yo'q, faqat orkestratsiya (tarix, system prompt, tool-call
+loop, xatolik handling).
+"""
 
 import logging
 
 import anthropic
-
+import openai
 from django.conf import settings
 
+from apps.aida.providers import get_provider
+from apps.aida.schemas import AidaResponse
 from apps.aida.system_prompt import build_system_prompt
+from apps.aida.tools import execute_tool_call
 
 logger = logging.getLogger("hrmm.aida")
 
-# Anthropic settings
-ANTHROPIC_API_KEY = getattr(settings, "ANTHROPIC_API_KEY", "")
-AIDA_MODEL = getattr(settings, "AIDA_MODEL", "claude-sonnet-5")
-MAX_TOKENS = getattr(settings, "AIDA_MAX_TOKENS", 1024)
 MAX_HISTORY_MESSAGES = getattr(settings, "AIDA_MAX_HISTORY", 20)
 
+# Anthropic va OpenAI-compatible (Gemini) SDK'lari bir xil nomlangan
+# exception'larni eksport qiladi — ikkalasini ham bitta joyda ushlaymiz.
+AUTH_ERRORS = (anthropic.AuthenticationError, openai.AuthenticationError)
+NOT_FOUND_ERRORS = (anthropic.NotFoundError, openai.NotFoundError)
+RATE_LIMIT_ERRORS = (anthropic.RateLimitError, openai.RateLimitError)
+STATUS_ERRORS = (anthropic.APIStatusError, openai.APIStatusError)
+CONNECTION_ERRORS = (anthropic.APIConnectionError, openai.APIConnectionError)
 
-def _get_client():
-    api_key = ANTHROPIC_API_KEY or ""
-    if not api_key:
-        raise RuntimeError("ANTHROPIC_API_KEY sozlanmagan.")
-    return anthropic.Anthropic(api_key=api_key)
 
-
-def _build_messages(session, user_message):
-    """Convert stored chat history into Claude API messages format."""
+def build_conversation_messages(session, user_message):
+    """Convert stored chat history (Postgres, ChatMessage) into provider messages format."""
     history = session.messages.order_by("created_at").values("role", "content")[
         :MAX_HISTORY_MESSAGES
     ]
-    messages = []
-    for msg in history:
-        messages.append({"role": msg["role"], "content": msg["content"]})
+    messages = [{"role": msg["role"], "content": msg["content"]} for msg in history]
     messages.append({"role": "user", "content": user_message})
     return messages
+
+
+def generate_response(
+    *,
+    session,
+    user_message,
+    user,
+    current_language,
+    current_page,
+    current_report_id,
+    voice_mode,
+    request,
+) -> AidaResponse:
+    """AI provider'dan javob oladi, kerak bo'lsa function call'larni RBAC bilan bajaradi.
+
+    Function-call loop faqat BITTA iteratsiya bilan cheklangan: model tool
+    so'rasa, natija bajarilib qaytariladi va yakuniy matn javobi olinadi.
+    Bu ortiqcha murakkablikni (cheksiz tool-loop) oldini oladi.
+    """
+    system_prompt = build_system_prompt(
+        user=user,
+        current_language=current_language,
+        current_page=current_page,
+        current_report_id=current_report_id,
+        voice_mode=voice_mode,
+    )
+    messages = build_conversation_messages(session, user_message)
+
+    try:
+        provider = get_provider()
+        response = provider.generate(system_prompt=system_prompt, messages=messages)
+
+        if response.function_calls:
+            for fc in response.function_calls:
+                fc.result = execute_tool_call(fc.name, fc.arguments, actor=user, request=request)
+            response = provider.generate_with_tool_results(
+                system_prompt=system_prompt,
+                messages=messages,
+                assistant_response=response,
+                tool_results=response.function_calls,
+            )
+        return response
+
+    except AUTH_ERRORS as exc:
+        logger.error("AIDA provider authentication error: %s", exc)
+        raise RuntimeError("AIDA API kaliti noto'g'ri yoki muddati o'tgan.")
+    except NOT_FOUND_ERRORS as exc:
+        logger.error("AIDA provider not found error: %s", exc)
+        raise RuntimeError("AIDA modeli topilmadi. Model nomini tekshiring.")
+    except RATE_LIMIT_ERRORS as exc:
+        logger.error("AIDA provider rate limit error: %s", exc)
+        raise RuntimeError("AIDA so'rovlar chegarasiga yetildi. Birozdan keyin urinib ko'ring.")
+    except STATUS_ERRORS as exc:
+        logger.error("AIDA provider error: %s — %s", exc.status_code, exc.message)
+        if exc.status_code == 400 and "credit balance" in str(exc.message).lower():
+            raise RuntimeError(
+                "AIDA xizmati uchun creditlar tugagan. Provayder konsolida "
+                "(Anthropic: console.anthropic.com/settings/billing, Gemini: aistudio.google.com) "
+                "billing bo'limini tekshiring."
+            )
+        if exc.status_code >= 500:
+            raise RuntimeError("AIDA xizmatida vaqtinchalik uzilish yuz berdi. Birozdan keyin urinib ko'ring.")
+        raise RuntimeError(f"AIDA xizmatida xatolik yuz berdi (HTTP {exc.status_code}).")
+    except CONNECTION_ERRORS:
+        logger.error("AIDA provider connection error")
+        raise RuntimeError("AIDA xizmatiga ulanib bo'lmadi. Internet aloqasini tekshiring.")
+    except RuntimeError:
+        raise
+    except Exception as exc:
+        logger.exception("Unexpected AIDA provider error: %s", exc)
+        raise RuntimeError("AIDA bilan aloqada kutilmagan xatolik yuz berdi.")
 
 
 def chat_with_claude(
@@ -45,57 +120,30 @@ def chat_with_claude(
     current_page,
     current_report_id,
     voice_mode,
+    request=None,
 ):
-    """Send a chat request to Claude and return the response text.
+    """Backward-compat wrapper — mavjud views.py shu nom bilan chaqiradi.
 
-    Returns:
-        dict: {"content": str, "tokens_used": int, "model": str}
+    Qaytaradi: dict {"content": str, "tokens_used": int, "model": str,
+    "function_calls": list[dict] | None}
     """
-    system_prompt = build_system_prompt(
+    response = generate_response(
+        session=session,
+        user_message=user_message,
         user=user,
         current_language=current_language,
         current_page=current_page,
         current_report_id=current_report_id,
         voice_mode=voice_mode,
+        request=request,
     )
-
-    messages = _build_messages(session, user_message)
-
-    try:
-        client = _get_client()
-        response = client.messages.create(
-            model=AIDA_MODEL,
-            max_tokens=MAX_TOKENS,
-            system=system_prompt,
-            messages=messages,
-        )
-        content = ""
-        for block in response.content:
-            if hasattr(block, "text"):
-                content += block.text
-        tokens_used = response.usage.input_tokens + response.usage.output_tokens
-        return {
-            "content": content,
-            "tokens_used": tokens_used,
-            "model": AIDA_MODEL,
-        }
-    except anthropic.AuthenticationError as exc:
-        logger.error("Anthropic API authentication error: %s", exc)
-        raise RuntimeError("AIDA API kaliti noto'g'ri yoki muddati o'tgan.")
-    except anthropic.NotFoundError as exc:
-        logger.error("Anthropic API not found error: %s", exc)
-        raise RuntimeError(f"AIDA modeli topilmadi ({AIDA_MODEL}). Model nomini tekshiring.")
-    except anthropic.RateLimitError as exc:
-        logger.error("Anthropic API rate limit error: %s", exc)
-        raise RuntimeError("AIDA so'rovlar chegarasiga yetildi. Birozdan keyin urinib ko'ring.")
-    except anthropic.APIStatusError as exc:
-        logger.error("Anthropic API error: %s — %s", exc.status_code, exc.message)
-        if exc.status_code >= 500:
-            raise RuntimeError("AIDA xizmatida vaqtinchalik uzilish yuz berdi. Birozdan keyin urinib ko'ring.")
-        raise RuntimeError(f"AIDA xizmatida xatolik yuz berdi (HTTP {exc.status_code}).")
-    except anthropic.APIConnectionError:
-        logger.error("Anthropic API connection error")
-        raise RuntimeError("AIDA xizmatiga ulanib bo'lmadi. Internet aloqasini tekshiring.")
-    except Exception as exc:
-        logger.exception("Unexpected Anthropic API error: %s", exc)
-        raise RuntimeError("AIDA bilan aloqada kutilmagan xatolik yuz berdi.")
+    return {
+        "content": response.text,
+        "tokens_used": response.tokens_used,
+        "model": response.model,
+        "function_calls": (
+            [{"name": fc.name, "arguments": fc.arguments, "result": fc.result} for fc in response.function_calls]
+            if response.function_calls
+            else None
+        ),
+    }

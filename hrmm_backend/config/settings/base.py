@@ -153,6 +153,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "20/minute",
         "user": "200/minute",
+        "aida_chat": "10/minute",
     },
 }
 
@@ -318,9 +319,35 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.getenv("DATA_UPLOAD_MAX_MEMORY_SIZE", str(2
 DATA_UPLOAD_MAX_NUMBER_FIELDS = int(os.getenv("DATA_UPLOAD_MAX_NUMBER_FIELDS", "1000"))
 
 # ---------------------------------------------------------------------------
-# AIDA AI Assistant — Anthropic Claude API
+# AIDA AI Assistant — provider-agnostic (Gemini / Anthropic)
 # ---------------------------------------------------------------------------
+# AI_PROVIDER orqali almashtiriladi: "gemini" (test, bepul) yoki "anthropic" (production).
+AI_PROVIDER = os.getenv("AI_PROVIDER", "gemini")
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_BASE_URL = os.getenv(
+    "GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/"
+)
+
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-AIDA_MODEL = os.getenv("AIDA_MODEL", "claude-sonnet-5")
-AIDA_MAX_TOKENS = int(os.getenv("AIDA_MAX_TOKENS", "1024"))
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-haiku-4-5")
+
+AIDA_MAX_TOKENS = int(os.getenv("AIDA_MAX_TOKENS", "1000"))
+AIDA_TEMPERATURE = float(os.getenv("AIDA_TEMPERATURE", "0.3"))
 AIDA_MAX_HISTORY = int(os.getenv("AIDA_MAX_HISTORY", "20"))
+
+# ---------------------------------------------------------------------------
+# Redis cache — AIDA rate limiting (va boshqa cache ehtiyojlari) uchun
+# ---------------------------------------------------------------------------
+REDIS_URL = os.getenv("REDIS_URL", "")
+if REDIS_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
+    }

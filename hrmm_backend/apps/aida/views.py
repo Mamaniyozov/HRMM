@@ -1,15 +1,20 @@
+import json
 import logging
 
+from django.http import StreamingHttpResponse
 from rest_framework import status
 from rest_framework.views import APIView
 
 from apps.aida.models import ChatMessage, ChatSession
+from apps.aida.providers import get_provider
 from apps.aida.serializers import (
     ChatMessageSerializer,
     ChatRequestSerializer,
     ChatSessionSerializer,
 )
-from apps.aida.services import chat_with_claude
+from apps.aida.services import build_conversation_messages, chat_with_claude
+from apps.aida.system_prompt import build_system_prompt
+from apps.aida.throttling import AidaChatThrottle
 from apps.reports.views import IsAuthenticatedHRMM
 from config.responses import api_success
 
@@ -20,6 +25,7 @@ class AidaChatView(APIView):
     """POST /api/v1/aida/chat/ — AIDA AI yordamchisiga xabar yuborish."""
 
     permission_classes = [IsAuthenticatedHRMM]
+    throttle_classes = [AidaChatThrottle]
 
     def post(self, request):
         serializer = ChatRequestSerializer(data=request.data)
@@ -64,6 +70,7 @@ class AidaChatView(APIView):
                 current_page=current_page,
                 current_report_id=current_report_id,
                 voice_mode=voice_mode,
+                request=request,
             )
         except RuntimeError as exc:
             ChatMessage.objects.create(
@@ -102,9 +109,107 @@ class AidaChatView(APIView):
                 "model": result["model"],
                 "tokens_used": result["tokens_used"],
                 "voice_mode": voice_mode,
+                "function_calls": result["function_calls"],
             },
             message="AIDA javob berdi.",
         )
+
+
+class AidaChatStreamView(APIView):
+    """GET /api/v1/aida/chat/stream/ — SSE orqali AIDA javobini oqim ko'rinishida olish.
+
+    Query params: message (majburiy), session_id, current_page, current_report_id, voice_mode.
+    Diqqat: streaming rejimida function-calling ishlatilmaydi (faqat matn oqimi) —
+    tool chaqiruvlari kerak bo'lgan so'rovlar uchun oddiy POST /chat/ endpointidan foydalaning.
+    Brauzerning native EventSource'i custom header (Authorization) qo'llamaydi —
+    frontend `fetch()` + `ReadableStream` bilan token'ni header orqali yuborishi kerak.
+    """
+
+    permission_classes = [IsAuthenticatedHRMM]
+    throttle_classes = [AidaChatThrottle]
+
+    def get(self, request):
+        serializer = ChatRequestSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        user = request.user
+        current_language = user.language or "uz"
+        current_page = data.get("current_page", "")
+        current_report_id = data.get("current_report_id")
+        voice_mode = data.get("voice_mode", False)
+        user_message = data["message"]
+
+        session_id = data.get("session_id")
+        if session_id:
+            session = ChatSession.objects.filter(id=session_id, user=user, is_active=True).first()
+            if not session:
+                return api_success(
+                    message="Sessiya topilmadi yoki yopilgan.",
+                    data=None,
+                    status_code=status.HTTP_404_NOT_FOUND,
+                )
+        else:
+            session = ChatSession.objects.create(user=user, title=user_message[:80])
+
+        ChatMessage.objects.create(
+            session=session,
+            role="user",
+            content=user_message,
+            language=current_language,
+            voice_mode=voice_mode,
+            current_page=current_page,
+            current_report_id=current_report_id,
+        )
+
+        system_prompt = build_system_prompt(
+            user=user,
+            current_language=current_language,
+            current_page=current_page,
+            current_report_id=current_report_id,
+            voice_mode=voice_mode,
+        )
+        messages = build_conversation_messages(session, user_message)
+
+        def event_stream():
+            full_text = []
+            try:
+                provider = get_provider()
+                for delta in provider.stream(system_prompt=system_prompt, messages=messages):
+                    full_text.append(delta)
+                    yield f"data: {json.dumps({'delta': delta}, ensure_ascii=False)}\n\n"
+            except Exception as exc:  # noqa: BLE001 — SSE ichida xatolikni oqim orqali yuborish kerak
+                logger.exception("AIDA stream error: %s", exc)
+                yield f"event: error\ndata: {json.dumps({'message': str(exc)}, ensure_ascii=False)}\n\n"
+                return
+
+            content = "".join(full_text)
+            assistant_msg = ChatMessage.objects.create(
+                session=session,
+                role="assistant",
+                content=content,
+                language=current_language,
+                voice_mode=voice_mode,
+                current_page=current_page,
+            )
+            if not session.title and session.messages.count() <= 2:
+                session.title = user_message[:80]
+                session.save(update_fields=["title"])
+
+            yield "event: done\ndata: {}\n\n".format(
+                json.dumps(
+                    {
+                        "session_id": str(session.id),
+                        "message_id": str(assistant_msg.id),
+                    },
+                    ensure_ascii=False,
+                )
+            )
+
+        response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
+        response["Cache-Control"] = "no-cache"
+        response["X-Accel-Buffering"] = "no"
+        return response
 
 
 class AidaSessionListView(APIView):

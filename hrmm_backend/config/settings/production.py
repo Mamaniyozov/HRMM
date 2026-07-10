@@ -94,14 +94,30 @@ SESSION_COOKIE_SAMESITE = "Lax"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ---------------------------------------------------------------------------
-# AIDA AI Assistant — Anthropic Claude API
+# AIDA AI Assistant — provider-agnostic (Gemini / Anthropic)
 # ---------------------------------------------------------------------------
 
-_aida_key = os.getenv("ANTHROPIC_API_KEY", "")
-if not _aida_key:
+_ai_provider = os.getenv("AI_PROVIDER", "gemini").lower()
+
+if _ai_provider == "anthropic":
+    _aida_key = os.getenv("ANTHROPIC_API_KEY", "")
+    if not _aida_key:
+        raise ImproperlyConfigured(
+            "AI_PROVIDER=anthropic bo'lganda ANTHROPIC_API_KEY majburiy. "
+            "Kalitni https://console.anthropic.com/settings/keys dan oling va "
+            "deployment platformangizning environment variables bo'limiga qo'ying."
+        )
+    ANTHROPIC_API_KEY = _aida_key
+elif _ai_provider == "gemini":
+    _aida_key = os.getenv("GEMINI_API_KEY", "")
+    if not _aida_key:
+        raise ImproperlyConfigured(
+            "AI_PROVIDER=gemini bo'lganda GEMINI_API_KEY majburiy. "
+            "Kalitni https://aistudio.google.com/apikey dan oling va "
+            "deployment platformangizning environment variables bo'limiga qo'ying."
+        )
+    GEMINI_API_KEY = _aida_key
+else:
     raise ImproperlyConfigured(
-        "ANTHROPIC_API_KEY environment variable is required in production. "
-        "Get a key from https://console.anthropic.com/settings/keys and set it "
-        "in your deployment platform's environment variables (e.g. Railway, Render, Heroku)."
+        f"Noto'g'ri AI_PROVIDER: {_ai_provider!r}. 'gemini' yoki 'anthropic' bo'lishi kerak."
     )
-ANTHROPIC_API_KEY = _aida_key
