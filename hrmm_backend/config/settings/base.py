@@ -318,11 +318,9 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.getenv("DATA_UPLOAD_MAX_MEMORY_SIZE", str(2
 DATA_UPLOAD_MAX_NUMBER_FIELDS = int(os.getenv("DATA_UPLOAD_MAX_NUMBER_FIELDS", "1000"))
 
 # ---------------------------------------------------------------------------
-# AIDA AI Assistant — OpenRouter (bepul modellar)
+# AIDA AI Assistant — Anthropic Claude API
 # ---------------------------------------------------------------------------
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-AIDA_MODEL = os.getenv("AIDA_MODEL", "meta-llama/llama-3.1-8b-instruct")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+AIDA_MODEL = os.getenv("AIDA_MODEL", "claude-sonnet-5")
 AIDA_MAX_TOKENS = int(os.getenv("AIDA_MAX_TOKENS", "1024"))
-AIDA_TEMPERATURE = float(os.getenv("AIDA_TEMPERATURE", "0.7"))
 AIDA_MAX_HISTORY = int(os.getenv("AIDA_MAX_HISTORY", "20"))

@@ -94,14 +94,14 @@ SESSION_COOKIE_SAMESITE = "Lax"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ---------------------------------------------------------------------------
-# AIDA AI Assistant — OpenRouter (bepul modellar)
+# AIDA AI Assistant — Anthropic Claude API
 # ---------------------------------------------------------------------------
 
-_aida_key = os.getenv("OPENROUTER_API_KEY", "")
+_aida_key = os.getenv("ANTHROPIC_API_KEY", "")
 if not _aida_key:
     raise ImproperlyConfigured(
-        "OPENROUTER_API_KEY environment variable is required in production. "
-        "Get a free key from https://openrouter.ai/keys and set it in your "
-        "deployment platform's environment variables (e.g. Railway, Render, Heroku)."
+        "ANTHROPIC_API_KEY environment variable is required in production. "
+        "Get a key from https://console.anthropic.com/settings/keys and set it "
+        "in your deployment platform's environment variables (e.g. Railway, Render, Heroku)."
     )
-OPENROUTER_API_KEY = _aida_key
+ANTHROPIC_API_KEY = _aida_key
