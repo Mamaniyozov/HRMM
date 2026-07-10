@@ -70,6 +70,45 @@ function _addMessage(role, content, isError = false) {
   _scrollToBottom();
 }
 
+function _addErrorMessage(text, onRetry) {
+  const messages = _el("aidaMessages");
+  if (!messages) return;
+  const wrapper = document.createElement("div");
+  wrapper.className = "aida-message aida-message-assistant aida-message-error";
+  const bubble = document.createElement("div");
+  bubble.className = "aida-message-content aida-error-content";
+
+  const row = document.createElement("div");
+  row.className = "aida-error-row";
+  const icon = document.createElement("span");
+  icon.className = "aida-error-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.innerHTML =
+    '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>';
+  const msgEl = document.createElement("span");
+  msgEl.className = "aida-error-text";
+  msgEl.textContent = text;
+  row.appendChild(icon);
+  row.appendChild(msgEl);
+  bubble.appendChild(row);
+
+  if (onRetry) {
+    const retryBtn = document.createElement("button");
+    retryBtn.type = "button";
+    retryBtn.className = "aida-retry-btn";
+    retryBtn.textContent = t("aida_retry") || "Qayta urinish";
+    retryBtn.addEventListener("click", () => {
+      wrapper.remove();
+      onRetry();
+    });
+    bubble.appendChild(retryBtn);
+  }
+
+  wrapper.appendChild(bubble);
+  messages.appendChild(wrapper);
+  _scrollToBottom();
+}
+
 function _setTyping(show) {
   const typing = _el("aidaTyping");
   if (typing) typing.hidden = !show;
@@ -83,17 +122,19 @@ function _setInputEnabled(enabled) {
   if (sendBtn) sendBtn.disabled = !enabled;
 }
 
-async function _sendMessage() {
+async function _sendMessage(retryMessage) {
   const input = _el("aidaInput");
-  if (!input) return;
-  const message = input.value.trim();
+  const isRetry = typeof retryMessage === "string";
+  const message = isRetry ? retryMessage : input ? input.value.trim() : "";
   if (!message || _isSending) return;
 
   _isSending = true;
-  input.value = "";
-  input.style.height = "auto";
+  if (!isRetry && input) {
+    input.value = "";
+    input.style.height = "auto";
+    _addMessage("user", message);
+  }
   _setInputEnabled(false);
-  _addMessage("user", message);
   _setTyping(true);
 
   try {
@@ -112,16 +153,16 @@ async function _sendMessage() {
     _setTyping(false);
     const data = response.data || response;
     if (data && data.error) {
-      _addMessage("assistant", data.content || t("aida_error") || "Xatolik yuz berdi.", true);
+      _addErrorMessage(data.content || t("aida_error") || "Xatolik yuz berdi.", () => _sendMessage(message));
     } else if (data && data.content) {
       _sessionId = data.session_id || _sessionId;
       _addMessage("assistant", data.content);
     } else {
-      _addMessage("assistant", t("aida_error") || "Javob olinmadi.", true);
+      _addErrorMessage(t("aida_error") || "Javob olinmadi.", () => _sendMessage(message));
     }
   } catch (err) {
     _setTyping(false);
-    _addMessage("assistant", err.message || t("aida_error") || "AIDA bilan aloqada xatolik.", true);
+    _addErrorMessage(err.message || t("aida_error") || "AIDA bilan aloqada xatolik.", () => _sendMessage(message));
   } finally {
     _isSending = false;
     _setInputEnabled(true);

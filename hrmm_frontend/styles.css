@@ -5705,6 +5705,10 @@ textarea:focus {
   animation: aida-panel-open 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.aida-panel[hidden] {
+  display: none;
+}
+
 @keyframes aida-panel-open {
   from {
     opacity: 0;
@@ -5923,6 +5927,49 @@ textarea:focus {
   -webkit-backdrop-filter: blur(10px);
   border-color: rgba(255, 107, 107, 0.4);
   color: var(--danger);
+}
+
+.aida-error-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.aida-error-icon {
+  flex-shrink: 0;
+  display: flex;
+  margin-top: 1px;
+  color: var(--danger);
+}
+
+.aida-error-text {
+  flex: 1;
+}
+
+.aida-retry-btn {
+  margin-top: 10px;
+  padding: 7px 14px;
+  border: 1px solid rgba(255, 107, 107, 0.45);
+  border-radius: 10px;
+  background: rgba(255, 107, 107, 0.12);
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.aida-retry-btn:hover {
+  background: rgba(255, 107, 107, 0.22);
+}
+
+.aida-retry-btn:active {
+  transform: scale(0.97);
+}
+
+.aida-retry-btn:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
 }
 
 .aida-typing {
