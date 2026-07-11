@@ -9,7 +9,13 @@ const indexHtmlPath = path.join(__dirname, 'index.html');
 const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
 const apiBase = process.env.HRMM_API_BASE || '';
 
-app.use(express.static(__dirname));
+app.use(
+  express.static(__dirname, {
+    setHeaders: (res) => {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    },
+  })
+);
 
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api/') || req.path === '/api') {
@@ -22,6 +28,7 @@ app.get('*', (req, res) => {
     ? indexHtml.replace('<!-- API_BASE_INJECTION -->', `<script>window.__HRMM_API_BASE__ = ${JSON.stringify(apiBase)};</script>`)
     : indexHtml.replace('<!-- API_BASE_INJECTION -->', '');
 
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.send(injectedHtml);
 });
 
