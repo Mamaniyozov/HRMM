@@ -3,16 +3,16 @@ from math import ceil
 from rest_framework.response import Response
 
 
-def paginate_queryset(request, queryset, serializer_class, *, context=None):
+def paginate_queryset(request, queryset, serializer_class, *, context=None, default_page_size=10):
     try:
         page = max(int(request.query_params.get("page", 1)), 1)
     except (TypeError, ValueError):
         page = 1
 
     try:
-        page_size = int(request.query_params.get("page_size", 10))
+        page_size = int(request.query_params.get("page_size", default_page_size))
     except (TypeError, ValueError):
-        page_size = 10
+        page_size = default_page_size
 
     page_size = min(max(page_size, 1), 100)
     total = queryset.count()

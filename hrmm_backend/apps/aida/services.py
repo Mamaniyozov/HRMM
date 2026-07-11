@@ -64,11 +64,18 @@ def describe_provider_error(exc: Exception) -> str:
 
 
 def build_conversation_messages(session, user_message):
-    """Convert stored chat history (Postgres, ChatMessage) into provider messages format."""
-    history = session.messages.order_by("created_at").values("role", "content")[
-        :MAX_HISTORY_MESSAGES
-    ]
-    messages = [{"role": msg["role"], "content": msg["content"]} for msg in history]
+    """Convert stored chat history (Postgres, ChatMessage) into provider messages format.
+
+    Suhbatning eng so'nggi `MAX_HISTORY_MESSAGES` ta xabari olinadi (eskirok
+    xabarlar emas) — shuning uchun avval `-created_at` bo'yicha teskari
+    tartiblab kesiladi, keyin providerga xronologik tartibda yuborish uchun
+    qaytadan to'g'irlanadi.
+    """
+    recent = list(
+        session.messages.order_by("-created_at").values("role", "content")[:MAX_HISTORY_MESSAGES]
+    )
+    recent.reverse()
+    messages = [{"role": msg["role"], "content": msg["content"]} for msg in recent]
     messages.append({"role": "user", "content": user_message})
     return messages
 

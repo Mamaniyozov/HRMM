@@ -344,7 +344,7 @@ GROQ_BASE_URL = os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
 
 AIDA_MAX_TOKENS = int(os.getenv("AIDA_MAX_TOKENS", "1000"))
 AIDA_TEMPERATURE = float(os.getenv("AIDA_TEMPERATURE", "0.3"))
-AIDA_MAX_HISTORY = int(os.getenv("AIDA_MAX_HISTORY", "20"))
+AIDA_MAX_HISTORY = int(os.getenv("AIDA_MAX_HISTORY", "10"))
 
 # ---------------------------------------------------------------------------
 # Redis cache — AIDA rate limiting (va boshqa cache ehtiyojlari) uchun

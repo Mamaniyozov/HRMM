@@ -10,11 +10,13 @@ from apps.aida.serializers import (
     ChatMessageSerializer,
     ChatRequestSerializer,
     ChatSessionSerializer,
+    ConversationListSerializer,
 )
 from apps.aida.services import build_conversation_messages, chat_with_claude, describe_provider_error
 from apps.aida.system_prompt import build_system_prompt
 from apps.aida.throttling import AidaChatThrottle
 from apps.reports.views import IsAuthenticatedHRMM
+from config.api_utils import paginate_queryset
 from config.responses import api_success
 
 
@@ -36,12 +38,12 @@ class AidaChatView(APIView):
         voice_mode = data.get("voice_mode", False)
         user_message = data["message"]
 
-        session_id = data.get("session_id")
-        if session_id:
-            session = ChatSession.objects.filter(id=session_id, user=user, is_active=True).first()
+        conversation_id = data.get("conversation_id")
+        if conversation_id:
+            session = ChatSession.objects.filter(id=conversation_id, user=user, is_active=True).first()
             if not session:
                 return api_success(
-                    message="Sessiya topilmadi yoki yopilgan.",
+                    message="Suhbat topilmadi yoki yopilgan.",
                     data=None,
                     status_code=status.HTTP_404_NOT_FOUND,
                 )
@@ -80,7 +82,7 @@ class AidaChatView(APIView):
             )
             return api_success(
                 message=str(exc),
-                data={"session_id": str(session.id), "error": True},
+                data={"conversation_id": str(session.id), "error": True},
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
@@ -92,6 +94,7 @@ class AidaChatView(APIView):
             voice_mode=voice_mode,
             current_page=current_page,
             tokens_used=result["tokens_used"],
+            tool_calls=result["function_calls"],
         )
 
         if not session.title and session.messages.count() <= 2:
@@ -100,7 +103,7 @@ class AidaChatView(APIView):
 
         return api_success(
             data={
-                "session_id": str(session.id),
+                "conversation_id": str(session.id),
                 "message_id": str(assistant_msg.id),
                 "content": result["content"],
                 "model": result["model"],
@@ -115,7 +118,7 @@ class AidaChatView(APIView):
 class AidaChatStreamView(APIView):
     """GET /api/v1/aida/chat/stream/ — SSE orqali AIDA javobini oqim ko'rinishida olish.
 
-    Query params: message (majburiy), session_id, current_page, current_report_id, voice_mode.
+    Query params: message (majburiy), conversation_id, current_page, current_report_id, voice_mode.
     Diqqat: streaming rejimida function-calling ishlatilmaydi (faqat matn oqimi) —
     tool chaqiruvlari kerak bo'lgan so'rovlar uchun oddiy POST /chat/ endpointidan foydalaning.
     Brauzerning native EventSource'i custom header (Authorization) qo'llamaydi —
@@ -137,12 +140,12 @@ class AidaChatStreamView(APIView):
         voice_mode = data.get("voice_mode", False)
         user_message = data["message"]
 
-        session_id = data.get("session_id")
-        if session_id:
-            session = ChatSession.objects.filter(id=session_id, user=user, is_active=True).first()
+        conversation_id = data.get("conversation_id")
+        if conversation_id:
+            session = ChatSession.objects.filter(id=conversation_id, user=user, is_active=True).first()
             if not session:
                 return api_success(
-                    message="Sessiya topilmadi yoki yopilgan.",
+                    message="Suhbat topilmadi yoki yopilgan.",
                     data=None,
                     status_code=status.HTTP_404_NOT_FOUND,
                 )
@@ -196,7 +199,7 @@ class AidaChatStreamView(APIView):
             yield "event: done\ndata: {}\n\n".format(
                 json.dumps(
                     {
-                        "session_id": str(session.id),
+                        "conversation_id": str(session.id),
                         "message_id": str(assistant_msg.id),
                     },
                     ensure_ascii=False,
@@ -209,48 +212,47 @@ class AidaChatStreamView(APIView):
         return response
 
 
-class AidaSessionListView(APIView):
-    """GET /api/v1/aida/sessions/ — foydalanuvchi sessiyalari ro'yxati."""
+class AidaConversationListCreateView(APIView):
+    """GET /api/v1/aida/conversations/ — foydalanuvchi suhbatlari ro'yxati (sahifalangan).
+    POST — yangi bo'sh suhbat yaratish."""
 
     permission_classes = [IsAuthenticatedHRMM]
 
     def get(self, request):
-        sessions = ChatSession.objects.filter(user=request.user, is_active=True).order_by("-updated_at")[:20]
-        data = []
-        for s in sessions:
-            data.append(
-                {
-                    "id": str(s.id),
-                    "title": s.title,
-                    "message_count": s.messages.count(),
-                    "updated_at": s.updated_at.isoformat(),
-                }
-            )
-        return api_success(data=data)
+        conversations = ChatSession.objects.filter(user=request.user, is_active=True).order_by("-updated_at")
+        return paginate_queryset(request, conversations, ConversationListSerializer, default_page_size=20)
+
+    def post(self, request):
+        session = ChatSession.objects.create(user=request.user)
+        return api_success(
+            data=ConversationListSerializer(session).data,
+            message="Yangi suhbat yaratildi.",
+            status_code=status.HTTP_201_CREATED,
+        )
 
 
-class AidaSessionDetailView(APIView):
-    """GET /api/v1/aida/sessions/<id>/ — sessiya tarixi.
-    DELETE — sessiyani yopish."""
+class AidaConversationDetailView(APIView):
+    """GET /api/v1/aida/conversations/<id>/ — suhbat + barcha xabarlari.
+    DELETE — suhbatni yopish (soft delete)."""
 
     permission_classes = [IsAuthenticatedHRMM]
 
-    def get(self, request, session_id):
-        session = ChatSession.objects.filter(id=session_id, user=request.user).first()
+    def get(self, request, conversation_id):
+        session = ChatSession.objects.filter(id=conversation_id, user=request.user).first()
         if not session:
-            return api_success(message="Sessiya topilmadi.", data=None, status_code=status.HTTP_404_NOT_FOUND)
+            return api_success(message="Suhbat topilmadi.", data=None, status_code=status.HTTP_404_NOT_FOUND)
         messages = session.messages.order_by("created_at")
         return api_success(
             data={
-                "session": ChatSessionSerializer(session).data,
+                "conversation": ChatSessionSerializer(session).data,
                 "messages": ChatMessageSerializer(messages, many=True).data,
             }
         )
 
-    def delete(self, request, session_id):
-        session = ChatSession.objects.filter(id=session_id, user=request.user).first()
+    def delete(self, request, conversation_id):
+        session = ChatSession.objects.filter(id=conversation_id, user=request.user).first()
         if not session:
-            return api_success(message="Sessiya topilmadi.", data=None, status_code=status.HTTP_404_NOT_FOUND)
+            return api_success(message="Suhbat topilmadi.", data=None, status_code=status.HTTP_404_NOT_FOUND)
         session.is_active = False
         session.save(update_fields=["is_active", "updated_at"])
-        return api_success(message="Sessiya yopildi.")
+        return api_success(message="Suhbat o'chirildi.")

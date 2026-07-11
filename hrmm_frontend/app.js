@@ -5651,7 +5651,7 @@ function renderThemePreview(theme) {
       <circle cx="34" cy="30" r="5" fill="${tokens.danger}"/>
       <circle cx="50" cy="30" r="5" fill="${tokens.warning}"/>
       <circle cx="66" cy="30" r="5" fill="${tokens.success}"/>
-      <rect x="16" y="58" width="58" height="86" rx="10" fill="${tokens.surface}" stroke="${tokens.border}"/>
+      <rect x="16" y="58" width="58" height="86" rx="10" fill="${tokens.rail || tokens.surface}" stroke="${tokens.border}"/>
       <rect x="88" y="58" width="216" height="86" rx="10" fill="${tokens.surface}" stroke="${tokens.border}"/>
       <rect x="101" y="73" width="74" height="8" rx="4" fill="${tokens.textPrimary}"/>
       <rect x="101" y="91" width="162" height="7" rx="3.5" fill="${tokens.textMuted}"/>

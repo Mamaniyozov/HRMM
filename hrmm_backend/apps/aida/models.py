@@ -30,6 +30,7 @@ class ChatMessage(models.Model):
     ROLE_CHOICES = [
         ("user", "Foydalanuvchi"),
         ("assistant", "AIDA"),
+        ("tool", "Tool"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -41,6 +42,7 @@ class ChatMessage(models.Model):
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     content = models.TextField()
+    tool_calls = models.JSONField(null=True, blank=True)
     language = models.CharField(max_length=5, default="uz")
     voice_mode = models.BooleanField(default=False)
     current_page = models.CharField(max_length=200, blank=True, default="")
