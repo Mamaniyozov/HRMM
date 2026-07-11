@@ -481,13 +481,13 @@ class QRLoginChallengeView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
 
-        challenge, token = create_qr_login_challenge(user)
+        challenge, token, short_token = create_qr_login_challenge(user)
         approve_url_base = request.data.get("approve_url_base", "")
         if approve_url_base:
-            approve_url = f"{approve_url_base.rstrip('/')}/?qr-approve={token}"
+            approve_url = f"{approve_url_base.rstrip('/')}/?qr-approve={short_token}"
         else:
-            approve_url = request.build_absolute_uri(f"/api/v1/auth/login/qr-approve/?token={token}")
-        qr_code_url = build_qr_login_data_uri(token, approve_url=approve_url)
+            approve_url = request.build_absolute_uri(f"/api/v1/auth/login/qr-approve/?token={short_token}")
+        qr_code_url = build_qr_login_data_uri(short_token, approve_url=approve_url)
 
         return api_success(
             message="QR login challenge created",
@@ -539,7 +539,10 @@ class QRLoginApproveView(APIView):
         if not token:
             raise ValidationError("token majburiy.")
 
-        challenge = QRLoginChallenge.objects.filter(challenge_token=token).first()
+        challenge = (
+            QRLoginChallenge.objects.filter(challenge_token=token).first()
+            or QRLoginChallenge.objects.filter(short_token=token).first()
+        )
         if not challenge:
             raise ValidationError("QR login sessiyasi topilmadi.")
         if challenge.status == "PENDING" and challenge.expires_at <= timezone.now():

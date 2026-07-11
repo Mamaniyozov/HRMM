@@ -55,6 +55,7 @@ class QRLoginChallenge(models.Model):
         related_name="qr_login_challenges",
     )
     challenge_token = models.CharField(max_length=255, unique=True)
+    short_token = models.CharField(max_length=32, unique=True, db_index=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
     approved_by = models.ForeignKey(
         "users.User",

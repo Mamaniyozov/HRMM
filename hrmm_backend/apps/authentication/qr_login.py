@@ -29,6 +29,11 @@ def _read_qr_login_token(token):
     )
 
 
+def _generate_short_token():
+    """Generate a short, URL-safe token for QR codes."""
+    return secrets.token_urlsafe(16).replace("-", "").replace("_", "")[:20]
+
+
 def create_qr_login_challenge(user):
     QRLoginChallenge.objects.filter(
         user=user,
@@ -37,13 +42,15 @@ def create_qr_login_challenge(user):
     ).delete()
 
     token = _build_qr_login_token(user)
+    short_token = _generate_short_token()
     challenge = QRLoginChallenge.objects.create(
         user=user,
         challenge_token=token,
+        short_token=short_token,
         status="PENDING",
         expires_at=timezone.now() + timedelta(seconds=QR_LOGIN_CHALLENGE_MAX_AGE_SECONDS),
     )
-    return challenge, token
+    return challenge, token, short_token
 
 
 def build_qr_login_data_uri(token, approve_url=None):
@@ -61,16 +68,20 @@ def build_qr_login_data_uri(token, approve_url=None):
 
 
 def get_pending_qr_challenge(token):
-    challenge = QRLoginChallenge.objects.filter(
-        challenge_token=token,
+    """Resolve a challenge by either full challenge_token or short_token."""
+    query = QRLoginChallenge.objects.filter(
         status="PENDING",
         used_at__isnull=True,
         expires_at__gt=timezone.now(),
-    ).select_related("user").first()
+    )
+    challenge = (
+        query.filter(challenge_token=token).select_related("user").first()
+        or query.filter(short_token=token).select_related("user").first()
+    )
     if not challenge:
         return None
     try:
-        _read_qr_login_token(token)
+        _read_qr_login_token(challenge.challenge_token)
     except (signing.BadSignature, signing.SignatureExpired):
         return None
     return challenge
