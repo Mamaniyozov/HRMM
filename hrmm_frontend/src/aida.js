@@ -128,6 +128,17 @@ function _setInputEnabled(enabled) {
   if (sendBtn) sendBtn.disabled = !enabled;
 }
 
+function _executeAidaFunctionCalls(functionCalls) {
+  if (!Array.isArray(functionCalls) || !functionCalls.length) return;
+  functionCalls.forEach((call) => {
+    const name = call.name;
+    const args = call.arguments || {};
+    if (name === "navigate_to" && typeof window.executeAidaNavigation === "function") {
+      window.executeAidaNavigation(args.page, args.entity_id);
+    }
+  });
+}
+
 async function _sendMessage(retryMessage) {
   const input = _el("aidaInput");
   const isRetry = typeof retryMessage === "string";
@@ -165,6 +176,7 @@ async function _sendMessage(retryMessage) {
     } else if (data && data.content) {
       _conversationId = data.conversation_id || _conversationId;
       _addMessage("assistant", data.content);
+      _executeAidaFunctionCalls(data.function_calls);
     } else {
       _addErrorMessage(t("aida_error") || "Javob olinmadi.", () => _sendMessage(message));
     }

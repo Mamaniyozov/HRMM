@@ -93,6 +93,17 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "get_report_detail",
+        "description": "Aniq hisobotning batafsil ma'lumotlarini olish (RBAC bo'yicha cheklangan).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "report_id": {"type": "string", "description": "Hisobot UUID"},
+            },
+            "required": ["report_id"],
+        },
+    },
+    {
         "name": "navigate_to",
         "description": "Frontend'da foydalanuvchini boshqa sahifaga yo'naltirish.",
         "parameters": {
@@ -203,6 +214,13 @@ def _get_reports(arguments: dict[str, Any], *, actor, request) -> dict[str, Any]
     return {"reports": reports, "count": len(reports)}
 
 
+def _get_report_detail(arguments: dict[str, Any], *, actor, request) -> dict[str, Any]:
+    from apps.reports.serializers import ReportDetailSerializer
+
+    report = _get_report_or_error(arguments.get("report_id", ""), actor)
+    return ReportDetailSerializer(report, context={"request": request}).data
+
+
 def _navigate_to(arguments: dict[str, Any], *, actor, request) -> dict[str, Any]:
     page = arguments.get("page")
     if page not in NAVIGATE_PAGES:
@@ -216,6 +234,7 @@ _HANDLERS = {
     "approve_report": lambda args, **kw: _workflow_action("APPROVE", args, **kw),
     "reject_report": lambda args, **kw: _workflow_action("REJECT", args, **kw),
     "get_reports": _get_reports,
+    "get_report_detail": _get_report_detail,
     "navigate_to": _navigate_to,
 }
 

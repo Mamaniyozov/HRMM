@@ -6299,4 +6299,56 @@ function updateCommentHint() {
 workflowActionSelect?.addEventListener("change", updateCommentHint);
 updateCommentHint();
 
+function executeAidaNavigation(page, entityId) {
+  if (page === "dashboard") {
+    closeSectionModal();
+    document.querySelectorAll(".app-section").forEach((sec) => sec.classList.add("hidden"));
+    const homeSection = document.getElementById("homeSection");
+    const auditSection = document.getElementById("auditSection");
+    const archiveSection = document.getElementById("archiveSection");
+    if (homeSection) homeSection.classList.remove("hidden");
+    if (auditSection) auditSection.classList.remove("hidden");
+    if (archiveSection) archiveSection.classList.remove("hidden");
+    navLinks.forEach((item) => item.classList.remove("active"));
+    document.querySelector('.nav-link[data-target="homeSection"]')?.classList.add("active");
+    homeSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  if (page === "reports") {
+    openSectionModal("reportsSection", t("sidebar_documents"));
+    loadReports();
+    return;
+  }
+
+  if (page === "report_detail" && entityId) {
+    const report = state.reports.find((item) => item.id === entityId);
+    if (report) {
+      openReportDetailModal(report);
+    } else {
+      getReportDetail(entityId)
+        .then((detail) => {
+          if (detail) openReportDetailModal(detail);
+          else setMessage(t("msg_report_not_found") || "Hisobot topilmadi.", "error");
+        })
+        .catch((error) => setMessage(error.message || t("msg_report_not_found") || "Hisobot topilmadi.", "error"));
+    }
+    return;
+  }
+
+  if (page === "leaves") {
+    openSectionModal("leavesSection", t("sidebar_leaves"));
+    loadLeaves();
+    return;
+  }
+
+  if (page === "notifications") {
+    openSectionModal("notificationsSection", t("sidebar_notifications"));
+    loadNotifications();
+    return;
+  }
+}
+
+window.executeAidaNavigation = executeAidaNavigation;
+
 initAutoGrow(document);
