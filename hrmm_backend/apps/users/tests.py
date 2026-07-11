@@ -97,3 +97,25 @@ class UserJobProfileTests(TestCase):
         )
 
         self.assertTrue(serializer.is_valid(), serializer.errors)
+
+    def test_director_with_job_role_and_level_is_valid_without_department(self):
+        serializer = UserCreateSerializer(
+            data={
+                "username": "director_it",
+                "email": "director_it@example.com",
+                "password": "123456789012",
+                "full_name": "Director IT",
+                "role": "DIRECTOR",
+                "job_role": "DIRECTOR",
+                "job_level": "SENIOR",
+            }
+        )
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        user = serializer.save()
+
+        self.assertEqual(user.role, "DIRECTOR")
+        self.assertEqual(user.job_role, "DIRECTOR")
+        self.assertEqual(user.job_level, "SENIOR")
+        self.assertIsNone(user.department_id)
+        self.assertIsNone(user.unit_id)

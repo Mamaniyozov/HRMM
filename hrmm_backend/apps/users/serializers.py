@@ -54,7 +54,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"role": "DIRECTOR uchun department va unit biriktirilmaydi."})
         if unit and department and unit.department_id.id != department.id:
             raise serializers.ValidationError({"unit_id": "Tanlangan unit shu departmentga tegishli emas."})
-        if job_role and not department:
+        if job_role and not department and role != "DIRECTOR":
             raise serializers.ValidationError({"department_id": "Kasbiy rol berilganda department majburiy."})
         if job_level and not job_role:
             raise serializers.ValidationError({"job_level": "Daraja berish uchun avval job_role tanlang."})
@@ -129,7 +129,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"role": "DIRECTOR uchun department va unit biriktirilmaydi."})
         if unit and department and unit.department_id.id != department.id:
             raise serializers.ValidationError({"unit_id": "Tanlangan unit shu departmentga tegishli emas."})
-        if job_role and not department:
+        if job_role and not department and role != "DIRECTOR":
             raise serializers.ValidationError({"department_id": "Kasbiy rol berilganda department majburiy."})
         if job_level and not job_role:
             raise serializers.ValidationError({"job_level": "Daraja berish uchun avval job_role tanlang."})
