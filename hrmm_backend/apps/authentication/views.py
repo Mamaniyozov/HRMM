@@ -481,13 +481,17 @@ class QRLoginChallengeView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
 
-        challenge, token, short_token = create_qr_login_challenge(user)
-        approve_url_base = request.data.get("approve_url_base", "")
-        if approve_url_base:
-            approve_url = f"{approve_url_base.rstrip('/')}/?qr-approve={short_token}"
-        else:
-            approve_url = request.build_absolute_uri(f"/api/v1/auth/login/qr-approve/?token={short_token}")
-        qr_code_url = build_qr_login_data_uri(short_token, approve_url=approve_url)
+        try:
+            challenge, token, short_token = create_qr_login_challenge(user)
+            approve_url_base = request.data.get("approve_url_base", "")
+            if approve_url_base:
+                approve_url = f"{approve_url_base.rstrip('/')}/?qr-approve={short_token}"
+            else:
+                approve_url = request.build_absolute_uri(f"/api/v1/auth/login/qr-approve/?token={short_token}")
+            qr_code_url = build_qr_login_data_uri(short_token, approve_url=approve_url)
+        except Exception as exc:
+            logger.exception("QR login challenge creation failed for user=%s", user.username)
+            raise ValidationError("QR login yaratishda xatolik yuz berdi.") from exc
 
         return api_success(
             message="QR login challenge created",
