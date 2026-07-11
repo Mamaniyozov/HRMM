@@ -190,6 +190,14 @@ const loginFootnote = document.getElementById("loginFootnote");
 const loginQrSetupPanel = document.getElementById("loginQrSetupPanel");
 const loginQrImage = document.getElementById("loginQrImage");
 const loginSecretLabel = document.getElementById("loginSecretLabel");
+const loginQrButton = document.getElementById("loginQrButton");
+const loginQrStep = document.getElementById("loginQrStep");
+const loginQrStepTitle = document.getElementById("loginQrStepTitle");
+const loginQrStepImage = document.getElementById("loginQrStepImage");
+const loginQrStepHint = document.getElementById("loginQrStepHint");
+const loginQrStepStatus = document.getElementById("loginQrStepStatus");
+const loginQrStepEyebrow = document.getElementById("loginQrStepEyebrow");
+const backToLoginFromQrButton = document.getElementById("backToLoginFromQrButton");
 const loginManualKeyLabel = document.getElementById("loginManualKeyLabel");
 const loginQrHint = document.getElementById("loginQrHint");
 const otpCodeLabel = document.getElementById("otpCodeLabel");
@@ -438,9 +446,20 @@ function resetPendingLogin() {
   state.pendingEmailChallengeId = "";
   state.pendingLoginUser = null;
   state.pendingVerificationMethod = "";
+  state.pendingQrToken = "";
+  if (state.pendingQrPollInterval) {
+    clearInterval(state.pendingQrPollInterval);
+    state.pendingQrPollInterval = null;
+  }
+  if (state.pendingQrTimeout) {
+    clearTimeout(state.pendingQrTimeout);
+    state.pendingQrTimeout = null;
+  }
   loginCredentialsStep.classList.remove("hidden");
   loginTwoFactorStep.classList.add("hidden");
+  if (loginQrStep) loginQrStep.classList.add("hidden");
   if (otpForm) otpForm.reset();
+  if (loginForm) loginForm.reset();
   if (loginStatusBox) {
     loginStatusBox.textContent = t("login_ready");
     loginStatusBox.className = "login-status-box";
@@ -448,6 +467,10 @@ function resetPendingLogin() {
   if (otpStatusBox) {
     otpStatusBox.textContent = t("login_code_ready");
     otpStatusBox.className = "login-status-box";
+  }
+  if (loginQrStepStatus) {
+    loginQrStepStatus.textContent = t("login_qr_waiting");
+    loginQrStepStatus.className = "login-status-box";
   }
   if (loginVerificationEyebrow) {
     loginVerificationEyebrow.textContent = t("login_verification_eyebrow");
@@ -464,8 +487,114 @@ function resetPendingLogin() {
   if (loginQrImage) {
     loginQrImage.removeAttribute("src");
   }
+  if (loginQrStepImage) {
+    loginQrStepImage.removeAttribute("src");
+  }
   if (loginSecretLabel) {
     loginSecretLabel.textContent = "-";
+  }
+}
+
+let qrLoginMode = false;
+const QR_LOGIN_TIMEOUT_MS = 60000;
+
+function startQrLoginMode() {
+  qrLoginMode = true;
+  if (loginAuthTitle) loginAuthTitle.textContent = t("login_qr_title") || "Yangi qurilmadan kirish";
+  if (loginSubmitButton) loginSubmitButton.textContent = t("login_qr_continue") || "QR kod olish";
+  if (loginStatusBox) {
+    loginStatusBox.textContent = t("login_qr_hint_text") || "Yangi qurilmadan kirish uchun username va parolni kiriting.";
+  }
+}
+
+function stopQrLoginMode() {
+  qrLoginMode = false;
+  if (loginAuthTitle) loginAuthTitle.textContent = t("login_auth_title") || "HRMM tizimiga kirish";
+  if (loginSubmitButton) loginSubmitButton.textContent = t("login_submit") || "Tizimga kirish";
+  if (loginStatusBox) {
+    loginStatusBox.textContent = t("login_ready") || "Login uchun tayyor.";
+  }
+}
+
+async function pollQrLoginStatus(token) {
+  if (!token) return;
+  if (state.pendingQrPollInterval) {
+    clearInterval(state.pendingQrPollInterval);
+  }
+  if (state.pendingQrTimeout) {
+    clearTimeout(state.pendingQrTimeout);
+  }
+  state.pendingQrPollInterval = window.setInterval(async () => {
+    if (!state.pendingQrToken) {
+      clearInterval(state.pendingQrPollInterval);
+      state.pendingQrPollInterval = null;
+      return;
+    }
+    try {
+      const payload = await apiRequest("/api/v1/auth/login/qr-status/", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({ challenge_token: token }),
+      });
+      const status = payload.data?.status;
+      if (status === "APPROVED") {
+        clearInterval(state.pendingQrPollInterval);
+        state.pendingQrPollInterval = null;
+        if (state.pendingQrTimeout) {
+          clearTimeout(state.pendingQrTimeout);
+          state.pendingQrTimeout = null;
+        }
+        await completeQrLogin(token);
+      } else if (status === "REJECTED" || status === "EXPIRED") {
+        clearInterval(state.pendingQrPollInterval);
+        state.pendingQrPollInterval = null;
+        if (state.pendingQrTimeout) {
+          clearTimeout(state.pendingQrTimeout);
+          state.pendingQrTimeout = null;
+        }
+        if (loginQrStepStatus) {
+          loginQrStepStatus.textContent = status === "REJECTED" ? t("login_qr_rejected") : t("login_qr_expired");
+          loginQrStepStatus.className = "login-status-box error";
+        }
+      }
+    } catch (error) {
+      // ignore polling errors, keep trying
+    }
+  }, 2000);
+
+  state.pendingQrTimeout = window.setTimeout(() => {
+    if (state.pendingQrPollInterval) {
+      clearInterval(state.pendingQrPollInterval);
+      state.pendingQrPollInterval = null;
+    }
+    state.pendingQrToken = "";
+    if (loginQrStepStatus) {
+      loginQrStepStatus.textContent = t("login_qr_expired") || "QR kod muddati tugadi.";
+      loginQrStepStatus.className = "login-status-box error";
+    }
+    window.setTimeout(() => {
+      resetPendingLogin();
+      stopQrLoginMode();
+    }, 2500);
+  }, QR_LOGIN_TIMEOUT_MS);
+}
+
+async function completeQrLogin(token) {
+  try {
+    const payload = await apiRequest("/api/v1/auth/login/qr-complete/", {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ challenge_token: token }),
+    });
+    finalizeAuthenticatedSession(payload);
+    const departmentCount = await loadDepartments();
+    await loadAllData();
+    setMessage(t("msg_connected_departments").replace("{count}", departmentCount), "success");
+  } catch (error) {
+    if (loginQrStepStatus) {
+      loginQrStepStatus.textContent = error.message || t("msg_login_error");
+      loginQrStepStatus.className = "login-status-box error";
+    }
   }
 }
 
@@ -698,7 +827,9 @@ function applyTranslations() {
   const loginFeatureThreeSpan = loginFeatureThreeTitle?.nextElementSibling;
   if (loginFeatureThreeSpan) loginFeatureThreeSpan.textContent = t("login_feature_three_text");
   if (loginAuthEyebrow) loginAuthEyebrow.textContent = t("login_auth_eyebrow");
-  if (loginAuthTitle) loginAuthTitle.textContent = t("login_auth_title");
+  if (loginAuthTitle) {
+    loginAuthTitle.textContent = qrLoginMode ? t("login_qr_title") : t("login_auth_title");
+  }
   if (loginUsernameLabel) loginUsernameLabel.textContent = t("login_username_label");
   if (loginUsernameInput) loginUsernameInput.placeholder = t("login_username_placeholder");
   if (loginPasswordLabel) loginPasswordLabel.textContent = t("login_password_label");
@@ -722,10 +853,17 @@ function applyTranslations() {
   if (showLoginButton) showLoginButton.textContent = t("login_badge");
   if (loginSwitchText) loginSwitchText.textContent = t("register_switch_text");
   if (registerSwitchText) registerSwitchText.textContent = t("login_switch_text");
-  if (loginSubmitButton) loginSubmitButton.textContent = t("login_submit");
+  if (loginSubmitButton) {
+    loginSubmitButton.textContent = qrLoginMode ? t("login_qr_continue") : t("login_submit");
+  }
   if (loginFootnote) loginFootnote.textContent = t("login_footnote");
   if (loginManualKeyLabel) loginManualKeyLabel.textContent = t("login_manual_key");
   if (loginQrHint) loginQrHint.textContent = t("login_qr_hint");
+  if (loginQrButton) loginQrButton.textContent = t("login_qr_title") || "Yangi qurilmadan QR orqali kirish";
+  if (loginQrStepEyebrow) loginQrStepEyebrow.textContent = t("login_qr_eyebrow") || "QR tasdiqlash";
+  if (loginQrStepTitle) loginQrStepTitle.textContent = t("login_qr_title") || "Yangi qurilmadan kirish";
+  if (loginQrStepHint) loginQrStepHint.textContent = t("login_qr_waiting") || "QR kodi kutilmoqda. Boshqa kirilgan qurilmangizdan tasdiqlang.";
+  if (backToLoginFromQrButton) backToLoginFromQrButton.textContent = t("login_back") || "Login bosqichiga qaytish";
   if (otpCodeLabel) otpCodeLabel.textContent = t("login_code_label");
   if (otpSubmitButton) otpSubmitButton.textContent = t("login_code_submit");
   if (backToLoginButton) backToLoginButton.textContent = t("login_back");
@@ -4092,6 +4230,31 @@ if (loginForm) {
     const formData = new FormData(loginForm);
 
     try {
+      if (qrLoginMode) {
+        setMessage(t("msg_logging_in"));
+        const payload = await apiRequest("/api/v1/auth/login/qr-challenge/", {
+          method: "POST",
+          headers: getHeaders(),
+          timeoutMs: 15000,
+          body: JSON.stringify({
+            username: formData.get("username"),
+            password: formData.get("password"),
+          }),
+        });
+
+        state.pendingQrToken = payload.data?.challenge_token || "";
+        loginCredentialsStep.classList.add("hidden");
+        loginTwoFactorStep.classList.add("hidden");
+        if (loginQrStep) loginQrStep.classList.remove("hidden");
+        if (loginQrStepImage) loginQrStepImage.src = payload.data?.qr_code_url || "";
+        if (loginQrStepStatus) {
+          loginQrStepStatus.textContent = t("login_qr_waiting") || "QR kodi kutilmoqda...";
+          loginQrStepStatus.className = "login-status-box";
+        }
+        pollQrLoginStatus(state.pendingQrToken);
+        return;
+      }
+
       setMessage(t("msg_logging_in"));
       const payload = await apiRequest("/api/v1/auth/login/", {
         method: "POST",
@@ -4196,6 +4359,19 @@ if (showLoginButton) {
   showLoginButton.addEventListener("click", () => {
     registerStep?.classList.add("hidden");
     loginCredentialsStep?.classList.remove("hidden");
+  });
+}
+
+if (loginQrButton) {
+  loginQrButton.addEventListener("click", () => {
+    startQrLoginMode();
+  });
+}
+
+if (backToLoginFromQrButton) {
+  backToLoginFromQrButton.addEventListener("click", () => {
+    resetPendingLogin();
+    stopQrLoginMode();
   });
 }
 

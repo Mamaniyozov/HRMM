@@ -38,3 +38,38 @@ class EmailOTPChallenge(models.Model):
 
     def __str__(self):
         return f"{self.user.username}:{self.purpose}:{self.created_at.isoformat()}"
+
+
+class QRLoginChallenge(models.Model):
+    STATUS_CHOICES = [
+        ("PENDING", "Kutilmoqda"),
+        ("APPROVED", "Tasdiqlandi"),
+        ("REJECTED", "Rad etildi"),
+        ("EXPIRED", "Muddati tugagan"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        related_name="qr_login_challenges",
+    )
+    challenge_token = models.CharField(max_length=255, unique=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
+    approved_by = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="approved_qr_login_challenges",
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.user.username}:qr_login:{self.status}:{self.created_at.isoformat()}"

@@ -103,6 +103,9 @@
               </label>
               <button id="loginSubmitButton" type="submit" class="primary-btn">Tizimga kirish</button>
             </form>
+            <div class="login-alt-actions">
+              <button id="loginQrButton" type="button" class="ghost-btn small-btn">Yangi qurilmadan QR orqali kirish</button>
+            </div>
             <div id="loginStatusBox" class="login-status-box">Login uchun tayyor.</div>
             <div id="loginFootnote" class="session-footnote">
               Tizimga kirgandan keyin asosiy boshqaruv paneli avtomatik ochiladi.
@@ -184,6 +187,23 @@
             </form>
             <div id="otpStatusBox" class="login-status-box">Authenticator kodini kiriting.</div>
             <button id="backToLoginButton" type="button" class="ghost-btn full-width-btn">
+              Login bosqichiga qaytish
+            </button>
+          </div>
+
+          <div id="loginQrStep" class="hidden">
+            <div class="panel-heading">
+              <p id="loginQrStepEyebrow" class="eyebrow">QR tasdiqlash</p>
+              <h3 id="loginQrStepTitle">Yangi qurilmadan kirish</h3>
+            </div>
+            <p id="loginQrStepHint" class="session-footnote otp-footnote">
+              QR kodni boshqa kirilgan qurilmangiz skan qilishi yoki quyidagi havolani ochishi kerak.
+            </p>
+            <div id="loginQrPanel" class="two-factor-setup">
+              <img id="loginQrStepImage" class="two-factor-qr" alt="QR login code" data-translate-alt="login_qr_alt" />
+            </div>
+            <div id="loginQrStepStatus" class="login-status-box">QR kodi kutilmoqda...</div>
+            <button id="backToLoginFromQrButton" type="button" class="ghost-btn full-width-btn">
               Login bosqichiga qaytish
             </button>
           </div>

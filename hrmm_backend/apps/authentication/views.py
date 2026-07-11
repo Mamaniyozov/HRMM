@@ -2,6 +2,8 @@ import logging
 
 from rest_framework.views import APIView
 from rest_framework import status, serializers
+from rest_framework.response import Response
+from html import escape
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.utils import timezone
@@ -11,6 +13,7 @@ from config.responses import api_success
 from config.throttling import LoginRateThrottle, OTPRateThrottle, UsernameIPLocaleRateThrottle
 from apps.reports.views import IsAuthenticatedHRMM
 from apps.users.models import User
+from .models import QRLoginChallenge
 
 logger = logging.getLogger("hrmm")
 from .serializers import (
@@ -27,6 +30,13 @@ from .serializers import (
 )
 from .tokens import get_tokens_for_user
 from .email_otp import create_login_email_challenge, mask_email, send_login_email_code, verify_email_challenge
+from .qr_login import (
+    approve_qr_login_challenge,
+    build_qr_login_data_uri,
+    create_qr_login_challenge,
+    get_pending_qr_challenge,
+    mark_qr_challenge_used,
+)
 from .two_factor import (
     build_login_challenge,
     build_otpauth_url,
@@ -459,3 +469,193 @@ class TwoFactorDisableView(APIView):
             request=request,
         )
         return api_success(message="Two-factor authentication disabled")
+
+
+class QRLoginChallengeView(APIView):
+    authentication_classes = []
+    permission_classes = []
+    throttle_classes = [LoginRateThrottle, UsernameIPLocaleRateThrottle]
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+
+        challenge, token = create_qr_login_challenge(user)
+        approve_url = request.build_absolute_uri(f"/api/v1/auth/login/qr-approve/?token={token}")
+        qr_code_url = build_qr_login_data_uri(token, approve_url=approve_url)
+
+        return api_success(
+            message="QR login challenge created",
+            data={
+                "challenge_token": token,
+                "qr_code_url": qr_code_url,
+                "approve_url": approve_url,
+                "expires_at": challenge.expires_at.isoformat(),
+            },
+            status_code=status.HTTP_200_OK,
+        )
+
+
+class QRLoginStatusView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        token = request.data.get("challenge_token") or request.GET.get("token")
+        if not token:
+            raise ValidationError("challenge_token majburiy.")
+
+        challenge = QRLoginChallenge.objects.filter(challenge_token=token).first()
+        if not challenge:
+            raise ValidationError("QR login sessiyasi topilmadi.")
+
+        if challenge.status == "PENDING" and challenge.expires_at <= timezone.now():
+            challenge.status = "EXPIRED"
+            challenge.save(update_fields=["status"])
+
+        return api_success(
+            message="QR login status",
+            data={
+                "status": challenge.status,
+                "expires_at": challenge.expires_at.isoformat(),
+            },
+            status_code=status.HTTP_200_OK,
+        )
+
+
+class QRLoginApproveView(APIView):
+    permission_classes = [IsAuthenticatedHRMM]
+
+    def _get_token(self, request):
+        return request.data.get("token") or request.GET.get("token")
+
+    def get(self, request):
+        token = self._get_token(request)
+        if not token:
+            raise ValidationError("token majburiy.")
+
+        challenge = QRLoginChallenge.objects.filter(challenge_token=token).first()
+        if not challenge:
+            raise ValidationError("QR login sessiyasi topilmadi.")
+        if challenge.status == "PENDING" and challenge.expires_at <= timezone.now():
+            challenge.status = "EXPIRED"
+            challenge.save(update_fields=["status"])
+        if challenge.status != "PENDING":
+            raise ValidationError(f"QR login sessiyasi {challenge.status} holatida.")
+
+        current_user = request.user if request.user and request.user.is_authenticated else None
+        is_authorized = current_user and challenge.user.id == current_user.id
+        html = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>HRMM QR Login</title>
+          <style>
+            body {{ font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #0f172a; color: #e2e8f0; }}
+            .card {{ background: #1e293b; padding: 2rem; border-radius: 1rem; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }}
+            h1 {{ margin: 0 0 0.5rem; font-size: 1.5rem; }}
+            p {{ color: #94a3b8; margin-bottom: 1.5rem; }}
+            button {{ border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-size: 1rem; cursor: pointer; margin: 0.25rem; }}
+            .approve {{ background: #10b981; color: #fff; }}
+            .reject {{ background: #ef4444; color: #fff; }}
+            .info {{ background: #334155; color: #e2e8f0; }}
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h1>HRMM QR Login</h1>
+            <p>Yangi qurilmadan kirishni tasdiqlash uchun foydalanuvchi: <strong>{escape(challenge.user.full_name)}</strong></p>
+            {"<form method='post'><button type='submit' class='approve' name='action' value='approve'>Tasdiqlash</button><button type='submit' class='reject' name='action' value='reject'>Rad etish</button></form>" if is_authorized else "<button class='info' disabled>Siz faqat o'z hisobingizga kirishni tasdiqlashingiz mumkin.</button>"}
+          </div>
+        </body>
+        </html>
+        """
+        return Response(html, content_type="text/html")
+
+    def post(self, request):
+        token = self._get_token(request)
+        if not token:
+            raise ValidationError("token majburiy.")
+
+        action = request.data.get("action") or request.POST.get("action") or "approve"
+        if action not in {"approve", "reject"}:
+            raise ValidationError("action 'approve' yoki 'reject' bo'lishi kerak.")
+
+        if action == "reject":
+            from .qr_login import reject_qr_login_challenge
+
+            ok, error = reject_qr_login_challenge(token)
+            if not ok:
+                raise ValidationError(error)
+            return api_success(message="QR login rejected")
+
+        ok, error = approve_qr_login_challenge(token, request.user)
+        if not ok:
+            raise ValidationError(error)
+
+        create_audit_log(
+            actor=request.user,
+            action="QR_LOGIN_APPROVED",
+            target_type="users.User",
+            target_id=request.user.id,
+            description=f"{request.user.username} yangi qurilmadan kirishni QR orqali tasdiqladi",
+            request=request,
+        )
+        return api_success(message="QR login approved")
+
+
+class QRLoginCompleteView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        token = request.data.get("challenge_token")
+        if not token:
+            raise ValidationError("challenge_token majburiy.")
+
+        challenge = QRLoginChallenge.objects.filter(
+            challenge_token=token,
+            status="APPROVED",
+            used_at__isnull=True,
+        ).select_related("user").first()
+
+        if not challenge:
+            raise ValidationError("QR login tasdiqlanmagan yoki allaqachon ishlatilgan.")
+
+        if challenge.expires_at <= timezone.now():
+            raise ValidationError("QR login muddati tugagan.")
+
+        user = challenge.user
+        tokens = get_tokens_for_user(user)
+        user.last_login_at = timezone.now()
+        user.save(update_fields=["last_login_at", "updated_at"])
+        mark_qr_challenge_used(challenge)
+
+        create_audit_log(
+            actor=user,
+            action="LOGIN_QR",
+            target_type="users.User",
+            target_id=user.id,
+            description=f"{user.username} QR login orqali yangi qurilmadan kirdi",
+            request=request,
+        )
+
+        return api_success(
+            message="QR login successful",
+            data={
+                "access": tokens["access"],
+                "refresh": tokens["refresh"],
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "full_name": user.full_name,
+                    "role": user.role,
+                    "job_role": user.job_role,
+                    "job_level": user.job_level,
+                },
+            },
+            status_code=status.HTTP_200_OK,
+        )

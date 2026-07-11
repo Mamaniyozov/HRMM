@@ -19,6 +19,18 @@ class AuthenticationTests(TestCase):
             role="DIRECTOR",
             is_active=True,
         )
+        # Disable throttling on auth endpoints to avoid 429 errors in fast test runs.
+        from apps.authentication.views import (
+            LoginView,
+            QRLoginChallengeView,
+            VerifyLoginEmailOTPView,
+            VerifyLoginTwoFactorView,
+        )
+
+        LoginView.throttle_classes = []
+        QRLoginChallengeView.throttle_classes = []
+        VerifyLoginEmailOTPView.throttle_classes = []
+        VerifyLoginTwoFactorView.throttle_classes = []
 
     def test_login_returns_email_otp_challenge(self):
         response = self.client.post(
@@ -204,3 +216,77 @@ class AuthenticationTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_qr_login_challenge_returns_qr_code(self):
+        response = self.client.post(
+            "/api/v1/auth/login/qr-challenge/",
+            {"username": "authuser", "password": "12345678"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["success"])
+        self.assertIn("challenge_token", response.data["data"])
+        self.assertIn("qr_code_url", response.data["data"])
+        self.assertTrue(response.data["data"]["qr_code_url"].startswith("data:image/png;base64,"))
+
+    def test_qr_login_challenge_rejects_invalid_password(self):
+        response = self.client.post(
+            "/api/v1/auth/login/qr-challenge/",
+            {"username": "authuser", "password": "wrongpass"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_qr_login_complete_returns_tokens_after_approval(self):
+        challenge_response = self.client.post(
+            "/api/v1/auth/login/qr-challenge/",
+            {"username": "authuser", "password": "12345678"},
+            format="json",
+        )
+        challenge_token = challenge_response.data["data"]["challenge_token"]
+
+        user = User.objects.get(username="authuser")
+        self.client.force_authenticate(user=user)
+        approve_response = self.client.post(
+            "/api/v1/auth/login/qr-approve/",
+            {"token": challenge_token},
+            format="json",
+        )
+        self.assertEqual(approve_response.status_code, 200)
+
+        self.client.force_authenticate(user=None)
+        complete_response = self.client.post(
+            "/api/v1/auth/login/qr-complete/",
+            {"challenge_token": challenge_token},
+            format="json",
+        )
+
+        self.assertEqual(complete_response.status_code, 200)
+        self.assertIn("access", complete_response.data["data"])
+        self.assertIn("refresh", complete_response.data["data"])
+
+    def test_qr_login_cannot_approve_for_other_user(self):
+        other_user = User.objects.create(
+            username="other_user",
+            email="other_user@example.com",
+            password_hash="12345678",
+            full_name="Other User",
+            role="DIRECTOR",
+            is_active=True,
+        )
+        challenge_response = self.client.post(
+            "/api/v1/auth/login/qr-challenge/",
+            {"username": "authuser", "password": "12345678"},
+            format="json",
+        )
+        challenge_token = challenge_response.data["data"]["challenge_token"]
+
+        self.client.force_authenticate(user=other_user)
+        approve_response = self.client.post(
+            "/api/v1/auth/login/qr-approve/",
+            {"token": challenge_token},
+            format="json",
+        )
+        self.assertEqual(approve_response.status_code, 400)
