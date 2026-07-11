@@ -482,7 +482,11 @@ class QRLoginChallengeView(APIView):
         user = serializer.validated_data["user"]
 
         challenge, token = create_qr_login_challenge(user)
-        approve_url = request.build_absolute_uri(f"/api/v1/auth/login/qr-approve/?token={token}")
+        approve_url_base = request.data.get("approve_url_base", "")
+        if approve_url_base:
+            approve_url = f"{approve_url_base.rstrip('/')}/?qr-approve={token}"
+        else:
+            approve_url = request.build_absolute_uri(f"/api/v1/auth/login/qr-approve/?token={token}")
         qr_code_url = build_qr_login_data_uri(token, approve_url=approve_url)
 
         return api_success(

@@ -598,6 +598,43 @@ async function completeQrLogin(token) {
   }
 }
 
+async function approveQrLoginFromToken(token) {
+  if (!token) return;
+  try {
+    await apiRequest("/api/v1/auth/login/qr-approve/", {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({ token }),
+    });
+    setMessage(t("login_qr_approved") || "QR login tasdiqlandi.", "success");
+  } catch (error) {
+    setMessage(error.message || t("msg_login_error"), "error");
+  }
+}
+
+function processQrApprovalFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("qr-approve");
+  if (!token) return;
+
+  // Clean the URL so a refresh doesn't re-trigger approval.
+  const url = new URL(window.location.href);
+  url.searchParams.delete("qr-approve");
+  window.history.replaceState({}, "", url.toString());
+
+  if (state.accessToken) {
+    const confirmed = window.confirm(
+      (t("login_qr_confirm_approve") || "Yangi qurilmadan kirishni tasdiqlaysizmi?") + "\n\n" + token.slice(0, 20) + "..."
+    );
+    if (confirmed) {
+      approveQrLoginFromToken(token);
+    }
+  } else {
+    state.pendingQrApproveToken = token;
+    setMessage(t("login_qr_login_first") || "QR loginni tasdiqlash uchun avval tizimga kiring.", "error");
+  }
+}
+
 function setAuthUi(isAuthenticated) {
   if (loginView) {
     loginView.classList.toggle("hidden", isAuthenticated);
@@ -2479,6 +2516,13 @@ function finalizeAuthenticatedSession(payload) {
   setAuthUi(true);
   applyRoleBasedUi();
 
+  // Agar URL orqali kelgan QR login tasdiqlash kutilayotgan bo'lsa, avtomatik tasdiqlaymiz.
+  if (state.pendingQrApproveToken) {
+    const tokenToApprove = state.pendingQrApproveToken;
+    state.pendingQrApproveToken = "";
+    approveQrLoginFromToken(tokenToApprove);
+  }
+
   // Sync language with user preference
   if (payload.data.user.language && payload.data.user.language !== state.language) {
     state.language = payload.data.user.language;
@@ -4239,6 +4283,7 @@ if (loginForm) {
           body: JSON.stringify({
             username: formData.get("username"),
             password: formData.get("password"),
+            approve_url_base: window.location.origin,
           }),
         });
 
@@ -5071,6 +5116,7 @@ authStateDot?.classList.add("offline");
 setAuthUi(false);
 applyRoleBasedUi();
 resetPendingLogin();
+processQrApprovalFromUrl();
 
 // Auxiliary Drawer functionality (must be defined before profile icons use them)
 const openAuxMenuButton = document.getElementById("openAuxMenuButton");

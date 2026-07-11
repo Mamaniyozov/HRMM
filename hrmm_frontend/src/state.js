@@ -15,6 +15,7 @@ export const state = {
   pendingQrToken: "",
   pendingQrTimeout: null,
   pendingQrPollInterval: null,
+  pendingQrApproveToken: "",
   twoFactorSetup: null,
   departments: [],
   units: [],
